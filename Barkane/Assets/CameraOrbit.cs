@@ -49,10 +49,10 @@ public class CameraOrbit : MonoBehaviour
         prevMousePosition = Mouse.current.position.ReadValue();
     }
 
-    private void OnClick(InputValue value)
+    private void OnToggleCamera(InputValue value)
     {
         Debug.Log("click");
-        ToggleCamera(value.isPressed);
+        ToggleCamera(cameraDisabled);
     }
 
     private void ToggleCamera(bool value)

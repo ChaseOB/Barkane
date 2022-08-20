@@ -341,7 +341,7 @@ GameObject:
   m_Component:
   - component: {fileID: 275763455}
   - component: {fileID: 275763456}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: N Edge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -636,7 +636,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1094619037}
   - component: {fileID: 1094619038}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: W Edge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -768,7 +768,7 @@ GameObject:
   - component: {fileID: 1179978660}
   - component: {fileID: 1179978659}
   - component: {fileID: 1179978658}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PaperSquare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -883,7 +883,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1206071440}
   - component: {fileID: 1206071441}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: S Edge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1056,14 +1056,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1310947893}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1388012868}
   m_Father: {fileID: 2018727544}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
 --- !u!1 &1363923792
 GameObject:
   m_ObjectHideFlags: 0
@@ -1074,7 +1074,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1363923793}
   - component: {fileID: 1363923794}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: E Edge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1207,6 +1207,7 @@ GameObject:
   - component: {fileID: 1388012866}
   - component: {fileID: 1388012869}
   - component: {fileID: 1388012870}
+  - component: {fileID: 1388012871}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -1358,9 +1359,21 @@ MonoBehaviour:
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: 570ed237-0d6d-42cf-b84c-a124e78405b6
+  m_DefaultActionMap: UI
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 1388012865}
+--- !u!114 &1388012871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388012864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e08d5f052230941429eab5fc1b22cc65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1471183540
 GameObject:
   m_ObjectHideFlags: 0
