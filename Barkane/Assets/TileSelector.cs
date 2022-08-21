@@ -5,7 +5,12 @@ using UnityEngine.InputSystem;
 
 public class TileSelector : MonoBehaviour
 {
-    private Camera camera;
+    new private Camera camera;
+
+    private PaperSqaure hoverSquare;
+    private PaperSqaure currentSquare;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,7 +24,22 @@ public class TileSelector : MonoBehaviour
         Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
         if(Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Paper")))
         {
-            Debug.Log("Hit " + info.transform.gameObject.name);
+            if(info.transform.gameObject.GetComponent<PaperSqaure>())
+                hoverSquare = info.transform.gameObject.GetComponent<PaperSqaure>();
+        } 
+        else
+        {
+            hoverSquare = null;
+        }
+    }
+
+
+    private void OnClick(InputValue value)
+    {
+        if(value.isPressed && hoverSquare != null)
+        {
+            currentSquare = hoverSquare;
+            Debug.Log(currentSquare);
         }
     }
 }

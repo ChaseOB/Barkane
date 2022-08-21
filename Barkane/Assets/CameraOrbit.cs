@@ -13,6 +13,7 @@ public class CameraOrbit : MonoBehaviour
     [SerializeField] private float maxCameraDistance = 10.0f;
 
     [SerializeField] private bool cameraDisabled = true;
+    private bool clicking = false;
 
     private Transform cameraTransform;
     private Transform cameraParent;
@@ -24,15 +25,16 @@ public class CameraOrbit : MonoBehaviour
     {
         cameraTransform = this.transform;
         cameraParent = this.transform.parent;
+        localRoatation = cameraParent.localRotation.eulerAngles;
     }
 
-    //We want the camera to move after everything else
+    //CO: We want the camera to move after everything else
     private void LateUpdate() 
     {
-        if(!cameraDisabled)
+        if(!cameraDisabled && clicking)
         {
             Vector2 diff = prevMousePosition - Mouse.current.position.ReadValue();
-            localRoatation.x += diff.x * mouseSensitivity * -1; //for some reason the x axis is inverted but the y axis is not
+            localRoatation.x += diff.x * mouseSensitivity; 
             localRoatation.y += diff.y * mouseSensitivity;
             localRoatation.y = Mathf.Clamp(localRoatation.y, 20f, 80f);
         }
@@ -41,7 +43,7 @@ public class CameraOrbit : MonoBehaviour
         cameraDistance -= scrollAmount;
         cameraDistance = Mathf.Clamp(cameraDistance, minCameraDistance, maxCameraDistance);
 
-        Quaternion quaternion = Quaternion.Euler(localRoatation.y, localRoatation.x, 0);
+        Quaternion quaternion = Quaternion.Euler(localRoatation.y, localRoatation.x * -1, 0);
         cameraParent.rotation = Quaternion.Lerp(cameraParent.rotation, quaternion, Time.deltaTime * orbitDampen);
         if(cameraTransform.localPosition.z != cameraDistance * -1)
             cameraTransform.localPosition = new Vector3(0, 0, Mathf.Lerp(cameraTransform.localPosition.z, cameraDistance * -1, Time.deltaTime * scrollDampen));
@@ -49,9 +51,13 @@ public class CameraOrbit : MonoBehaviour
         prevMousePosition = Mouse.current.position.ReadValue();
     }
 
+    private void OnClick(InputValue value)
+    {
+        clicking = value.isPressed;
+    }
+
     private void OnToggleCamera(InputValue value)
     {
-        Debug.Log("click");
         ToggleCamera(cameraDisabled);
     }
 
