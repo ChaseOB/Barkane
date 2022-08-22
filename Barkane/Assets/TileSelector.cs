@@ -37,8 +37,19 @@ public class TileSelector : MonoBehaviour
     {
         if(value.isPressed && hover != null)
         {
-            curr = hover;
-            Debug.Log(curr);
+            Debug.Log("click");
+            if(curr != hover)
+                curr?.Deselect();
+            else {
+                curr = hover;
+                Debug.Log(curr.gameObject.name);
+                curr.Select();
+            }
+        }
+        else
+        {
+            curr?.Deselect();
+            curr = null;
         }
     }
 }
