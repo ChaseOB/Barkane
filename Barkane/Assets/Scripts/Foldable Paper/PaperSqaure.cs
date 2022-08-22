@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class PaperSqaure : MonoBehaviour
 {
-    public Vector3Int currentLocation;
-    public Vector3Int targetLocation;
+    //public Vector3Int currentLocation;
+   // public Vector3Int targetLocation;
     public bool playerOccupied = false; //true if the player is on this square
+    public PaperJoint[] joints = new PaperJoint[4]; //ENWS Joints of this square
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.CompareTag("Player"))

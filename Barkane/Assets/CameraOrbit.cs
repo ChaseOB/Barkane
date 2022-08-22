@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CameraOrbit : MonoBehaviour
+public class CameraOrbit : Singleton<CameraOrbit>
 {
     [SerializeField] private float mouseSensitivity = 4.0f;
     [SerializeField] private float ScrollSenstivity = 0.2f;
@@ -13,6 +13,7 @@ public class CameraOrbit : MonoBehaviour
     [SerializeField] private float maxCameraDistance = 10.0f;
 
     [SerializeField] private bool cameraDisabled = true;
+    public bool CameraDisabled {get => cameraDisabled;}
     private bool clicking = false;
 
     private Transform cameraTransform;
@@ -21,7 +22,12 @@ public class CameraOrbit : MonoBehaviour
     private float cameraDistance = 5.0f;
     private Vector2 prevMousePosition;
 
-    void Start()
+    private void Awake()
+    {
+        InitializeSingleton();
+    }
+
+    private void Start()
     {
         cameraTransform = this.transform;
         cameraParent = this.transform.parent;

@@ -5,7 +5,7 @@ using UnityEngine;
 public class FoldablePaper : MonoBehaviour
 {
     [SerializeField] private PaperSqaure[] sqaures;
-    public List<PaperSqaure> fold = new List<PaperSqaure>();
+    public List<GameObject> fold = new List<GameObject>();
     public Line foldLine;
     public FoldAnimator foldAnimator;
 

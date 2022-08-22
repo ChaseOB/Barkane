@@ -35,16 +35,16 @@ public class TileSelector : MonoBehaviour
 
     private void OnClick(InputValue value)
     {
-        if(value.isPressed && hover != null)
+        if(!value.isPressed || !CameraOrbit.Instance.CameraDisabled)
+            return;
+        if(hover != null)
         {
-            Debug.Log("click");
-            if(curr != hover)
-                curr?.Deselect();
-            else {
-                curr = hover;
-                Debug.Log(curr.gameObject.name);
-                curr.Select();
-            }
+            if(curr == hover)
+                return;
+            curr?.Deselect();
+            curr = hover;
+            Debug.Log(curr.gameObject.name);
+            curr.Select();
         }
         else
         {
