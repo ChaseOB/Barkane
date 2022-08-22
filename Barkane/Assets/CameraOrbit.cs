@@ -25,7 +25,8 @@ public class CameraOrbit : MonoBehaviour
     {
         cameraTransform = this.transform;
         cameraParent = this.transform.parent;
-        localRoatation = cameraParent.localRotation.eulerAngles;
+        localRoatation.x = cameraParent.localRotation.eulerAngles.y * -1;
+        localRoatation.y = cameraParent.localRotation.eulerAngles.x;
     }
 
     //CO: We want the camera to move after everything else

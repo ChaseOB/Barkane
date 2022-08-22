@@ -12,4 +12,13 @@ public class Line : MonoBehaviour
     {
         return (p1 + p2) / 2;
     }
+
+    private void OnDrawGizmos() 
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(p1, 0.05f);
+        Gizmos.DrawSphere(p2, 0.05f); 
+        Gizmos.DrawLine(p1, p2);
+
+    }
 }

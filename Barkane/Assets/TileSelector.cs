@@ -7,8 +7,8 @@ public class TileSelector : MonoBehaviour
 {
     new private Camera camera;
 
-    private PaperSqaure hoverSquare;
-    private PaperSqaure currentSquare;
+    private PaperJoint hover;
+    private PaperJoint curr;
 
 
     // Start is called before the first frame update
@@ -22,24 +22,23 @@ public class TileSelector : MonoBehaviour
     {
         RaycastHit info;
         Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
-        if(Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Paper")))
+        if(Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Joint")))
         {
-            if(info.transform.gameObject.GetComponent<PaperSqaure>())
-                hoverSquare = info.transform.gameObject.GetComponent<PaperSqaure>();
+            hover = info.transform.gameObject.GetComponent<PaperJoint>();
         } 
         else
         {
-            hoverSquare = null;
+            hover = null;
         }
     }
 
 
     private void OnClick(InputValue value)
     {
-        if(value.isPressed && hoverSquare != null)
+        if(value.isPressed && hover != null)
         {
-            currentSquare = hoverSquare;
-            Debug.Log(currentSquare);
+            curr = hover;
+            Debug.Log(curr);
         }
     }
 }
