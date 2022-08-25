@@ -1643,7 +1643,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2018727544}
-  - component: {fileID: 2018727542}
   m_Layer: 0
   m_Name: Camera Rig
   m_TagString: Untagged
@@ -1651,20 +1650,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2018727542
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2018727541}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12e9c95c5398e114290c5aec8ad9f119, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 68673893}
-  followSpeed: 3
 --- !u!4 &2018727544
 Transform:
   m_ObjectHideFlags: 0
