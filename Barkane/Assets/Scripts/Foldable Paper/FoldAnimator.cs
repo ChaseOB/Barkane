@@ -7,6 +7,28 @@ public class FoldAnimator : MonoBehaviour
     public float foldDuration = 0.25f;
     public bool isFolding = false;
 
+
+
+    //C: Tries to fold the given objects. Returns true and folds if successful, returns false if this fold is not possible.
+    public bool TryFold(List<GameObject> objectsToFold, Line foldLine, float degrees)
+    {
+        if(CheckCanFold(objectsToFold, foldLine, degrees))
+        {
+            Fold(objectsToFold, foldLine, degrees);
+            return true;
+        }
+        return false;
+        
+    }
+
+    public bool CheckCanFold(List<GameObject> objectsToFold, Line foldLine, float degrees)
+    {
+        if(isFolding) return false;
+
+
+        return true;
+    }
+
     //C: folds the given list of squares along the given line by the given number of degrees
     public void Fold(List<GameObject> objectsToFold, Line foldLine, float degrees)
     {
