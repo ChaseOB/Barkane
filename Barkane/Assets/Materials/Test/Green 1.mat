@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Green
+  m_Name: Green 1
   m_Shader: {fileID: -6465566751694194690, guid: 043200d1f6961a54cb20d82f756c0148, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -120,7 +120,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_27b163011941461fa5a53f7fa66626a1: {r: 0.4198113, g: 1, b: 0.48044065, a: 0}
+    - Color_27b163011941461fa5a53f7fa66626a1: {r: 0.0074759563, g: 0.5283019, b: 0.11077629, a: 0}
     - _BaseColor: {r: 0, g: 0.9528302, b: 0.12631695, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
