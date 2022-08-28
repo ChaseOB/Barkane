@@ -45,7 +45,6 @@ public class TileSelector : MonoBehaviour
                 return;
             curr?.Deselect();
             curr = hover;
-            Debug.Log(curr.gameObject.name);
             curr.Select();
             foldablePaper.foldJoint = curr;
         }

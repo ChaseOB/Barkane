@@ -45,7 +45,7 @@ public class CameraOrbit : Singleton<CameraOrbit>
                 Vector2 diff = prevMousePosition - Mouse.current.position.ReadValue();
                 localRoatation.x += diff.x * mouseSensitivity; 
                 localRoatation.y += diff.y * mouseSensitivity;
-                localRoatation.y = Mathf.Clamp(localRoatation.y, 20f, 80f);
+                localRoatation.y = Mathf.Clamp(localRoatation.y, -80f, 80f);
             }
             float scrollAmount = Mouse.current.scroll.ReadValue().y * ScrollSenstivity * 0.01f * cameraDistance;
             cameraDistance -= scrollAmount;

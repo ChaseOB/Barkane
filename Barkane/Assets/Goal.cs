@@ -4,14 +4,33 @@ using UnityEngine;
 
 public class Goal : MonoBehaviour
 {
-    public List<GameObject> Shards;
+    public int numShards;
+    private int numShardsCollected;
+    private bool goalActive = false;
+    [SerializeField] private GameObject inactiveGoal;
+    [SerializeField] private GameObject activeGoal;
 
     private void OnTriggerEnter(Collider other) {
-        if(other.gameObject.CompareTag("Player"))
+        if(other.gameObject.CompareTag("Player") && goalActive)
             EndLevel();
     }
 
     private void EndLevel() {
         Debug.Log("You win");
+    }
+
+    public void CollectShard()
+    {
+        numShardsCollected++;
+        //update shard display
+        if(numShardsCollected >= numShards)
+            ActivateGoal();
+    }
+
+    private void ActivateGoal()
+    {
+        goalActive = true;
+        inactiveGoal.SetActive(false);
+        activeGoal.SetActive(true);
     }
 }

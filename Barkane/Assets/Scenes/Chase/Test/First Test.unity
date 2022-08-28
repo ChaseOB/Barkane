@@ -570,7 +570,7 @@ GameObject:
   - component: {fileID: 376837508}
   - component: {fileID: 376837510}
   - component: {fileID: 376837509}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: PlayerLoc
   m_TagString: PlayerLoc
   m_Icon: {fileID: 0}
@@ -1380,7 +1380,7 @@ GameObject:
   - component: {fileID: 775171452}
   - component: {fileID: 775171454}
   - component: {fileID: 775171453}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: PlayerLoc
   m_TagString: PlayerLoc
   m_Icon: {fileID: 0}
@@ -1520,7 +1520,7 @@ GameObject:
   - component: {fileID: 843318304}
   - component: {fileID: 843318305}
   - component: {fileID: 843318306}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Goal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1539,6 +1539,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1333820465}
+  - {fileID: 1399966284}
   m_Father: {fileID: 634133954}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1567,7 +1568,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09b06f01a09d5374893411663fb42352, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Shards: []
+  numShards: 1
+  inactiveGoal: {fileID: 1399966283}
+  activeGoal: {fileID: 1333820464}
 --- !u!54 &843318306
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2045,7 +2048,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1184534835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2125,12 +2128,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -2389,13 +2392,13 @@ GameObject:
   - component: {fileID: 1333820465}
   - component: {fileID: 1333820467}
   - component: {fileID: 1333820466}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1333820465
 Transform:
   m_ObjectHideFlags: 0
@@ -2641,6 +2644,87 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   foldablePaper: {fileID: 792990533}
+--- !u!1 &1399966283
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1399966284}
+  - component: {fileID: 1399966286}
+  - component: {fileID: 1399966285}
+  m_Layer: 0
+  m_Name: Cylinder (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1399966284
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1399966283}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.01, z: 0}
+  m_LocalScale: {x: 0.6, y: 0.01, z: 0.6}
+  m_Children: []
+  m_Father: {fileID: 843318303}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1399966285
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1399966283}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 1f68a18fe76f6054d8fc5bfc4a5a98c9, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1399966286
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1399966283}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1469012990
 GameObject:
   m_ObjectHideFlags: 0
@@ -3195,8 +3279,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1604755188}
-  - component: {fileID: 1604755190}
   - component: {fileID: 1604755189}
+  - component: {fileID: 1604755191}
+  - component: {fileID: 1604755190}
   m_Layer: 0
   m_Name: target
   m_TagString: Untagged
@@ -3237,8 +3322,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 68673892}
         m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: CheckValidMove
-        m_Mode: 1
+        m_MethodName: SetValidMoveLoc
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -3262,7 +3347,23 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!65 &1604755190
+--- !u!54 &1604755190
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604755187}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &1604755191
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3475,7 +3576,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1663220680
 Transform:
   m_ObjectHideFlags: 0
@@ -3854,7 +3955,7 @@ GameObject:
   - component: {fileID: 1794841558}
   - component: {fileID: 1794841560}
   - component: {fileID: 1794841559}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: PlayerLoc
   m_TagString: PlayerLoc
   m_Icon: {fileID: 0}
@@ -3962,6 +4063,7 @@ Transform:
   m_Children:
   - {fileID: 588274198}
   - {fileID: 775171452}
+  - {fileID: 2071922846}
   m_Father: {fileID: 1252386353}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3991,7 +4093,7 @@ GameObject:
   - component: {fileID: 1847776935}
   - component: {fileID: 1847776937}
   - component: {fileID: 1847776936}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: PlayerLoc
   m_TagString: PlayerLoc
   m_Icon: {fileID: 0}
@@ -4131,7 +4233,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09b06f01a09d5374893411663fb42352, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Shards: []
+  numShards: 0
+  inactiveGoal: {fileID: 0}
+  activeGoal: {fileID: 0}
 --- !u!65 &1924853867
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4191,6 +4295,165 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2071922845
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2071922846}
+  - component: {fileID: 2071922850}
+  - component: {fileID: 2071922849}
+  - component: {fileID: 2071922848}
+  - component: {fileID: 2071922847}
+  - component: {fileID: 2071922852}
+  - component: {fileID: 2071922851}
+  m_Layer: 0
+  m_Name: shard
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2071922846
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071922845}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.495, z: 0}
+  m_LocalScale: {x: 0.10871884, y: 0.21743768, z: 0.10871884}
+  m_Children: []
+  m_Father: {fileID: 1829903605}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2071922847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071922845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63d2196ad8d7ef3409833818f5915c16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goal: {fileID: 843318305}
+--- !u!135 &2071922848
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071922845}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &2071922849
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071922845}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: d02d077983c712045af37c1bc40e5a1c, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &2071922850
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071922845}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2071922851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071922845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fd14a1dba89b0c48ac5beff2474d704, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  compareTags:
+  - Player
+  OnEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2071922847}
+        m_TargetAssemblyTypeName: CrystalShard, Assembly-CSharp
+        m_MethodName: Collect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnExit:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!54 &2071922852
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071922845}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2092571650
 GameObject:
   m_ObjectHideFlags: 0
@@ -4376,7 +4639,7 @@ GameObject:
   - component: {fileID: 2112684965}
   - component: {fileID: 2112684967}
   - component: {fileID: 2112684966}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: PlayerLoc
   m_TagString: PlayerLoc
   m_Icon: {fileID: 0}

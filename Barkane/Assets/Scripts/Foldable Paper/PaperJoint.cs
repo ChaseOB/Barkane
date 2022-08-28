@@ -44,7 +44,6 @@ public class PaperJoint : MonoBehaviour
         {
             PaperJoint joint = other.GetComponent<PaperJoint>();
             Vector3 diff = this.transform.position - joint.transform.position;
-            Debug.Log(diff);
             if(Mathf.Abs(diff.x) < 0.1 || Mathf.Abs(diff.z) < 0.1)
                 adjList.Add(other.GetComponent<PaperJoint>());
         }
