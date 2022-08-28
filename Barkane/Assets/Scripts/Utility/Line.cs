@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Line : MonoBehaviour
+public class Line
 {
     public Vector3 p1;
     public Vector3 p2;

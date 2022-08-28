@@ -10,6 +10,8 @@ public class TileSelector : MonoBehaviour
     private PaperJoint hover;
     private PaperJoint curr;
 
+    public FoldablePaper foldablePaper;
+
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +47,7 @@ public class TileSelector : MonoBehaviour
             curr = hover;
             Debug.Log(curr.gameObject.name);
             curr.Select();
+            foldablePaper.foldJoint = curr;
         }
         else
         {

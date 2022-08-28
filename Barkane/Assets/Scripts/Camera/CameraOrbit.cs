@@ -38,17 +38,19 @@ public class CameraOrbit : Singleton<CameraOrbit>
     //CO: We want the camera to move after everything else
     private void LateUpdate() 
     {
-        if(!cameraDisabled && clicking)
+        if(!cameraDisabled)
         {
-            Vector2 diff = prevMousePosition - Mouse.current.position.ReadValue();
-            localRoatation.x += diff.x * mouseSensitivity; 
-            localRoatation.y += diff.y * mouseSensitivity;
-            localRoatation.y = Mathf.Clamp(localRoatation.y, 20f, 80f);
+            if(clicking)
+            {
+                Vector2 diff = prevMousePosition - Mouse.current.position.ReadValue();
+                localRoatation.x += diff.x * mouseSensitivity; 
+                localRoatation.y += diff.y * mouseSensitivity;
+                localRoatation.y = Mathf.Clamp(localRoatation.y, 20f, 80f);
+            }
+            float scrollAmount = Mouse.current.scroll.ReadValue().y * ScrollSenstivity * 0.01f * cameraDistance;
+            cameraDistance -= scrollAmount;
+            cameraDistance = Mathf.Clamp(cameraDistance, minCameraDistance, maxCameraDistance);
         }
-
-        float scrollAmount = Mouse.current.scroll.ReadValue().y * ScrollSenstivity * 0.01f * cameraDistance;
-        cameraDistance -= scrollAmount;
-        cameraDistance = Mathf.Clamp(cameraDistance, minCameraDistance, maxCameraDistance);
 
         Quaternion quaternion = Quaternion.Euler(localRoatation.y, localRoatation.x * -1, 0);
         cameraParent.rotation = Quaternion.Lerp(cameraParent.rotation, quaternion, Time.deltaTime * orbitDampen);

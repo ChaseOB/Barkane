@@ -286,6 +286,85 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!1 &155457437
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 155457438}
+  - component: {fileID: 155457440}
+  - component: {fileID: 155457439}
+  m_Layer: 5
+  m_Name: Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &155457438
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155457437}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1286257740}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &155457439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155457437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Button
+--- !u!222 &155457440
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155457437}
+  m_CullTransparentMesh: 1
 --- !u!1 &192076839
 GameObject:
   m_ObjectHideFlags: 0
@@ -735,8 +814,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaure1: {fileID: 1829903606}
-  paperSqaure2: {fileID: 1114580485}
+  paperSqaures:
+  - {fileID: 1829903606}
+  - {fileID: 1114580485}
   showLine: 0
   lineRenderer: {fileID: 473195820}
   adjList: []
@@ -1153,11 +1233,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOccupied: 0
-  joints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   paperThickness: 0.001
   paperVisuals: {fileID: 0}
 --- !u!1 &751183412
@@ -1203,7 +1278,6 @@ GameObject:
   m_Component:
   - component: {fileID: 792990534}
   - component: {fileID: 792990533}
-  - component: {fileID: 792990535}
   m_Layer: 0
   m_Name: FoldablePaper
   m_TagString: Untagged
@@ -1223,13 +1297,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f122d89b6bd2c34db5a8d13a8df5ac5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sqaures:
-  - {fileID: 1179978658}
-  - {fileID: 0}
-  fold:
-  - {fileID: 1114580483}
-  foldLine: {fileID: 792990535}
+  paperSqaures: []
+  paperJoints: []
   foldAnimator: {fileID: 1166862080}
+  foldJoint: {fileID: 0}
 --- !u!4 &792990534
 Transform:
   m_ObjectHideFlags: 0
@@ -1247,20 +1318,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &792990535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 792990532}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cf346131dbe74f468b62e655a994201, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  p1: {x: -1, y: 0, z: 1}
-  p2: {x: -1, y: 0, z: 3}
 --- !u!1 &843318302
 GameObject:
   m_ObjectHideFlags: 0
@@ -1423,12 +1480,12 @@ MonoBehaviour:
       - m_Target: {fileID: 792990533}
         m_TargetAssemblyTypeName: FoldablePaper, Assembly-CSharp
         m_MethodName: TestFold
-        m_Mode: 1
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
-          m_FloatArgument: 0
+          m_FloatArgument: 90
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
@@ -1643,11 +1700,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOccupied: 0
-  joints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   paperThickness: 0.001
   paperVisuals: {fileID: 0}
 --- !u!1 &1166862078
@@ -1742,11 +1794,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOccupied: 0
-  joints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   paperThickness: 0.001
   paperVisuals: {fileID: 0}
 --- !u!65 &1179978659
@@ -1855,6 +1902,7 @@ RectTransform:
   m_Children:
   - {fileID: 936087427}
   - {fileID: 409863731}
+  - {fileID: 1286257740}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1897,6 +1945,139 @@ Transform:
   m_Father: {fileID: 792990534}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1286257739
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1286257740}
+  - component: {fileID: 1286257743}
+  - component: {fileID: 1286257742}
+  - component: {fileID: 1286257741}
+  m_Layer: 5
+  m_Name: Button (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1286257740
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286257739}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 155457438}
+  m_Father: {fileID: 1206415569}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -130.51, y: -211}
+  m_SizeDelta: {x: 160, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1286257741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286257739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1286257742}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 792990533}
+        m_TargetAssemblyTypeName: FoldablePaper, Assembly-CSharp
+        m_MethodName: TestFold
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: -90
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1286257742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286257739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1286257743
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286257739}
+  m_CullTransparentMesh: 1
 --- !u!1 &1310947893
 GameObject:
   m_ObjectHideFlags: 0
@@ -2190,6 +2371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e08d5f052230941429eab5fc1b22cc65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  foldablePaper: {fileID: 792990533}
 --- !u!1 &1471183540
 GameObject:
   m_ObjectHideFlags: 0
@@ -2424,8 +2606,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaure1: {fileID: 728306538}
-  paperSqaure2: {fileID: 1829903606}
+  paperSqaures:
+  - {fileID: 1829903606}
+  - {fileID: 728306538}
   showLine: 0
   lineRenderer: {fileID: 1518030549}
   adjList: []
@@ -2899,8 +3082,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaure1: {fileID: 1179978658}
-  paperSqaure2: {fileID: 1829903606}
+  paperSqaures:
+  - {fileID: 1179978658}
+  - {fileID: 1829903606}
   showLine: 0
   lineRenderer: {fileID: 1609842769}
   adjList: []
@@ -3132,11 +3316,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOccupied: 0
-  joints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   paperThickness: 0.001
   paperVisuals: {fileID: 0}
 --- !u!1 &1847776934

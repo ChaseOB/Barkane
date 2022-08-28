@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PaperJoint : MonoBehaviour
 {
-    [SerializeField] private PaperSqaure paperSqaure1;
-    [SerializeField] private PaperSqaure paperSqaure2;
+    [SerializeField] private List<PaperSqaure> paperSqaures;
+    public  List<PaperSqaure> PaperSqaures { get => paperSqaures;}
     private bool isSelected = false; //true when this is the current selected fold
     public bool showLine = false; //true when this joint or any adjacent joins are selected
     public LineRenderer lineRenderer;
@@ -41,7 +41,13 @@ public class PaperJoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.layer == 7)
-            adjList.Add(other.GetComponent<PaperJoint>());
+        {
+            PaperJoint joint = other.GetComponent<PaperJoint>();
+            Vector3 diff = this.transform.position - joint.transform.position;
+            Debug.Log(diff);
+            if(Mathf.Abs(diff.x) < 0.1 || Mathf.Abs(diff.z) < 0.1)
+                adjList.Add(other.GetComponent<PaperJoint>());
+        }
     }
 
     private void OnTriggerExit(Collider other) {

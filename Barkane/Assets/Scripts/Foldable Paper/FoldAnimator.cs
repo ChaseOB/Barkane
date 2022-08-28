@@ -10,7 +10,7 @@ public class FoldAnimator : MonoBehaviour
 
 
     //C: Tries to fold the given objects. Returns true and folds if successful, returns false if this fold is not possible.
-    public bool TryFold(List<GameObject> objectsToFold, Line foldLine, float degrees)
+   /* public bool TryFold(List<GameObject> objectsToFold, Line foldLine, float degrees)
     {
         if(CheckCanFold(objectsToFold, foldLine, degrees))
         {
@@ -27,22 +27,22 @@ public class FoldAnimator : MonoBehaviour
 
 
         return true;
-    }
+    }*/
 
     //C: folds the given list of squares along the given line by the given number of degrees
-    public void Fold(List<GameObject> objectsToFold, Line foldLine, float degrees)
+    public void Fold(List<GameObject> objectsToFold, Vector3 center, Vector3 axis, float degrees)
     {
         if(!isFolding) 
-            StartCoroutine(FoldHelper(objectsToFold, foldLine, degrees));
+            StartCoroutine(FoldHelper(objectsToFold, center, axis, degrees));
     }
 
-    IEnumerator FoldHelper(List<GameObject> objectsToFold, Line foldLine, float degrees)
+    IEnumerator FoldHelper(List<GameObject> objectsToFold, Vector3 center, Vector3 axis, float degrees)
     {
         isFolding = true;
         GameObject tempObj = new GameObject();
         GameObject target = new GameObject();
-        tempObj.transform.position = foldLine.GetCenter();
-        target.transform.position = foldLine.GetCenter();
+        tempObj.transform.position = center;
+        target.transform.position = center;
         Dictionary<GameObject, GameObject> parents = new Dictionary<GameObject, GameObject>();
         //Dictionary<PaperSqaure, Vector3Int> targetLocs = new Dictionary<PaperSqaure, Vector3Int>();
         foreach(GameObject o in objectsToFold)
@@ -56,10 +56,10 @@ public class FoldAnimator : MonoBehaviour
         while (t < foldDuration)
         {
             t += Time.deltaTime;
-            tempObj.transform.RotateAround(foldLine.p1, foldLine.p1 - foldLine.p2, (degrees / foldDuration) * Time.deltaTime);
+            tempObj.transform.RotateAround(center, axis, (degrees / foldDuration) * Time.deltaTime);
             yield return null;
         }
-        target.transform.RotateAround(foldLine.p1, foldLine.p1 - foldLine.p2, degrees);
+        target.transform.RotateAround(center, axis, degrees);
         tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 
         foreach(GameObject o in objectsToFold)

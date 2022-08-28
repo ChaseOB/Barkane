@@ -5,7 +5,8 @@ using UnityEngine;
 public class PaperSqaure : MonoBehaviour
 {
     [SerializeField] private bool playerOccupied = false; //true if the player is on this square
-    public PaperJoint[] joints = new PaperJoint[4]; //ENWS Joints of this square
+    public bool PlayerOccupied { get => playerOccupied;}
+   // public PaperJoint[] joints = new PaperJoint[4]; //ENWS Joints of this square
 
     public float paperThickness = 0.001f;
     public GameObject paperVisuals;
