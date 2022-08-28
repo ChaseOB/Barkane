@@ -22,7 +22,6 @@ public class PlayerMovement : MonoBehaviour
     public void OnMove(InputValue value)
     {
         Vector2 move = value.Get<Vector2>();
-        Debug.Log(move);
         if(isMoving) return;
         if(move.y > 0.5)
             Move();
@@ -36,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void SetValidMoveLoc(bool value)
     {
-        validMoveLoc = value;
+        validMoveLoc = value; //Todo: use raycast to make sure u arent clipping through walls or whatnot
     }
 
     private void Move()
@@ -68,6 +67,7 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator RotateHelper(float degrees)
     {
+        Quaternion currRot = transform.rotation;
         isMoving = true;
         float t = 0;
         while (t < turnDuration)
@@ -76,7 +76,7 @@ public class PlayerMovement : MonoBehaviour
             transform.RotateAround(transform.position, Vector3.up, (degrees / turnDuration) * Time.deltaTime);
             yield return null;
         }
-        //transform.rotation.y = transform.rotation.y 
+        transform.rotation = currRot * Quaternion.Euler(0, degrees, 0);
         isMoving = false;
     }
 
