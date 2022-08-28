@@ -39,7 +39,7 @@ public class TileSelector : MonoBehaviour
     {
         if(!value.isPressed || !CameraOrbit.Instance.CameraDisabled)
             return;
-        if(hover != null)
+        if(hover != null && hover.canFold)
         {
             if(curr == hover)
                 return;

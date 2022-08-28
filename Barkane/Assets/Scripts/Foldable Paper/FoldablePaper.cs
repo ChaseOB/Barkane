@@ -66,8 +66,6 @@ public class FoldablePaper : MonoBehaviour
             if(ps.PlayerOccupied)
                 playerSquare = ps;
         DFSHelperSquare(playerSquare, true);
-        foreach(GameObject go in foldSide)
-            Debug.Log(go.name);
     }
 
     private void DFSHelperSquare(PaperSqaure ps, bool isPlayerSide)
@@ -104,6 +102,7 @@ public class FoldablePaper : MonoBehaviour
     public void TestFold(float degrees)
     {
         FindFoldObjects();
-        foldAnimator.Fold(foldSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+        if(foldJoint.canFold)
+            foldAnimator.Fold(foldSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
     }
 }

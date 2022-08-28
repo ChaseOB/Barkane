@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public float turnDuration = 0.25f;
 
     [SerializeField] private GameObject targetPos;
+    [SerializeField] private Transform raycastStart;
 
     private bool isMoving = false;
     private bool validMoveLoc = false;
@@ -16,6 +17,8 @@ public class PlayerMovement : MonoBehaviour
  
     public AnimationCurve moveVertCurve;
     public float jumpHeight = 0.2f;
+
+    public LayerMask playerCollidingMask;
 
     #region input
 
@@ -35,13 +38,18 @@ public class PlayerMovement : MonoBehaviour
 
     public void SetValidMoveLoc(bool value)
     {
-        validMoveLoc = value; //Todo: use raycast to make sure u arent clipping through walls or whatnot
+        validMoveLoc = value; 
+    }
+
+    public void CheckValidMove()
+    {
+        validMoveLoc = !Physics.Raycast(raycastStart.position, targetPos.transform.position, 10.0f, playerCollidingMask); //C:If the raycast is true, then there is something in between the player and the movable location
     }
 
     private void Move()
     {
         if(validMoveLoc)
-        StartCoroutine(MoveHelper());
+            StartCoroutine(MoveHelper());
     }
 
     private IEnumerator MoveHelper()

@@ -13,7 +13,7 @@ public class PaperJoint : MonoBehaviour
     [SerializeField] private List<PaperJoint> adjList = new List<PaperJoint>();
 
    // private bool JointEnabled = true; //CO: Set to false to "cut" the paper along the given joint
-    private bool canFold = true; //CO: Set to false to lock the current joint in position, as if the squares were glued together
+    public bool canFold = true; //CO: Set to false to lock the current joint in position, as if the squares were glued together
 
    
 
