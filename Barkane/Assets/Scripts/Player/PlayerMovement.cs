@@ -39,13 +39,12 @@ public class PlayerMovement : MonoBehaviour
     public void SetValidMoveLoc(bool value)
     {
         validMoveLoc = value; 
-        Debug.Log("valid move " + value);
     }
 
     public bool CheckValidMove()
     {
-        Debug.Log("raycast " + Physics.Raycast(raycastStart.position, (targetPos.transform.position + new Vector3(0,0.05f,0) - raycastStart.position), 3.0f, playerCollidingMask));
-        Debug.DrawRay(raycastStart.position, (targetPos.transform.position + new Vector3(0,0.05f,0) - raycastStart.position), Color.yellow, 15.0f);
+       // Debug.Log("raycast " + Physics.Raycast(raycastStart.position, (targetPos.transform.position + new Vector3(0,0.05f,0) - raycastStart.position), 3.0f, playerCollidingMask));
+       // Debug.DrawRay(raycastStart.position, (targetPos.transform.position + new Vector3(0,0.05f,0) - raycastStart.position), Color.yellow, 15.0f);
         return validMoveLoc && !Physics.Raycast(raycastStart.position, (targetPos.transform.position + new Vector3(0,0.05f,0) - raycastStart.position), 3.0f, playerCollidingMask); //C:If the raycast is true, then there is something in between the player and the movable location
     }
 

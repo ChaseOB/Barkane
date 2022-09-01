@@ -9,7 +9,10 @@ public class PaperSqaure : MonoBehaviour
    // public PaperJoint[] joints = new PaperJoint[4]; //ENWS Joints of this square
 
     public float paperThickness = 0.001f;
-    public GameObject paperVisuals;
+    [SerializeField] private GameObject topHalf;
+    public GameObject TopHalf => topHalf;
+    [SerializeField] private GameObject bottomHalf;
+    public GameObject BottomHalf => bottomHalf;
 
     public void SetPlayerOccupied(bool value)
     {

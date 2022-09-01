@@ -5,7 +5,10 @@ using UnityEngine;
 public class FoldablePaper : MonoBehaviour
 {
     [SerializeField] private PaperSqaure[] paperSqaures;
+    public PaperSqaure[] PaperSqaures => paperSqaures;
     [SerializeField] private PaperJoint[] paperJoints;
+    private List<PaperSquareStack> paperSquareStacks = new List<PaperSquareStack>();
+    public List<PaperSquareStack> PaperSquareStacks => paperSquareStacks;
     private Dictionary<PaperSqaure,  List<PaperJoint>> adjListSquareToJoint;
     private Dictionary<PaperJoint,  List<PaperSqaure>> adjListJointToSquare;
 
@@ -104,5 +107,30 @@ public class FoldablePaper : MonoBehaviour
         FindFoldObjects();
         if(foldJoint.canFold)
             foldAnimator.Fold(foldSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+    }
+
+
+    
+    //C: looks through the PSSes to see if this square is in a stack. If it is, remove it from the stack and update stack visuals.
+    //If there is only one square left in that PSS, the PSS is destroyed and removed.
+    public void TryRemoveSquare(PaperSqaure ps)
+    {
+        foreach(PaperSquareStack pss in paperSquareStacks)
+        {
+            pss.TryRemoveSquare(ps);
+            if(pss.destroy)
+            {
+                paperSquareStacks.Remove(pss);
+                Destroy(pss);
+            }
+        }
+    }
+
+    public PaperSquareStack GetStackWith(PaperSqaure ps)
+    {
+        foreach(PaperSquareStack pss in paperSquareStacks)
+            if (pss.Contains(ps))
+                return pss;
+        return null;
     }
 }
