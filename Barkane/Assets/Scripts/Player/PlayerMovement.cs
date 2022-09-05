@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private GameObject targetPos;
     [SerializeField] private Transform raycastStart;
+    [SerializeField] private GameObject marmalade;
 
     private bool isMoving = false;
     private bool validMoveLoc = false;
@@ -17,8 +18,14 @@ public class PlayerMovement : MonoBehaviour
  
     public AnimationCurve moveVertCurve;
     public float jumpHeight = 0.2f;
+    private float marmaladeY;
 
     public LayerMask playerCollidingMask;
+
+    private void Start() 
+    {
+        marmaladeY = marmalade.transform.position.y;    
+    }
 
     #region input
 
@@ -63,7 +70,8 @@ public class PlayerMovement : MonoBehaviour
         while (t < moveDuration)
         {
             t += Time.deltaTime;
-            transform.position = Vector3.Lerp(curr, goal, t/moveDuration) + new Vector3(0, moveVertCurve.Evaluate(t/moveDuration) * jumpHeight, 0);
+            transform.position = Vector3.Lerp(curr, goal, t/moveDuration);
+            marmalade.transform.position = new Vector3(marmalade.transform.position.x, marmaladeY + moveVertCurve.Evaluate(t/moveDuration) * jumpHeight,  marmalade.transform.position.z);
             yield return null;
         }
         transform.position = goal;
