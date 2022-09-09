@@ -9,6 +9,7 @@ public class Goal : MonoBehaviour
     private bool goalActive = false;
     [SerializeField] private GameObject inactiveGoal;
     [SerializeField] private GameObject activeGoal;
+    public GameObject showOnWin;
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.CompareTag("Player") && goalActive)
@@ -16,6 +17,7 @@ public class Goal : MonoBehaviour
     }
 
     private void EndLevel() {
+        showOnWin.SetActive(true);
         Debug.Log("You win");
     }
 

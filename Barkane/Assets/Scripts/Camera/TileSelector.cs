@@ -54,4 +54,19 @@ public class TileSelector : MonoBehaviour
             curr = null;
         }
     }
+
+    private void OnFoldUp(InputValue value)
+    {
+        Debug.Log("fold up");
+        if(!value.isPressed)
+            return;
+        foldablePaper.TestFold(90);
+    }
+
+    private void OnFoldDown(InputValue value)
+    {
+        if(!value.isPressed)
+            return;
+        foldablePaper.TestFold(-90);
+    }
 }
