@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed4ae041aba519f42bd173916d46852c, type: 3}
   m_Name: Fracture Mesh Setting
   m_EditorClassIdentifier: 
-  margin: 0.095
-  height: 0.052
-  triangleArea: 0.139
+  margin: 0.12
+  height: 0.178
+  mainTriangleArea: 0.253
+  allTriangleArea: 0.111
+  resolution: 64
+  blurLoop: 1

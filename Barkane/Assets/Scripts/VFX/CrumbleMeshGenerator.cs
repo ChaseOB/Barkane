@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class FractureMesh
+public class CrumbleMeshGenerator : MonoBehaviour
 {
 
     private readonly static Vector2 TL = new Vector2(0, 0);
@@ -13,12 +13,34 @@ public class FractureMesh
 
     private readonly static int END_OF_TILE_CORNERS = 3;
 
-    /// <summary>
-    /// basic fractured mesh
-    /// </summary>
-    public static Mesh Create(FractureMeshSetting setting)
+    public RenderTexture normBuf;
+
+    [SerializeField] private ComputeShader crumbleShader, blurShader;
+    [SerializeField] private FractureMeshSetting setting;
+
+    private ComputeBuffer vBuf;
+    
+    private void Awake()
+    { 
+        // sizeof(Vector3) doesn't work
+        // instead we assume each float is 4 bytes, Vector2 is a C# struct of 2 floats
+        vBuf = new ComputeBuffer(24, 2 * 4);
+        normBuf = new RenderTexture(setting.resolution, setting.resolution, 24);
+
+        crumbleShader.SetFloat("resolution", setting.resolution);
+        blurShader.SetFloat("resolution", setting.resolution);
+    }
+    private void OnDestroy()
     {
-        var (pivTop, pivLeft, pivOther) = GetDistinctUV(setting.margin, setting.triangleArea);
+        vBuf.Dispose();
+    }
+
+    /// <summary>
+    /// basic fractured mesh and its related material instance
+    /// </summary>
+    public (Mesh, Material) Create(Material baseMat)
+    {
+        var (pivTop, pivLeft, pivOther) = GetDistinctUV(setting.margin, setting.mainTriangleArea);
 
         var v2D = new Vector2[]
         {
@@ -31,10 +53,22 @@ public class FractureMesh
             pivOther
         };
 
+        var v2DDup = new Vector2[]
+        {
+            v2D[0], v2D[1], v2D[4],
+            v2D[0], v2D[5], v2D[2],
+            v2D[0], v2D[4], v2D[5],
+            v2D[4], v2D[6], v2D[5],
+            v2D[2], v2D[5], v2D[6],
+            v2D[1], v2D[3], v2D[6],
+            v2D[1], v2D[6], v2D[4],
+            v2D[6], v2D[3], v2D[2]
+        };
+
         var vSrc = v2D.Select((v2d, i) => new Vector3
         (
             v2d.x - 0.5f,
-            i > END_OF_TILE_CORNERS ? Random.value * setting.height : 0,
+            i > END_OF_TILE_CORNERS ? 2 * (Random.value - 0.5f) * setting.height : 0,
             v2d.y - 0.5f
         )).ToArray();
 
@@ -63,6 +97,31 @@ public class FractureMesh
             GetNorm(in vSrc, 6, 3, 2)
         };
 
+        // ensure correct normal direction and CCW
+        var triangles = new int[3 * 8];
+        for (int i = 0, j = 0; i < 8; i++, j += 3)
+        {
+            var centroid = (Vector3) GetCentroid(in vDup, j, j + 1, j + 2);
+            var arm1 = centroid - vDup[j];
+            var arm2 = centroid - vDup[j + 1];
+
+            // nuke if triangle too narrow
+            if (DoubleArea(vDup, j, j + 1, j + 2) < setting.allTriangleArea) return Create(baseMat);
+
+            triangles[j] = j;
+            if (Vector3.Cross(arm1, arm2).z > 0)
+            {
+                // CCW face up
+                triangles[j + 1] = j + 2;
+                triangles[j + 2] = j + 1;
+            } else
+            {
+                // CW face down
+                triangles[j + 2] = j + 1;
+                triangles[j + 1] = j + 2;
+            }
+        }
+
         var m = new Mesh
         {
             vertices = vDup,
@@ -80,27 +139,7 @@ public class FractureMesh
                 nSrc[6], nSrc[3], nSrc[2]
             },
 
-            // 8 faces, 16 triangles for double sided
-            triangles = new int[]
-            {
-                0, 1, 2,
-                3, 4, 5,
-                6, 7, 8,
-                9, 10, 11,
-                12, 13, 14,
-                15, 16, 17,
-                18, 19, 20,
-                21, 22, 23,
-
-                0, 2, 1,
-                3, 5, 4,
-                6, 8, 7,
-                9, 11, 10,
-                12, 14, 13,
-                15, 17, 16,
-                18, 20, 19,
-                21, 23, 22
-            },
+            triangles = triangles,
 
             uv = new Vector2[]
             {
@@ -117,9 +156,41 @@ public class FractureMesh
 
         // m.RecalculateBounds();
         // m.RecalculateTangents();
-        // m.Optimize();
+        m.Optimize();
 
-        return m;
+        // get base normal map from compute shader and pass that to the material
+        var mat = new Material(baseMat);
+        vBuf.SetData(v2DDup, 0, 0, 24);
+        crumbleShader.SetBuffer(0, "pivots", vBuf);
+
+        // render texture creation and use
+        // https://youtu.be/BrZ4pWwkpto
+        normBuf.enableRandomWrite = true;
+        normBuf.Create();
+        crumbleShader.SetTexture(0, "Result", normBuf);
+        Dispatch(crumbleShader);
+
+        blurShader.SetTexture(0, "Result", normBuf);
+        blurShader.SetTexture(1, "Result", normBuf);
+
+        // repeat gaussian blur for several times
+        for (int i = 0; i < setting.blurLoop; i++)
+        {
+            // gaussian blur is approximated by horizontal + vertical box blurs
+            Dispatch(blurShader, 0); // the horizontal pass
+            Dispatch(blurShader, 1); // the vertical pass
+        }
+
+        mat.SetTexture("Dist", normBuf);
+
+        mat.SetVector("YOverride", new Vector4(transform.up.x, transform.up.y, transform.up.z, 1));
+
+        return (m, mat);
+    }
+
+    private void Dispatch(ComputeShader cs, int kernelIndex = 0)
+    {
+        cs.Dispatch(kernelIndex, setting.groupSize, setting.groupSize, 1);
     }
 
     private static Vector3 GetNorm(in Vector3[] src, int a, int b, int c)
@@ -134,6 +205,16 @@ public class FractureMesh
             (src[a].x + src[b].x + src[c].x) / 3f,
             (src[a].z + src[b].z + src[c].z) / 3f
             );
+    }
+
+    private static float DoubleArea(Vector3[] src, int a, int b, int c)
+    {
+        return (src[b].x - src[a].x) * (src[c].z - src[a].z) - (src[c].x - src[a].x) * (src[b].z - src[a].z);
+    }
+
+    private static float DoubleArea(List<Vector2> src, int a, int b, int c)
+    {
+        return (src[b].x - src[a].x) * (src[c].y - src[a].y) - (src[c].x - src[a].x) * (src[b].y - src[a].y);
     }
 
     /// <summary>
@@ -162,10 +243,8 @@ public class FractureMesh
             if (legal) randoms.Add(curr);
         }
 
-        // nuke if triangle too narrow/small
-        var area = .5f * ((randoms[1].x - randoms[0].x) * (randoms[2].y - randoms[0].y) - (randoms[2].x - randoms[0].x) * (randoms[1].y - randoms[0].y));
-        if (area < triArea) return GetDistinctUV(boundary, triArea);
-
+        // nuke if triangle (parallelogram) too narrow/small
+        if (DoubleArea(randoms, 0, 1, 2) < triArea) return GetDistinctUV(boundary, triArea);
 
         // this is just MAX but expanded bc there's only 3 elements
         var top = randoms[0].y < randoms[1].y ?

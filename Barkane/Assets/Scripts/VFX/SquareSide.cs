@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class SquareSide : MonoBehaviour
 {
-    MeshFilter meshFilter;
-    [SerializeField] private FractureMeshSetting meshSettings;
+    MeshFilter mFilter;
+    MeshRenderer mRenderer;
+    CrumbleMeshGenerator meshGenerator;
 
     // Start is called before the first frame update
     void Start()
     {
-        meshFilter = GetComponent<MeshFilter>();
-        meshFilter.mesh = FractureMesh.Create(meshSettings);
+        mFilter = GetComponent<MeshFilter>();
+        mRenderer = GetComponent<MeshRenderer>();
+        meshGenerator = GetComponent<CrumbleMeshGenerator>();
+
+        UpdateMesh();
 
         StartCoroutine(RefreshMesh());
     }
@@ -21,7 +25,14 @@ public class SquareSide : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1);
-            meshFilter.mesh = FractureMesh.Create(meshSettings);
+            UpdateMesh();
         }
+    }
+
+    private void UpdateMesh()
+    {
+        var (mesh, material) = meshGenerator.Create(mRenderer.material);
+        mFilter.mesh = mesh;
+        mRenderer.sharedMaterials = new Material[] { material };
     }
 }
