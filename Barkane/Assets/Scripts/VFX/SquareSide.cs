@@ -16,17 +16,6 @@ public class SquareSide : MonoBehaviour
         meshGenerator = GetComponent<CrumbleMeshGenerator>();
 
         UpdateMesh();
-
-        StartCoroutine(RefreshMesh());
-    }
-
-    private IEnumerator RefreshMesh()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(1);
-            UpdateMesh();
-        }
     }
 
     private void UpdateMesh()
