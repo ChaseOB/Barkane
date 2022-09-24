@@ -18,7 +18,6 @@ public class Goal : MonoBehaviour
 
     private void EndLevel() {
         showOnWin.SetActive(true);
-        Debug.Log("You win");
     }
 
     public void CollectShard()

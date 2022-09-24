@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 move;
  
     public AnimationCurve moveVertCurve;
-    public float bounceHeight = 0.2f; //
+    public float bounceHeight = 0.2f; 
     private float marmaladeY;
 
     public LayerMask playerCollidingMask;
@@ -52,9 +52,9 @@ public class PlayerMovement : MonoBehaviour
     {
         return validMoveLoc && 
                 !Physics.Raycast(raycastStart.position, 
-                                (targetPos.transform.position + new Vector3(0,0.05f,0) - raycastStart.position), 
+                                (targetPos.transform.position + new Vector3(0, 0.05f ,0) - raycastStart.position), 
                                 3.0f, playerCollidingMask); 
-            //C:If the raycast is true, then there is something in between the player and the movable location
+        //C:If the raycast is true, then there is something in between the player and the movable location
     }
 
     private void Move()

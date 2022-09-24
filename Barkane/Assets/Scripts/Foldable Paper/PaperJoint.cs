@@ -6,8 +6,9 @@ public class PaperJoint : MonoBehaviour
 {
     [SerializeField] private List<PaperSqaure> paperSqaures;
     public  List<PaperSqaure> PaperSqaures { get => paperSqaures;}
+
     private bool isSelected = false; //true when this is the current selected fold
-    public bool showLine = false; //true when this joint or any adjacent joins are selected
+    public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
     public LineRenderer lineRenderer;
 
     [SerializeField] private List<PaperJoint> adjList = new List<PaperJoint>();
@@ -15,13 +16,10 @@ public class PaperJoint : MonoBehaviour
    // private bool JointEnabled = true; //CO: Set to false to "cut" the paper along the given joint
     public bool canFold = true; //CO: Set to false to lock the current joint in position, as if the squares were glued together
 
-   
-
     public void Select()
     {
         isSelected = true;
         ShowLine(true);
-
     }
 
     public void Deselect()
