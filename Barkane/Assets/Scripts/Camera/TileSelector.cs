@@ -7,8 +7,11 @@ public class TileSelector : MonoBehaviour
 {
     new private Camera camera;
 
-    private PaperJoint hover;
-    private PaperJoint curr;
+    private PaperJoint hoverJoint;
+    private PaperJoint currJoint;
+
+    private PaperSqaure hoverSquare;
+    private PaperSqaure currSquare;
 
     public FoldablePaper foldablePaper;
 
@@ -26,11 +29,11 @@ public class TileSelector : MonoBehaviour
         Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
         if(Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Joint")))
         {
-            hover = info.transform.gameObject.GetComponent<PaperJoint>();
+            hoverJoint = info.transform.gameObject.GetComponent<PaperJoint>();
         } 
         else
         {
-            hover = null;
+            hoverJoint = null;
         }
     }
 
@@ -39,22 +42,24 @@ public class TileSelector : MonoBehaviour
     {
         if(!value.isPressed || !CameraOrbit.Instance.CameraDisabled)
             return;
-        if(hover != null && hover.canFold)
+        if(hoverJoint != null && hoverJoint.canFold)
         {
-            if(curr == hover)
+            if(currJoint == hoverJoint)
                 return;
-            curr?.Deselect();
-            curr = hover;
-            curr.Select();
-            foldablePaper.foldJoint = curr;
+            currJoint?.Deselect();
+            currJoint = hoverJoint;
+            currJoint.Select();
+            foldablePaper.foldJoint = currJoint;
         }
         else
         {
-            curr?.Deselect();
-            curr = null;
+            currJoint?.Deselect();
+            currJoint = null;
         }
     }
 
+
+    //C: These are only here for testing purposes
     private void OnFoldUp(InputValue value)
     {
         Debug.Log("fold up");

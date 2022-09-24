@@ -72,7 +72,7 @@ public class FoldAnimator : MonoBehaviour
 
         //Dictionary<GameObject, GameObject> parents = new Dictionary<GameObject, GameObject>();
         //Dictionary<PaperSqaure, Vector3Int> targetLocs = new Dictionary<PaperSqaure, Vector3Int>();
-        foreach(GameObject o in objectsToFold)
+       /* foreach(GameObject o in objectsToFold)
         {
             if(o.GetComponent<PaperSqaure>())
             {
@@ -96,7 +96,7 @@ public class FoldAnimator : MonoBehaviour
                     }
                 }
             }
-        }
+        }*/
        // target.transform.RotateAround(center, axis, degrees);
        // tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 

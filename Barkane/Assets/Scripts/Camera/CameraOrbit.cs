@@ -76,4 +76,5 @@ public class CameraOrbit : Singleton<CameraOrbit>
         if(!cameraDisabled)
             prevMousePosition = Mouse.current.position.ReadValue();
     }
+
 }
