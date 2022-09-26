@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using BarkaneEditor;
 
 [ExecuteInEditMode]
-public class JointRenderer : MonoBehaviour
+public class JointRenderer : MonoBehaviour, IRefreshable
 {
     [SerializeField] SquareRenderSettings squareRenderSettings; // for referencing the margin property
 
@@ -17,7 +18,7 @@ public class JointRenderer : MonoBehaviour
     /// unless absolutely necessary
     /// </summary>
     /// <exception cref="UnityException"></exception>
-    public void Refresh()
+    void IRefreshable.Refresh()
     {
         var parent = transform.parent.GetComponent<PaperJoint>();
         if (parent.PaperSqaures.Count < 2)
@@ -78,20 +79,3 @@ public class JointRenderer : MonoBehaviour
         }
     }
 }
-
-#if UNITY_EDITOR
-[CustomEditor(typeof(JointRenderer))]
-public class JointRendererEditor: Editor
-{
-
-    public override void OnInspectorGUI()
-    {
-        base.OnInspectorGUI();
-        if (GUILayout.Button("Refresh"))
-        {
-            (target as JointRenderer).Refresh();
-        }
-    }
-}
-
-#endif

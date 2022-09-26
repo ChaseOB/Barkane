@@ -1,27 +1,27 @@
+using BarkaneEditor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SquareSide : MonoBehaviour
+[ExecuteInEditMode]
+public class SquareSide : MonoBehaviour, IRefreshable
 {
-    MeshFilter mFilter;
-    MeshRenderer mRenderer;
-    CrumbleMeshGenerator meshGenerator;
-
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] MeshFilter mFilter;
+    [SerializeField] MeshRenderer mRenderer;
+    [SerializeField] CrumbleMeshGenerator meshGenerator;
+    [SerializeField] Material materialPrototype;
+    [SerializeField, HideInInspector] Material materialCurrent;
+    
+    void IRefreshable.Refresh()
     {
-        mFilter = GetComponent<MeshFilter>();
-        mRenderer = GetComponent<MeshRenderer>();
-        meshGenerator = GetComponent<CrumbleMeshGenerator>();
-
         UpdateMesh();
     }
 
-    private void UpdateMesh()
+    public void UpdateMesh()
     {
-        var (mesh, material) = meshGenerator.Create(mRenderer.material);
+        var (mesh, material) = meshGenerator.Create(materialPrototype);
         mFilter.mesh = mesh;
-        mRenderer.sharedMaterials = new Material[] { material };
+        materialCurrent = material;
+        mRenderer.sharedMaterials = new Material[] { materialCurrent };
     }
 }

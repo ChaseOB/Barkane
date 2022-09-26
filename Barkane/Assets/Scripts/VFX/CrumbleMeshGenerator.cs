@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEditor;
 
-public class CrumbleMeshGenerator : MonoBehaviour
+[ExecuteAlways]
+public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
 {
 
     private readonly static Vector2 TL = new Vector2(0, 0);
@@ -13,26 +15,33 @@ public class CrumbleMeshGenerator : MonoBehaviour
 
     private readonly static int END_OF_TILE_CORNERS = 3;
 
-    public RenderTexture normBuf;
+    [HideInInspector] public RenderTexture normBuf;
 
     [SerializeField] private ComputeShader crumbleShader, blurShader;
     [SerializeField] private FractureMeshSetting setting;
 
-    private ComputeBuffer vBuf;
+    [SerializeField, HideInInspector] private ComputeBuffer vBuf;
     
-    private void Awake()
-    { 
+    public void Load()
+    {
         // sizeof(Vector3) doesn't work
         // instead we assume each float is 4 bytes, Vector2 is a C# struct of 2 floats
-        vBuf = new ComputeBuffer(24, 2 * 4);
-        normBuf = new RenderTexture(setting.resolution, setting.resolution, 24);
+        if (vBuf == null) vBuf = new ComputeBuffer(24, 2 * 4);
+        if (normBuf == null) normBuf = new RenderTexture(setting.resolution, setting.resolution, 24);
 
         crumbleShader.SetFloat("resolution", setting.resolution);
         blurShader.SetFloat("resolution", setting.resolution);
     }
+
+    private void Start()
+    {
+        // compute shader no longer used in play mode, compute buffer can be disposed
+        if (vBuf != null) vBuf.Dispose();
+    }
+
     private void OnDestroy()
     {
-        vBuf.Dispose();
+        if (vBuf != null) vBuf.Dispose();
     }
 
     /// <summary>
@@ -68,7 +77,7 @@ public class CrumbleMeshGenerator : MonoBehaviour
         var vSrc = v2D.Select((v2d, i) => new Vector3
         (
             v2d.x - 0.5f,
-            i > END_OF_TILE_CORNERS ? 2 * (Random.value - 0.5f) * setting.height : 0,
+            i > END_OF_TILE_CORNERS ? Random.value * setting.height : 0,
             v2d.y - 0.5f
         )).ToArray();
 
@@ -109,7 +118,7 @@ public class CrumbleMeshGenerator : MonoBehaviour
             if (DoubleArea(vDup, j, j + 1, j + 2) < setting.allTriangleArea) return Create(baseMat);
 
             triangles[j] = j;
-            if (Vector3.Cross(arm1, arm2).z > 0)
+            if (Vector3.Dot(Vector3.Cross(arm1, arm2), transform.up) > 0)
             {
                 // CCW face up
                 triangles[j + 1] = j + 2;
