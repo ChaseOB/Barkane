@@ -37,6 +37,15 @@ public class PaperJoint : MonoBehaviour
                 pj.ShowLine(value);
     }
 
+    public void UpdateFlaps()
+    {
+        if (PaperSqaures.Count != 2)
+        {
+            throw new UnityException($"Joint with {PaperSqaures.Count} squares attached cannot update flaps!");
+        }
+
+    }
+
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.layer == 7)
         {
