@@ -376,15 +376,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Toggle Editor",
-                    "type": "Button",
-                    "id": "55ef6422-6f90-40d0-8c4c-932c00e1bb4f",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -836,17 +827,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "FoldDown",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "00798fe7-d1cd-4d43-9235-f6f8f8a53fd2",
-                    "path": "<Keyboard>/z",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Toggle Editor",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
