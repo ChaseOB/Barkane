@@ -6,6 +6,8 @@ public class PaperSqaure : MonoBehaviour
 {
     [SerializeField] private bool playerOccupied = false; //true if the player is on this square
     public bool PlayerOccupied { get => playerOccupied;}
+    
+    //Visuals
     public float paperLength = 2f;
     public float paperThickness = 0.001f;
     [SerializeField] private GameObject topHalf;
