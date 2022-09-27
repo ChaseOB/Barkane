@@ -72,7 +72,7 @@ public class FoldAnimator : MonoBehaviour
 
         //Dictionary<GameObject, GameObject> parents = new Dictionary<GameObject, GameObject>();
         //Dictionary<PaperSqaure, Vector3Int> targetLocs = new Dictionary<PaperSqaure, Vector3Int>();
-        foreach(GameObject o in objectsToFold)
+       /* foreach(GameObject o in objectsToFold)
         {
             if(o.GetComponent<PaperSqaure>())
             {
@@ -96,7 +96,7 @@ public class FoldAnimator : MonoBehaviour
                     }
                 }
             }
-        }
+        }*/
        // target.transform.RotateAround(center, axis, degrees);
        // tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 
@@ -115,6 +115,9 @@ public class FoldAnimator : MonoBehaviour
             parents[o] = o.transform.parent.gameObject;
            // targetLocs[s] = s.targetLocation;
             o.transform.parent = tempObj.transform;
+            if (o.GetComponent<PaperJoint>())
+                o.GetComponent<PaperJoint>().ToggleCollider(false);
+
         }
 
         float t = 0;
@@ -131,6 +134,8 @@ public class FoldAnimator : MonoBehaviour
         {
             o.transform.position = Vector3Int.RoundToInt(o.transform.position);
             o.transform.parent =  parents[o].transform;
+            if (o.GetComponent<PaperJoint>())
+                o.GetComponent<PaperJoint>().ToggleCollider(true);
         }
         Destroy(tempObj);
         Destroy(target);

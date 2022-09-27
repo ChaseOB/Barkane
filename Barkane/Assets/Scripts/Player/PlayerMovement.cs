@@ -13,11 +13,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject marmalade;
 
     private bool isMoving = false;
-    private bool validMoveLoc = false;
+    private bool validMoveLoc = false; //true if the tile in front of the player is a valid move location
     private Vector2 move;
  
     public AnimationCurve moveVertCurve;
-    public float jumpHeight = 0.2f;
+    public float bounceHeight = 0.2f; 
     private float marmaladeY;
 
     public LayerMask playerCollidingMask;
@@ -50,9 +50,11 @@ public class PlayerMovement : MonoBehaviour
 
     public bool CheckValidMove()
     {
-       // Debug.Log("raycast " + Physics.Raycast(raycastStart.position, (targetPos.transform.position + new Vector3(0,0.05f,0) - raycastStart.position), 3.0f, playerCollidingMask));
-       // Debug.DrawRay(raycastStart.position, (targetPos.transform.position + new Vector3(0,0.05f,0) - raycastStart.position), Color.yellow, 15.0f);
-        return validMoveLoc && !Physics.Raycast(raycastStart.position, (targetPos.transform.position + new Vector3(0,0.05f,0) - raycastStart.position), 3.0f, playerCollidingMask); //C:If the raycast is true, then there is something in between the player and the movable location
+        return validMoveLoc && 
+                !Physics.Raycast(raycastStart.position, 
+                                (targetPos.transform.position + new Vector3(0, 0.05f ,0) - raycastStart.position), 
+                                3.0f, playerCollidingMask); 
+        //C:If the raycast is true, then there is something in between the player and the movable location
     }
 
     private void Move()
@@ -71,7 +73,9 @@ public class PlayerMovement : MonoBehaviour
         {
             t += Time.deltaTime;
             transform.position = Vector3.Lerp(curr, goal, t/moveDuration);
-            marmalade.transform.position = new Vector3(marmalade.transform.position.x, marmaladeY + moveVertCurve.Evaluate(t/moveDuration) * jumpHeight,  marmalade.transform.position.z);
+            marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
+                                            marmaladeY + moveVertCurve.Evaluate(t/moveDuration) * bounceHeight,  
+                                            marmalade.transform.position.z);
             yield return null;
         }
         transform.position = goal;
