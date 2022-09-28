@@ -133,4 +133,8 @@ public class FoldablePaper : MonoBehaviour
                 return pss;
         return null;
     }
+
+    public List<GameObject> getFoldSide() {
+        return foldSide;
+    }
 }

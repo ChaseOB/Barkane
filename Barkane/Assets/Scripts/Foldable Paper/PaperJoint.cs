@@ -53,4 +53,8 @@ public class PaperJoint : MonoBehaviour
         if(other.gameObject.layer == 7)
             adjList.Remove(other.GetComponent<PaperJoint>());
     }
+
+    public bool getIsSelected() {
+        return isSelected;
+    }
 }
