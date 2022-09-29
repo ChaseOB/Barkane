@@ -44,25 +44,31 @@ public class EdgeParticles : MonoBehaviour
 
     public void Emit() {
         if (!isAwake) {
+            // print("in Emit, in !isAwake");
             isAwake = true;
             if (!atCapacity) {
+                // print("in Emit, in !isAwake, in !isCapacity");
                 atCapacity = true;
                 FindAllChildrenPS();
                 count = listOfSystems.Count;
-                print("listOfSystems.Count "  + count);
+                // print("listOfSystems.Count "  + count);
+                string sysNames = "(emit) all the systems: ";
                 for (int i = 0; i < count; i++) {
-                    print(" emit printing list of systems by name: " + listOfSystems[i].name);
+                    sysNames += listOfSystems[i].name + ", ";
                 }
+                // print(sysNames + "]");
             }
             for (int i = 0; i < count; i++) {
+                // print("now making system " + listOfSystems[i].name + " play");
                 listOfSystems[i].Play();
-            } 
+            } // does play have to be taken outside the !isAwake?
         }
+        // print("outside of the !isAwake in emit " + gameObject.name);
     }
 
     public void Unemit() {
         for (int i = 0; i < count; i++) {
-            print("unemit current index is " + i.ToString());
+            // print("unemit current index is " + i.ToString() + ", with system " + listOfSystems[i].name);
             isAwake = false;
             listOfSystems[i].Pause();
             listOfSystems[i].Clear();
