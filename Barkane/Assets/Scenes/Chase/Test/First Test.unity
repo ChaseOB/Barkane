@@ -1251,6 +1251,7 @@ GameObject:
   m_Component:
   - component: {fileID: 728306537}
   - component: {fileID: 728306538}
+  - component: {fileID: 728306539}
   m_Layer: 6
   m_Name: PaperSquare (2)
   m_TagString: Untagged
@@ -1288,9 +1289,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOccupied: 0
-  paperThickness: 0.001
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
+--- !u!65 &728306539
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728306536}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.01, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &751183412
 GameObject:
   m_ObjectHideFlags: 0
@@ -1645,11 +1658,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1032613304}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1040647062 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8500522089192884643, guid: e6122d66d72e2f248828794196740204, type: 3}
-  m_PrefabInstance: {fileID: 8814069561536548495}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1079685310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1707,6 +1715,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1114580484}
   - component: {fileID: 1114580485}
+  - component: {fileID: 1114580486}
   m_Layer: 6
   m_Name: PaperSquare (3)
   m_TagString: Untagged
@@ -1744,9 +1753,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOccupied: 0
-  paperThickness: 0.001
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
+--- !u!65 &1114580486
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114580483}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.01, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1166862078
 GameObject:
   m_ObjectHideFlags: 0
@@ -1842,7 +1863,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOccupied: 0
-  paperThickness: 0.001
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
 --- !u!65 &1179978659
@@ -1868,13 +1888,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1184534836}
   - component: {fileID: 1184534835}
+  - component: {fileID: 1184534837}
   m_Layer: 6
   m_Name: PaperSquare (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1184534835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1888,7 +1909,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOccupied: 0
-  paperThickness: 0.001
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
 --- !u!4 &1184534836
@@ -1908,6 +1928,19 @@ Transform:
   m_Father: {fileID: 1252386353}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1184534837
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184534834}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.01, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1206415565
 GameObject:
   m_ObjectHideFlags: 0
@@ -3017,7 +3050,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1663220680
 Transform:
   m_ObjectHideFlags: 0
@@ -3440,6 +3473,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1829903605}
   - component: {fileID: 1829903606}
+  - component: {fileID: 1829903607}
   m_Layer: 6
   m_Name: PaperSquare (1)
   m_TagString: Untagged
@@ -3478,9 +3512,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerOccupied: 0
-  paperThickness: 0.001
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
+--- !u!65 &1829903607
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829903604}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.01, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1847776934
 GameObject:
   m_ObjectHideFlags: 0
@@ -4158,58 +4204,15 @@ PrefabInstance:
     - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
       propertyPath: marmalade
       value: 
-      objectReference: {fileID: 1040647062}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[0].time
-      value: 0.00090408325
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[1].time
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[2].time
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[3].time
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[4].time
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[1].value
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[2].value
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[3].value
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[4].value
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[3].inSlope
-      value: -0.026744522
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[3].inWeight
-      value: 0.19337702
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: moveVertCurve.m_Curve.Array.data[3].outSlope
-      value: -0.026744522
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 8814069561536548496}
     - target: {fileID: 8814069561603125229, guid: e6122d66d72e2f248828794196740204, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6122d66d72e2f248828794196740204, type: 3}
+--- !u!1 &8814069561536548496 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 793832043710397480, guid: e6122d66d72e2f248828794196740204, type: 3}
+  m_PrefabInstance: {fileID: 8814069561536548495}
+  m_PrefabAsset: {fileID: 0}

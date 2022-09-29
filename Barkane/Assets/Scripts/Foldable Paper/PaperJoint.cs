@@ -6,8 +6,9 @@ public class PaperJoint : MonoBehaviour
 {
     [SerializeField] private List<PaperSqaure> paperSqaures;
     public  List<PaperSqaure> PaperSqaures { get => paperSqaures;}
+
     private bool isSelected = false; //true when this is the current selected fold
-    public bool showLine = false; //true when this joint or any adjacent joins are selected
+    public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
     public LineRenderer lineRenderer;
     private PaperJoint currentJoint;
     FoldablePaper foldablePaper;
@@ -17,6 +18,7 @@ public class PaperJoint : MonoBehaviour
 
     [SerializeField] private List<PaperJoint> adjList = new List<PaperJoint>();
 
+    [SerializeField] private CapsuleCollider capsuleCollider;
    // private bool JointEnabled = true; //CO: Set to false to "cut" the paper along the given joint
     public bool canFold = true; //CO: Set to false to lock the current joint in position, as if the squares were glued together
 
@@ -36,20 +38,26 @@ public class PaperJoint : MonoBehaviour
                 UnEmitParticles();
             }
         }
+    } private void Start() {
+        if(capsuleCollider == null)
+            capsuleCollider = GetComponent<CapsuleCollider>();
     }
 
     public void Select()
     {
         isSelected = true;
         ShowLine(true);
-        // isFirstCall = true;
     }
 
     public void Deselect()
     {
         isSelected = false;
         ShowLine(false);
-        // isFirstCall = true;
+    }
+
+    public void ToggleCollider(bool value)
+    {
+        capsuleCollider.enabled = value;
     }
 
     private void ShowLine(bool value)
@@ -66,7 +74,10 @@ public class PaperJoint : MonoBehaviour
         {
             PaperJoint joint = other.GetComponent<PaperJoint>();
             Vector3 diff = this.transform.position - joint.transform.position;
-            if(Mathf.Abs(diff.x) < 0.1 || Mathf.Abs(diff.z) < 0.1)
+            int difX = Mathf.Abs(diff.x) > 0.1 ? 1 : 0;
+            int difY = Mathf.Abs(diff.y) > 0.1 ? 1 : 0;
+            int difZ = Mathf.Abs(diff.z) > 0.1 ? 1 : 0;
+            if(difX + difY + difZ == 1) //C: 3-way XOR to check that the folds are along the same axis
                 adjList.Add(other.GetComponent<PaperJoint>());
         }
     }
