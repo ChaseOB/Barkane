@@ -1251,6 +1251,7 @@ GameObject:
   m_Component:
   - component: {fileID: 728306537}
   - component: {fileID: 728306538}
+  - component: {fileID: 728306539}
   m_Layer: 6
   m_Name: PaperSquare (2)
   m_TagString: Untagged
@@ -1290,6 +1291,19 @@ MonoBehaviour:
   playerOccupied: 0
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
+--- !u!65 &728306539
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728306536}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.01, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &751183412
 GameObject:
   m_ObjectHideFlags: 0
@@ -1701,6 +1715,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1114580484}
   - component: {fileID: 1114580485}
+  - component: {fileID: 1114580486}
   m_Layer: 6
   m_Name: PaperSquare (3)
   m_TagString: Untagged
@@ -1740,6 +1755,19 @@ MonoBehaviour:
   playerOccupied: 0
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
+--- !u!65 &1114580486
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114580483}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.01, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1166862078
 GameObject:
   m_ObjectHideFlags: 0
@@ -1860,13 +1888,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1184534836}
   - component: {fileID: 1184534835}
+  - component: {fileID: 1184534837}
   m_Layer: 6
   m_Name: PaperSquare (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1184534835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1899,6 +1928,19 @@ Transform:
   m_Father: {fileID: 1252386353}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1184534837
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184534834}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.01, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1206415565
 GameObject:
   m_ObjectHideFlags: 0
@@ -3008,7 +3050,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1663220680
 Transform:
   m_ObjectHideFlags: 0
@@ -3431,6 +3473,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1829903605}
   - component: {fileID: 1829903606}
+  - component: {fileID: 1829903607}
   m_Layer: 6
   m_Name: PaperSquare (1)
   m_TagString: Untagged
@@ -3471,6 +3514,19 @@ MonoBehaviour:
   playerOccupied: 0
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
+--- !u!65 &1829903607
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829903604}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.01, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1847776934
 GameObject:
   m_ObjectHideFlags: 0
