@@ -4,12 +4,12 @@ using UnityEngine;
 
 // Lives on the PaperSquares
 // Finds the Edge Particle Prefab
-// then iterates through the prefab's 4 children ParticleSystems
+// then iterates through the prefab's 8 children ParticleSystems
 // makes them play or pause and clear
 
 public class EdgeParticles : MonoBehaviour
 {
-    private int count = 4;
+    private int count = 8;
     List<ParticleSystem> listOfSystems = new List<ParticleSystem>();
     GameObject edgeParticlesPrefabChild;
     bool isAwake = false;
@@ -29,7 +29,7 @@ public class EdgeParticles : MonoBehaviour
     private void FindAllChildrenPS() {
         Transform result;
 
-        for (int i = 1; i < 5; i++)
+        for (int i = 1; i < (count + 1); i++)
         {
             string ps;
 
@@ -44,36 +44,23 @@ public class EdgeParticles : MonoBehaviour
 
     public void Emit() {
         if (!isAwake) {
-            // print("in Emit, in !isAwake");
             isAwake = true;
             if (!atCapacity) {
-                // print("in Emit, in !isAwake, in !isCapacity");
                 atCapacity = true;
                 FindAllChildrenPS();
                 count = listOfSystems.Count;
-                // print("listOfSystems.Count "  + count);
-                string sysNames = "(emit) all the systems: ";
-                for (int i = 0; i < count; i++) {
-                    sysNames += listOfSystems[i].name + ", ";
-                }
-                // print(sysNames + "]");
             }
             for (int i = 0; i < count; i++) {
-                // print("now making system " + listOfSystems[i].name + " play");
                 listOfSystems[i].Play();
-            } // does play have to be taken outside the !isAwake?
+            }
         }
-        // print("outside of the !isAwake in emit " + gameObject.name);
     }
 
     public void Unemit() {
         for (int i = 0; i < count; i++) {
-            // print("unemit current index is " + i.ToString() + ", with system " + listOfSystems[i].name);
             isAwake = false;
             listOfSystems[i].Pause();
             listOfSystems[i].Clear();
-            // listOfSystems.Clear();
-            // atCapacity = false;
         }
     }
 }
