@@ -7,4 +7,5 @@ public class SquareRenderSettings : ScriptableObject
 {
     [Range(0f, 1f)]
     public float margin;
+    public Material creaseMaterial;
 }

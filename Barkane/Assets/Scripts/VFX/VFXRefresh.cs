@@ -16,11 +16,14 @@ namespace BarkaneEditor
 
         internal void Refresh()
         {
+            EditorUtility.DisplayProgressBar("Wait", "Loading Scene VFX Assets...", .1f);
             Load();
+            EditorUtility.DisplayProgressBar("Wait", "Refreshing Scene VFX Assets...", .6f);
             foreach (var s in FindObjectsOfType<MonoBehaviour>())
             {
                 if (s is IRefreshable) (s as IRefreshable).Refresh();
             }
+            EditorUtility.ClearProgressBar();
         }
 
         //internal void Load(PlayModeStateChange change)

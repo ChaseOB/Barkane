@@ -1482,7 +1482,7 @@
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Color_27b163011941461fa5a53f7fa66626a1",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_Color",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -4498,10 +4498,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -649.0,
-            "y": -494.0000305175781,
-            "width": 207.99996948242188,
-            "height": 435.0
+            "x": -643.0,
+            "y": -485.0,
+            "width": 183.0,
+            "height": 251.00001525878907
         }
     },
     "m_Slots": [

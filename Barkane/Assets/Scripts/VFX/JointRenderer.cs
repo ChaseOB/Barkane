@@ -7,15 +7,46 @@ using BarkaneEditor;
 [ExecuteInEditMode]
 public class JointRenderer : MonoBehaviour, IRefreshable
 {
+    /**
+     * FOR THE CONTEXT OF JOINT VFX...
+     * A and B always represent the identity of the square, A always across the joint from B, and vice versa
+     * 1 and 2 always represent the side o fthe square, A1 and A2 are always on the same side of the joint (but different facing direction), same for B
+     * Pair1 contains both A and B for side 1, Pair2 contains both A and B for side 2
+     */
+
     [SerializeField] SquareRenderSettings squareRenderSettings; // for referencing the margin property
 
-    [SerializeField] MeshFilter filterA1, filterA2, filterB1, filterB2;
-    [SerializeField] MeshRenderer rendererA1, rendererA2, rendererB1, rendererB2;
+    /// <summary>
+    /// paper square filters
+    /// </summary>
+    [SerializeField, HideInInspector] MeshFilter filterA1, filterA2, filterB1, filterB2;
+    /// <summary>
+    /// paper square renderers
+    /// </summary>
+    [SerializeField, HideInInspector] MeshRenderer rendererA1, rendererA2, rendererB1, rendererB2;
+    [SerializeField, HideInInspector] (SquareSide, SquareSide) pair1, pair2;
+
+    /// <summary>
+    /// target filters
+    /// </summary>
+    [SerializeField] MeshFilter tFilterA1, tFilterA2, tFilterB1, tFilterB2;
+    /// <summary>
+    /// target renderers
+    /// </summary>
+    [SerializeField] MeshRenderer tRendererA1, tRendererA2, tRendererB1, tRendererB2;
+
+    private enum FoldState
+    {
+        Overlap,
+        Coplanar,
+        Orthogonal,
+        NonAdjacent
+    }
+
+    private FoldState foldState;
 
     /// <summary>
     /// Can be called manually in inspector or automatically by other scene editor utilities.
-    /// This should NOT be preferred over calling either UpdateReferences or UpdateGeometry    
-    /// unless absolutely necessary
     /// </summary>
     /// <exception cref="UnityException"></exception>
     void IRefreshable.Refresh()
@@ -26,15 +57,98 @@ public class JointRenderer : MonoBehaviour, IRefreshable
             throw new UnityException($"Cannot refresh joints without enough adjacent squares: {parent.PaperSqaures.Count}");
         }
 
-        var aTop = parent.PaperSqaures[0].TopHalf;
-        var aBottom = parent.PaperSqaures[0].BottomHalf;
-        var bTop = parent.PaperSqaures[1].TopHalf;
-        var bBottom = parent.PaperSqaures[1].BottomHalf;
+        SquareSide
+            a1 = parent.PaperSqaures[0].TopHalf.GetComponent<SquareSide>(),
+            a2 = parent.PaperSqaures[0].BottomHalf.GetComponent<SquareSide>(),
+            b1 = parent.PaperSqaures[1].TopHalf.GetComponent<SquareSide>(),
+            b2 = parent.PaperSqaures[1].BottomHalf.GetComponent<SquareSide>();
 
-        // if (aTop)
+        filterA1 = parent.PaperSqaures[0].TopHalf.GetComponent<MeshFilter>();
+        filterA2 = parent.PaperSqaures[0].BottomHalf.GetComponent<MeshFilter>();
+        filterB1 = parent.PaperSqaures[1].TopHalf.GetComponent<MeshFilter>();
+        filterB2 = parent.PaperSqaures[1].BottomHalf.GetComponent<MeshFilter>();
 
-        // UpdateReferences(a, b);
-        // UpdateGeometry(a, b);
+        rendererA1 = parent.PaperSqaures[0].TopHalf.GetComponent<MeshRenderer>();
+        rendererA2 = parent.PaperSqaures[0].BottomHalf.GetComponent<MeshRenderer>();
+        rendererB1 = parent.PaperSqaures[1].TopHalf.GetComponent<MeshRenderer>();
+        rendererB2 = parent.PaperSqaures[1].BottomHalf.GetComponent<MeshRenderer>();
+
+        filterA1 = parent.PaperSqaures[0].TopHalf.GetComponent<MeshFilter>();
+        filterA2 = parent.PaperSqaures[0].BottomHalf.GetComponent<MeshFilter>();
+        filterB1 = parent.PaperSqaures[1].TopHalf.GetComponent<MeshFilter>();
+        filterB2 = parent.PaperSqaures[1].BottomHalf.GetComponent<MeshFilter>();
+
+        rendererA1 = parent.PaperSqaures[0].TopHalf.GetComponent<MeshRenderer>();
+        rendererA2 = parent.PaperSqaures[0].BottomHalf.GetComponent<MeshRenderer>();
+        rendererB1 = parent.PaperSqaures[1].TopHalf.GetComponent<MeshRenderer>();
+        rendererB2 = parent.PaperSqaures[1].BottomHalf.GetComponent<MeshRenderer>();
+
+        (pair1, pair2, foldState) = FormPairs(a1, a2, b1, b2);
+
+        UpdateReferences();
+        UpdateGeometry();
+    }
+
+    private Mesh RectangleUnit()
+        => new Mesh()
+        {
+            vertices = new Vector3[] { new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector3(1, 0, 0), new Vector3(1, 0, 1) },
+            triangles = new int[] { 1, 2, 3, 2, 3, 4 },
+            normals = new Vector3[] { Vector3.up, Vector3.up, Vector3.up, Vector3.up }
+        };
+
+    private ((SquareSide, SquareSide), (SquareSide, SquareSide), FoldState) FormPairs(SquareSide a1, SquareSide a2, SquareSide b1, SquareSide b2)
+    {
+        switch(CoordUtils.DiffAxisCount(a1, b1))
+        {
+            case 0:
+                // for overlapping case, just compare if the normals are opposite
+                if (CoordUtils.RoundEquals(a1.transform.up, -b1.transform.up))
+                {
+                    return ((a1, b1), (a2, b2), FoldState.Overlap);
+                } else if (CoordUtils.RoundEquals(a1.transform.up, -b2.transform.up))
+                {
+                    return ((a1, b2), (a2, b1), FoldState.Overlap);
+                } else
+                {
+                    throw new UnityException("Cannot pair a1 with anything! (Overlapping Case)");
+                }
+            case 1:
+                // for coplanar case, just compare if the normals match up
+                if (CoordUtils.RoundEquals(a1.transform.up, b1.transform.up))
+                {
+                    return ((a1, b1), (a2, b2), FoldState.Coplanar);
+                }
+                else if (CoordUtils.RoundEquals(a1.transform.up, b2.transform.up))
+                {
+                    return ((a1, b2), (a2, b1), FoldState.Coplanar);
+                }
+                else
+                {
+                    throw new UnityException("Can't pair a1 with anything! (Coplanar Case)");
+                }
+            case 2:
+                // for orthogonal case, compare if the "towards" direction is in the same way as the normal (for both sides)
+                // this compares whether two sides are facing "inwards" or "outwards"
+                var a2b = CoordUtils.AsV(CoordUtils.FromTo(a1, b1));
+                var b2a = -a2b;
+
+                if (Mathf.Sign(Vector3.Dot(a1.transform.up, a2b)) == Mathf.Sign(Vector3.Dot(b1.transform.up, b2a)))
+                {
+                    return ((a1, b1), (a2, b2), FoldState.Orthogonal);
+                }
+                else if (Mathf.Sign(Vector3.Dot(a1.transform.up, a2b)) == Mathf.Sign(Vector3.Dot(b1.transform.up, a2b)))
+                {
+                    return ((a1, b2), (a2, b1), FoldState.Orthogonal);
+                }
+                else
+                {
+                    throw new UnityException("Can't pair a1 with anything! (Orthogonal Case)");
+                }
+            default:
+                // this includes the possible 3 case when non of the coordinates are equal (the tiles aren't even adjacent!)
+                throw new UnityException($"Joint { transform.parent } contains squares that aren't adjacent!");
+        }
     }
 
     /// <summary>
@@ -42,40 +156,54 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>
-    public void UpdateReferences(PaperSqaure a, PaperSqaure b)
+    public void UpdateReferences()
     {
+        FillMaterial(tRendererA1, pair1.Item1.MaterialPrototype);
+        FillMaterial(tRendererA2, pair2.Item1.MaterialPrototype);
+        FillMaterial(tRendererB1, pair1.Item2.MaterialPrototype);
+        FillMaterial(tRendererB2, pair2.Item2.MaterialPrototype);
+    }
+
+    private void FillMaterial(MeshRenderer renderer, Material materialPrototype)
+    {
+        var material = new Material(squareRenderSettings.creaseMaterial);
+        material.SetColor("_Color", materialPrototype.GetColor("_Color"));
+        renderer.sharedMaterials = new Material[] { material };
     }
 
     /// <summary>
     /// Update Joint appearance when the physical location/orientation of either side changes
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    public void UpdateGeometry(PaperSqaure a, PaperSqaure b)
+    public void UpdateGeometry()
     {
-        if (CoordUtils.Coplanar(a, b))
+        switch(foldState)
         {
-            var normal = a.transform.up;
-
-            var center = CoordUtils.AsV(CoordUtils.Average(a, b));
-
-            var toA = (a.transform.position - center).normalized;
-            var toB = (b.transform.position - center).normalized;
-
-            // create 4 rectangles (8 tris), 2 for each side
-            var verts = new Vector3[]
-            {
-
-            };
-            var tris = new List<int>();
-            for (int i = 0; i < verts.Length; i += 3)
-            {
-
-            }
+            case FoldState.Overlap:
+                CreateOverlapGeometry();
+                return;
+            case FoldState.Coplanar:
+                CreateCoplanarGeometry();
+                return;
+            case FoldState.Orthogonal:
+                CreateOrthogonalGeometry();
+                return;
+            case FoldState.NonAdjacent:
+                throw new UnityException("Cannot create geometry for non-adjacent tiles across a joint");
         }
-        else
-        {
+    }
 
-        }
+    private void CreateOverlapGeometry()
+    {
+
+    }
+
+    private void CreateCoplanarGeometry()
+    {
+
+    }
+
+    private void CreateOrthogonalGeometry()
+    {
+
     }
 }

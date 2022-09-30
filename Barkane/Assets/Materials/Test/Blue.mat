@@ -127,8 +127,8 @@ Material:
     - _DstBlend: 0
     - _EdgeBias: 0.001
     - _EdgeSharpness: 200
-    - _Edge_Sharpness: 2000
-    - _Emphasize_Vertex: 20
+    - _Edge_Sharpness: 1500
+    - _Emphasize_Vertex: 40
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -151,8 +151,8 @@ Material:
     - Color_27b163011941461fa5a53f7fa66626a1: {r: 0.5424528, g: 1, b: 0.9290044, a: 0}
     - YOverride: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 0.07564971, g: 0.9433962, b: 0.8808075, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EdgeTint: {r: 0.31254467, g: 1, b: 0, a: 0.34901962}
+    - _Color: {r: 0.19607843, g: 0.79607844, b: 1, a: 1}
+    - _EdgeTint: {r: 1, g: 1, b: 1, a: 0.56078434}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

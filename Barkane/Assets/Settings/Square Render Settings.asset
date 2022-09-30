@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: Square Render Settings
   m_EditorClassIdentifier: 
   margin: 0.035
+  creaseMaterial: {fileID: 2100000, guid: 68a95989fe9f5a54196acd957c93a5aa, type: 2}

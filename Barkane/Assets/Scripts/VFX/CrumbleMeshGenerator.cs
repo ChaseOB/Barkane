@@ -19,29 +19,13 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
 
     [SerializeField] private ComputeShader crumbleShader, blurShader;
     [SerializeField] private FractureMeshSetting setting;
-
-    [SerializeField, HideInInspector] private ComputeBuffer vBuf;
     
     public void Load()
     {
-        // sizeof(Vector3) doesn't work
-        // instead we assume each float is 4 bytes, Vector2 is a C# struct of 2 floats
-        if (vBuf == null) vBuf = new ComputeBuffer(24, 2 * 4);
         if (normBuf == null) normBuf = new RenderTexture(setting.resolution, setting.resolution, 24);
 
         crumbleShader.SetFloat("resolution", setting.resolution);
         blurShader.SetFloat("resolution", setting.resolution);
-    }
-
-    private void Start()
-    {
-        // compute shader no longer used in play mode, compute buffer can be disposed
-        if (vBuf != null) vBuf.Dispose();
-    }
-
-    private void OnDestroy()
-    {
-        if (vBuf != null) vBuf.Dispose();
     }
 
     /// <summary>
@@ -50,6 +34,10 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
     public (Mesh, Material) Create(Material baseMat)
     {
         var (pivTop, pivLeft, pivOther) = GetDistinctUV(setting.margin, setting.mainTriangleArea);
+
+        // sizeof(Vector3) doesn't work
+        // instead we assume each float is 4 bytes, Vector2 is a C# struct of 2 floats
+        var vBuf = new ComputeBuffer(24, 2 * 4);
 
         var v2D = new Vector2[]
         {
@@ -115,7 +103,11 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
             var arm2 = centroid - vDup[j + 1];
 
             // nuke if triangle too narrow
-            if (DoubleArea(vDup, j, j + 1, j + 2) < setting.allTriangleArea) return Create(baseMat);
+            if (DoubleArea(vDup, j, j + 1, j + 2) < setting.allTriangleArea)
+            {
+                vBuf.Dispose();
+                return Create(baseMat);
+            }
 
             triangles[j] = j;
             if (Vector3.Dot(Vector3.Cross(arm1, arm2), transform.up) > 0)
@@ -169,6 +161,7 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
 
         // get base normal map from compute shader and pass that to the material
         var mat = new Material(baseMat);
+        mat.name = $"hydrated [{baseMat.name}]";
         vBuf.SetData(v2DDup, 0, 0, 24);
         crumbleShader.SetBuffer(0, "pivots", vBuf);
 
@@ -193,6 +186,8 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
         mat.SetTexture("Dist", normBuf);
 
         mat.SetVector("YOverride", new Vector4(transform.up.x, transform.up.y, transform.up.z, 1));
+
+        vBuf.Dispose();
 
         return (m, mat);
     }
