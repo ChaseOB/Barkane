@@ -9,46 +9,34 @@ public class SceneManager : MonoBehaviour
     public bool EditorOn => editorOn;
     [SerializeField] private PaperSquares squares;
     public PaperSquares Squares => squares;
-    [SerializeField] private Plane editPlane;
 
-    // Start is called before the first frame update
-    private void Start()
-    {
-        editPlane = new Plane(Vector3.up, Vector3.zero);
-    }
+    private BoxCollider collider;
+    [SerializeField] private int axisPos;
 
-    private Vector3? GetSelectPosition(Ray mouseRay)
+    // [SerializeField] private Vector3 orientation;
+    public readonly Vector3 XY = new Vector3(0, 0, 0);
+    public readonly Vector3 XZ = new Vector3(90, 0, 0);
+    public readonly Vector3 YZ = new Vector3(0, 90, 0);
+
+    public Vector3? GetPlanePosition(Ray mouseRay)
     {
-        float outDist = 0f;
-        if (editPlane.Raycast(mouseRay, out outDist)) {
-            return mouseRay.GetPoint(outDist);
+        // Bit mask for layer 6 (paper layer)
+        int paperMask = 1 << 6;
+        RaycastHit hit;
+
+        if (Physics.Raycast(mouseRay.origin, mouseRay.direction, out hit, Mathf.Infinity, paperMask))
+        {
+            Vector3 hitPoint = hit.point;
+            if (collider.bounds.Contains(hitPoint))
+            {
+                return hitPoint;
+            }
         }
-        // Ray does not intersect with plane
         return null;
     }
 
-    public void SelectSquare(Ray mouseRay)
+    private void Start()
     {
-        Vector3? selectPos = GetSelectPosition(mouseRay);
-        if (selectPos == null)
-        {
-            return;
-        }
-        squares.SelectSquare((Vector3)selectPos);
-    }
-
-    public void RemoveSquare(Ray mouseRay)
-    {
-        Vector3? selectPos = GetSelectPosition(mouseRay);
-        if (selectPos == null)
-        {
-            return;
-        }
-        squares.RemoveSquare((Vector3)selectPos);
-    }
-
-    private void OnMouseDown()
-    {
-        print("asdfasdf");
+        collider = GetComponent<BoxCollider>();
     }
 }

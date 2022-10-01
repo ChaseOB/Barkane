@@ -6,65 +6,58 @@ using UnityEngine;
 public class PaperSquares : MonoBehaviour
 {
     public const int SIZE = 21;
-    public readonly Vector3Int center = new Vector3Int(10, 0, 10);
+    public readonly Vector3Int center = new Vector3Int(SIZE / 2, 0, SIZE / 2);
     private PaperSqaure[,] paperSquares = new PaperSqaure[SIZE, SIZE];
     [SerializeField] private PaperSqaure copyFrom;
 
-    public void SelectSquare(Vector3 selectPos)
+    // Returns true if a new square is instantiated. Determines drag type
+    public bool SelectSquare(Vector3 absPos, out PaperSqaure square)
     {
-        Vector3Int relPos = GetRelativePosition(selectPos);
-        if (checkNotValid(relPos))
-        {
-            return;
-        }
-        PaperSqaure square = GetPaperAt(relPos);
+        Vector3Int relPos = GetRelativePosition(absPos);
+        square = GetSquareAt(relPos);
 
         if (square != null)
         {
             copyFrom = square;
-        } else
-        {
-            Vector3 absPos = GetAbsolutePosition(relPos);
-            PaperSqaure newSquare = Instantiate<PaperSqaure>(copyFrom, absPos, copyFrom.transform.rotation, this.transform);
-            SetPaperAt(relPos, newSquare);
+            return false;
         }
+
+        Vector3 centerPos = GetAbsolutePosition(relPos);
+        square = Instantiate<PaperSqaure>(copyFrom, centerPos, copyFrom.transform.rotation, this.transform);
+        SetSquareAt(relPos, square);
+        return true;
     }
 
-    public void RemoveSquare(Vector3 selectPos)
+    public PaperSqaure RemoveSquare(Vector3 selectPos)
     {
         Vector3Int relPos = GetRelativePosition(selectPos);
-        if (checkNotValid(relPos))
-        {
-            return;
-        }
-        PaperSqaure square = GetPaperAt(relPos);
+        PaperSqaure square = GetSquareAt(relPos);
 
-        if (square == null)
+        if (square == null || relPos.Equals(center))
         {
-            // Debug.Log(string.Format("Error: Deleting nonexistant PaperSquare at {0}", selectPos));
-            return;
+            return null;
         }
-        if (!relPos.Equals(center))
+
+        RemoveReference(relPos);
+        if (square.Equals(copyFrom))
         {
-            RemoveReference(relPos);
-            if (square.Equals(copyFrom))
-            {
-                copyFrom = GetPaperAt(center);
-            }
-            DestroyImmediate(square.gameObject);
+            copyFrom = GetSquareAt(center);
         }
+        return square;
+    }
+
+    private void Start()
+    {
+        PaperSqaure[] squares = GetComponentsInChildren<PaperSqaure>();
+        foreach (PaperSqaure square in squares)
+        {
+            Vector3Int relPos = GetRelativePosition(square.transform.position);
+            SetSquareAt(relPos, square);
+        }
+        copyFrom = GetSquareAt(center);
     }
 
     // Implementation Specific
-    private void Start()
-    {
-        SetPaperAt(center, copyFrom);
-    }
-
-    private bool checkNotValid(Vector3Int relPos)
-    {
-        return relPos.x < 0 || relPos.x >= SIZE || relPos.z < 0 || relPos.z >= SIZE;
-    }
 
     private Vector3Int GetRelativePosition(Vector3 absPos)
     {
@@ -84,18 +77,18 @@ public class PaperSquares : MonoBehaviour
         return new Vector3(absX, absY, absZ);
     }
 
-    private PaperSqaure GetPaperAt(Vector3Int relPos)
+    private PaperSqaure GetSquareAt(Vector3Int relPos)
     {
         return paperSquares[relPos.x, relPos.z];
     }
 
-    private void SetPaperAt(Vector3Int relPos, PaperSqaure square)
+    private void SetSquareAt(Vector3Int relPos, PaperSqaure square)
     {
         paperSquares[relPos.x, relPos.z] = square;
     }
 
     private void RemoveReference(Vector3Int relPos)
     {
-        SetPaperAt(relPos, null);
+        SetSquareAt(relPos, null);
     }
 }
