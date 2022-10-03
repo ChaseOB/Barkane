@@ -5,17 +5,32 @@ using UnityEditor;
 
 namespace BarkaneEditor
 {
-    [InitializeOnLoad, ExecuteInEditMode]
-    public class VFXRefresh : MonoBehaviour
+    public enum ThemeChoice
     {
-        private void Awake()
-        {
-            // EditorApplication.playModeStateChanged += Load;
-            Refresh();
-        }
+        CherryBlossom,
+        SnowySnow,
+        GlowstickCave,
+        CardboardCastle
+    }
+
+    [InitializeOnLoad, ExecuteInEditMode]
+    public class VFXManager : MonoBehaviour
+    {
+        [SerializeField] private ThemeChoice themeChoice;
+        [SerializeField] private Theme[] themes;
+        public static Theme Theme => Instance.themes[(int)Instance.themeChoice];
+
+        public static VFXManager Instance { get; private set; }
 
         internal void Refresh()
         {
+            Instance = this;
+
+            if (themes == null || themes.Length != System.Enum.GetNames(typeof(ThemeChoice)).Length)
+            {
+                throw new UnityException("Theme assets are referenced incorrectly in VFXManager.");
+            }
+
             Load();
             foreach (var s in FindObjectsOfType<MonoBehaviour>())
             {
@@ -62,7 +77,7 @@ namespace BarkaneEditor
 
 #if UNITY_EDITOR
 
-    [CustomEditor(typeof(VFXRefresh))]
+    [CustomEditor(typeof(VFXManager))]
     public class VFXRefreshEditor : Editor
     {
         public override void OnInspectorGUI()
@@ -70,7 +85,7 @@ namespace BarkaneEditor
             base.OnInspectorGUI();
             if (GUILayout.Button("Refresh"))
             {
-                (target as VFXRefresh).Refresh();
+                (target as VFXManager).Refresh();
             }
         }
     }

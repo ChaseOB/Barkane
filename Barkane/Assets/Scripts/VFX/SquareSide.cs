@@ -12,6 +12,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
     [SerializeField] Material materialPrototype;
 
     public Material MaterialPrototype => materialPrototype;
+
+    public (Vector3[], Vector3[]) sprinkles;
     
     void IRefreshable.Refresh()
     {
@@ -20,9 +22,27 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public void UpdateMesh()
     {
-        var (mesh, material) = meshGenerator.Create(materialPrototype);
+        var (mesh, material, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
         mFilter.mesh = mesh;
         mRenderer.sharedMaterials = new Material[] { material };
+
+        while(transform.childCount > 0)
+        {
+            if (Application.isEditor)
+            {
+                DestroyImmediate(transform.GetChild(0).gameObject);
+            } else
+            {
+                throw new UnityException("VFXManager should not be evoked in the game!");
+            }
+        }
+
+        for (int i = 0; i < sprinkleVerts.Length; i++)
+        {
+            var go = Instantiate(VFXManager.Theme.Sprinkle, transform);
+            go.transform.localPosition = sprinkleVerts[i];
+            go.transform.up = transform.rotation * sprinkleNorms[i];
+        }
     }
 
 

@@ -18,8 +18,8 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
     [HideInInspector] public RenderTexture normBuf;
 
     [SerializeField] private ComputeShader crumbleShader, blurShader;
-    [SerializeField] private FractureMeshSetting setting;
-    
+    [SerializeField] private FractureMeshSettings setting;
+
     public void Load()
     {
         if (normBuf == null) normBuf = new RenderTexture(setting.resolution, setting.resolution, 24);
@@ -28,10 +28,13 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
         blurShader.SetFloat("resolution", setting.resolution);
     }
 
+    
     /// <summary>
-    /// basic fractured mesh and its related material instance
+    /// create relevant information for updating paper tile geometry
     /// </summary>
-    public (Mesh, Material) Create(Material baseMat)
+    /// <param name="baseMat">prototype of new material to be applied to the mesh</param>
+    /// <returns>mesh, material, sprinkle positions, sprinkle normals</returns>
+    public (Mesh, Material, Vector3[], Vector3[]) Create(Material baseMat)
     {
         var (pivTop, pivLeft, pivOther) = GetDistinctUV(setting.margin, setting.mainTriangleArea);
 
@@ -187,9 +190,39 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
 
         mat.SetVector("YOverride", new Vector4(transform.up.x, transform.up.y, transform.up.z, 1));
 
+        var sprinkleVerts = new Vector3[setting.sprinkleCount];
+        var sprinkleNorms = new Vector3[setting.sprinkleCount];
+        for (int i = 0; i < setting.sprinkleCount; i++)
+        {
+            var uv = new Vector2(Random.value, Random.value);
+            // check against every triangle...
+            for(int t = 0; t < 24; t += 3)
+            {
+                if (PointInTriangle(uv, v2DDup[triangles[t]], v2DDup[triangles[t + 1]], v2DDup[triangles[t + 2]]))
+                {
+                    // get displaced sprinkle position within the mesh
+                    sprinkleVerts[i] = EvaluateBarycentric(
+                        FindBarycentric(uv, v2DDup[triangles[t]], v2DDup[triangles[t + 1]], v2DDup[triangles[t + 2]]),
+                        vDup[triangles[t]], vDup[triangles[t + 1]], vDup[triangles[t + 2]]
+                        );
+
+                    // get normal from the traingle, note that the given order is always CW as specified by Unity
+                    sprinkleNorms[i] = Vector3.Cross(
+                        vDup[triangles[t + 1]] - vDup[triangles[t]],
+                        vDup[triangles[t + 2]] - vDup[triangles[t]])
+                        .normalized;
+
+                    // bumping
+                    sprinkleVerts[i] += sprinkleNorms[i] * setting.sprinkleElevation;
+
+                    continue;
+                }
+            }
+        }
+
         vBuf.Dispose();
 
-        return (m, mat);
+        return (m, mat, sprinkleVerts, sprinkleNorms);
     }
 
     private void Dispatch(ComputeShader cs, int kernelIndex = 0)
@@ -294,5 +327,25 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
 
         return !(has_neg && has_pos);
     }
+    #endregion
+
+    #region https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
+    (float, float, float) FindBarycentric(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
+    {
+        Vector2 v0 = b - a, v1 = c - a, v2 = p - a;
+        var d00 = Vector2.Dot(v0, v0);
+        var d01 = Vector2.Dot(v0, v1);
+        var d11 = Vector2.Dot(v1, v1);
+        var d20 = Vector2.Dot(v2, v0);
+        var d21 = Vector2.Dot(v2, v1);
+        var denom = d00 * d11 - d01 * d01;
+        var v = (d11 * d20 - d01 * d21) / denom;
+        var w = (d00 * d21 - d01 * d20) / denom;
+        var u = 1.0f - v - w;
+        return (u, v, w);
+    }
+
+    Vector3 EvaluateBarycentric((float, float, float) uvw, Vector3 a, Vector3 b, Vector3 c)
+        => uvw.Item1 * a + uvw.Item2 * b + uvw.Item3 * c;
     #endregion
 }

@@ -101,50 +101,43 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     {
         switch(CoordUtils.DiffAxisCount(a1, b1))
         {
+            // for overlapping case, just compare if the normals are opposite
             case 0:
-                // for overlapping case, just compare if the normals are opposite
-                if (CoordUtils.RoundEquals(a1.transform.up, -b1.transform.up))
-                {
-                    return ((a1, b1), (a2, b2), FoldState.Overlap);
-                } else if (CoordUtils.RoundEquals(a1.transform.up, -b2.transform.up))
-                {
-                    return ((a1, b2), (a2, b1), FoldState.Overlap);
-                } else
-                {
-                    throw new UnityException("Cannot pair a1 with anything! (Overlapping Case)");
-                }
+                // pair a1 with b1, a2 with b2
+                if (CoordUtils.RoundEquals(a1.transform.up, -b1.transform.up)) return ((a1, b1), (a2, b2), FoldState.Overlap);
+                
+                // the other pairing
+                else if (CoordUtils.RoundEquals(a1.transform.up, -b2.transform.up)) return ((a1, b2), (a2, b1), FoldState.Overlap);
+                
+                // invalid
+                else throw new UnityException("Cannot pair a1 with anything! (Overlapping Case)");
+            
+            // for coplanar case, just compare if the normals match up
             case 1:
-                // for coplanar case, just compare if the normals match up
-                if (CoordUtils.RoundEquals(a1.transform.up, b1.transform.up))
-                {
-                    return ((a1, b1), (a2, b2), FoldState.Coplanar);
-                }
-                else if (CoordUtils.RoundEquals(a1.transform.up, b2.transform.up))
-                {
-                    return ((a1, b2), (a2, b1), FoldState.Coplanar);
-                }
-                else
-                {
-                    throw new UnityException("Can't pair a1 with anything! (Coplanar Case)");
-                }
+                // pair a1 with b1, a2 with b2
+                if (CoordUtils.RoundEquals(a1.transform.up, b1.transform.up)) return ((a1, b1), (a2, b2), FoldState.Coplanar);
+                
+                // the other pairing
+                else if (CoordUtils.RoundEquals(a1.transform.up, b2.transform.up)) return ((a1, b2), (a2, b1), FoldState.Coplanar);
+                
+                // invalid
+                else throw new UnityException("Can't pair a1 with anything! (Coplanar Case)");
             case 2:
                 // for orthogonal case, compare if the "towards" direction is in the same way as the normal (for both sides)
                 // this compares whether two sides are facing "inwards" or "outwards"
                 var a2b = CoordUtils.AsV(CoordUtils.FromTo(a1, b1));
                 var b2a = -a2b;
-
-                if (Mathf.Sign(Vector3.Dot(a1.transform.up, a2b)) == Mathf.Sign(Vector3.Dot(b1.transform.up, b2a)))
-                {
-                    return ((a1, b1), (a2, b2), FoldState.Orthogonal);
-                }
-                else if (Mathf.Sign(Vector3.Dot(a1.transform.up, a2b)) == Mathf.Sign(Vector3.Dot(b1.transform.up, a2b)))
-                {
-                    return ((a1, b2), (a2, b1), FoldState.Orthogonal);
-                }
-                else
-                {
-                    throw new UnityException("Can't pair a1 with anything! (Orthogonal Case)");
-                }
+                
+                // pair a1 with b1, a2 with b2
+                if (Mathf.Sign(Vector3.Dot(a1.transform.up, a2b)) == Mathf.Sign(Vector3.Dot(b1.transform.up, b2a))) return ((a1, b1), (a2, b2), FoldState.Orthogonal);
+                
+                // the other pairing
+                else if (Mathf.Sign(Vector3.Dot(a1.transform.up, a2b)) == Mathf.Sign(Vector3.Dot(b1.transform.up, a2b))) return ((a1, b2), (a2, b1), FoldState.Orthogonal);
+                
+                // invalid
+                else throw new UnityException("Can't pair a1 with anything! (Orthogonal Case)");
+            
+            // somehow there are more than 3 axis different in a 3D space..?
             default:
                 // this includes the possible 3 case when non of the coordinates are equal (the tiles aren't even adjacent!)
                 throw new UnityException($"Joint { transform.parent } contains squares that aren't adjacent!");
@@ -176,34 +169,34 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     /// </summary>
     public void UpdateGeometry()
     {
+        var creaseNorm = Vector3.zero;
+
+        // initialize creaseNorm
         switch(foldState)
         {
+            // norm goes inwards from the joint to the center of the overlapping tiles (i.e. the center of any one of them)
             case FoldState.Overlap:
-                CreateOverlapGeometry();
-                return;
+                creaseNorm = (pair1.Item1.transform.position - transform.position).normalized;
+                break;
+            
+            // norm follows the upwards direction of any tile side
+            // since the crease deforms both +y and -y, there's no need to pick a particular side
             case FoldState.Coplanar:
-                CreateCoplanarGeometry();
-                return;
+                creaseNorm = pair1.Item1.transform.up;
+                break;
+
+            // norm is the average between the two upward directions of any pair
+            // the first pair is picked just as convention, it doesn't guarantee the norm will face inward
             case FoldState.Orthogonal:
-                CreateOrthogonalGeometry();
-                return;
+                creaseNorm = (pair1.Item1.transform.up + pair1.Item2.transform.up).normalized;
+                break;
+
+            // invalid
             case FoldState.NonAdjacent:
                 throw new UnityException("Cannot create geometry for non-adjacent tiles across a joint");
         }
-    }
 
-    private void CreateOverlapGeometry()
-    {
-
-    }
-
-    private void CreateCoplanarGeometry()
-    {
-
-    }
-
-    private void CreateOrthogonalGeometry()
-    {
-
+        if (creaseNorm.sqrMagnitude < .1f) throw new UnityException("Crease normal cannot be initialized due to non-adjacent tiles");
+        
     }
 }
