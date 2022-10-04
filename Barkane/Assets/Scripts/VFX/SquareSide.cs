@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
+[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshFilter))]
 public class SquareSide : MonoBehaviour, IRefreshable
 {
     [SerializeField] MeshFilter mFilter;
