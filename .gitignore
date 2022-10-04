@@ -61,3 +61,5 @@ crashlytics-build.properties
 
 Barkane/.vsconfig
 
+.DS_Store
+/Barkane/ProjectSettings/Packages/com.unity.probuilder/Settings.json
