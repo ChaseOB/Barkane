@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Crease Render Settings
   m_EditorClassIdentifier: 
   creaseMaterial: {fileID: 2100000, guid: 9e1dfe9053d0eaf448923530f341cbbf, type: 2}
-  creaseSegmentCount: 12
-  creaseElevation: 0.0091
+  creaseSegmentCount: 22
+  creaseDeviation: {x: 0.02, y: 0.01, z: 0.02}
+  tintCorrection: 0.07

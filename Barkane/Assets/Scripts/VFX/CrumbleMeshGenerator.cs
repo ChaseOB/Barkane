@@ -15,15 +15,11 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
 
     private readonly static int END_OF_TILE_CORNERS = 3;
 
-    [HideInInspector] public RenderTexture normBuf;
-
     [SerializeField] private ComputeShader crumbleShader, blurShader;
     [SerializeField] private FractureMeshSettings setting;
 
     public void Load()
     {
-        if (normBuf == null) normBuf = new RenderTexture(setting.resolution, setting.resolution, 24);
-
         crumbleShader.SetFloat("resolution", setting.resolution);
         blurShader.SetFloat("resolution", setting.resolution);
     }
@@ -34,13 +30,14 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
     /// </summary>
     /// <param name="baseMat">prototype of new material to be applied to the mesh</param>
     /// <returns>mesh, material, sprinkle positions, sprinkle normals</returns>
-    public (Mesh, Material, Vector3[], Vector3[]) Create(Material baseMat)
+    public (Mesh, Material, Texture2D, Vector3[], Vector3[]) Create(Material baseMat)
     {
         var (pivTop, pivLeft, pivOther) = GetDistinctUV(setting.margin, setting.mainTriangleArea);
 
         // sizeof(Vector3) doesn't work
         // instead we assume each float is 4 bytes, Vector2 is a C# struct of 2 floats
         var vBuf = new ComputeBuffer(24, 2 * 4);
+        var normBuf = new RenderTexture(setting.resolution, setting.resolution, 24);
 
         var v2D = new Vector2[]
         {
@@ -186,8 +183,6 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
             Dispatch(blurShader, 1); // the vertical pass
         }
 
-        mat.SetTexture("Dist", normBuf);
-
         mat.SetVector("YOverride", new Vector4(transform.up.x, transform.up.y, transform.up.z, 1));
 
         var sprinkleVerts = new Vector3[setting.sprinkleCount];
@@ -222,7 +217,18 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
 
         vBuf.Dispose();
 
-        return (m, mat, sprinkleVerts, sprinkleNorms);
+        // transfer distance from GPU to CPu
+        var cpuTexture = new Texture2D(setting.resolution, setting.resolution);
+        // https://answers.unity.com/questions/37134/is-it-possible-to-save-rendertextures-into-png-fil.html
+        RenderTexture.active = normBuf;
+        cpuTexture.ReadPixels(new Rect(0, 0, setting.resolution, setting.resolution), 0, 0);
+        cpuTexture.Apply();
+        RenderTexture.active = null;
+        DestroyImmediate(normBuf);
+
+        mat.SetTexture("Dist", cpuTexture);
+
+        return (m, mat, cpuTexture, sprinkleVerts, sprinkleNorms);
     }
 
     private void Dispatch(ComputeShader cs, int kernelIndex = 0)
