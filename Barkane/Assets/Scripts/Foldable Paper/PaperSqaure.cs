@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class PaperSqaure : MonoBehaviour
 {
     [SerializeField] private bool playerOccupied = false; //true if the player is on this square
@@ -18,6 +19,11 @@ public class PaperSqaure : MonoBehaviour
     public void SetPlayerOccupied(bool value)
     {
         playerOccupied = value;
+    }
+
+    private void OnDestroy()
+    {
+        SendMessageUpwards("RemoveReferenceMessage", this.transform.position);
     }
 
     private void OnValidate()

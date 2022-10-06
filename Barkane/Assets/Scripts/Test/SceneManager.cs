@@ -1,24 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 
-[ExecuteAlways]
+[ExecuteInEditMode]
 public class SceneManager : MonoBehaviour
 {
-    [SerializeField] private bool editorOn = false;
-    public bool EditorOn => editorOn;
     [SerializeField] private PaperSquares squares;
     public PaperSquares Squares => squares;
+    [SerializeField] private PaperSqaure copyFrom;
 
-    private BoxCollider collider;
-    [SerializeField] private int axisPos;
+    private BoxCollider meshCollider;
 
-    // [SerializeField] private Vector3 orientation;
-    public readonly Vector3 XY = new Vector3(0, 0, 0);
-    public readonly Vector3 XZ = new Vector3(90, 0, 0);
-    public readonly Vector3 YZ = new Vector3(0, 90, 0);
+    [SerializeField] private int axisPos = -1;
+    [SerializeField] Orientation orientation;
 
-    public Vector3? GetPlanePosition(Ray mouseRay)
+    public bool GetPlanePosition(Ray mouseRay, out Vector3 hitPoint)
     {
         // Bit mask for layer 6 (paper layer)
         int paperMask = 1 << 6;
@@ -26,17 +23,90 @@ public class SceneManager : MonoBehaviour
 
         if (Physics.Raycast(mouseRay.origin, mouseRay.direction, out hit, Mathf.Infinity, paperMask))
         {
-            Vector3 hitPoint = hit.point;
-            if (collider.bounds.Contains(hitPoint))
+            if (meshCollider.bounds.Contains(hit.point))
             {
-                return hitPoint;
+                hitPoint = GetPosOnPlane(hit.point);
+                return true;
             }
         }
-        return null;
+        hitPoint = Vector3.zero;
+        return false;
+    }
+
+    public bool AddSquare(Vector3Int relPos)
+    {
+        PaperSqaure square = squares.GetSquareAt(relPos);
+
+        if (square != null)
+        {
+            return false;
+        }
+
+        Vector3 squareCenter = squares.GetAbsolutePosition(relPos);
+        Quaternion rotation = Quaternion.Euler(OrientationExtension.GetEulerAngle(orientation));
+        square = Instantiate(copyFrom, squareCenter, rotation, squares.squareList.transform);
+        squares.SetSquareAt(relPos, square);
+        return true;
+    }
+
+    public bool RemoveSquare(Vector3Int relPos)
+    {
+        PaperSqaure square = squares.GetSquareAt(relPos);
+
+        if (square == null || square == squares.GetCenter())
+        {
+            return false;
+        }
+
+        squares.RemoveReference(relPos);
+        if (square == copyFrom)
+        {
+            copyFrom = squares.GetCenter();
+        }
+        DestroyImmediate(square.gameObject);
+        return true;
+    }
+
+    public Vector3Int GetNearestSquarePos(Vector3 absPos)
+    {
+        return squares.GetNearestSquarePos(absPos, orientation);
     }
 
     private void Start()
     {
-        collider = GetComponent<BoxCollider>();
+        meshCollider = GetComponent<BoxCollider>();
+        orientation = OrientationExtension.GetOrientation(transform.eulerAngles);
+        if (orientation == Orientation.XZ)
+        {
+            transform.eulerAngles = OrientationExtension.XZ;
+        }
+        transform.position = GetPosOnPlane(Vector3.zero);
+        copyFrom = squares.GetCenter();
+    }
+
+    private void OnValidate()
+    {
+        transform.eulerAngles = OrientationExtension.GetEulerAngle(orientation);
+        transform.position = GetPosOnPlane(Vector3.zero);
+    }
+
+    // Helper methods
+
+    private Vector3 GetPosOnPlane(Vector3 approxPos)
+    {
+        Vector3 newPos = new Vector3(approxPos.x, approxPos.y, approxPos.z);
+        switch (orientation)
+        {
+            case Orientation.YZ:
+                newPos.x = axisPos;
+                break;
+            case Orientation.XZ:
+                newPos.y = axisPos;
+                break;
+            case Orientation.XY:
+                newPos.z = axisPos;
+                break;
+        }
+        return newPos;
     }
 }
