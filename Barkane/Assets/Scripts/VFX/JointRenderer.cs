@@ -59,8 +59,6 @@ public class JointRenderer : MonoBehaviour, IRefreshable
             throw new UnityException("Incorrect square side references! A paper square has sides on different coordinates.");
         }
 
-        Debug.Log($"Joint with tiles at ({a1.Coordinate}, {b1.Coordinate})");
-
         if (a1 != null)
         {
             foldState = FormPairs(a1, a2, b1, b2);
@@ -160,8 +158,6 @@ public class JointRenderer : MonoBehaviour, IRefreshable
         colorA2 = a2.EdgeTintedColor(settings.tintCorrection);
         colorB1 = b1.EdgeTintedColor(settings.tintCorrection);
         colorB2 = b2.EdgeTintedColor(settings.tintCorrection);
-
-        Debug.Log($"... colors: ({colorA1}, {colorB1}), ({colorA2}, {colorB2})");
     }
 
     private static readonly float squareSize = 2;
@@ -232,8 +228,6 @@ public class JointRenderer : MonoBehaviour, IRefreshable
             throw new UnityException("Crease normal cannot be initialized due to non-adjacent tiles");
         creaseBitangent = Vector3.Cross(creaseNorm, creaseTangent);
 
-        Debug.Log($"... norm: {creaseNorm}, tangent: {creaseTangent}");
-
         // time points (t in 0~1) for both anchors and pivots
         // anchors are along the side of the tile faces
         var ts = new float[settings.creaseSegmentCount + 1];
@@ -294,11 +288,22 @@ public class JointRenderer : MonoBehaviour, IRefreshable
             verts[i + 2 * submeshOffset] = pivotBase + squareRenderSettings.margin * toAN + a2Up * 0.0005f;
             verts[i + 3 * submeshOffset] = pivotBase + squareRenderSettings.margin * toBN + b2Up * 0.0005f;
 
-            // the same pivots are duplicated to avoid color bleeding
-            verts[i + pivotOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
-            verts[i + pivotOffset + submeshOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
-            verts[i + pivotOffset + 2 * submeshOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
-            verts[i + pivotOffset + 3 * submeshOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
+            // special case for adding a edge-directed shift to the overlap case
+            // otherwise the saw-edge shape looks too pronounced
+            if (foldState == FoldState.Overlap)
+            {
+                verts[i + pivotOffset] = pivotBase;
+                verts[i + pivotOffset + submeshOffset] = pivotBase;
+                verts[i + pivotOffset + 2 * submeshOffset] = pivotBase;
+                verts[i + pivotOffset + 3 * submeshOffset] = pivotBase;
+            } else
+            {
+                verts[i + pivotOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
+                verts[i + pivotOffset + submeshOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
+                verts[i + pivotOffset + 2 * submeshOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
+                verts[i + pivotOffset + 3 * submeshOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
+            }
+            
             #endregion
 
             #region normals filling
@@ -425,9 +430,6 @@ public class JointRenderer : MonoBehaviour, IRefreshable
                 tris[3 * triOffset + j + 5] = i + 3 * submeshOffset + pivotOffset + 1;
             }
         }
-        
-        // Debug.Log(string.Join("\n", verts));
-        // Debug.Log(string.Join(", ", tris));
 
         var m = filter.sharedMesh;
         m.vertices = verts;
