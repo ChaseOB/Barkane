@@ -1,12 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UnityEngine;
+using UnityEditor;
+using UnityEditor.EditorTools;
 
-namespace Assets.Scripts.TP_Tool.Editor
+[EditorTool("Place Joints Tool")]
+class JointPaintTool : EditorTool
 {
-    internal class JointPaintTool
+    [SerializeField] private Texture2D toolIcon;
+
+    private GUIContent _iconContent;
+
+    private void OnEnable()
     {
+        _iconContent = new GUIContent()
+        {
+            image = toolIcon,
+            text = "Joint Paint Tool",
+            tooltip = "Paint Joints Between Squares"
+        };
     }
 }
+
