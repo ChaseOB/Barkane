@@ -91,7 +91,7 @@ public class JointRenderer : MonoBehaviour, IRefreshable
         }
 
         UpdateColors();
-        UpdateGeometry();
+        UpdateGeometry(true);
     }
 
     public bool IsAnimating = false;
@@ -112,9 +112,6 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     void Update()
     {
         if (foldState == FoldState.NonAdjacent) return;
-
-        if (IsAnimating && Application.isPlaying)
-            UpdateGeometry();
     }
 
     /// <summary>
@@ -214,7 +211,7 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     /// <summary>
     /// Update Joint appearance when the physical location/orientation of either side changes
     /// </summary>
-    private void UpdateGeometry()
+    private void UpdateGeometry(bool clear = false)
     {
         // lock to world space orientation
         transform.rotation = Quaternion.identity;
@@ -275,14 +272,6 @@ public class JointRenderer : MonoBehaviour, IRefreshable
         var norms = new Vector3[verts.Length];
         var colors = new Color[verts.Length];
         var uvs = new Vector2[verts.Length];
-
-        if (filter.sharedMesh == null)
-        {
-            filter.sharedMesh = new Mesh()
-            {
-                name = "Joint Mesh"
-            };
-        }
 
         var creaseNorm1 = Vector3.Dot(creaseNorm, a1Up) > 0 ? creaseNorm : -creaseNorm;
         var creaseNorm2 = -creaseNorm1;
@@ -494,11 +483,26 @@ public class JointRenderer : MonoBehaviour, IRefreshable
             }
         }
 
-        var m = filter.sharedMesh;
-        m.vertices = verts;
-        m.normals = norms;
-        m.colors = colors;
-        m.uv = uvs;
-        m.triangles = tris;
+        if (clear || filter.sharedMesh == null)
+        {
+            filter.sharedMesh = new Mesh()
+            {
+                name = "Joint Mesh",
+                vertices = verts,
+                normals = norms,
+                colors = colors,
+                uv = uvs,
+                triangles = tris
+            };
+        } else
+        {
+            var m = filter.sharedMesh;
+            m.name = "Joint Mesh";
+            m.vertices = verts;
+            m.normals = norms;
+            m.colors = colors;
+            m.uv = uvs;
+            m.triangles = tris;
+        }
     }
 }
