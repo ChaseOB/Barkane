@@ -16,6 +16,9 @@ public class PaperJoint : MonoBehaviour
    // private bool JointEnabled = true; //CO: Set to false to "cut" the paper along the given joint
     public bool canFold = true; //CO: Set to false to lock the current joint in position, as if the squares were glued together
 
+    [SerializeField] private JointRenderer jointRenderer;
+    public JointRenderer JointRenderer => jointRenderer;
+
     private void Start() {
         if(capsuleCollider == null)
             capsuleCollider = GetComponent<CapsuleCollider>();

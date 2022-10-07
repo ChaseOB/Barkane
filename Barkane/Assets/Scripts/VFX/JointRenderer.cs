@@ -27,6 +27,12 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     // base color for tile sides
     [SerializeField, HideInInspector] private Color colorA1, colorB1, colorA2, colorB2;
 
+    [SerializeField, HideInInspector] private Vector3[] randoms;
+
+    // time points (t in 0~1) for both anchors and pivots
+    // anchors are along the side of the tile faces
+    [SerializeField, HideInInspector] private float[] ts;
+
     private enum FoldState
     {
         Overlap,
@@ -66,11 +72,42 @@ public class JointRenderer : MonoBehaviour, IRefreshable
         else
             throw new UnityException("Cannot find square side reference in joint renderer parent");
 
+        ts = new float[settings.creaseSegmentCount + 1];
+        for (int i = 0; i < settings.creaseSegmentCount + 1; i++)
+        {
+            ts[i] = i / (float)settings.creaseSegmentCount;
+        }
+        ts[settings.creaseSegmentCount] = 1;
+
+
+        randoms = new Vector3[settings.creaseSegmentCount + 1];
+
+        for (int i = 0; i < settings.creaseSegmentCount + 1; i++)
+        {
+            randoms[i] = new Vector3(
+                2 * (Random.value - 0.5f) * settings.creaseDeviation.x,
+                2 * (Random.value - 0.5f) * settings.creaseDeviation.y,
+                2 * (Random.value - 0.5f) * settings.creaseDeviation.z);
+        }
+
         UpdateColors();
         UpdateGeometry();
     }
 
     public bool IsAnimating = false;
+
+    public System.Action DisableMeshAction => new System.Action(delegate() {
+        meshRenderer.enabled = false;
+    });
+
+    public System.Action EnableMeshAction => new System.Action(delegate ()
+    {
+        FormPairs(a1, a2, b1, b2);
+        // colors stay the same across folds
+        // UpdateColors();
+        UpdateGeometry();
+        meshRenderer.enabled = true;
+    });
 
     void Update()
     {
@@ -228,26 +265,6 @@ public class JointRenderer : MonoBehaviour, IRefreshable
             throw new UnityException("Crease normal cannot be initialized due to non-adjacent tiles");
         creaseBitangent = Vector3.Cross(creaseNorm, creaseTangent);
 
-        // time points (t in 0~1) for both anchors and pivots
-        // anchors are along the side of the tile faces
-        var ts = new float[settings.creaseSegmentCount + 1];
-        for (int i = 0; i < settings.creaseSegmentCount + 1; i++)
-        {
-            ts[i] = i / (float)settings.creaseSegmentCount;
-        }
-        ts[settings.creaseSegmentCount] = 1;
-
-        // displacement for each pivot point along the crease normal
-        var ys = new float[settings.creaseSegmentCount + 1];
-        var xs = new float[settings.creaseSegmentCount + 1];
-        var zs = new float[settings.creaseSegmentCount + 1];
-        for (int i = 0; i < settings.creaseSegmentCount + 1; i++)
-        {
-            ys[i] = 2 * (Random.value - 0.5f) * settings.creaseDeviation.y;
-            xs[i] = 2 * (Random.value - 0.5f) * settings.creaseDeviation.x;
-            zs[i] = 2 * (Random.value - 0.5f) * settings.creaseDeviation.z;
-        }
-
         // the pivots are duplicated
         var verts = new Vector3[8 * (settings.creaseSegmentCount + 1)];
         // not actually submeshes, just mentally think of each side of each tile as a submesh
@@ -288,20 +305,66 @@ public class JointRenderer : MonoBehaviour, IRefreshable
             verts[i + 2 * submeshOffset] = pivotBase + squareRenderSettings.margin * toAN + a2Up * 0.0005f;
             verts[i + 3 * submeshOffset] = pivotBase + squareRenderSettings.margin * toBN + b2Up * 0.0005f;
 
-            // special case for adding a edge-directed shift to the overlap case
-            // otherwise the saw-edge shape looks too pronounced
-            if (foldState == FoldState.Overlap)
+            // different cases for pivots at fold states
+            switch (foldState)
             {
-                verts[i + pivotOffset] = pivotBase;
-                verts[i + pivotOffset + submeshOffset] = pivotBase;
-                verts[i + pivotOffset + 2 * submeshOffset] = pivotBase;
-                verts[i + pivotOffset + 3 * submeshOffset] = pivotBase;
-            } else
-            {
-                verts[i + pivotOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
-                verts[i + pivotOffset + submeshOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
-                verts[i + pivotOffset + 2 * submeshOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
-                verts[i + pivotOffset + 3 * submeshOffset] = pivotBase + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * zs[i] * creaseTangent + ys[i] * creaseNorm + xs[i] * toAN;
+                case FoldState.Overlap:
+                    verts[i + pivotOffset] = pivotBase;
+                    verts[i + pivotOffset + submeshOffset] = pivotBase;
+                    verts[i + pivotOffset + 2 * submeshOffset] = pivotBase;
+                    verts[i + pivotOffset + 3 * submeshOffset] = pivotBase;
+                    break;
+                case FoldState.Coplanar:
+                    verts[i + pivotOffset] =
+                    pivotBase
+                    + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * creaseTangent
+                    + randoms[i].y * creaseNorm
+                    + randoms[i].x * toAN;
+
+                    verts[i + pivotOffset + submeshOffset] =
+                        pivotBase
+                        + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * creaseTangent
+                        + randoms[i].y * creaseNorm
+                        + randoms[i].x * toAN;
+
+                    verts[i + pivotOffset + 2 * submeshOffset] =
+                        pivotBase
+                        + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * creaseTangent
+                        + randoms[i].y * creaseNorm
+                        + randoms[i].x * toAN;
+
+                    verts[i + pivotOffset + 3 * submeshOffset] =
+                        pivotBase
+                        + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * creaseTangent
+                        + randoms[i].y * creaseNorm
+                        + randoms[i].x * toAN;
+                    break;
+                case FoldState.Orthogonal:
+                    verts[i + pivotOffset] =
+                    pivotBase
+                    + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * creaseTangent
+                    + Mathf.Abs(randoms[i].y) * creaseNorm
+                    + randoms[i].x * toAN;
+
+                    verts[i + pivotOffset + submeshOffset] =
+                        pivotBase
+                        + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * creaseTangent
+                        + Mathf.Abs(randoms[i].y) * creaseNorm
+                        + randoms[i].x * toAN;
+
+                    verts[i + pivotOffset + 2 * submeshOffset] =
+                        pivotBase
+                        + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * creaseTangent
+                        + Mathf.Abs(randoms[i].y) * creaseNorm
+                        + randoms[i].x * toAN;
+
+                    verts[i + pivotOffset + 3 * submeshOffset] =
+                        pivotBase
+                        + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * creaseTangent
+                        + Mathf.Abs(randoms[i].y) * creaseNorm
+                        + randoms[i].x * toAN;
+                    break;
+                case FoldState.NonAdjacent: throw new UnityException("Incorrect folding state: non-adjacent");
             }
             
             #endregion
