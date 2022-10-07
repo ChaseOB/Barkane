@@ -22,14 +22,17 @@ public class PaperJoint : MonoBehaviour
    // private bool JointEnabled = true; //CO: Set to false to "cut" the paper along the given joint
     public bool canFold = true; //CO: Set to false to lock the current joint in position, as if the squares were glued together
 
+    private void Start() {
+        if(capsuleCollider == null)
+            capsuleCollider = GetComponent<CapsuleCollider>();
+    }
+
     void Update(){
         if (isSelected) {
             if (isFirstCall) {
                 isFirstCall = !isFirstCall;
                 foldablePaper = FindObjectOfType<FoldablePaper>();
-                foldablePaper.FindFoldObjects();
-                willBeFoldedAll = foldablePaper.getFoldSide();
-                GetWillBeFoldedPaperSquares();
+                willBeFoldedPaperSquares = foldablePaper.GetWillBeFoldedSquares();
                 EmitEdgeParticles();
             }
         } else {
@@ -38,9 +41,6 @@ public class PaperJoint : MonoBehaviour
                 UnEmitParticles();
             }
         }
-    } private void Start() {
-        if(capsuleCollider == null)
-            capsuleCollider = GetComponent<CapsuleCollider>();
     }
 
     public void Select()
@@ -85,14 +85,6 @@ public class PaperJoint : MonoBehaviour
     private void OnTriggerExit(Collider other) {
         if(other.gameObject.layer == 7)
             adjList.Remove(other.GetComponent<PaperJoint>());
-    }
-
-    private void GetWillBeFoldedPaperSquares() {
-        for (int i = 0; i < willBeFoldedAll.Count; i++) {
-            if (willBeFoldedAll[i].GetComponent<PaperSqaure>() != null) {
-                willBeFoldedPaperSquares.Add(willBeFoldedAll[i].GetComponent<PaperSqaure>());
-            }
-        }
     }
 
     private void EmitEdgeParticles() {

@@ -19,13 +19,6 @@ public class EdgeParticles : MonoBehaviour
     {
         edgeParticlesPrefabChild = gameObject.transform.Find("Edge Particles").gameObject;
     }
-    
-    void Update()
-    {
-
-    }
-
-
     private void FindAllChildrenPS() {
         Transform result;
 
