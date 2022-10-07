@@ -11,18 +11,12 @@ public class FoldablePaper : MonoBehaviour
     public List<PaperSquareStack> PaperSquareStacks => paperSquareStacks;
     private Dictionary<PaperSqaure,  List<PaperJoint>> adjListSquareToJoint;
     private Dictionary<PaperJoint,  List<PaperSqaure>> adjListJointToSquare;
-
+    private List<PaperSqaure> willBeFoldedPaperSquares = new List<PaperSqaure>();
     public FoldAnimator foldAnimator;
-
-
     private  List<GameObject> playerSide = new List<GameObject>();
-
     private  List<GameObject> foldSide = new List<GameObject>();
-
     private HashSet<PaperSqaure> visitedSquares = new HashSet<PaperSqaure>();
     private HashSet<PaperJoint> visitedJoints = new HashSet<PaperJoint>();
-
-
     public PaperJoint foldJoint;
 
 
@@ -132,5 +126,19 @@ public class FoldablePaper : MonoBehaviour
             if (pss.Contains(ps))
                 return pss;
         return null;
+    }
+
+    private void WillBeFoldedPaperSquares() {
+        for (int i = 0; i < foldSide.Count; i++) {
+            if (foldSide[i].GetComponent<PaperSqaure>() != null) {
+                willBeFoldedPaperSquares.Add(foldSide[i].GetComponent<PaperSqaure>());
+            }
+        }
+    }
+
+    public List<PaperSqaure> GetWillBeFoldedSquares() {
+        FindFoldObjects();
+        WillBeFoldedPaperSquares();
+        return willBeFoldedPaperSquares;
     }
 }
