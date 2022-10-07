@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(EdgeParticles))]
 public class PaperSqaure : MonoBehaviour
 {
     [SerializeField] private bool playerOccupied = false; //true if the player is on this square
