@@ -10,6 +10,12 @@ public class PaperJoint : MonoBehaviour
     private bool isSelected = false; //true when this is the current selected fold
     public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
     public LineRenderer lineRenderer;
+    private PaperJoint currentJoint;
+    FoldablePaper foldablePaper;
+    List<GameObject> willBeFoldedAll;
+    private bool isFirstCall = true;
+    List<PaperSqaure> willBeFoldedPaperSquares = new List<PaperSqaure>();
+
     [SerializeField] private List<PaperJoint> adjList = new List<PaperJoint>();
 
     [SerializeField] private CapsuleCollider capsuleCollider;
@@ -19,6 +25,22 @@ public class PaperJoint : MonoBehaviour
     private void Start() {
         if(capsuleCollider == null)
             capsuleCollider = GetComponent<CapsuleCollider>();
+    }
+
+    void Update(){
+        if (isSelected) {
+            if (isFirstCall) {
+                isFirstCall = !isFirstCall;
+                foldablePaper = FindObjectOfType<FoldablePaper>();
+                willBeFoldedPaperSquares = foldablePaper.GetWillBeFoldedSquares();
+                EmitEdgeParticles();
+            }
+        } else {
+            if (!isFirstCall) {
+                isFirstCall = !isFirstCall;
+                UnEmitParticles();
+            }
+        }
     }
 
     public void Select()
@@ -63,5 +85,17 @@ public class PaperJoint : MonoBehaviour
     private void OnTriggerExit(Collider other) {
         if(other.gameObject.layer == 7)
             adjList.Remove(other.GetComponent<PaperJoint>());
+    }
+
+    private void EmitEdgeParticles() {
+        for (int i = 0; i < willBeFoldedPaperSquares.Count; i++) {
+            willBeFoldedPaperSquares[i].GetComponent<EdgeParticles>().Emit();
+        }
+    }
+
+    private void UnEmitParticles() {
+        for (int i = 0; i < willBeFoldedPaperSquares.Count; i++) {
+            willBeFoldedPaperSquares[i].GetComponent<EdgeParticles>().Unemit();
+        }
     }
 }
