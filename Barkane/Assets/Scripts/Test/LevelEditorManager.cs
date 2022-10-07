@@ -11,7 +11,7 @@ public class LevelEditorManager : MonoBehaviour
     [SerializeField] private PaperSqaure copyFrom;
 
     private BoxCollider meshCollider;
-    [SerializeField] private PlaneManager plane;
+    [SerializeField] private GameObject plane;
 
     [SerializeField] private int axisPos = -1;
     [SerializeField] private Orientation orientation;
@@ -93,7 +93,7 @@ public class LevelEditorManager : MonoBehaviour
 
     private void OnValidate()
     {
-        axisPos = Mathf.RoundToInt(axisPos + 0.5f) - 1;
+        axisPos = Mathf.Clamp(Mathf.RoundToInt(axisPos + 0.5f) - 1, -PaperSquares.SIZE / 2, PaperSquares.SIZE / 2);
         plane.transform.eulerAngles = OrientationExtension.GetEulerAngle(orientation);
         plane.transform.position = GetPosOnPlane(Vector3.zero);
     }
