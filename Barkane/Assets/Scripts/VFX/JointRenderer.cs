@@ -197,8 +197,6 @@ public class JointRenderer : MonoBehaviour, IRefreshable
         colorB2 = b2.EdgeTintedColor(settings.tintCorrection);
     }
 
-    private static readonly float squareSize = 2;
-
     private void OnDrawGizmosSelected()
     {
         if (filter.sharedMesh != null)
@@ -285,7 +283,7 @@ public class JointRenderer : MonoBehaviour, IRefreshable
         var creaseNorm1 = Vector3.Dot(creaseNorm, a1Up) > 0 ? creaseNorm : -creaseNorm;
         var creaseNorm2 = -creaseNorm1;
 
-        var scaledSquareSize = squareSize * (1 - squareRenderSettings.margin);
+        var scaledSquareSize = squareRenderSettings.squareSize * (1 - squareRenderSettings.margin);
 
         var toAN = toA.normalized;
         var toBN = toB.normalized;
