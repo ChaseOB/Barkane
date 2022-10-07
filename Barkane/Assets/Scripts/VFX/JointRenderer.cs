@@ -33,6 +33,8 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     // anchors are along the side of the tile faces
     [SerializeField, HideInInspector] private float[] ts;
 
+    [SerializeField] private GameObject indicator;
+
     private enum FoldState
     {
         Overlap,
@@ -67,7 +69,7 @@ public class JointRenderer : MonoBehaviour, IRefreshable
 
         if (a1 != null)
         {
-            foldState = FormPairs(a1, a2, b1, b2);
+            FormPairs(a1, a2, b1, b2);
         }
         else
             throw new UnityException("Cannot find square side reference in joint renderer parent");
@@ -78,7 +80,6 @@ public class JointRenderer : MonoBehaviour, IRefreshable
             ts[i] = i / (float)settings.creaseSegmentCount;
         }
         ts[settings.creaseSegmentCount] = 1;
-
 
         randoms = new Vector3[settings.creaseSegmentCount + 1];
 
@@ -115,11 +116,10 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     }
 
     /// <summary>
-    /// Reorganize square side references based on side parity.
+    /// Reorganize square side references based on side parity, pairs and foldState are set as side effect
     /// </summary>
-    /// <returns>Classification of the fold type based on number of coordinates different between A and B. Pairs are rearranged as side effect.</returns>
     /// <exception cref="UnityException"></exception>
-    private FoldState FormPairs(SquareSide a1, SquareSide a2, SquareSide b1, SquareSide b2)
+    private void FormPairs(SquareSide a1, SquareSide a2, SquareSide b1, SquareSide b2)
     {
         switch(CoordUtils.DiffAxisCount(a1, b1))
         {
@@ -138,7 +138,8 @@ public class JointRenderer : MonoBehaviour, IRefreshable
                 // invalid
                 else throw new UnityException("Cannot pair a1 with anything! (Overlapping Case)");
 
-                return FoldState.Overlap;
+                foldState = FoldState.Overlap;
+                break;
             
             // for coplanar case, just compare if the normals match up
             case 1:
@@ -156,7 +157,8 @@ public class JointRenderer : MonoBehaviour, IRefreshable
                 // invalid
                 else throw new UnityException("Can't pair a1 with anything! (Coplanar Case)");
 
-                return FoldState.Coplanar;
+                foldState = FoldState.Coplanar;
+                break;
             case 2:
                 // for orthogonal case, compare if the "towards" direction is in the same way as the normal (for both sides)
                 // this compares whether two sides are facing "inwards" or "outwards"
@@ -177,7 +179,8 @@ public class JointRenderer : MonoBehaviour, IRefreshable
                 // invalid
                 else throw new UnityException("Can't pair a1 with anything! (Orthogonal Case)");
 
-                return FoldState.Orthogonal;
+                foldState = FoldState.Orthogonal;
+                break;
             
             // somehow there are more than 3 axis different in a 3D space..?
             default:
@@ -208,11 +211,17 @@ public class JointRenderer : MonoBehaviour, IRefreshable
         }
     }
 
+    public void ShowLine(bool value)
+    {
+        indicator.SetActive(value);
+    }
+
     /// <summary>
     /// Update Joint appearance when the physical location/orientation of either side changes
     /// </summary>
     private void UpdateGeometry(bool clear = false)
     {
+
         // lock to world space orientation
         transform.rotation = Quaternion.identity;
 
@@ -236,7 +245,7 @@ public class JointRenderer : MonoBehaviour, IRefreshable
             case FoldState.Overlap:
                 creaseNorm = toA.normalized;
                 // the a2b vector is 0 in this case, we need another way to find crease tangent
-                creaseTangent = Vector3.Cross(toA, a1Up).normalized;
+                creaseTangent = Vector3.Cross(creaseNorm, a1Up).normalized;
                 break;
 
             // norm follows the upwards direction of any tile side

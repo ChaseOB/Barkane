@@ -9,7 +9,7 @@ public class PaperJoint : MonoBehaviour
 
     private bool isSelected = false; //true when this is the current selected fold
     public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
-    public LineRenderer lineRenderer;
+
     [SerializeField] private List<PaperJoint> adjList = new List<PaperJoint>();
 
     [SerializeField] private CapsuleCollider capsuleCollider;
@@ -43,8 +43,10 @@ public class PaperJoint : MonoBehaviour
 
     private void ShowLine(bool value)
     {
-        lineRenderer.enabled = value;
         showLine = value;
+        
+        jointRenderer.ShowLine(value);
+
         foreach(PaperJoint pj in adjList)
             if(pj.showLine != value)
                 pj.ShowLine(value);

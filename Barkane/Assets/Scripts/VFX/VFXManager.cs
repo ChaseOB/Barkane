@@ -22,6 +22,16 @@ namespace BarkaneEditor
 
         public static VFXManager Instance { get; private set; }
 
+        [UnityEditor.Callbacks.DidReloadScripts]
+        public static void DidReloadScripts()
+        {
+            var singleton = FindObjectOfType<VFXManager>();
+            if (singleton)
+            {
+                singleton.Refresh();
+            }
+        }
+
         internal void Refresh()
         {
             Instance = this;
