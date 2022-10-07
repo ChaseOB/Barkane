@@ -19,18 +19,6 @@ public class PaperSquares : MonoBehaviour
         Vertex  // Should contain null (for now)
     }
 
-    /*
-    public void SelectSquare(Vector3Int relPos)
-    {
-        PaperSqaure square = GetSquareAt(relPos);
-
-        if (square != null)
-        {
-            copyFrom = square;
-        }
-    }
-    */
-
     public PaperSqaure GetCenter()
     {
         return GetSquareAt(center);
@@ -109,9 +97,14 @@ public class PaperSquares : MonoBehaviour
         }
     }
 
+    public MonoBehaviour GetObjectAt(Vector3Int relPos)
+    {
+        return paperSquares[relPos.x, relPos.y, relPos.z];
+    }
+
     public PaperSqaure GetSquareAt(Vector3Int relPos)
     {
-        return paperSquares[relPos.x, relPos.y, relPos.z] as PaperSqaure;
+        return GetObjectAt(relPos) as PaperSqaure;
     }
 
     public void SetSquareAt(Vector3Int relPos, PaperSqaure square)

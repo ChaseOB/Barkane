@@ -1,5 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
-    <uie:ObjectField label="Squares" binding-path="squares" />
-    <ui:SliderInt picking-mode="Ignore" label="SliderInt" value="42" high-value="100" />
-    <uie:EnumField label="Enum" include-obsolete-values="false" />
-</ui:UXML>

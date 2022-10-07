@@ -2,11 +2,14 @@
 using UnityEditor;
 using UnityEditor.EditorTools;
 
-[EditorTool("Add & Delete Squares", typeof(SceneManager))]
+[EditorTool("Add & Delete Squares", typeof(LevelEditorManager))]
 public class SquareAdder : EditorTool
 {
-    SceneManager manager;
+    LevelEditorManager manager;
+    // TODO: Use PrefabUtility.InstatitatePrefab to instantiate new PaperSquares
+    [SerializeField] PaperSqaure squarePrefab;
 
+    // TODO: Use Handles to deal with UnityGUI events
     public override void OnToolGUI(EditorWindow window)
     {
         if (!(window is SceneView sceneView))
@@ -102,7 +105,7 @@ public class SquareAdder : EditorTool
 
     private void OnEnable()
     {
-        manager = target as SceneManager;
+        manager = target as LevelEditorManager;
     }
 }
 

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
 public class PaperSqaure : MonoBehaviour
 {
     [SerializeField] private bool playerOccupied = false; //true if the player is on this square
