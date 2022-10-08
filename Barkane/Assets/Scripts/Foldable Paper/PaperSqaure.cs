@@ -22,7 +22,7 @@ public class PaperSqaure : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (Application.isEditor)
+        if (!Application.isPlaying)
         {
             SendMessageUpwards("RemoveReferenceMessage", this.transform.position);
         }

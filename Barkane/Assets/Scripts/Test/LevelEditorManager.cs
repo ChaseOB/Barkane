@@ -16,6 +16,32 @@ public class LevelEditorManager : MonoBehaviour
     [SerializeField] private int axisPos = -1;
     [SerializeField] private Orientation orientation;
 
+    public bool GetSquarePosition(Ray mouseRay, out Vector3 hitPoint, out Orientation orientation)
+    {
+        RaycastHit hitSquare;
+        if (!GetSquarePosition(mouseRay, out hitSquare))
+        {
+            hitPoint = Vector3.zero;
+            orientation = Orientation.XZ;
+            return false;
+        }
+        hitPoint = hitSquare.collider.transform.position;
+        orientation = OrientationExtension.GetOrientation(hitSquare.collider.transform.eulerAngles);
+        return true;
+    }
+
+    private bool GetSquarePosition(Ray mouseRay, out RaycastHit hitSquare)
+    {
+        // Bit mask for layer 6 (paper layer)
+        int paperMask = 1 << 6;
+
+        if (Physics.Raycast(mouseRay, out hitSquare, Mathf.Infinity, paperMask))
+        {
+            return true;
+        }
+        return false;
+    }
+
     public bool GetPlanePosition(Ray mouseRay, out Vector3 hitPoint)
     {
         RaycastHit hitPlane;
@@ -26,13 +52,11 @@ public class LevelEditorManager : MonoBehaviour
             return false;
         }
 
-        // Bit mask for layer 6 (paper layer)
-        int paperMask = 1 << 6;
         RaycastHit hitSquare;
-
-        if (Physics.Raycast(mouseRay, out hitSquare, Mathf.Infinity, paperMask) && hitPlane.distance > hitSquare.distance)
+        if (GetSquarePosition(mouseRay, out hitSquare) && hitPlane.distance > hitSquare.distance)
         {
-            hitPoint = GetPosOnPlane(hitSquare.point);
+            // A PaperSquare blocks the Raycast to the plane.
+            hitPoint = hitSquare.collider.transform.position;
             return false;
         }
 
@@ -74,11 +98,6 @@ public class LevelEditorManager : MonoBehaviour
         return true;
     }
 
-    public Vector3Int GetNearestSquarePos(Vector3 absPos)
-    {
-        return squares.GetNearestSquarePos(absPos, orientation);
-    }
-
     private void Start()
     {
         meshCollider = plane.GetComponent<BoxCollider>();
@@ -89,7 +108,7 @@ public class LevelEditorManager : MonoBehaviour
         }
         plane.transform.position = GetPosOnPlane(Vector3.zero);
         copyFrom = squares.GetCenter();
-        this.enabled = false;
+        HidePlane();
     }
 
     private void OnValidate()
@@ -99,19 +118,24 @@ public class LevelEditorManager : MonoBehaviour
         plane.transform.position = GetPosOnPlane(Vector3.zero);
     }
 
-    private void OnDisable()
+    public Vector3Int GetNearestSquarePos(Vector3 absPos)
     {
-        plane.gameObject.SetActive(false);
+        return GetNearestSquarePos(absPos, orientation);
     }
 
-    private void OnEnable()
+    public Vector3Int GetNearestSquarePos(Vector3 absPos, Orientation orientation)
+    {
+        return squares.GetNearestSquarePos(absPos, orientation);
+    }
+
+    public void ShowPlane()
     {
         plane.gameObject.SetActive(true);
     }
 
-    private void OnDestroy()
+    public void HidePlane()
     {
-        this.enabled = true;
+        plane.gameObject.SetActive(false);
     }
 
     private Vector3 GetPosOnPlane(Vector3 approxPos)
