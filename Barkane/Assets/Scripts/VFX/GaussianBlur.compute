@@ -1,0 +1,38 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel hBoxBlur
+#pragma kernel vBoxBlur
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+float resolution;
+
+[numthreads(8, 8, 1)]
+void hBoxBlur (uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < 3 || id.x/resolution > (resolution - 3)/resolution) return;
+    else {
+        Result[id.xy] = 
+            1.0 * Result[uint2(id.x - 2, id.y)] / 16.0 +
+            4.0 * Result[uint2(id.x - 1, id.y)] / 16.0 +
+            6.0 * Result[uint2(id.x, id.y)] / 16.0 +
+            4.0 * Result[uint2(id.x + 1, id.y)] / 16.0 +
+            1.0 * Result[uint2(id.x + 2, id.y)] / 16.0;
+    }
+}
+
+[numthreads(8, 8, 1)]
+void vBoxBlur(uint3 id : SV_DispatchThreadID)
+{
+    if (id.y < 3 || id.y / resolution >(resolution - 3) / resolution) return;
+    else {
+        Result[id.xy] =
+            1.0 * Result[uint2(id.x, id.y - 2)] / 16.0 +
+            4.0 * Result[uint2(id.x, id.y - 1)] / 16.0 +
+            6.0 * Result[uint2(id.x, id.y)] / 16.0 +
+            4.0 * Result[uint2(id.x, id.y - 1)] / 16.0 +
+            1.0 * Result[uint2(id.x, id.y - 2)] / 16.0;
+    }
+}
+

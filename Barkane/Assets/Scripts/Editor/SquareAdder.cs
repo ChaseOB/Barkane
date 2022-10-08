@@ -17,12 +17,6 @@ public class SquareAdder : EditorTool
 
         Event e = Event.current;
 
-        if (!e.isMouse)
-        {
-            // Not a mouse event.
-            return;
-        }
-
         int id = GUIUtility.GetControlID(FocusType.Passive);
         Ray mouseRay = HandleUtility.GUIPointToWorldRay(e.mousePosition);
         Vector3 hitPoint;
@@ -33,6 +27,14 @@ public class SquareAdder : EditorTool
         }
 
         Vector3Int relPos = manager.GetNearestSquarePos(hitPoint);
+
+        //Handles.DrawWireDisc(hitPoint, Vector3.up, 0.5f);
+
+        if (!e.isMouse)
+        {
+            // Not a mouse event.
+            return;
+        }
 
         if (e.button == 0)
         {
