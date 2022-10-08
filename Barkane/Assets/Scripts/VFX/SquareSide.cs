@@ -71,6 +71,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
             var go = Instantiate(VFXManager.Theme.Sprinkle, transform);
             go.transform.localPosition = sprinkleVerts[i];
             go.transform.up = transform.rotation * sprinkleNorms[i];
+            go.transform.RotateAround(go.transform.up, Random.Range(0, 360));
         }
     }
 

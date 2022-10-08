@@ -19,4 +19,5 @@ MonoBehaviour:
   resolution: 64
   blurLoop: 1
   sprinkleCount: 3
-  sprinkleElevation: 0.0165
+  sprinkleBonus: 3
+  sprinkleElevation: 0.01

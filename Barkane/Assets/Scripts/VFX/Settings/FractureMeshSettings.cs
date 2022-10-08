@@ -27,6 +27,8 @@ public class FractureMeshSettings : ScriptableObject
     [Header("Sprinkles")]
     [Range(0, 50)]
     public int sprinkleCount;
+    [Range(0, 50)]
+    public int sprinkleBonus;
     [Range(0, 0.1f)]
     public float sprinkleElevation;
 

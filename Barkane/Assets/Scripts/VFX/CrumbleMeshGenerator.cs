@@ -185,9 +185,10 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
 
         mat.SetVector("YOverride", new Vector4(transform.up.x, transform.up.y, transform.up.z, 1));
 
-        var sprinkleVerts = new Vector3[setting.sprinkleCount];
-        var sprinkleNorms = new Vector3[setting.sprinkleCount];
-        for (int i = 0; i < setting.sprinkleCount; i++)
+        int sprinkleCount = setting.sprinkleCount + Random.Range(0, setting.sprinkleBonus);
+        var sprinkleVerts = new Vector3[sprinkleCount];
+        var sprinkleNorms = new Vector3[sprinkleCount];
+        for (int i = 0; i < sprinkleCount; i++)
         {
             var uv = new Vector2(Random.value, Random.value);
             // check against every triangle...
