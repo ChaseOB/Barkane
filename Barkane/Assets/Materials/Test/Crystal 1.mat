@@ -104,7 +104,7 @@ Material:
     - _SrcBlend: 1
     - _Surface: 0
     - _Voronoi_Angle_Offset: 2
-    - _Voronoi_Scale: 2
+    - _Voronoi_Scale: 14.31
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
