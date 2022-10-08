@@ -190,7 +190,7 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
         var sprinkleNorms = new Vector3[sprinkleCount];
         for (int i = 0; i < sprinkleCount; i++)
         {
-            var uv = new Vector2(Random.value, Random.value);
+            var uv = new Vector2(0.1f + 0.8f * Random.value, 0.1f + 0.8f * Random.value);
             // check against every triangle...
             for(int t = 0; t < 24; t += 3)
             {

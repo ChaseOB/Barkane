@@ -10,16 +10,14 @@ public class PaperJoint : MonoBehaviour
     private bool isSelected = false; //true when this is the current selected fold
     public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
 
-    private PaperJoint currentJoint;
-    FoldablePaper foldablePaper;
-    List<GameObject> willBeFoldedAll;
-    private bool isFirstCall = true;
-    List<PaperSqaure> willBeFoldedPaperSquares = new List<PaperSqaure>();
+    //private PaperJoint currentJoint;
+   // FoldablePaper foldablePaper;
+    //private bool isFirstCall = true;
+  //  List<PaperSqaure> willBeFoldedPaperSquares = new List<PaperSqaure>();
 
     [SerializeField] private List<PaperJoint> adjList = new List<PaperJoint>();
 
     [SerializeField] private CapsuleCollider capsuleCollider;
-   // private bool JointEnabled = true; //CO: Set to false to "cut" the paper along the given joint
     public bool canFold = true; //CO: Set to false to lock the current joint in position, as if the squares were glued together
 
     [SerializeField] private JointRenderer jointRenderer;
@@ -30,7 +28,7 @@ public class PaperJoint : MonoBehaviour
             capsuleCollider = GetComponent<CapsuleCollider>();
     }
 
-    void Update(){
+  /*  void Update(){
         if (isSelected) {
             if (isFirstCall) {
                 isFirstCall = !isFirstCall;
@@ -44,7 +42,7 @@ public class PaperJoint : MonoBehaviour
                 UnEmitParticles();
             }
         }
-    }
+    }*/
 
     public void Select()
     {
@@ -67,7 +65,7 @@ public class PaperJoint : MonoBehaviour
     {
         showLine = value;
         
-        jointRenderer.ShowLine(value);
+        jointRenderer?.ShowLine(value);
 
         foreach(PaperJoint pj in adjList)
             if(pj.showLine != value)
@@ -90,17 +88,5 @@ public class PaperJoint : MonoBehaviour
     private void OnTriggerExit(Collider other) {
         if(other.gameObject.layer == 7)
             adjList.Remove(other.GetComponent<PaperJoint>());
-    }
-
-    private void EmitEdgeParticles() {
-        for (int i = 0; i < willBeFoldedPaperSquares.Count; i++) {
-            willBeFoldedPaperSquares[i].GetComponent<EdgeParticles>()?.Emit();
-        }
-    }
-
-    private void UnEmitParticles() {
-        for (int i = 0; i < willBeFoldedPaperSquares.Count; i++) {
-            willBeFoldedPaperSquares[i].GetComponent<EdgeParticles>()?.Unemit();
-        }
     }
 }

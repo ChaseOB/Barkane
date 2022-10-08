@@ -6095,7 +6095,7 @@ MonoBehaviour:
   - {fileID: 1829903606}
   showLine: 0
   adjList: []
-  capsuleCollider: {fileID: 0}
+  capsuleCollider: {fileID: 1609842770}
   canFold: 1
   jointRenderer: {fileID: 0}
 --- !u!54 &1609842772
