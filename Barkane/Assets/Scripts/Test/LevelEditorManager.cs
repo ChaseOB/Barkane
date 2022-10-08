@@ -89,6 +89,7 @@ public class LevelEditorManager : MonoBehaviour
         }
         plane.transform.position = GetPosOnPlane(Vector3.zero);
         copyFrom = squares.GetCenter();
+        this.enabled = false;
     }
 
     private void OnValidate()
@@ -106,6 +107,11 @@ public class LevelEditorManager : MonoBehaviour
     private void OnEnable()
     {
         plane.gameObject.SetActive(true);
+    }
+
+    private void OnDestroy()
+    {
+        this.enabled = true;
     }
 
     private Vector3 GetPosOnPlane(Vector3 approxPos)

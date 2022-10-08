@@ -107,5 +107,17 @@ public class SquareAdder : EditorTool
     {
         manager = target as LevelEditorManager;
     }
+
+    public override void OnActivated()
+    {
+        base.OnActivated();
+        manager.enabled = true;
+    }
+
+    public override void OnWillBeDeactivated()
+    {
+        base.OnWillBeDeactivated();
+        manager.enabled = false;
+    }
 }
 
