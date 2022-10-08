@@ -33,6 +33,14 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Dist:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Albedo:
+        m_Texture: {fileID: 10307, guid: 0000000000000000f000000000000000, type: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -73,8 +81,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_0de3525015e64dff8711c03d2d8c3486_Texture_1:
+        m_Texture: {fileID: 2800000, guid: 9d681d00423431243b8149f5685b63fd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_845d6ba07ab64a02b63a9a18f9b3c61d_Texture_1:
         m_Texture: {fileID: 2800000, guid: 069dafb5c990f6247a0121c423360219, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_ae52a911a0c8489b87c3f26406ae08c8_Texture_1:
+        m_Texture: {fileID: 2800000, guid: 60fb8cc1e00bdd74cac43f8d8a82a91c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -109,10 +125,18 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EdgeBias: 0.001
+    - _EdgeExaggeration: 200
+    - _EdgeSharpness: 2500
+    - _Edge_Sharpness: 2200
+    - _Emphasize_Node: 35
+    - _Emphasize_Vertex: 10
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _Level: 4
+    - _Levels: 50
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
@@ -128,8 +152,10 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - Color_27b163011941461fa5a53f7fa66626a1: {r: 0.4198113, g: 1, b: 0.48044065, a: 0}
+    - YOverride: {r: 0, g: 1, b: 0, a: 0}
     - _BaseColor: {r: 0, g: 0.9528302, b: 0.12631695, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.60784316, g: 0.9607843, b: 0.5921569, a: 1}
+    - _EdgeTint: {r: 0.01886791, g: 0.01886791, b: 0.01886791, a: 0.12941177}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

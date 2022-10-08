@@ -9,17 +9,40 @@ public class PaperJoint : MonoBehaviour
 
     private bool isSelected = false; //true when this is the current selected fold
     public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
-    public LineRenderer lineRenderer;
+
+    //private PaperJoint currentJoint;
+   // FoldablePaper foldablePaper;
+    //private bool isFirstCall = true;
+  //  List<PaperSqaure> willBeFoldedPaperSquares = new List<PaperSqaure>();
+
     [SerializeField] private List<PaperJoint> adjList = new List<PaperJoint>();
 
     [SerializeField] private CapsuleCollider capsuleCollider;
-   // private bool JointEnabled = true; //CO: Set to false to "cut" the paper along the given joint
     public bool canFold = true; //CO: Set to false to lock the current joint in position, as if the squares were glued together
+
+    [SerializeField] private JointRenderer jointRenderer;
+    public JointRenderer JointRenderer => jointRenderer;
 
     private void Start() {
         if(capsuleCollider == null)
             capsuleCollider = GetComponent<CapsuleCollider>();
     }
+
+  /*  void Update(){
+        if (isSelected) {
+            if (isFirstCall) {
+                isFirstCall = !isFirstCall;
+                foldablePaper = FindObjectOfType<FoldablePaper>();
+                willBeFoldedPaperSquares = foldablePaper.GetWillBeFoldedSquares();
+                EmitEdgeParticles();
+            }
+        } else {
+            if (!isFirstCall) {
+                isFirstCall = !isFirstCall;
+                UnEmitParticles();
+            }
+        }
+    }*/
 
     public void Select()
     {
@@ -40,8 +63,12 @@ public class PaperJoint : MonoBehaviour
 
     private void ShowLine(bool value)
     {
-        lineRenderer.enabled = value;
         showLine = value;
+        
+        jointRenderer?.ShowLine(value);
+
+        Debug.Log("Showing line for " + this.gameObject.name);
+
         foreach(PaperJoint pj in adjList)
             if(pj.showLine != value)
                 pj.ShowLine(value);

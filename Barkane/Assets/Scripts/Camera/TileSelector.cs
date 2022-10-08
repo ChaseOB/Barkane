@@ -13,12 +13,14 @@ public class TileSelector : MonoBehaviour
     [SerializeField] private PaperSqaure hoverSquare;
 
     public FoldablePaper foldablePaper;
+    public FoldAnimator foldAnimator;
 
 
     // Start is called before the first frame update
     void Start()
     {
         camera = this.GetComponent<Camera>();
+        foldAnimator = FindObjectOfType<FoldAnimator>();
     }
 
     // Update is called once per frame
@@ -51,7 +53,7 @@ public class TileSelector : MonoBehaviour
 
     private void OnClick(InputValue value)
     {
-        if(!value.isPressed || !CameraOrbit.Instance.CameraDisabled)
+        if(!value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
             return;
         if(hoverJoint != null && hoverJoint.canFold)
         {
@@ -67,6 +69,8 @@ public class TileSelector : MonoBehaviour
             currJoint?.Deselect();
             currJoint = null;
         }
+
+        foldablePaper.FindFoldObjects();
     }
 
 
