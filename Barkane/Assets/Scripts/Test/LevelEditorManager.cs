@@ -3,34 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Analytics;
 
-[ExecuteInEditMode]
-public class SceneManager : MonoBehaviour
+[ExecuteAlways]
+public class LevelEditorManager : MonoBehaviour
 {
     [SerializeField] private PaperSquares squares;
     public PaperSquares Squares => squares;
     [SerializeField] private PaperSqaure copyFrom;
 
     private BoxCollider meshCollider;
+    [SerializeField] private GameObject plane;
 
     [SerializeField] private int axisPos = -1;
-    [SerializeField] Orientation orientation;
+    [SerializeField] private Orientation orientation;
 
     public bool GetPlanePosition(Ray mouseRay, out Vector3 hitPoint)
     {
+        RaycastHit hitPlane;
+        if (!meshCollider.Raycast(mouseRay, out hitPlane, Mathf.Infinity))
+        {
+            // The mouseRay does not collide with the edit plane.
+            hitPoint = Vector3.zero;
+            return false;
+        }
+
         // Bit mask for layer 6 (paper layer)
         int paperMask = 1 << 6;
-        RaycastHit hit;
+        RaycastHit hitSquare;
 
-        if (Physics.Raycast(mouseRay.origin, mouseRay.direction, out hit, Mathf.Infinity, paperMask))
+        if (Physics.Raycast(mouseRay, out hitSquare, Mathf.Infinity, paperMask) && hitPlane.distance > hitSquare.distance)
         {
-            if (meshCollider.bounds.Contains(hit.point))
-            {
-                hitPoint = GetPosOnPlane(hit.point);
-                return true;
-            }
+            hitPoint = GetPosOnPlane(hitSquare.point);
+            return false;
         }
-        hitPoint = Vector3.zero;
-        return false;
+
+        hitPoint = GetPosOnPlane(hitPlane.point);
+        return true;
     }
 
     public bool AddSquare(Vector3Int relPos)
@@ -74,23 +81,32 @@ public class SceneManager : MonoBehaviour
 
     private void Start()
     {
-        meshCollider = GetComponent<BoxCollider>();
-        orientation = OrientationExtension.GetOrientation(transform.eulerAngles);
+        meshCollider = plane.GetComponent<BoxCollider>();
+        orientation = OrientationExtension.GetOrientation(plane.transform.eulerAngles);
         if (orientation == Orientation.XZ)
         {
-            transform.eulerAngles = OrientationExtension.XZ;
+            plane.transform.eulerAngles = OrientationExtension.XZ;
         }
-        transform.position = GetPosOnPlane(Vector3.zero);
+        plane.transform.position = GetPosOnPlane(Vector3.zero);
         copyFrom = squares.GetCenter();
     }
 
     private void OnValidate()
     {
-        transform.eulerAngles = OrientationExtension.GetEulerAngle(orientation);
-        transform.position = GetPosOnPlane(Vector3.zero);
+        axisPos = Mathf.Clamp(Mathf.RoundToInt(axisPos + 0.5f) - 1, -PaperSquares.SIZE / 2, PaperSquares.SIZE / 2);
+        plane.transform.eulerAngles = OrientationExtension.GetEulerAngle(orientation);
+        plane.transform.position = GetPosOnPlane(Vector3.zero);
     }
 
-    // Helper methods
+    private void OnDisable()
+    {
+        plane.gameObject.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        plane.gameObject.SetActive(true);
+    }
 
     private Vector3 GetPosOnPlane(Vector3 approxPos)
     {

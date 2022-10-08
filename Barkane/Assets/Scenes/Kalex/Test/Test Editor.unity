@@ -313,6 +313,7 @@ GameObject:
   m_Component:
   - component: {fileID: 696987781}
   - component: {fileID: 696987782}
+  - component: {fileID: 696987783}
   m_Layer: 0
   m_Name: FoldablePaper
   m_TagString: Untagged
@@ -333,6 +334,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2097578947}
+  - {fileID: 1933101935}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -352,6 +354,23 @@ MonoBehaviour:
   paperJoints: []
   foldAnimator: {fileID: 0}
   foldJoint: {fileID: 0}
+--- !u!114 &696987783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696987780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6914e1dcad73b4e4dac5bdc295f9e4ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  squares: {fileID: 2097578948}
+  copyFrom: {fileID: 1777327489}
+  plane: {fileID: 1933101930}
+  axisPos: -1
+  orientation: 1
 --- !u!1 &1297083836
 GameObject:
   m_ObjectHideFlags: 0
@@ -848,12 +867,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1933101935}
-  - component: {fileID: 1933101937}
   - component: {fileID: 1933101941}
   - component: {fileID: 1933101943}
   - component: {fileID: 1933101944}
-  m_Layer: 6
-  m_Name: SceneManager
+  m_Layer: 0
+  m_Name: Tool Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -866,30 +884,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1933101930}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0}
   m_LocalScale: {x: 42, y: 0.001, z: 42}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_Father: {fileID: 696987781}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1933101937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1933101930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6914e1dcad73b4e4dac5bdc295f9e4ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  squares: {fileID: 2097578948}
-  copyFrom: {fileID: 1777327489}
-  axisPos: -1
-  orientation: 1
 --- !u!33 &1933101941
 MeshFilter:
   m_ObjectHideFlags: 0

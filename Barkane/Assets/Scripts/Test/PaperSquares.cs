@@ -5,7 +5,7 @@ using UnityEngine;
 [ExecuteAlways]
 public class PaperSquares : MonoBehaviour
 {
-    public const int SIZE = 42; // Should be 4k + 2 form, k is approximately # of valid squares per direction
+    public const int SIZE = 43; // Should be 4k + 3 form, k is approximately # of valid squares per direction
     public readonly Vector3Int center = new Vector3Int(SIZE / 2, SIZE / 4 * 2, SIZE / 2);
     [SerializeField] private MonoBehaviour[,,] paperSquares = new MonoBehaviour[SIZE, SIZE, SIZE];
     [SerializeField] public GameObject squareList;
@@ -18,18 +18,6 @@ public class PaperSquares : MonoBehaviour
         Edge,   // Should contain Joint
         Vertex  // Should contain null (for now)
     }
-
-    /*
-    public void SelectSquare(Vector3Int relPos)
-    {
-        PaperSqaure square = GetSquareAt(relPos);
-
-        if (square != null)
-        {
-            copyFrom = square;
-        }
-    }
-    */
 
     public PaperSqaure GetCenter()
     {
@@ -109,9 +97,14 @@ public class PaperSquares : MonoBehaviour
         }
     }
 
+    public MonoBehaviour GetObjectAt(Vector3Int relPos)
+    {
+        return paperSquares[relPos.x, relPos.y, relPos.z];
+    }
+
     public PaperSqaure GetSquareAt(Vector3Int relPos)
     {
-        return paperSquares[relPos.x, relPos.y, relPos.z] as PaperSqaure;
+        return GetObjectAt(relPos) as PaperSqaure;
     }
 
     public void SetSquareAt(Vector3Int relPos, PaperSqaure square)
