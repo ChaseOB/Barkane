@@ -34,12 +34,13 @@ public class FoldAnimator : MonoBehaviour
     }*/
 
     //C: folds the given list of squares along the given line by the given number of degrees
-    public void Fold(List<GameObject> objectsToFold, Vector3 center, Vector3 axis, float degrees)
+    public void Fold(PaperJoint foldJoint, List<GameObject> objectsToFold, Vector3 center, Vector3 axis, float degrees)
     {
         if(!isFolding) 
         {
+            var foldJointRenderer = foldJoint.JointRenderer;
             DetermineVisibleSides(objectsToFold, center, axis, degrees);
-            StartCoroutine(FoldHelper(objectsToFold, center, axis, degrees));
+            StartCoroutine(FoldHelper(objectsToFold, center, axis, degrees, foldJointRenderer.DisableMeshAction, foldJointRenderer.EnableMeshAction));
         }
             
     }
@@ -101,7 +102,7 @@ public class FoldAnimator : MonoBehaviour
        // tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 
     }
-    private IEnumerator FoldHelper(List<GameObject> objectsToFold, Vector3 center, Vector3 axis, float degrees)
+    private IEnumerator FoldHelper(List<GameObject> objectsToFold, Vector3 center, Vector3 axis, float degrees, System.Action beforeFold, System.Action afterFold)
     {
         isFolding = true;
         GameObject tempObj = new GameObject();
@@ -119,6 +120,8 @@ public class FoldAnimator : MonoBehaviour
                 o.GetComponent<PaperJoint>().ToggleCollider(false);
 
         }
+
+        beforeFold();
 
         float t = 0;
         while (t < foldDuration)
@@ -140,6 +143,8 @@ public class FoldAnimator : MonoBehaviour
         Destroy(tempObj);
         Destroy(target);
         isFolding = false;
+
+        afterFold();
     }
 
 

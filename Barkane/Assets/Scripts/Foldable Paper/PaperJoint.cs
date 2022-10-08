@@ -9,7 +9,7 @@ public class PaperJoint : MonoBehaviour
 
     private bool isSelected = false; //true when this is the current selected fold
     public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
-    public LineRenderer lineRenderer;
+
     private PaperJoint currentJoint;
     FoldablePaper foldablePaper;
     List<GameObject> willBeFoldedAll;
@@ -21,6 +21,9 @@ public class PaperJoint : MonoBehaviour
     [SerializeField] private CapsuleCollider capsuleCollider;
    // private bool JointEnabled = true; //CO: Set to false to "cut" the paper along the given joint
     public bool canFold = true; //CO: Set to false to lock the current joint in position, as if the squares were glued together
+
+    [SerializeField] private JointRenderer jointRenderer;
+    public JointRenderer JointRenderer => jointRenderer;
 
     private void Start() {
         if(capsuleCollider == null)
@@ -62,8 +65,10 @@ public class PaperJoint : MonoBehaviour
 
     private void ShowLine(bool value)
     {
-        lineRenderer.enabled = value;
         showLine = value;
+        
+        jointRenderer.ShowLine(value);
+
         foreach(PaperJoint pj in adjList)
             if(pj.showLine != value)
                 pj.ShowLine(value);
@@ -89,13 +94,13 @@ public class PaperJoint : MonoBehaviour
 
     private void EmitEdgeParticles() {
         for (int i = 0; i < willBeFoldedPaperSquares.Count; i++) {
-            willBeFoldedPaperSquares[i].GetComponent<EdgeParticles>().Emit();
+            willBeFoldedPaperSquares[i].GetComponent<EdgeParticles>()?.Emit();
         }
     }
 
     private void UnEmitParticles() {
         for (int i = 0; i < willBeFoldedPaperSquares.Count; i++) {
-            willBeFoldedPaperSquares[i].GetComponent<EdgeParticles>().Unemit();
+            willBeFoldedPaperSquares[i].GetComponent<EdgeParticles>()?.Unemit();
         }
     }
 }

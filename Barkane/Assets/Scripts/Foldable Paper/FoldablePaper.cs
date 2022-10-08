@@ -100,7 +100,7 @@ public class FoldablePaper : MonoBehaviour
     {
         FindFoldObjects();
         if(foldJoint.canFold)
-            foldAnimator.Fold(foldSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+            foldAnimator.Fold(foldJoint, foldSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
     }
 
 

@@ -7,32 +7,16 @@ using UnityEngine;
 // then iterates through the prefab's 8 children ParticleSystems
 // makes them play or pause and clear
 
-public class EdgeParticles : MonoBehaviour
+public class EdgeParticles : MonoBehaviour, BarkaneEditor.IRefreshable
 {
     private int count = 8;
-    List<ParticleSystem> listOfSystems = new List<ParticleSystem>();
-    GameObject edgeParticlesPrefabChild;
+    [SerializeField, HideInInspector] List<ParticleSystem> listOfSystems;
+    [SerializeField, HideInInspector] GameObject edgeParticlesPrefabChild;
     bool isAwake = false;
     bool atCapacity = false;
 
-    void Start()
-    {
-        edgeParticlesPrefabChild = gameObject.transform.Find("Edge Particles").gameObject;
-    }
     private void FindAllChildrenPS() {
-        Transform result;
-
-        for (int i = 1; i < (count + 1); i++)
-        {
-            string ps;
-
-            ps = "Particle System " + i.ToString();
-            result = edgeParticlesPrefabChild.transform.Find(ps);
-
-            if (result){
-                listOfSystems.Add(result.gameObject.GetComponent<ParticleSystem>());
-            }
-        }
+        if (listOfSystems == null || listOfSystems.Count != count) Refresh();
     }
 
     public void Emit() {
@@ -54,6 +38,29 @@ public class EdgeParticles : MonoBehaviour
             isAwake = false;
             listOfSystems[i].Pause();
             listOfSystems[i].Clear();
+        }
+    }
+
+    public void Refresh()
+    {
+        edgeParticlesPrefabChild = gameObject.transform.Find("Edge Particles").gameObject;
+        Transform result;
+        listOfSystems = new List<ParticleSystem>();
+
+        for (int i = 1; i < (count + 1); i++)
+        {
+            string ps;
+
+            ps = "Particle System " + i.ToString();
+            result = edgeParticlesPrefabChild.transform.Find(ps);
+
+            if (result)
+            {
+                listOfSystems.Add(result.gameObject.GetComponent<ParticleSystem>());
+            } else
+            {
+                throw new UnityException($"Cannot find particle system {i} prefab under paper square");
+            }
         }
     }
 }
