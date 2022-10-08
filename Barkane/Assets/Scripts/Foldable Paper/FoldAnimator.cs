@@ -39,8 +39,11 @@ public class FoldAnimator : MonoBehaviour
         if(!isFolding) 
         {
             var foldJointRenderer = foldJoint.JointRenderer;
+            if(foldJointRenderer != null)
           //  DetermineVisibleSides(objectsToFold, center, axis, degrees);
-            StartCoroutine(FoldHelper(foldObjects, center, axis, degrees, foldJointRenderer.DisableMeshAction, foldJointRenderer.EnableMeshAction));
+                StartCoroutine(FoldHelper(foldObjects, center, axis, degrees, foldJointRenderer.DisableMeshAction, foldJointRenderer.EnableMeshAction));
+            else
+                StartCoroutine(FoldHelper(foldObjects, center, axis, degrees));
         }
             
     }
@@ -102,7 +105,7 @@ public class FoldAnimator : MonoBehaviour
        // tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 
     }
-    private IEnumerator FoldHelper(FoldObjects objectsToFold, Vector3 center, Vector3 axis, float degrees, System.Action beforeFold, System.Action afterFold)
+    private IEnumerator FoldHelper(FoldObjects objectsToFold, Vector3 center, Vector3 axis, float degrees, System.Action beforeFold = null, System.Action afterFold = null)
     {
         isFolding = true;
         GameObject tempObj = new GameObject(); //used for reparenting/rotating
@@ -121,7 +124,8 @@ public class FoldAnimator : MonoBehaviour
             o.GetComponent<PaperJoint>().ToggleCollider(false);
         }
 
-        beforeFold();
+        if(beforeFold != null)
+            beforeFold();
 
         float t = 0;
         while (t < foldDuration)
@@ -149,7 +153,8 @@ public class FoldAnimator : MonoBehaviour
         Destroy(target);
         isFolding = false;
 
-        afterFold();
+        if(afterFold != null)
+             afterFold();
     }
 
 

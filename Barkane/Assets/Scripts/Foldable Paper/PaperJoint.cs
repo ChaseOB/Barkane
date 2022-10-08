@@ -67,6 +67,8 @@ public class PaperJoint : MonoBehaviour
         
         jointRenderer?.ShowLine(value);
 
+        Debug.Log("Showing line for " + this.gameObject.name);
+
         foreach(PaperJoint pj in adjList)
             if(pj.showLine != value)
                 pj.ShowLine(value);
