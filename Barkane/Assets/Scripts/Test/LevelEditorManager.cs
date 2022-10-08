@@ -6,6 +6,8 @@ using UnityEngine.Analytics;
 [ExecuteAlways]
 public class LevelEditorManager : MonoBehaviour
 {
+    private const int PAPER_LAYER = 6;
+
     [SerializeField] private PaperSquares squares;
     public PaperSquares Squares => squares;
     [SerializeField] private PaperSqaure copyFrom;
@@ -16,8 +18,15 @@ public class LevelEditorManager : MonoBehaviour
     [SerializeField] private int axisPos = -1;
     [SerializeField] private Orientation orientation;
 
+    ///Summary <summary>
+    /// Output the position on the edit plane that was clicked
+    /// </summary>
+    /// <param name="mouseRay">Ray going inward from part of the screen that was clicked</param>
+    /// <param name="hitPoint">The point on the plane that was clicked</param>
+    /// <returns>Returns true if and only if the area clicked is on the edit plane</returns>    
     public bool GetPlanePosition(Ray mouseRay, out Vector3 hitPoint)
     {
+        //Check that the user clicked on the edit plane
         RaycastHit hitPlane;
         if (!meshCollider.Raycast(mouseRay, out hitPlane, Mathf.Infinity))
         {
@@ -26,10 +35,10 @@ public class LevelEditorManager : MonoBehaviour
             return false;
         }
 
-        // Bit mask for layer 6 (paper layer)
-        int paperMask = 1 << 6;
-        RaycastHit hitSquare;
 
+        //Check that the clicked part does not hit a square that is in front of the edit plane.
+        int paperMask = 1 << PAPER_LAYER;     // Bit mask for layer 6 (paper layer)
+        RaycastHit hitSquare;
         if (Physics.Raycast(mouseRay, out hitSquare, Mathf.Infinity, paperMask) && hitPlane.distance > hitSquare.distance)
         {
             hitPoint = GetPosOnPlane(hitSquare.point);
@@ -38,6 +47,28 @@ public class LevelEditorManager : MonoBehaviour
 
         hitPoint = GetPosOnPlane(hitPlane.point);
         return true;
+    }
+
+    ///Summary <summary>
+    /// Output the position on a square
+    /// </summary>
+    /// <param name="mouseRay">Ray going inward from part of the screen that was clicked</param>
+    /// <param name="hitPoint">The point on the plane that was clicked</param>
+    /// <returns>Returns the square clicked on</returns>    
+    public PaperSqaure GetSquareClicked(Ray mouseRay)
+    {
+        Debug.Log("Getting Square Clicked");
+        int paperMask = 1 << PAPER_LAYER;     // Bit mask for layer 6 (paper layer)
+        RaycastHit hitSquare;
+        if (Physics.Raycast(mouseRay, out hitSquare, Mathf.Infinity, paperMask))
+        {
+            Debug.Log($"Found Square: {hitSquare.transform.gameObject.name}");
+            PaperSqaure squareClicked = hitSquare.transform.GetComponent<PaperSqaure>();
+
+            return squareClicked;
+        }
+
+        return null;
     }
 
     public bool AddSquare(Vector3Int relPos)

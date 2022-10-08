@@ -2,10 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum TileType
+{
+    WALKABLE,
+    UNWALKABLE,
+}
+
 [System.Serializable]
 [RequireComponent(typeof(EdgeParticles))]
 public class PaperSqaure : MonoBehaviour
 {
+
     [SerializeField] private bool playerOccupied = false; //true if the player is on this square
     public bool PlayerOccupied { get => playerOccupied;}
 
@@ -39,6 +46,11 @@ public class PaperSqaure : MonoBehaviour
         Vector3 offset = this.transform.rotation * new Vector3(0, paperThickness / 2, 0);
         topHalf.transform.position = this.transform.position + offset;
         bottomHalf.transform.position = this.transform.position - offset;
+    }
+
+    public void ChangeTileType(TileType type)
+    {
+        Debug.Log($"Tile Type of {gameObject.name} changed to {type}");
     }
 
     //select is true when this region is selected and false when deselected

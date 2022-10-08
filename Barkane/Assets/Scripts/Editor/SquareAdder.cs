@@ -9,6 +9,11 @@ public class SquareAdder : EditorTool
     // TODO: Use PrefabUtility.InstatitatePrefab to instantiate new PaperSquares
     [SerializeField] PaperSqaure squarePrefab;
 
+    private void OnEnable()
+    {
+        manager = target as LevelEditorManager;
+    }
+
     // TODO: Use Handles to deal with UnityGUI events
     public override void OnToolGUI(EditorWindow window)
     {
@@ -101,11 +106,6 @@ public class SquareAdder : EditorTool
                 e.Use();
             }
         }
-    }
-
-    private void OnEnable()
-    {
-        manager = target as LevelEditorManager;
     }
 }
 
