@@ -8,6 +8,9 @@
         },
         {
             "m_Id": "5ea7a8f1996b4a2aa4ba162bc437a64e"
+        },
+        {
+            "m_Id": "8ea7b2dff45c400e976142a6f5c1b8b8"
         }
     ],
     "m_Keywords": [],
@@ -92,6 +95,9 @@
         },
         {
             "m_Id": "b0219d28936a40b6935363aa6acbf289"
+        },
+        {
+            "m_Id": "0fe5936f0b034dacb2a57139362ecb47"
         }
     ],
     "m_GroupDatas": [
@@ -119,6 +125,20 @@
     ],
     "m_StickyNoteDatas": [],
     "m_Edges": [
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "0fe5936f0b034dacb2a57139362ecb47"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "ae52a911a0c8489b87c3f26406ae08c8"
+                },
+                "m_SlotId": 1
+            }
+        },
         {
             "m_OutputSlot": {
                 "m_Node": {
@@ -733,6 +753,41 @@
         "z": 0.0
     },
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "0fe5936f0b034dacb2a57139362ecb47",
+    "m_Group": {
+        "m_Id": "6f3aa1918d7b4f0c872dd543527da0f2"
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -1203.9998779296875,
+            "y": 198.99998474121095,
+            "width": 144.0,
+            "height": 34.000030517578128
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "fd9596ba50624f8ba3f2f3edb8f04e1e"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "8ea7b2dff45c400e976142a6f5c1b8b8"
+    }
 }
 
 {
@@ -2127,6 +2182,35 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty",
+    "m_ObjectId": "8ea7b2dff45c400e976142a6f5c1b8b8",
+    "m_Guid": {
+        "m_GuidSerialized": "a3be0df1-2468-4cdd-9612-9a1a5e8b671a"
+    },
+    "m_Name": "Height Map",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Height Map",
+    "m_DefaultReferenceName": "_Height_Map",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": {
+        "m_SerializedTexture": "{\"texture\":{\"instanceID\":0}}",
+        "m_Guid": ""
+    },
+    "isMainTexture": false,
+    "useTilingAndOffset": false,
+    "m_Modifiable": true,
+    "m_DefaultType": 0
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.GroupData",
     "m_ObjectId": "90954792aa1749bfa0c8f06a1d770cb4",
     "m_Title": "Bump",
@@ -3352,6 +3436,19 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
+    "m_ObjectId": "fd9596ba50624f8ba3f2f3edb8f04e1e",
+    "m_Id": 0,
+    "m_DisplayName": "Height Map",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_BareResource": false
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
     "m_ObjectId": "fdf24f6409ba4c05bdd0c3aa4e479004",
     "m_Id": 1,
@@ -3384,6 +3481,9 @@
         },
         {
             "m_Id": "5ea7a8f1996b4a2aa4ba162bc437a64e"
+        },
+        {
+            "m_Id": "8ea7b2dff45c400e976142a6f5c1b8b8"
         }
     ]
 }
