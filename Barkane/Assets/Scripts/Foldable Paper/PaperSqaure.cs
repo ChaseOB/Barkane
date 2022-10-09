@@ -43,6 +43,4 @@ public class PaperSqaure : MonoBehaviour
     public void OnFold(bool foldStart)
     {
     }
-
->>>>>>>>> Temporary merge branch 2
 }

@@ -36,14 +36,6 @@ public class SquareSelector : EditorTool
         SelectedSquare = null;
     }
 
-    public static void ChangeSelectedTileType(FaceType newType)
-    {
-        if (SelectedSquare != null)
-        {
-            SelectedSquare.ChangeTileType(newType);
-        }
-    }
-
     public override void OnWillBeDeactivated()
     {
         base.OnWillBeDeactivated();

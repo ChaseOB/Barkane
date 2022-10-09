@@ -42,6 +42,8 @@ public class PaperSqaureEditorWindow : EditorWindow
         _topInspector = root.Query<FaceInspectorView>("TopInspector");
         _bottomInspector = root.Query<FaceInspectorView>("BottomInspector");
 
+        UpdateSqaureSelection(SquareSelector.SelectedSquare);
+
         // The style will be applied to the VisualElement and all of its children.
         var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Scripts/Editor/PaperSqaureEditor/PaperSqaureEditorWindow.uss");
         root.styleSheets.Add(styleSheet);
@@ -49,9 +51,19 @@ public class PaperSqaureEditorWindow : EditorWindow
 
     void UpdateSqaureSelection(PaperSqaure sqaure)
     {
-        Debug.Log($"Updated Sqaure Selection for {sqaure.gameObject.name}");
-        _topInspector.UpdateSelection(sqaure.TopHalf.GetComponent<PaperSqaureFace>(), true);
-        _bottomInspector.UpdateSelection(sqaure.BottomHalf.GetComponent<PaperSqaureFace>(), false);
+        //string sqaureName = sqaure == null ? "null" : sqaure.gameObject.name;
+        //Debug.Log($"Updated Sqaure Selection to {sqaureName} ");
+
+        if (sqaure != null)
+        {
+            _topInspector.UpdateSelection(sqaure.TopHalf.GetComponent<PaperSqaureFace>());
+            _bottomInspector.UpdateSelection(sqaure.BottomHalf.GetComponent<PaperSqaureFace>());
+        } else
+        {
+            _topInspector.UpdateSelection(null);
+            _bottomInspector.UpdateSelection(null);
+        }
+
     }
 
     //private void RadioButtonGroupCallback(ChangeEvent<int> e)

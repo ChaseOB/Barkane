@@ -367,7 +367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squares: {fileID: 2097578948}
-  copyFrom: {fileID: 0}
+  copyFrom: {fileID: 1777327489}
   plane: {fileID: 1933101930}
   axisPos: -1
   orientation: 1
@@ -626,6 +626,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8814069561603125226, guid: e6122d66d72e2f248828794196740204, type: 3}
   m_PrefabInstance: {fileID: 1879096322}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1639602791 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6208710807625830258, guid: e861be4f725c841ac90c6d65db950a35, type: 3}
+  m_PrefabInstance: {fileID: 1777327487}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1767751622
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -781,11 +786,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6208710809056942662, guid: e861be4f725c841ac90c6d65db950a35, type: 3}
   m_PrefabInstance: {fileID: 1777327487}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1777327489 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6208710807625830258, guid: e861be4f725c841ac90c6d65db950a35, type: 3}
+--- !u!114 &1777327489 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2521718316802639938, guid: e861be4f725c841ac90c6d65db950a35, type: 3}
   m_PrefabInstance: {fileID: 1777327487}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 415d5d491de8c2249b864727bd008830, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1777327490 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6208710807336550292, guid: e861be4f725c841ac90c6d65db950a35, type: 3}
@@ -803,14 +814,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc3d2d3eb8a01834692c7e9f90c503fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  faceType: 0
+  faceType: 1
 --- !u!114 &1777327492
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1777327489}
+  m_GameObject: {fileID: 1639602791}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc3d2d3eb8a01834692c7e9f90c503fd, type: 3}
@@ -901,7 +912,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1933101935
 Transform:
   m_ObjectHideFlags: 0
