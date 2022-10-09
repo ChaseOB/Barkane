@@ -2,12 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum TileType
-{
-    WALKABLE,
-    UNWALKABLE,
-}
-
 [System.Serializable]
 [RequireComponent(typeof(EdgeParticles))]
 public class PaperSqaure : MonoBehaviour
@@ -48,10 +42,12 @@ public class PaperSqaure : MonoBehaviour
         bottomHalf.transform.position = this.transform.position - offset;
     }
 
-    public void ChangeTileType(TileType type)
+#if UNITY_EDITOR
+    public void ChangeTileType(FaceType type)
     {
         Debug.Log($"Tile Type of {gameObject.name} changed to {type}");
     }
+#endif
 
     //select is true when this region is selected and false when deselected
     public void OnFoldHighlight(bool select)

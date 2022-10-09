@@ -1,6 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
-    <ui:RadioButtonGroup label="Editor Modes" value="-1" style="flex-direction: column;">
-        <ui:RadioButton label="Walkable" name="Walkable" />
-        <ui:RadioButton label="Unwalkable" name="Unwalkable" />
-    </ui:RadioButtonGroup>
-</ui:UXML>

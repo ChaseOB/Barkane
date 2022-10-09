@@ -57,12 +57,11 @@ public class LevelEditorManager : MonoBehaviour
     /// <returns>Returns the square clicked on</returns>    
     public PaperSqaure GetSquareClicked(Ray mouseRay)
     {
-        Debug.Log("Getting Square Clicked");
         int paperMask = 1 << PAPER_LAYER;     // Bit mask for layer 6 (paper layer)
         RaycastHit hitSquare;
         if (Physics.Raycast(mouseRay, out hitSquare, Mathf.Infinity, paperMask))
         {
-            Debug.Log($"Found Square: {hitSquare.transform.gameObject.name}");
+            //Debug.Log($"Found Square: {hitSquare.transform.gameObject.name}");
             PaperSqaure squareClicked = hitSquare.transform.GetComponent<PaperSqaure>();
 
             return squareClicked;

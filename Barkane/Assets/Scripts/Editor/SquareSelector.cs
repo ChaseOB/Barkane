@@ -15,6 +15,9 @@ public class SquareSelector : EditorTool
     private GUIContent _toolbarIcon;
     public override GUIContent toolbarIcon => _toolbarIcon;
 
+    public delegate void OnSquareSelected(PaperSqaure sqaureSelected);
+    public static event OnSquareSelected onSquareSelected;
+
     private void Awake()
     {
         SelectedSquare = null;
@@ -31,6 +34,14 @@ public class SquareSelector : EditorTool
 
         levelEditor = target as LevelEditorManager;
         SelectedSquare = null;
+    }
+
+    public static void ChangeSelectedTileType(FaceType newType)
+    {
+        if (SelectedSquare != null)
+        {
+            SelectedSquare.ChangeTileType(newType);
+        }
     }
 
     public override void OnWillBeDeactivated()
@@ -91,6 +102,7 @@ public class SquareSelector : EditorTool
             SelectedSquare = levelEditor.GetSquareClicked(mouseRay);
             Debug.Log(SelectedSquare == null ? $"DESELECTED SQUARE" : $"SELECTED SQUARE: {SelectedSquare}");
 
+            onSquareSelected?.Invoke(SelectedSquare);
 
             e.Use();
         }

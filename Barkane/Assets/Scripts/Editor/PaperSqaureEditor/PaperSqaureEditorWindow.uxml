@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <SplitView>
+        <ui:VisualElement name="Top" style="min-width: 150px;">
+            <ui:Label text="Top Half" display-tooltip-when-elided="true" name="TopLabel" />
+            <FaceInspectorView name="TopInspector" style="width: 300px; height: 447px; flex-grow: 2; min-width: 150px; max-width: none;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="Bottom" style="min-width: 150px;">
+            <ui:Label text="Bottom Half" display-tooltip-when-elided="true" name="BottomLabel" />
+            <FaceInspectorView name="BottomInspector" style="min-width: 150px;" />
+        </ui:VisualElement>
+    </SplitView>
+</ui:UXML>
