@@ -102,7 +102,7 @@ public class FoldablePaper : MonoBehaviour
     public void TestFold(float degrees)
     {
         FindFoldObjects();
-        if(foldJoint.canFold)
+        if(foldJoint != null && foldJoint.canFold)
             foldAnimator.Fold(foldJoint, foldObjects, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
     }
 
@@ -159,6 +159,7 @@ public class FoldObjects {
     //foldStart is true when starting a fold and false when ending a fold
     public void OnFold(bool foldStart)
     {
+        
     }
 
 }

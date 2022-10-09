@@ -35,16 +35,15 @@ public class SquareAdder : EditorTool
         Ray mouseRay = HandleUtility.GUIPointToWorldRay(e.mousePosition);
         Vector3 hitPoint;
 
-        if (!manager.GetPlanePosition(mouseRay, out hitPoint))
-        {
-            return;
-        }
-
-        Vector3Int relPos = manager.GetNearestSquarePos(hitPoint);
-
         if (e.button == 0)
         {
             // Left click handlers
+            if (!manager.GetPlanePosition(mouseRay, out hitPoint))
+            {
+                return;
+            }
+
+            Vector3Int relPos = manager.GetNearestSquarePos(hitPoint);
 
             // Left click start
             if (e.type == EventType.MouseDown)
@@ -77,6 +76,14 @@ public class SquareAdder : EditorTool
         else if (e.button == 1)
         {
             // Right click handlers
+            Orientation orientation;
+
+            if (!manager.GetSquarePosition(mouseRay, out hitPoint, out orientation))
+            {
+                return;
+            }
+
+            Vector3Int relPos = manager.GetNearestSquarePos(hitPoint, orientation);
 
             // Right click start
             if (e.type == EventType.MouseDown)
@@ -105,6 +112,22 @@ public class SquareAdder : EditorTool
                 GUIUtility.hotControl = 0;
                 e.Use();
             }
+        }
+    }
+
+    public override void OnActivated()
+    {
+        if (!Application.isPlaying)
+        {
+            manager.ShowPlane();
+        }
+    }
+
+    public override void OnWillBeDeactivated()
+    {
+        if (!Application.isPlaying)
+        {
+            manager.HidePlane();
         }
     }
 }

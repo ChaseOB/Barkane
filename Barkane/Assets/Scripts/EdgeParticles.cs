@@ -9,14 +9,13 @@ using UnityEngine;
 
 public class EdgeParticles : MonoBehaviour, BarkaneEditor.IRefreshable
 {
-    private int count = 8;
     [SerializeField, HideInInspector] List<ParticleSystem> listOfSystems;
     [SerializeField, HideInInspector] GameObject edgeParticlesPrefabChild;
     bool isAwake = false;
     bool atCapacity = false;
 
     private void FindAllChildrenPS() {
-        if (listOfSystems == null || listOfSystems.Count != count) Refresh();
+        if (listOfSystems == null) Refresh();
     }
 
     public void Emit() {
@@ -25,42 +24,30 @@ public class EdgeParticles : MonoBehaviour, BarkaneEditor.IRefreshable
             if (!atCapacity) {
                 atCapacity = true;
                 FindAllChildrenPS();
-                count = listOfSystems.Count;
             }
-            for (int i = 0; i < count; i++) {
-                listOfSystems[i].Play();
+            foreach (ParticleSystem ps in listOfSystems) {
+                ps.Play();
             }
         }
     }
 
     public void Unemit() {
-        for (int i = 0; i < count; i++) {
-            isAwake = false;
-            listOfSystems[i].Pause();
-            listOfSystems[i].Clear();
+        foreach (ParticleSystem ps in listOfSystems) {
+            ps.Pause();
+            ps.Clear();
+            ps.Play();
         }
+        isAwake = false;
     }
 
     public void Refresh()
     {
         edgeParticlesPrefabChild = gameObject.transform.Find("Edge Particles").gameObject;
-        Transform result;
         listOfSystems = new List<ParticleSystem>();
 
-        for (int i = 1; i < (count + 1); i++)
-        {
-            string ps;
-
-            ps = "Particle System " + i.ToString();
-            result = edgeParticlesPrefabChild.transform.Find(ps);
-
-            if (result)
-            {
-                listOfSystems.Add(result.gameObject.GetComponent<ParticleSystem>());
-            } else
-            {
-                throw new UnityException($"Cannot find particle system {i} prefab under paper square");
-            }
+        ParticleSystem[] sys = GetComponentsInChildren<ParticleSystem>();
+        foreach(ParticleSystem ps in sys) {
+            listOfSystems.Add(ps);
         }
     }
 }

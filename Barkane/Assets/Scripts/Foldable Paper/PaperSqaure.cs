@@ -30,25 +30,6 @@ public class PaperSqaure : MonoBehaviour
         playerOccupied = value;
     }
 
-    private void OnDestroy()
-    {
-        SendMessageUpwards("RemoveReferenceMessage", this.transform.position);
-    }
-
-    private void OnValidate()
-    {
-        Vector3 offset = this.transform.rotation * new Vector3(0, paperThickness / 2, 0);
-        topHalf.transform.position = this.transform.position + offset;
-        bottomHalf.transform.position = this.transform.position - offset;
-    }
-
-#if UNITY_EDITOR
-    public void ChangeTileType(FaceType type)
-    {
-        Debug.Log($"Tile Type of {gameObject.name} changed to {type}");
-    }
-#endif
-
     //select is true when this region is selected and false when deselected
     public void OnFoldHighlight(bool select)
     {
@@ -62,4 +43,6 @@ public class PaperSqaure : MonoBehaviour
     public void OnFold(bool foldStart)
     {
     }
+
+>>>>>>>>> Temporary merge branch 2
 }
