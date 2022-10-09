@@ -10,6 +10,8 @@ public class PaperSqaure : MonoBehaviour
 
     
     //Visuals
+    public float paperLength = 2f;
+    public float paperThickness = 0.001f;
     [SerializeField] private GameObject topHalf;
     public GameObject TopHalf => topHalf;
     [SerializeField] private GameObject bottomHalf;
@@ -40,4 +42,19 @@ public class PaperSqaure : MonoBehaviour
     {
     }
 
+
+    private void OnDestroy()
+    {
+        if (!Application.isPlaying)
+        {
+            SendMessageUpwards("RemoveReferenceMessage", this.transform.position);
+        }
+    }
+
+    private void OnValidate()
+    {
+        Vector3 offset = this.transform.rotation * new Vector3(0, paperThickness / 2, 0);
+        topHalf.transform.position = this.transform.position + offset;
+        bottomHalf.transform.position = this.transform.position - offset;
+    }
 }
