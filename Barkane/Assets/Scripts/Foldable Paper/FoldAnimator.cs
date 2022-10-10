@@ -8,6 +8,7 @@ public class FoldAnimator : MonoBehaviour
     public bool isFolding = false;
     public FoldablePaper foldablePaper;
 
+    public int foldCount = 0;
 
     private void Start() 
     {
@@ -155,6 +156,7 @@ public class FoldAnimator : MonoBehaviour
 
         if(afterFold != null)
              afterFold();
+        UIManager.UpdateFoldCount(++foldCount);
     }
 
 
