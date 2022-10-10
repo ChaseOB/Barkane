@@ -27,7 +27,7 @@ public class AudioManager : MonoBehaviour
     //public static bool isPlaying;
     private int currentArray;
     private int currentIndex;
-    public AudioSource source;
+    private AudioSource source;
 
     void Awake()
     {
