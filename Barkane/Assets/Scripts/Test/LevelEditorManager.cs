@@ -11,15 +11,27 @@ public class LevelEditorManager : MonoBehaviour
 
     [SerializeField] private PaperSquares squares;
     public PaperSquares Squares => squares;
-    [SerializeField] private PaperSqaure copyFrom;
+    [SerializeField] private PaperJoints joints;
 
-    private BoxCollider meshCollider;
+
+    [SerializeField] private PaperSqaure SqaureCopy;
+    [SerializeField] private GameObject jointPrefab;
+
     [SerializeField] private GameObject plane;
 
     [SerializeField] private int axisPos = -1;
     [SerializeField] private Orientation orientation;
 
-    //L: Moved these up here to abide by standards.
+    private BoxCollider meshCollider;
+
+    private void Awake()
+    {
+        if (jointPrefab == null)
+        {
+            Debug.LogWarning("Joint prefab is null");
+        }
+    }
+
     private void Start()
     {
         meshCollider = plane.GetComponent<BoxCollider>();
@@ -29,7 +41,7 @@ public class LevelEditorManager : MonoBehaviour
             plane.transform.eulerAngles = OrientationExtension.XZ;
         }
         plane.transform.position = GetPosOnPlane(Vector3.zero);
-        copyFrom = squares.GetCenter();
+        SqaureCopy = squares.GetCenter();
         HidePlane();
     }
 
@@ -111,9 +123,70 @@ public class LevelEditorManager : MonoBehaviour
 
         Vector3 squareCenter = squares.GetAbsolutePosition(relPos);
         Quaternion rotation = Quaternion.Euler(OrientationExtension.GetEulerAngle(orientation));
-        square = Instantiate(copyFrom, squareCenter, rotation, squares.squareList.transform);
+        square = Instantiate(SqaureCopy, squareCenter, rotation, squares.squareList.transform);
+        square.orient = orientation;
         squares.SetSquareAt(relPos, square);
+
+        AddJointsTo(relPos, square);
+
         return true;
+    }
+
+    private void AddJointsTo(Vector3Int relPos, PaperSqaure square)
+    {
+        ForEachAdjacentSqaure(relPos, square.orient, (nRelPos, nSqaure) =>
+        {
+            //determine joint center and joint orientation and add joint.
+            
+            //Center is between the two sqaures.
+            Vector3 jointCenter = (squares.GetAbsolutePosition(nRelPos) - squares.GetAbsolutePosition(relPos)) / 2;
+            Quaternion jointRot = Quaternion.identity;  //figure out later
+            AddJoint(jointCenter, jointRot);
+        });
+    }
+
+    private void ForEachAdjacentSqaure(Vector3Int relPos, Orientation orient, System.Action<Vector3Int, PaperSqaure> callback)
+    {
+        //Still need to take care of case where two sqaures meet with different orientations.
+        Vector3Int[] dirs = DirectionsToCheck(orient);
+
+        foreach (Vector3Int dir in dirs)
+        {
+            Vector3Int neighborRelPos = relPos + 2 * dir;
+            Debug.Log($"Checking Position: {neighborRelPos}");
+            PaperSqaure neighborSq = squares.GetSquareAt(neighborRelPos);
+            if (neighborSq != null)
+            {
+                Debug.Log($"Neighbor detected at {neighborRelPos}");
+                callback(neighborRelPos, neighborSq);
+            }
+        }
+    }
+
+    private Vector3Int[] DirectionsToCheck(Orientation orient)
+    {
+        Vector3Int[] dirs = new Vector3Int[4];
+
+        //4 sides based on orientation
+        switch (orient)
+        {
+            case Orientation.XY:
+                dirs = new Vector3Int[4] { Vector3Int.left, Vector3Int.right, Vector3Int.up, Vector3Int.down };
+                break;
+            case Orientation.YZ:
+                dirs = new Vector3Int[4] { Vector3Int.up, Vector3Int.down, Vector3Int.forward, Vector3Int.back };
+                break;
+            case Orientation.XZ:
+                dirs = new Vector3Int[4] { Vector3Int.left, Vector3Int.forward, Vector3Int.right, -Vector3Int.back };
+                break;
+        }
+
+        return dirs;
+    }
+
+    private void AddJoint(Vector3 jointCenter, Quaternion jointRotation)
+    {
+        PaperJoint joint = Instantiate(jointPrefab, jointCenter, jointRotation, joints.transform).GetComponent<PaperJoint>();
     }
 
     public bool RemoveSquare(Vector3Int relPos)
@@ -126,10 +199,12 @@ public class LevelEditorManager : MonoBehaviour
         }
 
         squares.RemoveReference(relPos);
-        if (square == copyFrom)
+        if (square == SqaureCopy)
         {
-            copyFrom = squares.GetCenter();
+            SqaureCopy = squares.GetCenter();
         }
+
+        square.RemoveAdjacentJoints();
         DestroyImmediate(square.gameObject);
         return true;
     }

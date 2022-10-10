@@ -20,6 +20,11 @@ public class PaperSqaure : MonoBehaviour
     public GameObject BottomHalf => bottomHalf;
     [SerializeField] private EdgeParticles edgeParticles;
 
+#if UNITY_EDITOR
+    public Orientation orient;
+    public List<PaperJoint> adjacentJoints;
+#endif
+
     private void Start() 
     {
         edgeParticles = GetComponent<EdgeParticles>();
@@ -43,4 +48,19 @@ public class PaperSqaure : MonoBehaviour
     public void OnFold(bool foldStart)
     {
     }
+
+#if UNITY_EDITOR
+    public void AddJoint(PaperJoint joint)
+    {
+        adjacentJoints.Add(joint);
+    }
+
+    public void RemoveAdjacentJoints()
+    {
+        foreach (PaperJoint joint in adjacentJoints)
+        {
+            joint.Remove();
+        }
+    }
+#endif
 }

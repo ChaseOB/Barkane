@@ -109,6 +109,7 @@ public class PaperSquares : MonoBehaviour
 
     public void SetSquareAt(Vector3Int relPos, PaperSqaure square)
     {
+        Debug.Log($"Placed Square At relPos: {relPos}");
         paperSquares[relPos.x, relPos.y, relPos.z] = square;
     }
 
