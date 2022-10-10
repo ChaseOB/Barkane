@@ -95,11 +95,12 @@ public class PaperJoint : MonoBehaviour
 #if UNITY_EDITOR
     public void Remove()
     {
+        Debug.Log($"Destroying Joint {gameObject.name}");
         foreach (PaperSqaure sqaure in PaperSqaures)
         {
             sqaure.adjacentJoints.Remove(this);
         }
-        DestroyImmediate(this);
+        DestroyImmediate(this.gameObject);
     }       
 #endif
 }
