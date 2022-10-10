@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
     public float bounceHeight = 0.2f; 
     private float marmaladeY;
 
+    private bool Snowball = false;
     public LayerMask playerCollidingMask;
 
     private void Start() 
@@ -100,6 +101,9 @@ public class PlayerMovement : MonoBehaviour
         }
         transform.rotation = currRot * Quaternion.Euler(0, degrees, 0);
         isMoving = false;
+    }
+    private void meetSnowBall(bool value){
+        Snowball = value;
     }
 
     #endregion
