@@ -57,9 +57,9 @@ public class PaperSqaure : MonoBehaviour
 
     public void RemoveAdjacentJoints()
     {
-        foreach (PaperJoint joint in adjacentJoints)
+        while(adjacentJoints.Count > 0)
         {
-            joint.Remove();
+            adjacentJoints[0].Remove();
         }
     }
 #endif

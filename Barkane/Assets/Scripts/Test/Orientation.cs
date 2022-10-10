@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.Remoting.Messaging;
+using UnityEngine;
 
 public enum Orientation
 {
@@ -24,6 +25,21 @@ public static class OrientationExtension
             case Orientation.XY:
                 return XY;
         }
+        return Vector3.zero;
+    }
+
+    public static Vector3 GetRotationAxis(Orientation orientation)
+    {
+        switch (orientation)
+        {
+            case Orientation.YZ:
+                return new Vector3(1, 0, 0);
+            case Orientation.XZ:
+                return new Vector3(0, 1, 0);
+            case Orientation.XY:
+                return new Vector3(0, 0, 1);
+        }
+
         return Vector3.zero;
     }
 

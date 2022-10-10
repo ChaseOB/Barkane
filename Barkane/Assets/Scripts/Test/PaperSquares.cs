@@ -122,4 +122,19 @@ public class PaperSquares : MonoBehaviour
     {
         SetSquareAt(relPos, null);
     }
+
+    //This goes through 44^3 values which is around 85k entries (don't do this unless necessary)
+    //public void RemoveAllReferences()
+    //{
+    //    for (int x = 0; x < SIZE; x++)
+    //    {
+    //        for(int y = 0; y < SIZE; y++)
+    //        {
+    //            for (int z = 0; z < SIZE; z++)
+    //            {
+    //                RemoveReference(new Vector3Int(x, y, z));
+    //            }
+    //        }
+    //    }
+    //}
 }

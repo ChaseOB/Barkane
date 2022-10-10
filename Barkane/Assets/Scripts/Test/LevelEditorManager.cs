@@ -13,7 +13,6 @@ public class LevelEditorManager : MonoBehaviour
     public PaperSquares Squares => squares;
     [SerializeField] private PaperJoints joints;
 
-
     [SerializeField] private PaperSqaure SqaureCopy;
     [SerializeField] private GameObject jointPrefab;
 
@@ -134,14 +133,9 @@ public class LevelEditorManager : MonoBehaviour
 
     private void AddJointsTo(Vector3Int relPos, PaperSqaure square)
     {
-        ForEachAdjacentSqaure(relPos, square.orient, (nRelPos, nSqaure) =>
+        ForEachAdjacentSqaure(relPos, square.orient, (nRelPos, nSquare) =>
         {
-            //determine joint center and joint orientation and add joint.
-            
-            //Center is between the two sqaures.
-            Vector3 jointCenter = (squares.GetAbsolutePosition(nRelPos) - squares.GetAbsolutePosition(relPos)) / 2;
-            Quaternion jointRot = Quaternion.identity;  //figure out later
-            AddJoint(jointCenter, jointRot);
+            AddJoint(square, nSquare, relPos, nRelPos);
         });
     }
 
@@ -177,16 +171,69 @@ public class LevelEditorManager : MonoBehaviour
                 dirs = new Vector3Int[4] { Vector3Int.up, Vector3Int.down, Vector3Int.forward, Vector3Int.back };
                 break;
             case Orientation.XZ:
-                dirs = new Vector3Int[4] { Vector3Int.left, Vector3Int.forward, Vector3Int.right, -Vector3Int.back };
+                dirs = new Vector3Int[4] { Vector3Int.left, Vector3Int.forward, Vector3Int.right, Vector3Int.back };
                 break;
         }
 
         return dirs;
     }
 
-    private void AddJoint(Vector3 jointCenter, Quaternion jointRotation)
+    private void AddJoint(PaperSqaure sq1, PaperSqaure sq2, Vector3Int relPos1, Vector3Int relPos2)
     {
-        PaperJoint joint = Instantiate(jointPrefab, jointCenter, jointRotation, joints.transform).GetComponent<PaperJoint>();
+        Vector3 absPos1 = squares.GetAbsolutePosition(relPos1);
+        Vector3 absPos2 = squares.GetAbsolutePosition(relPos2);
+        Vector3 dPos = (absPos2 - absPos1);
+        Vector3 dPosNormal = dPos.normalized;
+
+        //Determine the position of the joint
+        Vector3 jointCenter = absPos1 + dPos / 2;
+
+        //Determine the orientation of the joint
+        Vector3 sqNormal = OrientationExtension.GetRotationAxis(sq1.orient);
+        var capsule = jointPrefab.GetComponent<CapsuleCollider>();
+
+        //L: Boiler Plate FTW
+        switch (sq1.orient)
+        {
+            case Orientation.XZ:
+                if (dPosNormal == Vector3.left || dPosNormal == Vector3.right)
+                {
+                    capsule.direction = 2;  //Z-axis
+                } else
+                {
+                    capsule.direction = 0;  //X-axis
+                }
+                break;
+            case Orientation.XY:
+                if (dPosNormal == Vector3.left || dPosNormal == Vector3.right)
+                {
+                    capsule.direction = 1;  //Y-axis
+                }
+                else
+                {
+                    capsule.direction = 0;  //X-axis
+                }
+                break;
+            case Orientation.YZ:
+                if (dPosNormal == Vector3.up || dPosNormal == Vector3.down)
+                {
+                    capsule.direction = 2;  //Z-axis
+                }
+                else
+                {
+                    capsule.direction = 1;  //Y-axis
+                }
+                break;
+        }
+
+        PaperJoint joint = Instantiate(jointPrefab, jointCenter, Quaternion.identity, joints.transform).GetComponent<PaperJoint>();
+
+        //Update the joint's adjacent squares and the adjacent squares' joints.
+        joint.PaperSqaures.Clear();
+        joint.PaperSqaures.Add(sq1);
+        joint.PaperSqaures.Add(sq2);
+        sq1.adjacentJoints.Add(joint);
+        sq2.adjacentJoints.Add(joint);
     }
 
     public bool RemoveSquare(Vector3Int relPos)
