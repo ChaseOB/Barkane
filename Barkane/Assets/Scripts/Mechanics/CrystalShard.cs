@@ -20,7 +20,7 @@ public class CrystalShard : MonoBehaviour
         Vector3 currentVal = new Vector3(0, displacement * Mathf.Sin(Mathf.PI * hoverSpeed * Time.time));
         model.transform.localPosition += currentVal - prevVal;
         prevVal = currentVal;
-        model.transform.Rotate(this.transform.forward, rotateSpeed * 0.1f);
+        model.transform.Rotate(Vector3.up, rotateSpeed * 0.1f);
     }
 
 

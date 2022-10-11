@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Esther/Main Menu.unity
+    path: Assets/Scenes/Main Menu.unity
     guid: f07f3d8e5c407594db4e2a07d09998ee
   - enabled: 1
     path: Assets/Scenes/Chase/Test/First Test.unity
