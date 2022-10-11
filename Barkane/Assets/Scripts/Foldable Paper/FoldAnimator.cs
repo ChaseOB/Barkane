@@ -8,6 +8,7 @@ public class FoldAnimator : MonoBehaviour
     public bool isFolding = false;
     public FoldablePaper foldablePaper;
 
+    public int foldCount = 0;
 
     private void Start() 
     {
@@ -34,12 +35,16 @@ public class FoldAnimator : MonoBehaviour
     }*/
 
     //C: folds the given list of squares along the given line by the given number of degrees
-    public void Fold(List<GameObject> objectsToFold, Vector3 center, Vector3 axis, float degrees)
+    public void Fold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
     {
         if(!isFolding) 
         {
-            DetermineVisibleSides(objectsToFold, center, axis, degrees);
-            StartCoroutine(FoldHelper(objectsToFold, center, axis, degrees));
+            var foldJointRenderer = foldJoint.JointRenderer;
+            if(foldJointRenderer != null)
+          //  DetermineVisibleSides(objectsToFold, center, axis, degrees);
+                StartCoroutine(FoldHelper(foldObjects, center, axis, degrees, foldJointRenderer.DisableMeshAction, foldJointRenderer.EnableMeshAction));
+            else
+                StartCoroutine(FoldHelper(foldObjects, center, axis, degrees));
         }
             
     }
@@ -101,24 +106,27 @@ public class FoldAnimator : MonoBehaviour
        // tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 
     }
-    private IEnumerator FoldHelper(List<GameObject> objectsToFold, Vector3 center, Vector3 axis, float degrees)
+    private IEnumerator FoldHelper(FoldObjects objectsToFold, Vector3 center, Vector3 axis, float degrees, System.Action beforeFold = null, System.Action afterFold = null)
     {
         isFolding = true;
-        GameObject tempObj = new GameObject();
-        GameObject target = new GameObject();
+        GameObject tempObj = new GameObject(); //used for reparenting/rotating
+        GameObject target = new GameObject(); //used for setting correct position due to float jank
         tempObj.transform.position = center;
         target.transform.position = center;
-        Dictionary<GameObject, GameObject> parents = new Dictionary<GameObject, GameObject>();
-        //Dictionary<PaperSqaure, Vector3Int> targetLocs = new Dictionary<PaperSqaure, Vector3Int>();
-        foreach(GameObject o in objectsToFold)
+       
+        foreach(GameObject o in objectsToFold.foldSquares)
         {
-            parents[o] = o.transform.parent.gameObject;
-           // targetLocs[s] = s.targetLocation;
             o.transform.parent = tempObj.transform;
-            if (o.GetComponent<PaperJoint>())
-                o.GetComponent<PaperJoint>().ToggleCollider(false);
-
         }
+        
+        foreach(GameObject o in objectsToFold.foldJoints)
+        {
+            o.transform.parent = tempObj.transform;
+            o.GetComponent<PaperJoint>().ToggleCollider(false);
+        }
+
+        if(beforeFold != null)
+            beforeFold();
 
         float t = 0;
         while (t < foldDuration)
@@ -130,16 +138,25 @@ public class FoldAnimator : MonoBehaviour
         target.transform.RotateAround(center, axis, degrees);
         tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 
-        foreach(GameObject o in objectsToFold)
+        foreach(GameObject o in objectsToFold.foldSquares)
         {
             o.transform.position = Vector3Int.RoundToInt(o.transform.position);
-            o.transform.parent =  parents[o].transform;
-            if (o.GetComponent<PaperJoint>())
-                o.GetComponent<PaperJoint>().ToggleCollider(true);
+            o.transform.parent =  objectsToFold.squareParent;
+        }
+
+        foreach(GameObject o in objectsToFold.foldJoints)
+        {
+            o.transform.position = Vector3Int.RoundToInt(o.transform.position);
+            o.transform.parent =  objectsToFold.jointParent;
+            o.GetComponent<PaperJoint>().ToggleCollider(true);
         }
         Destroy(tempObj);
         Destroy(target);
         isFolding = false;
+
+        if(afterFold != null)
+             afterFold();
+        UIManager.UpdateFoldCount(++foldCount);
     }
 
 

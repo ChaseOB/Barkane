@@ -11,18 +11,11 @@ public class FoldablePaper : MonoBehaviour
     public List<PaperSquareStack> PaperSquareStacks => paperSquareStacks;
     private Dictionary<PaperSqaure,  List<PaperJoint>> adjListSquareToJoint;
     private Dictionary<PaperJoint,  List<PaperSqaure>> adjListJointToSquare;
-
     public FoldAnimator foldAnimator;
-
-
-    private  List<GameObject> playerSide = new List<GameObject>();
-
-    private  List<GameObject> foldSide = new List<GameObject>();
-
+    private  FoldObjects playerSide;
+    private  FoldObjects foldObjects;
     private HashSet<PaperSqaure> visitedSquares = new HashSet<PaperSqaure>();
     private HashSet<PaperJoint> visitedJoints = new HashSet<PaperJoint>();
-
-
     public PaperJoint foldJoint;
 
 
@@ -61,14 +54,18 @@ public class FoldablePaper : MonoBehaviour
     {
         visitedJoints.Clear();
         visitedSquares.Clear();
-        playerSide.Clear();
-        foldSide.Clear();
+
+        playerSide = new FoldObjects();
+        foldObjects = new FoldObjects(paperSqaures[0].transform.parent, paperJoints[0].transform.parent);
 
         PaperSqaure playerSquare = null;
         foreach(PaperSqaure ps in paperSqaures)
             if(ps.PlayerOccupied)
                 playerSquare = ps;
         DFSHelperSquare(playerSquare, true);
+
+        playerSide.OnFoldHighlight(false);
+        foldObjects.OnFoldHighlight(true);
     }
 
     private void DFSHelperSquare(PaperSqaure ps, bool isPlayerSide)
@@ -76,9 +73,9 @@ public class FoldablePaper : MonoBehaviour
         if(ps == null) return;
         visitedSquares.Add(ps);
         if(isPlayerSide)
-            playerSide.Add(ps.gameObject);
+            playerSide.foldSquares.Add(ps.gameObject);
         else
-            foldSide.Add(ps.gameObject);
+            foldObjects.foldSquares.Add(ps.gameObject);
         foreach(PaperJoint adjJoint in adjListSquareToJoint[ps])
         {
             if(!visitedJoints.Contains(adjJoint))
@@ -92,9 +89,9 @@ public class FoldablePaper : MonoBehaviour
         visitedJoints.Add(pj);
         isPlayerSide = pj.showLine ? !isPlayerSide : isPlayerSide; //C: if we cross the fold line, then this value changes. We're essentially slicing the graph into 2 parts
         if(isPlayerSide)
-            playerSide.Add(pj.gameObject);
+            playerSide.foldJoints.Add(pj.gameObject);
         else
-            foldSide.Add(pj.gameObject);
+            foldObjects.foldJoints.Add(pj.gameObject);
         foreach(PaperSqaure adjSquare in adjListJointToSquare[pj])
         {
             if(!visitedSquares.Contains(adjSquare))
@@ -105,8 +102,8 @@ public class FoldablePaper : MonoBehaviour
     public void TestFold(float degrees)
     {
         FindFoldObjects();
-        if(foldJoint.canFold)
-            foldAnimator.Fold(foldSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+        if(foldJoint != null && foldJoint.canFold)
+            foldAnimator.Fold(foldJoint, foldObjects, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
     }
 
 
@@ -133,4 +130,36 @@ public class FoldablePaper : MonoBehaviour
                 return pss;
         return null;
     }
+}
+
+public class FoldObjects {
+    public List<GameObject> foldSquares;
+    public List<GameObject> foldJoints;
+    public Transform squareParent;
+    public Transform jointParent;
+
+    public FoldObjects() {
+        foldSquares = new List<GameObject>();
+        foldJoints = new List<GameObject>();
+    }
+
+    public FoldObjects(Transform sp, Transform jp) {
+        foldSquares = new List<GameObject>();
+        foldJoints = new List<GameObject>();
+        squareParent = sp;
+        jointParent = jp;
+    }
+
+    public void OnFoldHighlight(bool select)
+    {
+        foreach (GameObject go in foldSquares)
+            go.GetComponent<PaperSqaure>().OnFoldHighlight(select);
+    }
+
+    //foldStart is true when starting a fold and false when ending a fold
+    public void OnFold(bool foldStart)
+    {
+        
+    }
+
 }

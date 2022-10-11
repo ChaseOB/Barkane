@@ -24,6 +24,7 @@ public class Goal : MonoBehaviour
     {
         numShardsCollected++;
         //update shard display
+        UIManager.UpdateShardCount(numShardsCollected, numShards);
         if(numShardsCollected >= numShards)
             ActivateGoal();
     }
