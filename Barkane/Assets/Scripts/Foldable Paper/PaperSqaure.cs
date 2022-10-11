@@ -54,7 +54,7 @@ public class PaperSqaure : MonoBehaviour
     private void OnValidate()
     {
         Vector3 offset = this.transform.rotation * new Vector3(0, paperThickness / 2, 0);
-//        topHalf.transform.position = this.transform.position + offset;
-    //    bottomHalf.transform.position = this.transform.position - offset;
+        if (topHalf) topHalf.transform.position = this.transform.position + offset;
+        if (bottomHalf) bottomHalf.transform.position = this.transform.position - offset;
     }
 }

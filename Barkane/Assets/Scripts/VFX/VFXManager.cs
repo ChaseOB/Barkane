@@ -13,7 +13,9 @@ namespace BarkaneEditor
         CardboardCastle
     }
 
+#if UNITY_EDITOR
     [InitializeOnLoad, ExecuteInEditMode]
+#endif
     public class VFXManager : MonoBehaviour
     {
         [SerializeField] private ThemeChoice themeChoice;
@@ -22,6 +24,7 @@ namespace BarkaneEditor
 
         public static VFXManager Instance { get; private set; }
 
+#if UNITY_EDITOR
         [UnityEditor.Callbacks.DidReloadScripts]
         public static void DidReloadScripts()
         {
@@ -31,6 +34,7 @@ namespace BarkaneEditor
                 singleton.Refresh();
             }
         }
+#endif
 
         internal void Refresh()
         {
