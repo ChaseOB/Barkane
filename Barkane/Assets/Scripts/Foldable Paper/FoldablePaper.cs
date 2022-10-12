@@ -17,7 +17,7 @@ public class FoldablePaper : MonoBehaviour
     private HashSet<PaperSqaure> visitedSquares = new HashSet<PaperSqaure>();
     private HashSet<PaperJoint> visitedJoints = new HashSet<PaperJoint>();
     public PaperJoint foldJoint;
-
+    public GameObject SquareCollider;
 
     private void Awake() 
     {
@@ -25,6 +25,7 @@ public class FoldablePaper : MonoBehaviour
         paperJoints = GetComponentsInChildren<PaperJoint>(); 
         UpdateAdjList();
     }
+
 
     private void UpdateAdjList()
     {
@@ -48,6 +49,43 @@ public class FoldablePaper : MonoBehaviour
             adjListJointToSquare[pj] = pj.PaperSqaures;
         }
     }
+
+    //C: Physics calculations should always be in FixedUpdate()
+    private void FixedUpdate() 
+    {
+       // CheckFoldCollisions();
+    }
+
+
+    //C: Given the currently selected fold objects, uses collision to check the directions that they can rotate in
+    private void CheckFoldCollisions()
+    {
+        int numChecks = 5;
+        if(foldJoint == null) return;
+        GameObject parent = new GameObject();
+        foreach(GameObject go in foldObjects.foldSquares)
+        {
+            GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
+            newSquare.transform.parent = parent.transform;
+        }
+        
+        //Ideally we should check every point along the rotation axis, but this is impracticle. 
+        for(int i = 1; i <= numChecks; i++) {
+
+        }
+
+        //First check obstacles
+
+
+        //Then check for intesecting squares
+
+
+
+        Destroy(parent);
+    }
+
+
+
 
     //C: Uses a modified DFS to determine which objects should be folded
     public void FindFoldObjects()

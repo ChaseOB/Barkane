@@ -6,7 +6,9 @@ public class FoldAnimator : MonoBehaviour
 {
     public float foldDuration = 0.25f;
     public bool isFolding = false;
+    //public bool isChecking = false;
     public FoldablePaper foldablePaper;
+    public GameObject SquareCollider;
 
     public int foldCount = 0;
 
@@ -15,24 +17,30 @@ public class FoldAnimator : MonoBehaviour
         foldablePaper = FindObjectOfType<FoldablePaper>();
     }
     //C: Tries to fold the given objects. Returns true and folds if successful, returns false if this fold is not possible.
-   /* public bool TryFold(List<GameObject> objectsToFold, Line foldLine, float degrees)
+    public bool TryFold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
     {
-        if(CheckCanFold(objectsToFold, foldLine, degrees))
+        if(CheckCanFold(foldJoint, foldObjects, center, axis, degrees))
         {
-            Fold(objectsToFold, foldLine, degrees);
+            Fold(foldJoint, foldObjects, center, axis, degrees);
             return true;
         }
         return false;
         
     }
 
-    public bool CheckCanFold(List<GameObject> objectsToFold, Line foldLine, float degrees)
+    public bool CheckCanFold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
     {
         if(isFolding) return false;
 
+        //C: duplicate square hitboxes, check if they collide with any obsticles
+
+        foreach(GameObject go in foldObjects.foldSquares)
+        {
+            Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
+        }
 
         return true;
-    }*/
+    }
 
     //C: folds the given list of squares along the given line by the given number of degrees
     public void Fold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
