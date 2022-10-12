@@ -55,4 +55,41 @@ public static class OrientationExtension
         }
         return Orientation.XZ;
     }
+
+    public static Vector3Int[] GetTangentDirs(Orientation orient)
+    {
+        Vector3Int[] dirs = new Vector3Int[4];
+
+        //4 sides based on orientation
+        switch (orient)
+        {
+            case Orientation.XY:
+                dirs = new Vector3Int[4] { Vector3Int.left, Vector3Int.right, Vector3Int.up, Vector3Int.down };
+                break;
+            case Orientation.YZ:
+                dirs = new Vector3Int[4] { Vector3Int.up, Vector3Int.down, Vector3Int.forward, Vector3Int.back };
+                break;
+            case Orientation.XZ:
+                dirs = new Vector3Int[4] { Vector3Int.left, Vector3Int.forward, Vector3Int.right, Vector3Int.back };
+                break;
+        }
+
+        return dirs;
+    }
+
+    public static Vector3Int GetNormalDir(Orientation orient)
+    {
+        Vector3Int[] dirs = new Vector3Int[2];
+
+        switch (orient)
+        {
+            case Orientation.XY:
+                return Vector3Int.forward;
+            case Orientation.YZ:
+                return Vector3Int.right;
+            case Orientation.XZ:
+            default:
+                return Vector3Int.up;
+        }
+    }
 }

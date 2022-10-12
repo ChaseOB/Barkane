@@ -125,6 +125,7 @@ public class LevelEditorManager : MonoBehaviour
         square = Instantiate(SqaureCopy, squareCenter, rotation, squares.squareList.transform);
         square.orient = orientation;
         squares.SetSquareAt(relPos, square);
+        Debug.Log($"Added Square at {relPos}");
 
         AddJointsTo(relPos, square);
 
@@ -133,60 +134,41 @@ public class LevelEditorManager : MonoBehaviour
 
     private void AddJointsTo(Vector3Int relPos, PaperSqaure square)
     {
-        ForEachAdjacentSqaure(relPos, square.orient, (nRelPos, nSquare) =>
+        ForEachAdjacentSqaure(relPos, square.orient, (nRelPos, nSquare, tangent) =>
         {
-            AddJoint(square, nSquare, relPos, nRelPos);
+            AddJoint(square, nSquare, relPos, tangent);
         });
     }
 
-    private void ForEachAdjacentSqaure(Vector3Int relPos, Orientation orient, System.Action<Vector3Int, PaperSqaure> callback)
+    private void ForEachAdjacentSqaure(Vector3Int relPos, Orientation orient, System.Action<Vector3Int, PaperSqaure, Vector3Int> callback)
     {
         //Still need to take care of case where two sqaures meet with different orientations.
-        Vector3Int[] dirs = DirectionsToCheck(orient);
+        Vector3Int[] tDirs = OrientationExtension.GetTangentDirs(orient);
+        Vector3Int normal = OrientationExtension.GetNormalDir(orient);
 
-        foreach (Vector3Int dir in dirs)
+        foreach (Vector3Int tangent in tDirs)
         {
-            Vector3Int neighborRelPos = relPos + 2 * dir;
-            Debug.Log($"Checking Position: {neighborRelPos}");
-            PaperSqaure neighborSq = squares.GetSquareAt(neighborRelPos);
-            if (neighborSq != null)
+            Vector3Int[] neighbors = new Vector3Int[3] { relPos + 2 * tangent, relPos + tangent + normal, relPos + tangent - normal};
+
+            foreach (Vector3Int neighbor in neighbors)
             {
-                Debug.Log($"Neighbor detected at {neighborRelPos}");
-                callback(neighborRelPos, neighborSq);
+                //Debug.Log($"Checking Position: {neighbor}");
+                PaperSqaure neighborSq = squares.GetSquareAt(neighbor);
+                if (neighborSq != null)
+                {
+                    Debug.Log($"Neighbor detected at {neighbor}");
+                    callback(neighbor, neighborSq, tangent);
+                }
             }
         }
     }
 
-    private Vector3Int[] DirectionsToCheck(Orientation orient)
+    private void AddJoint(PaperSqaure sq1, PaperSqaure sq2, Vector3Int relPos1, Vector3Int jointOffset)
     {
-        Vector3Int[] dirs = new Vector3Int[4];
-
-        //4 sides based on orientation
-        switch (orient)
-        {
-            case Orientation.XY:
-                dirs = new Vector3Int[4] { Vector3Int.left, Vector3Int.right, Vector3Int.up, Vector3Int.down };
-                break;
-            case Orientation.YZ:
-                dirs = new Vector3Int[4] { Vector3Int.up, Vector3Int.down, Vector3Int.forward, Vector3Int.back };
-                break;
-            case Orientation.XZ:
-                dirs = new Vector3Int[4] { Vector3Int.left, Vector3Int.forward, Vector3Int.right, Vector3Int.back };
-                break;
-        }
-
-        return dirs;
-    }
-
-    private void AddJoint(PaperSqaure sq1, PaperSqaure sq2, Vector3Int relPos1, Vector3Int relPos2)
-    {
-        Vector3 absPos1 = squares.GetAbsolutePosition(relPos1);
-        Vector3 absPos2 = squares.GetAbsolutePosition(relPos2);
-        Vector3 dPos = (absPos2 - absPos1);
-        Vector3 dPosNormal = dPos.normalized;
+        Vector3 absPos1 = squares.GetAbsolutePosition(relPos1);;
 
         //Determine the position of the joint
-        Vector3 jointCenter = absPos1 + dPos / 2;
+        Vector3 jointCenter = absPos1 + jointOffset;
 
         //Determine the orientation of the joint
         Vector3 sqNormal = OrientationExtension.GetRotationAxis(sq1.orient);
@@ -196,7 +178,7 @@ public class LevelEditorManager : MonoBehaviour
         switch (sq1.orient)
         {
             case Orientation.XZ:
-                if (dPosNormal == Vector3.left || dPosNormal == Vector3.right)
+                if (jointOffset == Vector3.left || jointOffset == Vector3.right)
                 {
                     capsule.direction = 2;  //Z-axis
                 } else
@@ -205,7 +187,7 @@ public class LevelEditorManager : MonoBehaviour
                 }
                 break;
             case Orientation.XY:
-                if (dPosNormal == Vector3.left || dPosNormal == Vector3.right)
+                if (jointOffset == Vector3.left || jointOffset == Vector3.right)
                 {
                     capsule.direction = 1;  //Y-axis
                 }
@@ -215,7 +197,7 @@ public class LevelEditorManager : MonoBehaviour
                 }
                 break;
             case Orientation.YZ:
-                if (dPosNormal == Vector3.up || dPosNormal == Vector3.down)
+                if (jointOffset == Vector3.up || jointOffset == Vector3.down)
                 {
                     capsule.direction = 2;  //Z-axis
                 }
@@ -238,12 +220,15 @@ public class LevelEditorManager : MonoBehaviour
 
     public bool RemoveSquare(Vector3Int relPos)
     {
+        Debug.Log($"Removing Square at {relPos}");
         PaperSqaure square = squares.GetSquareAt(relPos);
+        //Debug.Log($"square is {square}");
 
         if (square == null || square == squares.GetCenter())
         {
             return false;
         }
+        //Debug.Log("Square is a square");
 
         squares.RemoveReference(relPos);
         if (square == SqaureCopy)
