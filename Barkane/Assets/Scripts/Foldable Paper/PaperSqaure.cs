@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 [RequireComponent(typeof(EdgeParticles))]
 public class PaperSqaure : MonoBehaviour
 {
+
     [SerializeField] private bool playerOccupied = false; //true if the player is on this square
     public bool PlayerOccupied { get => playerOccupied;}
 
@@ -17,6 +19,11 @@ public class PaperSqaure : MonoBehaviour
     [SerializeField] private GameObject bottomHalf;
     public GameObject BottomHalf => bottomHalf;
     [SerializeField] private EdgeParticles edgeParticles;
+
+#if UNITY_EDITOR
+    public Orientation orientation;
+    public List<PaperJoint> adjacentJoints;
+#endif
 
     private void Start() 
     {
@@ -42,14 +49,20 @@ public class PaperSqaure : MonoBehaviour
     {
     }
 
-
-    private void OnDestroy()
+#if UNITY_EDITOR
+    public void AddJoint(PaperJoint joint)
     {
-        if (!Application.isPlaying)
+        adjacentJoints.Add(joint);
+    }
+
+    public void RemoveAdjacentJoints()
+    {
+        while(adjacentJoints.Count > 0)
         {
-            SendMessageUpwards("RemoveReferenceMessage", this.transform.position);
+            adjacentJoints[0].Remove();
         }
     }
+#endif
 
     private void OnValidate()
     {

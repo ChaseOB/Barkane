@@ -91,4 +91,19 @@ public class PaperJoint : MonoBehaviour
         if(other.gameObject.layer == 7)
             adjList.Remove(other.GetComponent<PaperJoint>());
     }
+
+#if UNITY_EDITOR
+    public void Remove()
+    {
+        if (gameObject != null)
+        {
+            //Debug.Log($"Destroying Joint {gameObject.name}");
+            foreach (PaperSqaure sqaure in PaperSqaures)
+            {
+                sqaure.adjacentJoints.Remove(this);
+            }
+            DestroyImmediate(this.gameObject);
+        }
+    }       
+#endif
 }
