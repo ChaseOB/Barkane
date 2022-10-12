@@ -10,7 +10,7 @@ public enum Orientation
 
 public static class OrientationExtension
 {
-    public static readonly Vector3 YZ = new Vector3(0, 0, -90);
+    public static readonly Vector3 YZ = new Vector3(0, 0, 270);
     public static readonly Vector3 XZ = new Vector3(0, 0, 0);
     public static readonly Vector3 XY = new Vector3(90, 0, 0);
 

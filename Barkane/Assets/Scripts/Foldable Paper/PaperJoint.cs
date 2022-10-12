@@ -97,7 +97,7 @@ public class PaperJoint : MonoBehaviour
     {
         if (gameObject != null)
         {
-            Debug.Log($"Destroying Joint {gameObject.name}");
+            //Debug.Log($"Destroying Joint {gameObject.name}");
             foreach (PaperSqaure sqaure in PaperSqaures)
             {
                 sqaure.adjacentJoints.Remove(this);

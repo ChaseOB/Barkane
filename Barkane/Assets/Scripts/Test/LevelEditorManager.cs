@@ -123,7 +123,7 @@ public class LevelEditorManager : MonoBehaviour
         Vector3 squareCenter = squares.GetAbsolutePosition(relPos);
         Quaternion rotation = Quaternion.Euler(OrientationExtension.GetEulerAngle(orientation));
         square = Instantiate(SqaureCopy, squareCenter, rotation, squares.squareList.transform);
-        square.orient = orientation;
+        square.orientation = orientation;
         squares.SetSquareAt(relPos, square);
         Debug.Log($"Added Square at {relPos}");
 
@@ -132,90 +132,95 @@ public class LevelEditorManager : MonoBehaviour
         return true;
     }
 
-    private void AddJointsTo(Vector3Int relPos, PaperSqaure square)
+    private void AddJointsTo(Vector3Int squareRelPos, PaperSqaure square)
     {
-        ForEachAdjacentSqaure(relPos, square.orient, (nRelPos, nSquare, tangent) =>
-        {
-            AddJoint(square, nSquare, relPos, tangent);
-        });
-    }
+        Orientation orient = square.orientation;
 
-    private void ForEachAdjacentSqaure(Vector3Int relPos, Orientation orient, System.Action<Vector3Int, PaperSqaure, Vector3Int> callback)
-    {
         //Still need to take care of case where two sqaures meet with different orientations.
-        Vector3Int[] tDirs = OrientationExtension.GetTangentDirs(orient);
+        Vector3Int[] tangents = OrientationExtension.GetTangentDirs(orient);
         Vector3Int normal = OrientationExtension.GetNormalDir(orient);
 
-        foreach (Vector3Int tangent in tDirs)
+        foreach (Vector3Int tangent in tangents)
         {
-            Vector3Int[] neighbors = new Vector3Int[3] { relPos + 2 * tangent, relPos + tangent + normal, relPos + tangent - normal};
+            Vector3Int[] neighborPositions = new Vector3Int[3] {    squareRelPos + 2 * tangent, 
+                                                                    squareRelPos + tangent + normal, 
+                                                                    squareRelPos + tangent - normal
+            };
 
-            foreach (Vector3Int neighbor in neighbors)
+            foreach (Vector3Int nPos in neighborPositions)
             {
                 //Debug.Log($"Checking Position: {neighbor}");
-                PaperSqaure neighborSq = squares.GetSquareAt(neighbor);
-                if (neighborSq != null)
+                PaperSqaure nSquare = squares.GetSquareAt(nPos);
+                if (nSquare != null)
                 {
-                    Debug.Log($"Neighbor detected at {neighbor}");
-                    callback(neighbor, neighborSq, tangent);
+                    //Debug.Log($"Neighbor detected at {nPos}");
+                    AddJoint(squareRelPos, square, nSquare, tangent);
                 }
             }
         }
     }
 
-    private void AddJoint(PaperSqaure sq1, PaperSqaure sq2, Vector3Int relPos1, Vector3Int jointOffset)
+    private void AddJoint(Vector3Int currSquareRelPos, PaperSqaure currSquare, PaperSqaure nSquare, Vector3Int jointOffset)
     {
-        Vector3 absPos1 = squares.GetAbsolutePosition(relPos1);;
+        PaperJoint joint = InstantiateJoint(currSquareRelPos, currSquare.orientation, jointOffset);
+
+        //Update the joint's adjacent squares and the adjacent squares' joints.
+        joint.PaperSqaures.Clear();
+        joint.PaperSqaures.Add(currSquare);
+        joint.PaperSqaures.Add(nSquare);
+
+        currSquare.adjacentJoints.Add(joint);
+        nSquare.adjacentJoints.Add(joint);
+    }
+
+    private PaperJoint InstantiateJoint(Vector3Int squareRelPos, Orientation squareOrient, Vector3Int jointOffset)
+    {
+        Vector3 sqAbsPos = squares.GetAbsolutePosition(squareRelPos);
 
         //Determine the position of the joint
-        Vector3 jointCenter = absPos1 + jointOffset;
+        Vector3 jointCenter = sqAbsPos + jointOffset;
 
-        //Determine the orientation of the joint
-        Vector3 sqNormal = OrientationExtension.GetRotationAxis(sq1.orient);
+        //Set the direction of the capsule
         var capsule = jointPrefab.GetComponent<CapsuleCollider>();
+        capsule.direction = GetJointCapsuleDirection(squareOrient, jointOffset);
 
+        return Instantiate(jointPrefab, jointCenter, Quaternion.identity, joints.transform).GetComponent<PaperJoint>();
+    }
+
+    private int GetJointCapsuleDirection(Orientation squareOrientation, Vector3Int jointOffset)
+    {
         //L: Boiler Plate FTW
-        switch (sq1.orient)
+        switch (squareOrientation)
         {
             case Orientation.XZ:
                 if (jointOffset == Vector3.left || jointOffset == Vector3.right)
                 {
-                    capsule.direction = 2;  //Z-axis
-                } else
-                {
-                    capsule.direction = 0;  //X-axis
+                    return 2;  //Z-axis
                 }
-                break;
+                else
+                {
+                    return 0;  //X-axis
+                }
             case Orientation.XY:
                 if (jointOffset == Vector3.left || jointOffset == Vector3.right)
                 {
-                    capsule.direction = 1;  //Y-axis
+                    return 1;  //Y-axis
                 }
                 else
                 {
-                    capsule.direction = 0;  //X-axis
+                    return 0;  //X-axis
                 }
-                break;
             case Orientation.YZ:
+            default:
                 if (jointOffset == Vector3.up || jointOffset == Vector3.down)
                 {
-                    capsule.direction = 2;  //Z-axis
+                    return 2;  //Z-axis
                 }
                 else
                 {
-                    capsule.direction = 1;  //Y-axis
+                    return 1;  //Y-axis
                 }
-                break;
         }
-
-        PaperJoint joint = Instantiate(jointPrefab, jointCenter, Quaternion.identity, joints.transform).GetComponent<PaperJoint>();
-
-        //Update the joint's adjacent squares and the adjacent squares' joints.
-        joint.PaperSqaures.Clear();
-        joint.PaperSqaures.Add(sq1);
-        joint.PaperSqaures.Add(sq2);
-        sq1.adjacentJoints.Add(joint);
-        sq2.adjacentJoints.Add(joint);
     }
 
     public bool RemoveSquare(Vector3Int relPos)

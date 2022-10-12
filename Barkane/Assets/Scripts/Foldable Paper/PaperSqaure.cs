@@ -21,7 +21,7 @@ public class PaperSqaure : MonoBehaviour
     [SerializeField] private EdgeParticles edgeParticles;
 
 #if UNITY_EDITOR
-    public Orientation orient;
+    public Orientation orientation;
     public List<PaperJoint> adjacentJoints;
 #endif
 
