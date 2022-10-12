@@ -84,19 +84,19 @@ public class FoldAnimator : MonoBehaviour
       // target.transform.position = center;
 
         //Dictionary<GameObject, GameObject> parents = new Dictionary<GameObject, GameObject>();
-        //Dictionary<PaperSqaure, Vector3Int> targetLocs = new Dictionary<PaperSqaure, Vector3Int>();
+        //Dictionary<PaperSquare, Vector3Int> targetLocs = new Dictionary<PaperSquare, Vector3Int>();
        /* foreach(GameObject o in objectsToFold)
         {
-            if(o.GetComponent<PaperSqaure>())
+            if(o.GetComponent<PaperSquare>())
             {
-                PaperSqaure square = o.GetComponent<PaperSqaure>();
+                PaperSquare square = o.GetComponent<PaperSquare>();
                 //Check if this square is currently in a stack. If it is, remove it
                 foldablePaper.TryRemoveSquare(square);
 
                 GameObject go = new GameObject();
                 go.transform.position = o.transform.position;
                 go.transform.RotateAround(center, axis, degrees);
-                foreach(PaperSqaure ps in foldablePaper.PaperSqaures)
+                foreach(PaperSquare ps in foldablePaper.PaperSquares)
                 {
                     if(Vector3.Magnitude(ps.transform.position - go.transform.position) < 0.01f)
                     {

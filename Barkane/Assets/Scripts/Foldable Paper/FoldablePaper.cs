@@ -4,24 +4,24 @@ using UnityEngine;
 
 public class FoldablePaper : MonoBehaviour
 {
-    [SerializeField] private PaperSqaure[] paperSqaures;
-    public PaperSqaure[] PaperSqaures => paperSqaures;
+    [SerializeField] private PaperSquare[] paperSquares;
+    public PaperSquare[] PaperSquares => paperSquares;
     [SerializeField] private PaperJoint[] paperJoints;
     private List<PaperSquareStack> paperSquareStacks = new List<PaperSquareStack>();
     public List<PaperSquareStack> PaperSquareStacks => paperSquareStacks;
-    private Dictionary<PaperSqaure,  List<PaperJoint>> adjListSquareToJoint;
-    private Dictionary<PaperJoint,  List<PaperSqaure>> adjListJointToSquare;
+    private Dictionary<PaperSquare,  List<PaperJoint>> adjListSquareToJoint;
+    private Dictionary<PaperJoint,  List<PaperSquare>> adjListJointToSquare;
     public FoldAnimator foldAnimator;
     private  FoldObjects playerSide;
     private  FoldObjects foldObjects;
-    private HashSet<PaperSqaure> visitedSquares = new HashSet<PaperSqaure>();
+    private HashSet<PaperSquare> visitedSquares = new HashSet<PaperSquare>();
     private HashSet<PaperJoint> visitedJoints = new HashSet<PaperJoint>();
     public PaperJoint foldJoint;
     public GameObject SquareCollider;
 
     private void Awake() 
     {
-        paperSqaures = GetComponentsInChildren<PaperSqaure>();   
+        paperSquares = GetComponentsInChildren<PaperSquare>();   
         paperJoints = GetComponentsInChildren<PaperJoint>(); 
         UpdateAdjList();
     }
@@ -29,14 +29,14 @@ public class FoldablePaper : MonoBehaviour
 
     private void UpdateAdjList()
     {
-        adjListSquareToJoint = new Dictionary<PaperSqaure,  List<PaperJoint>>();
-        adjListJointToSquare = new Dictionary<PaperJoint,  List<PaperSqaure>>();
-        foreach(PaperSqaure ps in paperSqaures)
+        adjListSquareToJoint = new Dictionary<PaperSquare,  List<PaperJoint>>();
+        adjListJointToSquare = new Dictionary<PaperJoint,  List<PaperSquare>>();
+        foreach(PaperSquare ps in paperSquares)
         {
             List<PaperJoint> adj = new List<PaperJoint>();
             foreach(PaperJoint pj in paperJoints)
             {
-                if(pj.PaperSqaures.Contains(ps))
+                if(pj.PaperSquares.Contains(ps))
                 {
                     adj.Add(pj);
                 }
@@ -46,7 +46,7 @@ public class FoldablePaper : MonoBehaviour
 
         foreach(PaperJoint pj in paperJoints)
         {
-            adjListJointToSquare[pj] = pj.PaperSqaures;
+            adjListJointToSquare[pj] = pj.PaperSquares;
         }
     }
 
@@ -94,10 +94,10 @@ public class FoldablePaper : MonoBehaviour
         visitedSquares.Clear();
 
         playerSide = new FoldObjects();
-        foldObjects = new FoldObjects(paperSqaures[0].transform.parent, paperJoints[0].transform.parent);
+        foldObjects = new FoldObjects(paperSquares[0].transform.parent, paperJoints[0].transform.parent);
 
-        PaperSqaure playerSquare = null;
-        foreach(PaperSqaure ps in paperSqaures)
+        PaperSquare playerSquare = null;
+        foreach(PaperSquare ps in paperSquares)
             if(ps.PlayerOccupied)
                 playerSquare = ps;
         DFSHelperSquare(playerSquare, true);
@@ -106,7 +106,7 @@ public class FoldablePaper : MonoBehaviour
         foldObjects.OnFoldHighlight(true);
     }
 
-    private void DFSHelperSquare(PaperSqaure ps, bool isPlayerSide)
+    private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
     {
         if(ps == null) return;
         visitedSquares.Add(ps);
@@ -130,7 +130,7 @@ public class FoldablePaper : MonoBehaviour
             playerSide.foldJoints.Add(pj.gameObject);
         else
             foldObjects.foldJoints.Add(pj.gameObject);
-        foreach(PaperSqaure adjSquare in adjListJointToSquare[pj])
+        foreach(PaperSquare adjSquare in adjListJointToSquare[pj])
         {
             if(!visitedSquares.Contains(adjSquare))
                 DFSHelperSquare(adjSquare, isPlayerSide);
@@ -148,7 +148,7 @@ public class FoldablePaper : MonoBehaviour
     
     //C: looks through the PSSes to see if this square is in a stack. If it is, remove it from the stack and update stack visuals.
     //If there is only one square left in that PSS, the PSS is destroyed and removed.
-    public void TryRemoveSquare(PaperSqaure ps)
+    public void TryRemoveSquare(PaperSquare ps)
     {
         foreach(PaperSquareStack pss in paperSquareStacks)
         {
@@ -161,7 +161,7 @@ public class FoldablePaper : MonoBehaviour
         }
     }
 
-    public PaperSquareStack GetStackWith(PaperSqaure ps)
+    public PaperSquareStack GetStackWith(PaperSquare ps)
     {
         foreach(PaperSquareStack pss in paperSquareStacks)
             if (pss.Contains(ps))
@@ -191,7 +191,7 @@ public class FoldObjects {
     public void OnFoldHighlight(bool select)
     {
         foreach (GameObject go in foldSquares)
-            go.GetComponent<PaperSqaure>().OnFoldHighlight(select);
+            go.GetComponent<PaperSquare>().OnFoldHighlight(select);
     }
 
     //foldStart is true when starting a fold and false when ending a fold

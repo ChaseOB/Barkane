@@ -8,14 +8,14 @@ public class SquareSelector : EditorTool
     [SerializeField] private Texture2D toolIcon;    //L: You can't even assign this lmao.
 
     //static bc I want to access it from other things
-    public static PaperSqaure SelectedSquare { get; private set; }
+    public static PaperSquare SelectedSquare { get; private set; }
 
     private LevelEditorManager levelEditor;
 
     private GUIContent _toolbarIcon;
     public override GUIContent toolbarIcon => _toolbarIcon;
 
-    public delegate void OnSquareSelected(PaperSqaure sqaureSelected);
+    public delegate void OnSquareSelected(PaperSquare squareSelected);
     public static event OnSquareSelected onSquareSelected;
 
     private void Awake()

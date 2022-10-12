@@ -10,14 +10,14 @@ public class FaceInspectorView : VisualElement
     public new class UxmlFactory : UxmlFactory<FaceInspectorView, VisualElement.UxmlTraits> { }
 
     Editor editor;
-    PaperSqaureFace currFace;
+    PaperSquareFace currFace;
 
     public FaceInspectorView()
     {
 
     }
 
-    public void UpdateSelection(PaperSqaureFace face)
+    public void UpdateSelection(PaperSquareFace face)
     {
         ClearSelection();
         this.currFace = face;

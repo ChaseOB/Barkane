@@ -52,15 +52,15 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     void IRefreshable.Refresh()
     {
         var parent = transform.parent.GetComponent<PaperJoint>();
-        if (parent.PaperSqaures.Count < 2)
+        if (parent.PaperSquares.Count < 2)
         {
-            throw new UnityException($"Cannot refresh joints without enough adjacent squares: {parent.PaperSqaures.Count}");
+            throw new UnityException($"Cannot refresh joints without enough adjacent squares: {parent.PaperSquares.Count}");
         }
 
-        a1 = parent.PaperSqaures[0].TopHalf.GetComponent<SquareSide>();
-        a2 = parent.PaperSqaures[0].BottomHalf.GetComponent<SquareSide>();
-        b1 = parent.PaperSqaures[1].TopHalf.GetComponent<SquareSide>();
-        b2 = parent.PaperSqaures[1].BottomHalf.GetComponent<SquareSide>();
+        a1 = parent.PaperSquares[0].TopHalf.GetComponent<SquareSide>();
+        a2 = parent.PaperSquares[0].BottomHalf.GetComponent<SquareSide>();
+        b1 = parent.PaperSquares[1].TopHalf.GetComponent<SquareSide>();
+        b2 = parent.PaperSquares[1].BottomHalf.GetComponent<SquareSide>();
 
         if (CoordUtils.DiffAxisCount(a1, a2) != 0 || CoordUtils.DiffAxisCount(b1, b2) != 0)
         {

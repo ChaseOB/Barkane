@@ -4,7 +4,7 @@ using UnityEngine;
 
 [System.Serializable]
 [RequireComponent(typeof(EdgeParticles))]
-public class PaperSqaure : MonoBehaviour
+public class PaperSquare : MonoBehaviour
 {
 
     [SerializeField] private bool playerOccupied = false; //true if the player is on this square

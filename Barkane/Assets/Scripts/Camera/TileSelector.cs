@@ -10,7 +10,7 @@ public class TileSelector : MonoBehaviour
     private PaperJoint hoverJoint;
     private PaperJoint currJoint;
 
-    [SerializeField] private PaperSqaure hoverSquare;
+    [SerializeField] private PaperSquare hoverSquare;
 
     public FoldablePaper foldablePaper;
     public FoldAnimator foldAnimator;
@@ -38,14 +38,14 @@ public class TileSelector : MonoBehaviour
             foreach (RaycastHit hit in hits)
             {
                 PaperJoint joint = hit.transform.gameObject.GetComponent<PaperJoint>();
-                if (hoverSquare != null && joint.PaperSqaures.Contains(hoverSquare))
+                if (hoverSquare != null && joint.PaperSquares.Contains(hoverSquare))
                     hoverJoint = joint;
             }
         }
 
         if(Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Paper")))
         {
-            hoverSquare = info.transform.gameObject.GetComponent<PaperSqaure>();
+            hoverSquare = info.transform.gameObject.GetComponent<PaperSquare>();
         } 
           
     }

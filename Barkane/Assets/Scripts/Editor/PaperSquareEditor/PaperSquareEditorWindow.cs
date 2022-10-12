@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class PaperSqaureEditorWindow : EditorWindow
+public class PaperSquareEditorWindow : EditorWindow
 {
     //private RadioButtonGroup typeButtonGroup;
     //private Dictionary<TileType, RadioButton> tileTypeButtons;
@@ -13,19 +13,19 @@ public class PaperSqaureEditorWindow : EditorWindow
 
     private void OnEnable()
     {
-        SquareSelector.onSquareSelected += UpdateSqaureSelection;
+        SquareSelector.onSquareSelected += UpdateSquareSelection;
     }
 
     private void OnDisable()
     {
-        SquareSelector.onSquareSelected -= UpdateSqaureSelection;
+        SquareSelector.onSquareSelected -= UpdateSquareSelection;
     }
 
-    [MenuItem("Tools/Paper Sqaure Editor")]
+    [MenuItem("Tools/Paper Square Editor")]
     public static void OpenWindow()
     {
-        PaperSqaureEditorWindow wnd = GetWindow<PaperSqaureEditorWindow>();
-        wnd.titleContent = new GUIContent("Paper Sqaure Editor");
+        PaperSquareEditorWindow wnd = GetWindow<PaperSquareEditorWindow>();
+        wnd.titleContent = new GUIContent("Paper Square Editor");
     }
 
     public void CreateGUI()
@@ -33,7 +33,7 @@ public class PaperSqaureEditorWindow : EditorWindow
         VisualElement root = rootVisualElement;
 
         // Import and build the editor from the UXML
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Scripts/Editor/PaperSqaureEditor/PaperSqaureEditorWindow.uxml");
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Scripts/Editor/PaperSquareEditor/PaperSquareEditorWindow.uxml");
         visualTree.CloneTree(root);
 
         //typeButtonGroup = root.Query<RadioButtonGroup>("TileTypes");
@@ -42,22 +42,22 @@ public class PaperSqaureEditorWindow : EditorWindow
         _topInspector = root.Query<FaceInspectorView>("TopInspector");
         _bottomInspector = root.Query<FaceInspectorView>("BottomInspector");
 
-        UpdateSqaureSelection(SquareSelector.SelectedSquare);
+        UpdateSquareSelection(SquareSelector.SelectedSquare);
 
         // The style will be applied to the VisualElement and all of its children.
-        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Scripts/Editor/PaperSqaureEditor/PaperSqaureEditorWindow.uss");
+        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Scripts/Editor/PaperSquareEditor/PaperSquareEditorWindow.uss");
         root.styleSheets.Add(styleSheet);
     }
 
-    void UpdateSqaureSelection(PaperSqaure sqaure)
+    void UpdateSquareSelection(PaperSquare square)
     {
-        //string sqaureName = sqaure == null ? "null" : sqaure.gameObject.name;
-        //Debug.Log($"Updated Sqaure Selection to {sqaureName} ");
+        //string squareName = square == null ? "null" : square.gameObject.name;
+        //Debug.Log($"Updated Square Selection to {squareName} ");
 
-        if (sqaure != null)
+        if (square != null)
         {
-            _topInspector.UpdateSelection(sqaure.TopHalf.GetComponent<PaperSqaureFace>());
-            _bottomInspector.UpdateSelection(sqaure.BottomHalf.GetComponent<PaperSqaureFace>());
+            _topInspector.UpdateSelection(square.TopHalf.GetComponent<PaperSquareFace>());
+            _bottomInspector.UpdateSelection(square.BottomHalf.GetComponent<PaperSquareFace>());
         } else
         {
             _topInspector.UpdateSelection(null);

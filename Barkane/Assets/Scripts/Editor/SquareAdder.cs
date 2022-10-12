@@ -7,7 +7,7 @@ public class SquareAdder : EditorTool
 {
     LevelEditorManager manager;
     // TODO: Use PrefabUtility.InstatitatePrefab to instantiate new PaperSquares
-    [SerializeField] PaperSqaure squarePrefab;
+    [SerializeField] PaperSquare squarePrefab;
 
     private void OnEnable()
     {

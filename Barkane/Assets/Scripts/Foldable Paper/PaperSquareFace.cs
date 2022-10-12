@@ -8,7 +8,7 @@ public enum FaceType
     UNWALKABLE,
 }
 
-public class PaperSqaureFace : MonoBehaviour
+public class PaperSquareFace : MonoBehaviour
 {
     [SerializeField] FaceType faceType;
 

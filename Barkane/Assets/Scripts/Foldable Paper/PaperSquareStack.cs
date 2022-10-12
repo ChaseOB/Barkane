@@ -9,61 +9,61 @@ public class PaperSquareStack : MonoBehaviour
     */
 
     //lowest index = bottom of the stack, highest index = top of the stack 
-    private List<PaperSqaure> sqaures;
+    private List<PaperSquare> squares;
     public bool destroy = false;
 
-    public void AddSquareTop(PaperSqaure ps)
+    public void AddSquareTop(PaperSquare ps)
     {
-        sqaures.Add(ps);
+        squares.Add(ps);
     }
 
-    public void AddSquareBottom(PaperSqaure ps)
+    public void AddSquareBottom(PaperSquare ps)
     {
-        sqaures.Insert(0, ps);
+        squares.Insert(0, ps);
     }
 
-    public void RemoveSquare(PaperSqaure ps)
+    public void RemoveSquare(PaperSquare ps)
     {
-        sqaures.Remove(ps);
+        squares.Remove(ps);
     }
 
-    public void TryRemoveSquare(PaperSqaure ps)
+    public void TryRemoveSquare(PaperSquare ps)
     {
-        if(sqaures.Contains(ps))
+        if(squares.Contains(ps))
         {
-            sqaures.Remove(ps);
+            squares.Remove(ps);
             EnableSquareComponents();
         }
     }
 
-    public bool Contains(PaperSqaure ps)
+    public bool Contains(PaperSquare ps)
     {
-        return sqaures.Contains(ps);
+        return squares.Contains(ps);
     }
 
     public void EnableSquareComponents()
     {
-        if(sqaures.Count <= 1)
+        if(squares.Count <= 1)
         {
-            foreach(PaperSqaure ps in sqaures)
+            foreach(PaperSquare ps in squares)
             {
                 ps.TopHalf.SetActive(true);
                 ps.BottomHalf.SetActive(true);
             }
             destroy = true;
         }
-        foreach(PaperSqaure ps in sqaures)
+        foreach(PaperSquare ps in squares)
         {
             ps.TopHalf.SetActive(false);
             ps.BottomHalf.SetActive(false);
         }
-        PaperSqaure top = sqaures[sqaures.Count - 1];
+        PaperSquare top = squares[squares.Count - 1];
         float topAngle = Quaternion.Angle(top.transform.rotation, this.transform.rotation);
         if(topAngle < 90.0f)
             top.TopHalf.SetActive(true);
         else
             top.BottomHalf.SetActive(true);
-        PaperSqaure bottom = sqaures[0];
+        PaperSquare bottom = squares[0];
         float bottomAngle = Quaternion.Angle(bottom.transform.rotation, this.transform.rotation);
         if(topAngle > 90.0f)
             bottom.TopHalf.SetActive(true);

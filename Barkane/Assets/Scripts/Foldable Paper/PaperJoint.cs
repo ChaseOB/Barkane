@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PaperJoint : MonoBehaviour
 {
-    [SerializeField] private List<PaperSqaure> paperSqaures;
-    public  List<PaperSqaure> PaperSqaures { get => paperSqaures;}
+    [SerializeField] private List<PaperSquare> paperSquares;
+    public  List<PaperSquare> PaperSquares { get => paperSquares;}
 
     private bool isSelected = false; //true when this is the current selected fold
     public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
@@ -13,7 +13,7 @@ public class PaperJoint : MonoBehaviour
     //private PaperJoint currentJoint;
    // FoldablePaper foldablePaper;
     //private bool isFirstCall = true;
-  //  List<PaperSqaure> willBeFoldedPaperSquares = new List<PaperSqaure>();
+  //  List<PaperSquare> willBeFoldedPaperSquares = new List<PaperSquare>();
 
     [SerializeField] private List<PaperJoint> adjList = new List<PaperJoint>();
 
@@ -98,9 +98,9 @@ public class PaperJoint : MonoBehaviour
         if (gameObject != null)
         {
             //Debug.Log($"Destroying Joint {gameObject.name}");
-            foreach (PaperSqaure sqaure in PaperSqaures)
+            foreach (PaperSquare square in PaperSquares)
             {
-                sqaure.adjacentJoints.Remove(this);
+                square.adjacentJoints.Remove(this);
             }
             DestroyImmediate(this.gameObject);
         }
