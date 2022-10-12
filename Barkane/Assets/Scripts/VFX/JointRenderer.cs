@@ -34,6 +34,7 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     [SerializeField, HideInInspector] private float[] ts;
 
     [SerializeField] private GameObject indicator;
+    [SerializeField] private MaskFoldParticles maskFoldParticles;
 
     private enum FoldState
     {
@@ -98,11 +99,13 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     public bool IsAnimating = false;
 
     public System.Action DisableMeshAction => new System.Action(delegate() {
+        indicator.SetActive(false);
         meshRenderer.enabled = false;
     });
 
     public System.Action EnableMeshAction => new System.Action(delegate ()
     {
+        indicator.SetActive(true);
         FormPairs(a1, a2, b1, b2);
         // colors stay the same across folds
         // UpdateColors();
@@ -214,6 +217,14 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     public void ShowLine(bool value)
     {
         indicator.SetActive(value);
+        if (value)
+        {
+            maskFoldParticles?.Emit();
+        }
+        else
+        {
+            maskFoldParticles?.UnEmit();
+        }
     }
 
     /// <summary>
