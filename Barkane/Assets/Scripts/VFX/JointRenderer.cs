@@ -197,6 +197,7 @@ public class JointRenderer : MonoBehaviour, IRefreshable
         colorB2 = b2.EdgeTintedColor(settings.tintCorrection);
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         if (filter.sharedMesh != null)
@@ -208,6 +209,7 @@ public class JointRenderer : MonoBehaviour, IRefreshable
             }
         }
     }
+#endif
 
     public void ShowLine(bool value)
     {
