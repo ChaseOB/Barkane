@@ -22,7 +22,13 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     void IRefreshable.Refresh()
     {
-        UpdateMesh();
+        if (Application.isEditor && !Application.isPlaying)
+        {
+            UpdateMesh();
+        } else
+        {
+            PushMaterial();
+        }
     }
 
     private void Start()
