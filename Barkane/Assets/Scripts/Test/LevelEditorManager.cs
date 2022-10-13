@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Analytics;
+using BarkaneEditor;
 
 [ExecuteAlways]
 public class LevelEditorManager : MonoBehaviour
@@ -23,17 +24,24 @@ public class LevelEditorManager : MonoBehaviour
 
     private BoxCollider meshCollider;
 
+    private VFXManager vFXManager;
+
     private void Awake()
     {
         if (jointPrefab == null)
         {
             Debug.LogWarning("Joint prefab is null");
         }
+        meshCollider = plane.GetComponent<BoxCollider>();
+        vFXManager = FindObjectOfType<VFXManager>();
+        if(vFXManager == null)
+        {
+            Debug.LogError("VFX Manager Not Found!");
+        }
     }
 
     private void Start()
     {
-        meshCollider = plane.GetComponent<BoxCollider>();
         orientation = OrientationExtension.GetOrientation(plane.transform.eulerAngles);
         if (orientation == Orientation.XZ)
         {
@@ -129,7 +137,11 @@ public class LevelEditorManager : MonoBehaviour
         Debug.Log($"Added Square at {relPos}");
 
         AddJointsTo(relPos, square);
-
+        if(vFXManager == null)
+        {
+            vFXManager = FindObjectOfType<VFXManager>();
+        }
+        vFXManager.Refresh();
         return true;
     }
 
@@ -227,7 +239,7 @@ public class LevelEditorManager : MonoBehaviour
 
     public bool RemoveSquare(Vector3Int relPos)
     {
-        Debug.Log($"Removing Square at {relPos}");
+       /* Debug.Log($"Removing Square at {relPos}");    C: Attempeing to run this crashes the game
         PaperSquare square = squares.GetSquareAt(relPos);
         //Debug.Log($"square is {square}");
 
@@ -244,8 +256,8 @@ public class LevelEditorManager : MonoBehaviour
         }
 
         square.RemoveAdjacentJoints();
-        DestroyImmediate(square.gameObject);
-        return true;
+        DestroyImmediate(square.gameObject);*/
+        return true; 
     }
 
     public Vector3Int GetNearestSquarePos(Vector3 absPos)

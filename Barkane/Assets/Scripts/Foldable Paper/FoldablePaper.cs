@@ -23,6 +23,7 @@ public class FoldablePaper : MonoBehaviour
     {
         paperSquares = GetComponentsInChildren<PaperSquare>();   
         paperJoints = GetComponentsInChildren<PaperJoint>(); 
+        foldAnimator = FindObjectOfType<FoldAnimator>();
         UpdateAdjList();
     }
 

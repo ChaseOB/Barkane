@@ -70,7 +70,7 @@ public class SquareSelector : EditorTool
         }
         else if (e.button == 1)
         {
-            HandleRightClick(e, id, mouseRay);
+            HandleRightClick(e, id, mouseRay); 
         }
     }
 

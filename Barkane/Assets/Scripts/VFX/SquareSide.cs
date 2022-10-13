@@ -11,7 +11,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
     [SerializeField] MeshFilter mFilter;
     [SerializeField] MeshRenderer mRenderer;
     [SerializeField] CrumbleMeshGenerator meshGenerator;
-    [SerializeField] Material materialPrototype;
+    [SerializeField] public Material materialPrototype;
 
     [SerializeField, HideInInspector] Texture2D distanceTexture;
     [SerializeField, HideInInspector] Material materialInstance;
@@ -66,13 +66,17 @@ public class SquareSide : MonoBehaviour, IRefreshable
             }
         }
 
-        for (int i = 0; i < sprinkleVerts.Length; i++)
+        if (materialPrototype.shader == Shader.Find("Paper") && materialPrototype.GetInt("_UseSprinkles") == 1)
         {
-            var go = Instantiate(VFXManager.Theme.Sprinkle, transform);
-            go.transform.localPosition = sprinkleVerts[i];
-            go.transform.up = transform.rotation * sprinkleNorms[i];
-            go.transform.RotateAround(go.transform.up, Random.Range(0, 360));
+            for (int i = 0; i < sprinkleVerts.Length; i++)
+            {
+                var go = Instantiate(VFXManager.Theme.Sprinkle, transform);
+                go.transform.localPosition = sprinkleVerts[i];
+                go.transform.up = transform.rotation * sprinkleNorms[i];
+                go.transform.RotateAround(go.transform.up, Random.Range(0, 360));
+            }
         }
+        
     }
 
     /// <summary>

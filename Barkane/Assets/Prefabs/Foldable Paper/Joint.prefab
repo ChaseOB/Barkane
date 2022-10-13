@@ -160,9 +160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaures:
-  - {fileID: 0}
-  - {fileID: 0}
+  paperSquares: []
   showLine: 0
   adjList: []
   capsuleCollider: {fileID: 7650339220258648006}

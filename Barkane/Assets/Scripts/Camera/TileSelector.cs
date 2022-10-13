@@ -21,6 +21,7 @@ public class TileSelector : MonoBehaviour
     {
         camera = this.GetComponent<Camera>();
         foldAnimator = FindObjectOfType<FoldAnimator>();
+        foldablePaper = FindObjectOfType<FoldablePaper>();
     }
 
     // Update is called once per frame

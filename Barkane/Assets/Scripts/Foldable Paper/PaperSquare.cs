@@ -59,7 +59,7 @@ public class PaperSquare : MonoBehaviour
     {
         while(adjacentJoints.Count > 0)
         {
-            adjacentJoints[0].Remove();
+            adjacentJoints[0]?.Remove();
         }
     }
 #endif
