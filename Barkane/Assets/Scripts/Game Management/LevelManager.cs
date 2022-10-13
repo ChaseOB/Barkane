@@ -100,6 +100,13 @@ public class LevelManager : Singleton<LevelManager>
         playerInstance= Instantiate(playerPrefab, playerPos.position, Quaternion.identity);
 
         FollowTarget.Instance.SetTargetAndPosition(playerInstance.transform);    
+        StartCoroutine(waitfive());
+    }
+
+    private IEnumerator waitfive()
+    {
+        yield return new WaitForSeconds(5);
+                FindObjectOfType<VFXManager>().Refresh();
     }
 
     //C: used when switching from level back to a non-level scene

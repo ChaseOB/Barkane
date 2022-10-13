@@ -20,10 +20,10 @@ public class PaperSquare : MonoBehaviour
     public GameObject BottomHalf => bottomHalf;
     [SerializeField] private EdgeParticles edgeParticles;
 
-#if UNITY_EDITOR
+////#if UNITY_EDITOR
     public Orientation orientation;
     public List<PaperJoint> adjacentJoints;
-#endif
+//#endif
 
     private void Start() 
     {

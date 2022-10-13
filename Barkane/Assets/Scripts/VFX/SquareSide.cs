@@ -82,7 +82,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
                 DestroyImmediate(transform.GetChild(0).gameObject);
             } else
             {
-                throw new UnityException("VFXManager should not be evoked in the game!");
+                Destroy(transform.GetChild(0).gameObject);
+                //throw new UnityException("VFXManager should not be evoked in the game!");
             }
         }
 

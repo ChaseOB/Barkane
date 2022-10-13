@@ -110,7 +110,10 @@ public class PaperSquares : MonoBehaviour
 
     public void SetSquareAt(Vector3Int relPos, PaperSquare square)
     {
-        paperSquares[relPos.x, relPos.y, relPos.z] = square;
+        if (relPos.x >= 0 && relPos.x < SIZE
+        && relPos.y >= 0 && relPos.y < SIZE
+        && relPos.z >= 0 && relPos.z < SIZE)
+            paperSquares[relPos.x, relPos.y, relPos.z] = square;
         if(square != null)
             numSquares++;
         else

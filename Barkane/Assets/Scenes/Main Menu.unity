@@ -1932,8 +1932,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 8814069561603125229, guid: e6122d66d72e2f248828794196740204, type: 3}
   levelSwitchScreen: {fileID: 239814906}
   levelList:
-  - {fileID: 1637694753067455408, guid: 92d299195ac03684f972f1ef3988d4be, type: 3}
-  - {fileID: 166566938870345973, guid: 81759d04e70358f4ba536151407e9ba4, type: 3}
+  - {fileID: 8292709102988328780, guid: 0631c4a0364edbb4d948915e94f319df, type: 3}
   currLevelIndex: -1
   levelScenes: 01000000
 --- !u!1 &619464791
