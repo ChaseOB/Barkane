@@ -46,10 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds: []
-  music: []
   musicLists:
   - name: Cherry Blossom
     Tracks:
+    - {fileID: 8300000, guid: 43e9ec39cb821dd4dac17b8c39542dbc, type: 3}
     - {fileID: 8300000, guid: c180579728f3b8e44a098995948da05b, type: 3}
   - name: Menu
     Tracks:

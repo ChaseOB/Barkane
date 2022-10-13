@@ -18,6 +18,7 @@ public class FoldablePaper : MonoBehaviour
     private HashSet<PaperJoint> visitedJoints = new HashSet<PaperJoint>();
     public PaperJoint foldJoint;
     public GameObject SquareCollider;
+    public Transform playerSpawn;
 
     private void Awake() 
     {
