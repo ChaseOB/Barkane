@@ -9,8 +9,8 @@ public class AudioManager : MonoBehaviour
     private Sound[] sounds;
     private static Sound[] _sounds;
     [SerializeField]
-    private Sound[] music;
-    private static Sound[] _music;
+    //private Sound[] music;
+    //private static Sound[] _music;
     public ArrayClipArray[] musicLists;
 
     private static float sfxVolume = 0.5f; // [0..1]
@@ -41,7 +41,7 @@ public class AudioManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         _sounds = sounds;
-        _music = music;
+       // _music = music;
 
         foreach (Sound s in _sounds)
         {
@@ -52,16 +52,8 @@ public class AudioManager : MonoBehaviour
             s.source.pitch = s.pitch + 1f;
             s.source.loop = s.loop;
         }
+        source = GetComponent<AudioSource>();
 
-        foreach (Sound s in _music)
-        {
-            s.source = gameObject.AddComponent<AudioSource>();
-            s.source.clip = s.clip;
-
-            s.source.volume = s.volume;
-            s.source.pitch = s.pitch + 1f;
-            s.source.loop = s.loop;
-        }
 
 
         //menuLowPass = audioListenerObj.GetComponent<AudioLowPassFilter>();
@@ -71,7 +63,6 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        source = GetComponent<AudioSource>();
         PlayMusic();
     }
 
@@ -154,20 +145,6 @@ public class AudioManager : MonoBehaviour
         s.source.Stop();
     }
 
-    public static void StopMusic(string name)
-    {
-        if (_music == null)
-            return;
-        Sound s = Array.Find(_music, sound => sound.name == name);
-
-        if (s == null)
-        {
-            Debug.LogError("Sound: " + name + " not found!");
-            return;
-        }
-
-        s.source.Stop();
-    }
 
     public static void SetSFXVolume(float value)
     {
@@ -184,19 +161,11 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public static void SetMusicVolume(float value)
+    public void SetMusicVolume(float value)
     {
         value = Mathf.Clamp(value, 0, 1);
         musicVolume = value;
-
-        if (_music == null)
-            return;
-        foreach (Sound s in _music)
-        {
-            if (s == null || s.source == null)
-                continue;
-            s.source.volume = s.volume * value;
-        }
+        source.volume = musicVolume;
     }
 
     public static void SetPitch(float value)
