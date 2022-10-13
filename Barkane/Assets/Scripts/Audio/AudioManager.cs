@@ -20,8 +20,6 @@ public class AudioManager : Singleton<AudioManager>
     //private GameObject audioListenerObj;
     //private static AudioLowPassFilter menuLowPass;
 
-    //public static AudioManager instance;
-
     //private static string currentMusic;
     //public static bool isPlaying;
     private int currentArray;
@@ -34,7 +32,6 @@ public class AudioManager : Singleton<AudioManager>
         DontDestroyOnLoad(gameObject);
 
         _sounds = sounds;
-       // _music = music;
 
         foreach (Sound s in _sounds)
         {
@@ -50,8 +47,8 @@ public class AudioManager : Singleton<AudioManager>
 
 
         //menuLowPass = audioListenerObj.GetComponent<AudioLowPassFilter>();
-        SetSFXVolume(sfxVolume);
-        SetMusicVolume(musicVolume);
+        SetSFXVolume(sfxVolume * 100);
+        SetMusicVolume(musicVolume * 100);
     }
 
     private void Start()
@@ -141,7 +138,7 @@ public class AudioManager : Singleton<AudioManager>
 
     public static void SetSFXVolume(float value)
     {
-        value = Mathf.Clamp(value, 0, 100)/100.0f;
+        value = (Mathf.Clamp(value, 0, 100)/100.0f);
         sfxVolume = value;
 
         if (_sounds == null)
@@ -156,7 +153,7 @@ public class AudioManager : Singleton<AudioManager>
 
     public static void SetMusicVolume(float value)
     {
-        value = Mathf.Clamp(value, 0, 100)/100.0f;
+        value = (Mathf.Clamp(value, 0, 100)/100.0f);
         musicVolume = value;
         Instance.source.volume = musicVolume;
     }
