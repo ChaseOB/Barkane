@@ -16,7 +16,10 @@ public class UIManager : Singleton<UIManager>
 
     private void Start() {
         Goal g = FindObjectOfType<Goal>();
-        ResetCounts(g.numShards);
+        if(g != null)
+            ResetCounts(g.numShards);
+        else
+            ResetCounts();
     }
 
     public void ResetCounts(int numShards = 0)
