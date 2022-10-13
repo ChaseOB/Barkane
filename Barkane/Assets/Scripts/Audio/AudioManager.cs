@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Audio;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : Singleton<AudioManager>
 {
     [SerializeField]
     private Sound[] sounds;
@@ -20,7 +20,7 @@ public class AudioManager : MonoBehaviour
     //private GameObject audioListenerObj;
     //private static AudioLowPassFilter menuLowPass;
 
-    public static AudioManager instance;
+    //public static AudioManager instance;
 
     //private static string currentMusic;
     //public static bool isPlaying;
@@ -30,14 +30,7 @@ public class AudioManager : MonoBehaviour
 
     void Awake()
     {
-        if (instance == null)
-            instance = this;
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-
+        InitializeSingleton();
         DontDestroyOnLoad(gameObject);
 
         _sounds = sounds;
@@ -148,7 +141,7 @@ public class AudioManager : MonoBehaviour
 
     public static void SetSFXVolume(float value)
     {
-        value = Mathf.Clamp(value, 0, 1);
+        value = Mathf.Clamp(value, 0, 100)/100.0f;
         sfxVolume = value;
 
         if (_sounds == null)
@@ -161,11 +154,11 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void SetMusicVolume(float value)
+    public static void SetMusicVolume(float value)
     {
-        value = Mathf.Clamp(value, 0, 1);
+        value = Mathf.Clamp(value, 0, 100)/100.0f;
         musicVolume = value;
-        source.volume = musicVolume;
+        Instance.source.volume = musicVolume;
     }
 
     public static void SetPitch(float value)

@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu.unity
     guid: f07f3d8e5c407594db4e2a07d09998ee
   - enabled: 1
+    path: Assets/Scenes/Cherry Blossom.unity
+    guid: 4f45ac5526d37dc46b50a2b9d392acf4
+  - enabled: 1
     path: Assets/Scenes/Chase/Test/First Test.unity
     guid: aa1bc5775ad426c41bf6bf26dc6763c7
   - enabled: 1

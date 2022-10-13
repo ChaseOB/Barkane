@@ -864,7 +864,6 @@ GameObject:
   - component: {fileID: 239814911}
   - component: {fileID: 239814910}
   - component: {fileID: 239814909}
-  - component: {fileID: 239814908}
   m_Layer: 5
   m_Name: ScreenTransitionCanvas
   m_TagString: Untagged
@@ -893,19 +892,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &239814908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 239814906}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40d7d971e85b69e45866d18275eeb345, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  levelSwitchScreen: {fileID: 0}
 --- !u!114 &239814909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1077,6 +1063,18 @@ MonoBehaviour:
       - m_Target: {fileID: 252492945}
         m_TargetAssemblyTypeName: TextSlider, Assembly-CSharp
         m_MethodName: setNumberText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6325944096096093205}
+        m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
+        m_MethodName: SetSFXVolume
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1895,6 +1893,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 609617771}
+  - component: {fileID: 609617772}
   m_Layer: 0
   m_Name: SceneManager
   m_TagString: Untagged
@@ -1918,6 +1917,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &609617772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609617770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40d7d971e85b69e45866d18275eeb345, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 8814069561603125229, guid: e6122d66d72e2f248828794196740204, type: 3}
+  levelSwitchScreen: {fileID: 239814906}
+  levelList:
+  - {fileID: 1637694753067455408, guid: 92d299195ac03684f972f1ef3988d4be, type: 3}
+  - {fileID: 166566938870345973, guid: 81759d04e70358f4ba536151407e9ba4, type: 3}
+  currLevelIndex: -1
+  levelScenes: 01000000
 --- !u!1 &619464791
 GameObject:
   m_ObjectHideFlags: 0
@@ -2822,6 +2840,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 6325944096096093205}
+        m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
+        m_MethodName: SetMusicVolume
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &708064856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3267,12 +3297,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -4206,7 +4236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bd8f3bb1c67e6e4eb2563735cf880ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameStartScene: 0
+  gameStartScene: 1
 --- !u!4 &1330438225
 Transform:
   m_ObjectHideFlags: 0
@@ -4563,10 +4593,10 @@ RectTransform:
   m_Father: {fileID: 1012048194}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1238, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1679801670
 MonoBehaviour:
@@ -5418,3 +5448,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
+--- !u!114 &6325944096096093205 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
+  m_PrefabInstance: {fileID: 6325944096096093204}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9c3531e14e30e842a5ef189892c4e00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

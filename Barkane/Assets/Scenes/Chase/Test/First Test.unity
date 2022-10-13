@@ -831,9 +831,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaures:
-  - {fileID: 1829903606}
-  - {fileID: 1114580485}
+  paperSquares: []
   showLine: 0
   adjList: []
   capsuleCollider: {fileID: 0}
@@ -1509,6 +1507,8 @@ MonoBehaviour:
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   edgeParticles: {fileID: 0}
+  orientation: 0
+  adjacentJoints: []
 --- !u!65 &728306539
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1700,10 +1700,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f122d89b6bd2c34db5a8d13a8df5ac5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaures: []
+  paperSquares: []
   paperJoints: []
   foldAnimator: {fileID: 1166862080}
   foldJoint: {fileID: 0}
+  SquareCollider: {fileID: 0}
+  playerSpawn: {fileID: 0}
 --- !u!4 &792990534
 Transform:
   m_ObjectHideFlags: 0
@@ -4428,6 +4430,8 @@ MonoBehaviour:
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   edgeParticles: {fileID: 0}
+  orientation: 0
+  adjacentJoints: []
 --- !u!65 &1114580486
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4507,6 +4511,7 @@ MonoBehaviour:
   foldDuration: 0.25
   isFolding: 0
   foldablePaper: {fileID: 0}
+  SquareCollider: {fileID: 0}
   foldCount: 0
 --- !u!1 &1179978656
 GameObject:
@@ -4563,6 +4568,8 @@ MonoBehaviour:
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   edgeParticles: {fileID: 0}
+  orientation: 0
+  adjacentJoints: []
 --- !u!65 &1179978659
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4627,6 +4634,8 @@ MonoBehaviour:
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   edgeParticles: {fileID: 0}
+  orientation: 0
+  adjacentJoints: []
 --- !u!4 &1184534836
 Transform:
   m_ObjectHideFlags: 0
@@ -5295,9 +5304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaures:
-  - {fileID: 1829903606}
-  - {fileID: 728306538}
+  paperSquares: []
   showLine: 0
   adjList: []
   capsuleCollider: {fileID: 0}
@@ -5867,9 +5874,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaures:
-  - {fileID: 1179978658}
-  - {fileID: 1829903606}
+  paperSquares: []
   showLine: 0
   adjList: []
   capsuleCollider: {fileID: 1609842770}
@@ -6028,9 +6033,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaures:
-  - {fileID: 1184534835}
-  - {fileID: 728306538}
+  paperSquares: []
   showLine: 0
   adjList: []
   capsuleCollider: {fileID: 0}
@@ -6459,6 +6462,8 @@ MonoBehaviour:
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   edgeParticles: {fileID: 0}
+  orientation: 0
+  adjacentJoints: []
 --- !u!65 &1829903607
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7464,18 +7469,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8814069561603125227, guid: e6122d66d72e2f248828794196740204, type: 3}
-      propertyPath: marmalade
-      value: 
-      objectReference: {fileID: 8814069561536548496}
     - target: {fileID: 8814069561603125229, guid: e6122d66d72e2f248828794196740204, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6122d66d72e2f248828794196740204, type: 3}
---- !u!1 &8814069561536548496 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 793832043710397480, guid: e6122d66d72e2f248828794196740204, type: 3}
-  m_PrefabInstance: {fileID: 8814069561536548495}
-  m_PrefabAsset: {fileID: 0}
