@@ -13,8 +13,9 @@ public class SquareSide : MonoBehaviour, IRefreshable
     [SerializeField] CrumbleMeshGenerator meshGenerator;
     [SerializeField] public Material materialPrototype;
 
-    [SerializeField, HideInInspector] Texture2D distanceTexture;
     [SerializeField, HideInInspector] Material materialInstance;
+    [SerializeField, HideInInspector] byte[] distanceTextureData;
+    [SerializeField, HideInInspector] int distanceTextureWidth;
 
     public Material MaterialPrototype => materialPrototype;
 
@@ -27,13 +28,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
             UpdateMesh();
         } else
         {
-            if (materialInstance == null)
-            {
-                materialInstance = new Material(materialPrototype)
-                {
-                    name = $"hydrated {materialPrototype.name}"
-                };
-            }
             PushMaterial();
         }
     }
@@ -45,8 +39,17 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     private void PushMaterial()
     {
-        if (materialInstance != null &&  distanceTexture != null)
+        if (materialInstance == null)
         {
+            materialInstance = new Material(materialPrototype)
+            {
+                name = $"hydrated {materialPrototype.name}"
+            };
+        }
+        if (materialInstance != null)
+        {
+            var distanceTexture = new Texture2D(distanceTextureWidth, distanceTextureWidth);
+            distanceTexture.LoadImage(distanceTextureData);
             materialInstance.SetTexture("Dist", distanceTexture);
             mRenderer.sharedMaterials = new Material[] { materialInstance };
         }
@@ -64,7 +67,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
     {
         var (mesh, texture, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
         mFilter.sharedMesh = mesh;
-        distanceTexture = texture;
+        distanceTextureData = texture.EncodeToPNG();
+        distanceTextureWidth = texture.width;
         materialInstance = new Material(materialPrototype)
         {
             name = $"hydrated {materialPrototype.name}"
