@@ -24,8 +24,7 @@ public class MaskFoldParticles : MonoBehaviour, BarkaneEditor.IRefreshable
     {
         foreach (ParticleSystem ps in listOfSystems)
         {
-            ps.Pause();
-            ps.Clear();
+            ps.Stop();
         }
     }
 

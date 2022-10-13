@@ -99,13 +99,13 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     public bool IsAnimating = false;
 
     public System.Action DisableMeshAction => new System.Action(delegate() {
-        indicator.SetActive(false);
+       // indicator.SetActive(false);
         meshRenderer.enabled = false;
     });
 
     public System.Action EnableMeshAction => new System.Action(delegate ()
     {
-        indicator.SetActive(true);
+        //indicator.SetActive(true);
         FormPairs(a1, a2, b1, b2);
         // colors stay the same across folds
         // UpdateColors();
