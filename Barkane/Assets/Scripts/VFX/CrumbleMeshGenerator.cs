@@ -181,8 +181,6 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
             Dispatch(blurShader, 1); // the vertical pass
         }
 
-        mat.SetVector("YOverride", new Vector4(transform.up.x, transform.up.y, transform.up.z, 1));
-
         int sprinkleCount = setting.sprinkleCount + Random.Range(0, setting.sprinkleBonus);
         var sprinkleVerts = new Vector3[sprinkleCount];
         var sprinkleNorms = new Vector3[sprinkleCount];
