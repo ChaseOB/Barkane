@@ -30,7 +30,7 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
     /// </summary>
     /// <param name="baseMat">prototype of new material to be applied to the mesh</param>
     /// <returns>mesh, material, sprinkle positions, sprinkle normals</returns>
-    public (Mesh, Material, Texture2D, Vector3[], Vector3[]) Create(Material baseMat)
+    public (Mesh, Texture2D, Vector3[], Vector3[]) Create(Material baseMat)
     {
         var (pivTop, pivLeft, pivOther) = GetDistinctUV(setting.margin, setting.mainTriangleArea);
 
@@ -160,8 +160,6 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
         m.Optimize();
 
         // get base normal map from compute shader and pass that to the material
-        var mat = new Material(baseMat);
-        mat.name = $"hydrated [{baseMat.name}]";
         vBuf.SetData(v2DDup, 0, 0, 24);
         crumbleShader.SetBuffer(0, "pivots", vBuf);
 
@@ -227,9 +225,7 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
         RenderTexture.active = null;
         DestroyImmediate(normBuf);
 
-        mat.SetTexture("Dist", cpuTexture);
-
-        return (m, mat, cpuTexture, sprinkleVerts, sprinkleNorms);
+        return (m, cpuTexture, sprinkleVerts, sprinkleNorms);
     }
 
     private void Dispatch(ComputeShader cs, int kernelIndex = 0)

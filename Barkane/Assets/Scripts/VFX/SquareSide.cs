@@ -27,6 +27,13 @@ public class SquareSide : MonoBehaviour, IRefreshable
             UpdateMesh();
         } else
         {
+            if (materialInstance == null)
+            {
+                materialInstance = new Material(materialPrototype)
+                {
+                    name = $"hydrated {materialPrototype.name}"
+                };
+            }
             PushMaterial();
         }
     }
@@ -55,10 +62,13 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public void UpdateMesh()
     {
-        var (mesh, material, texture, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
+        var (mesh, texture, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
         mFilter.sharedMesh = mesh;
         distanceTexture = texture;
-        materialInstance = material;
+        materialInstance = new Material(materialPrototype)
+        {
+            name = $"hydrated {materialPrototype.name}"
+        };
         PushMaterial();
 
         while (transform.childCount > 0)
