@@ -66,8 +66,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
             }
         }
 
-        if (materialPrototype.shader == Shader.Find("Paper") && materialPrototype.GetInt("_UseSprinkles") == 1)
-        {
+        //if (materialPrototype.shader == Shader.Find("Paper") && materialPrototype.GetInt("_UseSprinkles") == 1) //C: No GetBool, need to use GetInt. Also this is broken lol
+        //{
             for (int i = 0; i < sprinkleVerts.Length; i++)
             {
                 var go = Instantiate(VFXManager.Theme.Sprinkle, transform);
@@ -75,7 +75,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
                 go.transform.up = transform.rotation * sprinkleNorms[i];
                 go.transform.RotateAround(go.transform.up, Random.Range(0, 360));
             }
-        }
+        //}
         
     }
 

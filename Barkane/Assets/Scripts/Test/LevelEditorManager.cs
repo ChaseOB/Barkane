@@ -195,10 +195,51 @@ public class LevelEditorManager : MonoBehaviour
         Vector3 jointCenter = sqAbsPos + jointOffset;
 
         //Set the direction of the capsule
-        var capsule = jointPrefab.GetComponent<CapsuleCollider>();
-        capsule.direction = GetJointCapsuleDirection(squareOrient, jointOffset);
+       // var capsule = jointPrefab.GetComponent<CapsuleCollider>();
+        //capsule.direction = GetJointCapsuleDirection(squareOrient, jointOffset);
 
-        return Instantiate(jointPrefab, jointCenter, Quaternion.identity, joints.transform).GetComponent<PaperJoint>();
+        Vector3 rot = GetJointDirection(squareOrient, jointOffset);
+        return Instantiate(jointPrefab, jointCenter, Quaternion.Euler(rot.x, rot.y, rot.z), joints.transform).GetComponent<PaperJoint>();
+    }
+    
+    private Vector3 GetJointDirection(Orientation squareOrientation, Vector3Int jointOffset)
+    {
+        //C: need to rotate entire joint, not just capsule
+
+        //0 X -> 0, 0, 0 
+        //1 Y -> 0 0 90
+        //2 Z -> 0 90 0
+        switch (squareOrientation)
+        {
+            case Orientation.XZ:
+                if (jointOffset == Vector3.left || jointOffset == Vector3.right)
+                {
+                    return new Vector3(0, 90, 0);  //Z-axis
+                }
+                else
+                {
+                    return Vector3.zero;  //X-axis
+                }
+            case Orientation.XY:
+                if (jointOffset == Vector3.left || jointOffset == Vector3.right)
+                {
+                    return new Vector3(0, 0, 90);  //Y-axis
+                }
+                else
+                {
+                    return Vector3.zero;  //X-axis
+                }
+            case Orientation.YZ:
+            default:
+                if (jointOffset == Vector3.up || jointOffset == Vector3.down)
+                {
+                    return new Vector3(0, 90, 0);  //Z-axis
+                }
+                else
+                {
+                    return new Vector3(0, 0, 90);  //Y-axis
+                }
+        }
     }
 
     private int GetJointCapsuleDirection(Orientation squareOrientation, Vector3Int jointOffset)
