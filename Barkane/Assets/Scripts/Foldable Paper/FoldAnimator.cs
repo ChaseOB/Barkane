@@ -157,14 +157,12 @@ public class FoldAnimator : MonoBehaviour
                 }
                 else
                 {
-                    //List<PaperSquare> squaresInFold = new List<PaperSquare>();
-                     //We arbitrarily pick one side of the first square to be the "top", then add to this list based on the normals of the other square's top/bottoms
-                    //List<GameObject> topHalfList = new List<GameObject>(); 
-                    //List<GameObject> botHalfList = new List<GameObject>();
+                    Debug.Log($"{list.Count} squares at location {list[0].transform.position}");
+                    //We arbitrarily pick one side of the first square to be the "top", which is then used as a comparison for other square's top/bottoms
                     Vector3 topHalfNorm = list[0].TopHalf.transform.up;
                     
-                    List<GameObject> activeSides = new List<GameObject>();
-                    List<GameObject> activeFoldSides = new List<GameObject>();
+                    HashSet<GameObject> activeSides = new HashSet<GameObject>();
+                    HashSet<GameObject> activeFoldSides = new HashSet<GameObject>();
 
                     GameObject foldTop = null;
                     GameObject foldBot = null;
@@ -172,29 +170,34 @@ public class FoldAnimator : MonoBehaviour
                     GameObject stationaryBot = null;
 
                     Vector3 prevPos = Vector3.zero;
-                   // Vector3 currPos = list[0];
                     //C: there should be a total of 2 sides enabled in each list currently. We need to figure out which of them to now hide.
                     foreach(PaperSquare ps in list) 
                     {
-                        activeSides.AddRange(ps.GetOpenSides());
+                        activeSides.UnionWith(ps.GetOpenSides());
                         if(foldObjects.foldSquares.Contains(ps.gameObject))
                         {
-                            activeFoldSides.AddRange(ps.GetOpenSides());
+                         //   Debug.Log($"{ps.gameObject.name} is in fold list on stack of size {list.Count}");
+                            activeFoldSides.UnionWith(ps.GetOpenSides());
                             prevPos = ps.storedPos;
                         }
                     }
-
+                    
+                    Debug.Log(activeFoldSides.Count);
+                    
                     foreach(GameObject go in activeSides)
                     {
                         if(activeFoldSides.Contains(go))
                         {
+                            //Debug.Log(go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name + " is in active fold sides");
                             if(CoordUtils.ApproxSameVector(topHalfNorm, go.transform.up))
                             {
                                 foldTop = go;
+                                Debug.Log("fold top is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
                             }
                             else
                             {
                                 foldBot = go;
+                                Debug.Log("fold bot is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
                             }
                         }
                         else
@@ -202,19 +205,35 @@ public class FoldAnimator : MonoBehaviour
                             if(CoordUtils.ApproxSameVector(topHalfNorm, go.transform.up))
                             {
                                 stationaryTop = go;
+                                Debug.Log("stat top is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
                             }
                             else
                             {
                                 stationaryBot = go;
+                                Debug.Log("stat bot  is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
                             }
                         }
                     }
+                    if(foldTop == null)
+                        Debug.Log("fold top is null");
+                    if(foldBot == null)
+                        Debug.Log("fold bot is null");
+                      if(stationaryTop == null)
+                        Debug.Log("stat top is null");
+                    if(stationaryBot == null)
+                        Debug.Log("stat bot is null");
+//                    Debug.Log(foldTop.name + " " + foldBot.name + " " + stationaryTop.name + " " + stationaryBot.name);
                         //Check to see if we should like S top and F bot or F top and S bot
 
+                    if(foldTop != null && foldBot != null && stationaryTop != null && stationaryBot != null)
+                    {
                     float topDist = Vector3.Magnitude(prevPos - stationaryTop.transform.position);
                     float botDist = Vector3.Magnitude(prevPos - stationaryBot.transform.position);
+                    if(topDist == botDist) Debug.Log("same dist");
                     if(topDist > botDist) //new square is on the bottom, join top of fold and bottom of stationary
                     {
+                        foldTop.GetComponentInParent<PaperSquare>().invertForGetOpen = !CoordUtils.ApproxSameVector(foldTop.transform.up, foldTop.GetComponentInParent<PaperSquare>().TopHalf.transform.up);
+                        Debug.Log("top side");
                         foldTop.SetActive(false);
                         stationaryBot.SetActive(false);
                         PaperSquare foldSquare = foldTop.GetComponentInParent<PaperSquare>();
@@ -226,6 +245,7 @@ public class FoldAnimator : MonoBehaviour
                     }
                     else //new fold square is on the top, join bot of fold and top of stationary
                     {
+                        Debug.Log("bottom side");
                         foldBot.SetActive(false);
                         stationaryTop.SetActive(false);
                         PaperSquare foldSquare = foldBot.GetComponentInParent<PaperSquare>();
@@ -234,6 +254,7 @@ public class FoldAnimator : MonoBehaviour
                         statSquare.bottomStack = foldSquare;
                         foldSquare.UpdateHitboxes();
                         statSquare.UpdateHitboxes();
+                    }
                     }
                 }
             }

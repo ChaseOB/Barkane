@@ -180,7 +180,7 @@ public class FoldablePaper : MonoBehaviour
                 List<PaperSquare> list = new List<PaperSquare>();
                 list.Add(ps);
                 dict.Add(ps.transform.position, list);
-                Debug.Log(ps.transform.position);
+//                Debug.Log(ps.transform.position);
             }
         }
 

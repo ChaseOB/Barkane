@@ -34,6 +34,8 @@ public class PaperSquare : MonoBehaviour, IComparable<PaperSquare>
 
     public Vector3 storedPos;
 
+    public bool invertForGetOpen = false;
+
 ////#if UNITY_EDITOR
     public Orientation orientation;
     public List<PaperJoint> adjacentJoints;
@@ -129,10 +131,19 @@ public class PaperSquare : MonoBehaviour, IComparable<PaperSquare>
     public List<GameObject> GetOpenSides()
     {
         List<GameObject> list = new List<GameObject>();
-        if(topStack == null)
-            list.Add(topHalf);
-        if(bottomStack == null)
-            list.Add(bottomHalf);
+        if(topStack == null) {
+            if(invertForGetOpen)
+                list.Add(bottomHalf);
+            else
+                list.Add(topHalf);
+        }
+        if(bottomStack == null) {
+            if(invertForGetOpen)
+                list.Add(topHalf);
+            else
+                list.Add(bottomHalf);
+        }
+        
         return list;
     }
 

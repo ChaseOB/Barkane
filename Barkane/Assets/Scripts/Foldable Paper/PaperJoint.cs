@@ -7,7 +7,7 @@ public class PaperJoint : MonoBehaviour
     [SerializeField] private List<PaperSquare> paperSquares;
     public  List<PaperSquare> PaperSquares { get => paperSquares;}
 
-    private bool isSelected = false; //true when this is the current selected fold
+    public bool isSelected = false; //true when this is the current selected fold
     public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
 
     //private PaperJoint currentJoint;

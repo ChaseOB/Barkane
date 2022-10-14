@@ -71,6 +71,8 @@ public class TileSelector : MonoBehaviour
         {
             currJoint?.Deselect();
             currJoint = null;
+            foldablePaper.foldJoint = null;
+
         }
 
         foldablePaper.FindFoldObjects();
@@ -81,14 +83,14 @@ public class TileSelector : MonoBehaviour
     private void OnFoldUp(InputValue value)
     {
         Debug.Log("fold up");
-        if(!value.isPressed)
+        if(!value.isPressed || currJoint == null || !currJoint.isSelected)
             return;
         foldablePaper.TestFold(90);
     }
 
     private void OnFoldDown(InputValue value)
     {
-        if(!value.isPressed)
+        if(!value.isPressed || currJoint == null || !currJoint.isSelected)
             return;
         foldablePaper.TestFold(-90);
     }
