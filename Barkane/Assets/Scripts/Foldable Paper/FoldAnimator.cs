@@ -25,20 +25,44 @@ public class FoldAnimator : MonoBehaviour
             Fold(foldJoint, foldObjects, center, axis, degrees);
             return true;
         }
+        else
+        {
+            Debug.Log("You can't fold!");
+            //play error sound
+        }
         return false;
         
     }
 
     public bool CheckCanFold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
     {
+        Debug.Log("checking fold");
         if(isFolding) return false;
+        //C: check selected joints to ensure straight line
+        HashSet<int> x = new HashSet<int>();
+        HashSet<int> y = new HashSet<int>();
+        HashSet<int> z = new HashSet<int>();
+
+        foreach(PaperJoint pj in foldablePaper.PaperJoints)
+        {
+            if(pj.showLine)
+            {
+                Debug.Log(Vector3Int.RoundToInt(pj.transform.position));
+                x.Add(Vector3Int.RoundToInt(pj.transform.position).x);
+                y.Add(Vector3Int.RoundToInt(pj.transform.position).y);
+                z.Add(Vector3Int.RoundToInt(pj.transform.position).z);
+            }
+        }
+
+        if(x.Count + y.Count + z.Count > 4) return false;
+
 
         //C: duplicate square hitboxes, check if they collide with any obsticles
 
-        foreach(GameObject go in foldObjects.foldSquares)
-        {
-            Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
-        }
+       // foreach(GameObject go in foldObjects.foldSquares)
+      //  {
+       //     Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
+       // }
 
         return true;
     }

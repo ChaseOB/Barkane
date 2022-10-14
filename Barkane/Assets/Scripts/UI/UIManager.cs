@@ -55,7 +55,8 @@ public class UIManager : Singleton<UIManager>
 
     public static void UpdateFoldCount(int numFolds)
     {
-        Instance.UpdateFC(numFolds);
+        if(Instance != null)
+            Instance.UpdateFC(numFolds);
     }
 
     public void UpdateFC(int numFolds)

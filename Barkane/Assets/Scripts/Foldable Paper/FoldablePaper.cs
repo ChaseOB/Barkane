@@ -7,6 +7,7 @@ public class FoldablePaper : MonoBehaviour
     [SerializeField] private PaperSquare[] paperSquares;
     public PaperSquare[] PaperSquares => paperSquares;
     [SerializeField] private PaperJoint[] paperJoints;
+    public PaperJoint[] PaperJoints => paperJoints;
     private List<PaperSquareStack> paperSquareStacks = new List<PaperSquareStack>();
     public List<PaperSquareStack> PaperSquareStacks => paperSquareStacks;
     private Dictionary<PaperSquare,  List<PaperJoint>> adjListSquareToJoint;
@@ -157,7 +158,7 @@ public class FoldablePaper : MonoBehaviour
     {
         FindFoldObjects();
         if(!isComplete && foldJoint != null && foldJoint.canFold)
-            foldAnimator.Fold(foldJoint, foldObjects, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+            foldAnimator.TryFold(foldJoint, foldObjects, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
     }
 
 
