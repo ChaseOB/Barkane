@@ -1934,6 +1934,7 @@ MonoBehaviour:
   levelSwitchScreen: {fileID: 239814906}
   levelList:
   - {fileID: 4510660754950133340, guid: 0631c4a0364edbb4d948915e94f319df, type: 3}
+  - {fileID: 4510660754950133340, guid: 2e54473a2df95cf469bcf82e5dc14c3f, type: 3}
   currLevelIndex: -1
   levelScenes: 01000000
 --- !u!114 &609617773
@@ -5428,22 +5429,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: sounds.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: sounds.Array.data[0].clip
-      value: 
-      objectReference: {fileID: 8300000, guid: b5e39b53bf57e04479fac8d2111f9aea, type: 3}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: sounds.Array.data[0].name
-      value: test
-      objectReference: {fileID: 0}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: sounds.Array.data[0].volume
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5809165807994719649, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
       propertyPath: m_Name
       value: AudioManager
