@@ -18,9 +18,14 @@ public class LevelManager : Singleton<LevelManager>
 
     public List<int> levelScenes = new List<int>();
 
+
+    public Transform marmStart;
+    public Transform marmEnd;
+    public GameObject marmIcon;
+
     private void Awake() 
     {
-        InitializeSingleton();
+        InitializeSingleton(this.gameObject);
         DontDestroyOnLoad(gameObject);
         ChangeSkybox("CB");
     }
@@ -59,7 +64,9 @@ public class LevelManager : Singleton<LevelManager>
     //C: allows us to do something special on last level completion
     public void OnCompleteLastLevel()
     {
-
+        UIManager.Instance.endLevelGroup.SetActive(false);
+        LevelManager.Instance.UnloadLevel();
+        SceneManager.LoadScene(0);
     }
 
     public void SwitchLevel(GameObject level) {
@@ -127,7 +134,14 @@ public class LevelManager : Singleton<LevelManager>
     private IEnumerator OneSecTransition()
     {
         SetTransitionScreen(true);
-        yield return new WaitForSeconds(1);
+        float elapsedTime = 0.0f;
+        float time = 1.5f;
+        while (elapsedTime < time)
+        {
+            marmIcon.transform.position = Vector3.Lerp(marmStart.position, marmEnd.position, (elapsedTime/time));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
         SetTransitionScreen(false);
     }
 

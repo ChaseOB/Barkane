@@ -26,9 +26,10 @@ public class AudioManager : Singleton<AudioManager>
     private int currentIndex;
     private AudioSource source;
 
+
     void Awake()
     {
-        InitializeSingleton();
+        InitializeSingleton(this.gameObject);
         DontDestroyOnLoad(gameObject);
 
         _sounds = sounds;
