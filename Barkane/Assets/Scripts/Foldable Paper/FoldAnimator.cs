@@ -28,7 +28,6 @@ public class FoldAnimator : MonoBehaviour
         }
         else
         {
-            Debug.Log("You can't fold!");
             AudioManager.Instance?.Play("Fold Error");
             //play error sound
         }
@@ -38,7 +37,10 @@ public class FoldAnimator : MonoBehaviour
 
     public bool CheckCanFold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
     {
-        if(isFolding) return false;
+        if(isFolding) {
+            Debug.Log("Cannot fold: You can't do 2 folds at once");
+            return false;
+        }
         //C: check selected joints to ensure straight line
         HashSet<int> x = new HashSet<int>();
         HashSet<int> y = new HashSet<int>();
@@ -54,7 +56,56 @@ public class FoldAnimator : MonoBehaviour
             }
         }
 
-        if(x.Count + y.Count + z.Count > 4) return false;
+        if((x.Count > 1 && y.Count >1) || (x.Count > 1 && z.Count >1) || (z.Count > 1 && y.Count >1)) {
+            Debug.Log($"Cannot fold: joint is kinked. {x.Count} {y.Count} {z.Count}");
+            return false;
+        }
+
+        //C: Check that we aren't folding though a back to back square by getting vector of top and bottom in square stack and ensuring that 
+        //the direction of that vector does not change 
+
+        List<List<PaperSquare>> overlaps = foldablePaper.FindOverlappingSquares();
+        foreach(List<PaperSquare> list in overlaps)
+        {
+            //Vector3 intial = Vector3.zero;
+            //Vector3 newVec = Vector3.zero;
+            if(list.Count > 1) //C: if count = 1 then only 1 square, can't fold through itself
+            {
+                GameObject parent = new GameObject();
+                parent.transform.position = center;
+                List<GameObject> activeSides = new List<GameObject>();
+                GameObject t1 = new GameObject();
+                GameObject t2 = new GameObject();
+                foreach(PaperSquare ps in list) 
+                {
+                    if(ps.BottomHalf.activeSelf)
+                        activeSides.Add(ps.BottomHalf);
+                    if(ps.TopHalf.activeSelf)
+                        activeSides.Add(ps.TopHalf);
+                }
+                Debug.Log($"AS length: {activeSides.Count}");
+                foreach(GameObject go in activeSides)
+                {
+                    Debug.Log($"{go.GetComponentInParent<PaperSquare>().name} {go.name} is active");
+                }
+                t1.transform.position = activeSides[0].transform.position;
+                t2.transform.position = activeSides[1].transform.position; 
+                Vector3 intial = t1.transform.position - t2.transform.position;
+                //reparent transforms and rotate about axis
+                t1.transform.parent = parent.transform;
+                t2.transform.parent = parent.transform;    
+                parent.transform.RotateAround(center, axis, degrees);
+                Vector3 final = t1.transform.position - t2.transform.position;
+                Destroy(parent);
+                if(Vector3.Angle(intial, final) > 90.0f){
+                    Debug.Log("Cannot fold: would clip through adj paper");
+                    return false;
+                }
+            }
+        }
+
+        //C: The final check is for rotating into hitboxes (ie the player, other paper, obstacles, etc)
+        
 
 
         //C: duplicate square hitboxes, check if they collide with any obsticles
@@ -206,8 +257,8 @@ public class FoldAnimator : MonoBehaviour
                         }
                     }
                     
-                    Debug.Log(activeFoldSides.Count);
-                    
+                    Debug.Log("fold side " + activeFoldSides.Count);
+                    Debug.Log("total " + activeSides.Count);
                     foreach(GameObject go in activeSides)
                     {
                         if(activeFoldSides.Contains(go))
@@ -216,12 +267,12 @@ public class FoldAnimator : MonoBehaviour
                             if(CoordUtils.ApproxSameVector(topHalfNorm, go.transform.up))
                             {
                                 foldTop = go;
-                                Debug.Log("fold top is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
+                              //  Debug.Log("fold top is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
                             }
                             else
                             {
                                 foldBot = go;
-                                Debug.Log("fold bot is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
+                             //   Debug.Log("fold bot is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
                             }
                         }
                         else
@@ -229,12 +280,12 @@ public class FoldAnimator : MonoBehaviour
                             if(CoordUtils.ApproxSameVector(topHalfNorm, go.transform.up))
                             {
                                 stationaryTop = go;
-                                Debug.Log("stat top is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
+                               // Debug.Log("stat top is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
                             }
                             else
                             {
                                 stationaryBot = go;
-                                Debug.Log("stat bot  is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
+                               // Debug.Log("stat bot  is " + go.GetComponentInParent<PaperSquare>().gameObject.name + " " + go.name);
                             }
                         }
                     }
@@ -245,7 +296,7 @@ public class FoldAnimator : MonoBehaviour
                       if(stationaryTop == null)
                         Debug.Log("stat top is null");
                     if(stationaryBot == null)
-                        Debug.Log("stat bot is null");
+                       Debug.Log("stat bot is null");
 //                    Debug.Log(foldTop.name + " " + foldBot.name + " " + stationaryTop.name + " " + stationaryBot.name);
                         //Check to see if we should like S top and F bot or F top and S bot
 
