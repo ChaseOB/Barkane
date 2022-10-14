@@ -100,7 +100,8 @@ public class LevelManager : Singleton<LevelManager>
         playerInstance= Instantiate(playerPrefab, playerPos.position, Quaternion.identity);
 
         FollowTarget.Instance.SetTargetAndPosition(playerInstance.transform);    
-        StartCoroutine(waitfive());
+        FindObjectOfType<VFXManager>().Refresh();
+        //StartCoroutine(waitfive());
     }
 
     private IEnumerator waitfive()
