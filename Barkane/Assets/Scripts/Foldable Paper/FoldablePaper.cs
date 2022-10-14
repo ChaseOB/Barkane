@@ -171,7 +171,7 @@ public class FoldablePaper : MonoBehaviour
         }
 
         foreach (List<PaperSquare> list in dict.Values){
-            if(list.Count > 1)
+           // if(list.Count > 1)
                 overlapList.Add(list);
         }
         return overlapList;
