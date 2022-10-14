@@ -32,6 +32,9 @@
         },
         {
             "m_Id": "1586642a458b49718fb05f6b4487ce9b"
+        },
+        {
+            "m_Id": "14a685bf161c42629fbd503131ec76a4"
         }
     ],
     "m_Keywords": [],
@@ -1188,6 +1191,28 @@
     "m_TextureType": 0,
     "m_NormalMapSpace": 0,
     "m_EnableGlobalMipBias": true
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.BooleanShaderProperty",
+    "m_ObjectId": "14a685bf161c42629fbd503131ec76a4",
+    "m_Guid": {
+        "m_GuidSerialized": "954c3e4a-4094-4c09-88a6-2347f11f741a"
+    },
+    "m_Name": "UseSprinkles",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "UseSprinkles",
+    "m_DefaultReferenceName": "_UseSprinkles",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 2,
+    "m_Hidden": false,
+    "m_Value": false
 }
 
 {
@@ -4247,6 +4272,9 @@
         },
         {
             "m_Id": "1586642a458b49718fb05f6b4487ce9b"
+        },
+        {
+            "m_Id": "14a685bf161c42629fbd503131ec76a4"
         }
     ]
 }

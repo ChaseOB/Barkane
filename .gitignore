@@ -60,6 +60,7 @@ sysinfo.txt
 crashlytics-build.properties
 
 Barkane/.vsconfig
+Barkane/.idea
 
 .DS_Store
 /Barkane/ProjectSettings/Packages/com.unity.probuilder/Settings.json

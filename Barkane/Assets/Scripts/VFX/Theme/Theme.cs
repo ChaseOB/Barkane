@@ -6,4 +6,5 @@ using UnityEngine;
 public class Theme : ScriptableObject
 {
     public GameObject Sprinkle;
+    public Skybox skybox;
 }

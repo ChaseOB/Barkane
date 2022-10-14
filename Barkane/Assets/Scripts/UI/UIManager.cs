@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -9,6 +10,9 @@ public class UIManager : Singleton<UIManager>
     public TMP_Text foldCountText;
 
     public GameObject shardCountGroup;
+    public int menuIndex;
+    public GameObject endLevelGroup;
+    public GameObject group;
 
     private void Awake() {
         InitializeSingleton();
@@ -16,7 +20,15 @@ public class UIManager : Singleton<UIManager>
 
     private void Start() {
         Goal g = FindObjectOfType<Goal>();
-        ResetCounts(g.numShards);
+        if(g != null)
+            ResetCounts(g.numShards);
+        else
+            ResetCounts();
+    }
+
+    public void ToggleGroup(bool val)
+    {
+        group.SetActive(val);
     }
 
     public void ResetCounts(int numShards = 0)
@@ -43,11 +55,30 @@ public class UIManager : Singleton<UIManager>
 
     public static void UpdateFoldCount(int numFolds)
     {
-        Instance.UpdateFC(numFolds);
+        if(Instance != null)
+            Instance.UpdateFC(numFolds);
     }
 
     public void UpdateFC(int numFolds)
     {
         foldCountText.text = numFolds.ToString();
+    }
+
+    public void EndLevel()
+    {
+        endLevelGroup.SetActive(true);
+    }
+
+    public void LoadNextLevel()
+    {
+        endLevelGroup.SetActive(false);
+        LevelManager.Instance.LoadNextLevel();
+    }
+
+    public void ReturnToMenu()
+    {
+        endLevelGroup.SetActive(false);
+        LevelManager.Instance.UnloadLevel();
+        SceneManager.LoadScene(menuIndex);
     }
 }

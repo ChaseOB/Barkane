@@ -35,7 +35,7 @@ public class EdgeParticles : MonoBehaviour, BarkaneEditor.IRefreshable
         foreach (ParticleSystem ps in listOfSystems) {
             ps.Pause();
             ps.Clear();
-            ps.Play();
+            //ps.Play();
         }
         isAwake = false;
     }

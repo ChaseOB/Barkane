@@ -34,6 +34,7 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     [SerializeField, HideInInspector] private float[] ts;
 
     [SerializeField] private GameObject indicator;
+    [SerializeField] private MaskFoldParticles maskFoldParticles;
 
     private enum FoldState
     {
@@ -52,15 +53,15 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     void IRefreshable.Refresh()
     {
         var parent = transform.parent.GetComponent<PaperJoint>();
-        if (parent.PaperSqaures.Count < 2)
+        if (parent.PaperSquares.Count < 2)
         {
-            throw new UnityException($"Cannot refresh joints without enough adjacent squares: {parent.PaperSqaures.Count}");
+            throw new UnityException($"Cannot refresh joints without enough adjacent squares: {parent.PaperSquares.Count}");
         }
 
-        a1 = parent.PaperSqaures[0].TopHalf.GetComponent<SquareSide>();
-        a2 = parent.PaperSqaures[0].BottomHalf.GetComponent<SquareSide>();
-        b1 = parent.PaperSqaures[1].TopHalf.GetComponent<SquareSide>();
-        b2 = parent.PaperSqaures[1].BottomHalf.GetComponent<SquareSide>();
+        a1 = parent.PaperSquares[0].TopHalf.GetComponent<SquareSide>();
+        a2 = parent.PaperSquares[0].BottomHalf.GetComponent<SquareSide>();
+        b1 = parent.PaperSquares[1].TopHalf.GetComponent<SquareSide>();
+        b2 = parent.PaperSquares[1].BottomHalf.GetComponent<SquareSide>();
 
         if (CoordUtils.DiffAxisCount(a1, a2) != 0 || CoordUtils.DiffAxisCount(b1, b2) != 0)
         {
@@ -98,11 +99,13 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     public bool IsAnimating = false;
 
     public System.Action DisableMeshAction => new System.Action(delegate() {
+       // indicator.SetActive(false);
         meshRenderer.enabled = false;
     });
 
     public System.Action EnableMeshAction => new System.Action(delegate ()
     {
+        //indicator.SetActive(true);
         FormPairs(a1, a2, b1, b2);
         // colors stay the same across folds
         // UpdateColors();
@@ -214,6 +217,14 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     public void ShowLine(bool value)
     {
         indicator.SetActive(value);
+        if (value)
+        {
+            maskFoldParticles?.Emit();
+        }
+        else
+        {
+            maskFoldParticles?.UnEmit();
+        }
     }
 
     /// <summary>
