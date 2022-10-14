@@ -45,12 +45,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9c3531e14e30e842a5ef189892c4e00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sounds: []
+  sounds:
+  - name: test
+    clip: {fileID: 8300000, guid: b5e39b53bf57e04479fac8d2111f9aea, type: 3}
+    volume: 1
+    pitch: 0
+    loop: 0
+    doRandomPitch: 0
+    source: {fileID: 0}
   musicLists:
   - name: Cherry Blossom
     Tracks:
     - {fileID: 8300000, guid: 43e9ec39cb821dd4dac17b8c39542dbc, type: 3}
     - {fileID: 8300000, guid: c180579728f3b8e44a098995948da05b, type: 3}
+    - {fileID: 8300000, guid: a3c0961821dcb3e469124a4ece4ecc60, type: 3}
   - name: Menu
     Tracks:
     - {fileID: 0}

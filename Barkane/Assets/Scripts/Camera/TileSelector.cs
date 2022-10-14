@@ -27,6 +27,8 @@ public class TileSelector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(foldablePaper.isComplete) return;
+
         RaycastHit info;
         Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
         RaycastHit[] hits = Physics.RaycastAll(ray, 100, LayerMask.GetMask("Joint"));
@@ -54,7 +56,7 @@ public class TileSelector : MonoBehaviour
 
     private void OnClick(InputValue value)
     {
-        if(!value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
+        if(foldablePaper == null || foldablePaper.isComplete || !value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
             return;
         if(hoverJoint != null && hoverJoint.canFold)
         {

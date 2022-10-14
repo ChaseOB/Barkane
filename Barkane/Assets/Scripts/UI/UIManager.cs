@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -9,6 +10,8 @@ public class UIManager : Singleton<UIManager>
     public TMP_Text foldCountText;
 
     public GameObject shardCountGroup;
+    public int menuIndex;
+    public GameObject endLevelGroup;
 
     private void Awake() {
         InitializeSingleton();
@@ -52,5 +55,23 @@ public class UIManager : Singleton<UIManager>
     public void UpdateFC(int numFolds)
     {
         foldCountText.text = numFolds.ToString();
+    }
+
+    public void EndLevel()
+    {
+        endLevelGroup.SetActive(true);
+    }
+
+    public void LoadNextLevel()
+    {
+        endLevelGroup.SetActive(false);
+        LevelManager.Instance.LoadNextLevel();
+    }
+
+    public void ReturnToMenu()
+    {
+        endLevelGroup.SetActive(false);
+        LevelManager.Instance.UnloadLevel();
+        SceneManager.LoadScene(menuIndex);
     }
 }

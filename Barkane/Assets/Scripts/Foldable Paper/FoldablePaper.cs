@@ -19,6 +19,7 @@ public class FoldablePaper : MonoBehaviour
     public PaperJoint foldJoint;
     public GameObject SquareCollider;
     public Transform playerSpawn;
+    public bool isComplete = false; //C: set to true when goal is reached
 
     private void Awake() 
     {
@@ -142,7 +143,7 @@ public class FoldablePaper : MonoBehaviour
     public void TestFold(float degrees)
     {
         FindFoldObjects();
-        if(foldJoint != null && foldJoint.canFold)
+        if(!isComplete && foldJoint != null && foldJoint.canFold)
             foldAnimator.Fold(foldJoint, foldObjects, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
     }
 

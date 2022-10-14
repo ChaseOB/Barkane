@@ -137,6 +137,11 @@ public class LevelManager : Singleton<LevelManager>
             ResetLevel();
     }
 
+    public void EndLevel()
+    {
+        instantiatedLevel.GetComponent<FoldablePaper>().isComplete = true;
+    }
+
     public void ChangeSkybox(Material skybox) {
         RenderSettings.skybox = skybox;
     }

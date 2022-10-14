@@ -9,7 +9,11 @@ public class Goal : MonoBehaviour
     private bool goalActive = false;
     [SerializeField] private GameObject inactiveGoal;
     [SerializeField] private GameObject activeGoal;
-    public GameObject showOnWin;
+
+    private void Start() {
+        if (numShardsCollected >= numShards)
+            ActivateGoal();
+    }
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.CompareTag("Player") && goalActive)
@@ -17,7 +21,8 @@ public class Goal : MonoBehaviour
     }
 
     private void EndLevel() {
-        showOnWin.SetActive(true);
+        LevelManager.Instance.EndLevel();
+        UIManager.Instance.EndLevel();
     }
 
     public void CollectShard()

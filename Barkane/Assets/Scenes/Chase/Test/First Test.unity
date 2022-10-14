@@ -327,11 +327,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 247794442}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &273827936 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 93322127315643179, guid: 44f76a9e032d8e64aa9a2ca36a4d5650, type: 3}
-  m_PrefabInstance: {fileID: 93322127042110283}
-  m_PrefabAsset: {fileID: 0}
 --- !u!850595691 &318394574
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -471,7 +466,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh33276
+  m_Name: pb_Mesh57850
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1845,7 +1840,6 @@ MonoBehaviour:
   numShards: 1
   inactiveGoal: {fileID: 1399966283}
   activeGoal: {fileID: 1333820464}
-  showOnWin: {fileID: 273827936}
 --- !u!54 &843318306
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6783,7 +6777,6 @@ MonoBehaviour:
   numShards: 0
   inactiveGoal: {fileID: 0}
   activeGoal: {fileID: 0}
-  showOnWin: {fileID: 0}
 --- !u!65 &1924853867
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7171,18 +7164,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 93322125617367715, guid: 44f76a9e032d8e64aa9a2ca36a4d5650, type: 3}
-      propertyPath: m_Color.a
-      value: 0.89411765
-      objectReference: {fileID: 0}
-    - target: {fileID: 93322125617367724, guid: 44f76a9e032d8e64aa9a2ca36a4d5650, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 1689
-      objectReference: {fileID: 0}
-    - target: {fileID: 93322125776423817, guid: 44f76a9e032d8e64aa9a2ca36a4d5650, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -384
-      objectReference: {fileID: 0}
     - target: {fileID: 93322126100992902, guid: 44f76a9e032d8e64aa9a2ca36a4d5650, type: 3}
       propertyPath: m_Name
       value: UI Canvas
@@ -7270,14 +7251,6 @@ PrefabInstance:
     - target: {fileID: 93322126100992922, guid: 44f76a9e032d8e64aa9a2ca36a4d5650, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 93322126335684210, guid: 44f76a9e032d8e64aa9a2ca36a4d5650, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 67.999985
-      objectReference: {fileID: 0}
-    - target: {fileID: 93322126687831619, guid: 44f76a9e032d8e64aa9a2ca36a4d5650, type: 3}
-      propertyPath: m_text
-      value: 000
       objectReference: {fileID: 0}
     - target: {fileID: 93322127182751098, guid: 44f76a9e032d8e64aa9a2ca36a4d5650, type: 3}
       propertyPath: m_MoveAction

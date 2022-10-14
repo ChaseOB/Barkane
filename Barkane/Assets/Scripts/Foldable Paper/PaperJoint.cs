@@ -28,22 +28,6 @@ public class PaperJoint : MonoBehaviour
             capsuleCollider = GetComponent<CapsuleCollider>();
     }
 
-  /*  void Update(){
-        if (isSelected) {
-            if (isFirstCall) {
-                isFirstCall = !isFirstCall;
-                foldablePaper = FindObjectOfType<FoldablePaper>();
-                willBeFoldedPaperSquares = foldablePaper.GetWillBeFoldedSquares();
-                EmitEdgeParticles();
-            }
-        } else {
-            if (!isFirstCall) {
-                isFirstCall = !isFirstCall;
-                UnEmitParticles();
-            }
-        }
-    }*/
-
     public void Select()
     {
         isSelected = true;
