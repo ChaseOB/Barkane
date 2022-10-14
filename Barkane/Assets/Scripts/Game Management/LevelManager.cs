@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using BarkaneEditor;
+using UnityEngine.InputSystem;
+
 
 public class LevelManager : Singleton<LevelManager>
 {
@@ -20,6 +22,7 @@ public class LevelManager : Singleton<LevelManager>
     {
         InitializeSingleton();
         DontDestroyOnLoad(gameObject);
+        ChangeSkybox("CB");
     }
 
     
@@ -101,13 +104,6 @@ public class LevelManager : Singleton<LevelManager>
 
         FollowTarget.Instance.SetTargetAndPosition(playerInstance.transform);    
         FindObjectOfType<VFXManager>().Refresh();
-        //StartCoroutine(waitfive());
-    }
-
-    private IEnumerator waitfive()
-    {
-        yield return new WaitForSeconds(5);
-                FindObjectOfType<VFXManager>().Refresh();
     }
 
     //C: used when switching from level back to a non-level scene
@@ -135,6 +131,11 @@ public class LevelManager : Singleton<LevelManager>
         SetTransitionScreen(false);
     }
 
+    private void OnResetLevel(InputValue value)
+    {
+        if(value.isPressed && instantiatedLevel != null)
+            ResetLevel();
+    }
 
     public void ChangeSkybox(Material skybox) {
         RenderSettings.skybox = skybox;
