@@ -15,6 +15,7 @@ public class CrystalShard : MonoBehaviour
 
     private void Start() {
         startPos = model.transform.position;
+        goal = FindObjectOfType<Goal>();
     }
     private void Update() {
         Vector3 currentVal = new Vector3(0, displacement * Mathf.Sin(Mathf.PI * hoverSpeed * Time.time));
