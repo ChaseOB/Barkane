@@ -20,6 +20,9 @@ public class PaperSquare : MonoBehaviour
     public GameObject BottomHalf => bottomHalf;
     [SerializeField] private EdgeParticles edgeParticles;
 
+    private SquareSide topSide;
+    private SquareSide bottomSide;
+
 ////#if UNITY_EDITOR
     public Orientation orientation;
     public List<PaperJoint> adjacentJoints;
@@ -28,11 +31,19 @@ public class PaperSquare : MonoBehaviour
     private void Start() 
     {
         edgeParticles = GetComponent<EdgeParticles>();
+        topSide = TopHalf.GetComponent<SquareSide>();
+        bottomSide = BottomHalf.GetComponent<SquareSide>();
     }
 
     public void SetPlayerOccupied(bool value)
     {
         playerOccupied = value;
+    }
+
+    public void UpdateSquarePriority(int priority)
+    {
+        topSide.UpdateSquarePriority(priority);
+        bottomSide.UpdateSquarePriority(priority);
     }
 
     //select is true when this region is selected and false when deselected

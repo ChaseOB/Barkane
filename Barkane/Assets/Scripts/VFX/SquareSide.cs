@@ -2,11 +2,13 @@ using BarkaneEditor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Collections;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
-public class SquareSide : MonoBehaviour, IRefreshable
+public class SquareSide : MonoBehaviour, IRefreshable, IComparable<SquareSide>
 {
     [SerializeField] MeshFilter mFilter;
     [SerializeField] MeshRenderer mRenderer;
@@ -21,6 +23,19 @@ public class SquareSide : MonoBehaviour, IRefreshable
     public Material MaterialPrototype => materialPrototype;
 
     public (Vector3[], Vector3[]) sprinkles;
+    public Transform sprinkleParent;
+
+    //public List<int> priorityList = new List<int>(); //C: Used to help enable/disable meshes for overlapping squares
+    public List<int> priority = new List<int>();
+
+
+    public int CompareTo(SquareSide other)
+    {
+        int index = 0;
+        while(other.priority[index] == this.priority[index])
+            index++;
+        return this.priority[index] - other.priority[index];
+    }
 
     void IRefreshable.Refresh()
     {
@@ -53,6 +68,10 @@ public class SquareSide : MonoBehaviour, IRefreshable
             materialInstance.SetTexture("Dist", distanceTexture);
             mRenderer.sharedMaterials = new Material[] { materialInstance };
         }
+    }
+
+    private void Awake() {
+        priority.Add(0);
     }
 
     private void Update()
@@ -93,9 +112,10 @@ public class SquareSide : MonoBehaviour, IRefreshable
             for (int i = 0; i < sprinkleVerts.Length; i++)
             {
                 var go = Instantiate(VFXManager.Theme.Sprinkle, transform);
+                //go.transform.parent = sprinkleParent;
                 go.transform.localPosition = sprinkleVerts[i];
                 go.transform.up = transform.rotation * sprinkleNorms[i];
-                go.transform.RotateAround(go.transform.up, Random.Range(0, 360));
+                go.transform.RotateAround(go.transform.up, UnityEngine.Random.Range(0, 360));
             }
         //}
         
@@ -123,4 +143,19 @@ public class SquareSide : MonoBehaviour, IRefreshable
         Mathf.RoundToInt(transform.position.z));
 
     public static implicit operator (int, int, int)(SquareSide s) => s.Coordinate;
+
+
+    #region overlap
+
+    public void ToggleMesh(bool val)
+    {
+        mRenderer.enabled = val;
+        sprinkleParent.gameObject.SetActive(val);
+    }
+
+    public void UpdateSquarePriority(int num)
+    {
+        priority.Insert(0, num);
+    }
+    #endregion
 }

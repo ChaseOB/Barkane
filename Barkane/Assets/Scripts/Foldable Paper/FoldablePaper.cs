@@ -148,6 +148,36 @@ public class FoldablePaper : MonoBehaviour
     }
 
 
+    public List<List<PaperSquare>> FindOverlappingSquares()
+    {
+        List<List<PaperSquare>> overlapList = new List<List<PaperSquare>>();
+
+        Dictionary<Vector3, List<PaperSquare>> dict = new Dictionary<Vector3, List<PaperSquare>>();
+
+        foreach(PaperSquare ps in paperSquares) {
+            bool didAdd = false;
+            foreach(Vector3 key in dict.Keys){
+                if (Vector3.Magnitude(key - ps.transform.position) < 0.001f) {
+                    dict[key].Add(ps);
+                    didAdd = true;
+                }
+            }
+            if(!didAdd)
+            {
+                List<PaperSquare> list = new List<PaperSquare>();
+                list.Add(ps);
+                dict.Add(ps.transform.position, list);
+            }
+        }
+
+        foreach (List<PaperSquare> list in dict.Values){
+            if(list.Count > 1)
+                overlapList.Add(list);
+        }
+        return overlapList;
+    }
+
+
     
     //C: looks through the PSSes to see if this square is in a stack. If it is, remove it from the stack and update stack visuals.
     //If there is only one square left in that PSS, the PSS is destroyed and removed.
@@ -203,4 +233,11 @@ public class FoldObjects {
         
     }
 
+    public void UpdateSquarePriority(int priority)
+    {
+        foreach(GameObject go in foldSquares)
+        {
+            go.GetComponent<PaperSquare>().UpdateSquarePriority(priority);
+        }
+    }
 }

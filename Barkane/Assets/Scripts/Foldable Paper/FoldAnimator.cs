@@ -11,6 +11,7 @@ public class FoldAnimator : MonoBehaviour
     public GameObject SquareCollider;
 
     public int foldCount = 0;
+    private int internalCount = 0; //C: ticks more often than foldCount, used for priority in rendering squares
 
     private void Start() 
     {
@@ -56,6 +57,48 @@ public class FoldAnimator : MonoBehaviour
         }
             
     }
+
+    /*public List<List<PaperSquare>> FindOverlappingSquares()
+    {
+        List<List<PaperSquare>> overlapList = new List<List<PaperSquare>>();
+
+        Dictionary<Vector3, List<PaperSquare>> dict = new Dictionary<Vector3, List<PaperSquare>>();
+
+        foreach(PaperSquare ps in foldablePaper.PaperSquares) {
+            if(dict.ContainsKey(ps.transform.position))
+            {
+                dict[ps.transform.position].Add(ps);
+            }
+            else
+            {
+                List<PaperSquare> list = new List<PaperSquare>();
+                list.Add(ps);
+                dict.Add(ps.transform.position, list);
+            }
+        }
+
+        foreach (List<PaperSquare> list in dict.Values){
+            if(list.Count > 1)
+                overlapList.Add(list);
+        }
+        return overlapList;
+    }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void DetermineVisibleSides(List<GameObject> objectsToFold, Vector3 center, Vector3 axis, float degrees)
     {
@@ -137,10 +180,15 @@ public class FoldAnimator : MonoBehaviour
             beforeFold();
 
         float t = 0;
+        bool first = true;
         while (t < foldDuration)
         {
             t += Time.deltaTime;
             tempObj.transform.RotateAround(center, axis, (degrees / foldDuration) * Time.deltaTime);
+            if(first){
+                first = false;
+                UpdateSquareVisibility(objectsToFold);
+            }
             yield return null;
         }
         target.transform.RotateAround(center, axis, degrees);
@@ -162,9 +210,22 @@ public class FoldAnimator : MonoBehaviour
         Destroy(target);
         isFolding = false;
 
+        UpdateSquareVisibility(objectsToFold);
+
         if(afterFold != null)
              afterFold();
         UIManager.UpdateFoldCount(++foldCount);
+    }
+
+    private void UpdateSquareVisibility(FoldObjects foldObjects){
+        //update priority
+        foldObjects.UpdateSquarePriority(++internalCount);
+        List<List<PaperSquare>> overlaps = foldablePaper.FindOverlappingSquares();
+        foreach(List<PaperSquare> list in overlaps)
+        {
+            Debug.Log("Overlapping Squares");
+            //in each list of overlaps, we need to calculate the highest priorty top square and highest priority bottom square, then hide everything else
+        }
     }
 
 
