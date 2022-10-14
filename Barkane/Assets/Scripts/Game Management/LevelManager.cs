@@ -46,6 +46,12 @@ public class LevelManager : Singleton<LevelManager>
             LoadLevel(0, true);
     }
 
+    public void LoadLevel(int index)
+    {
+        SceneManager.LoadScene(1);
+        LoadLevel(index, true);
+    }
+
     public void LoadLevel(int index, bool set = false)
     {
         if(set)
