@@ -90,13 +90,22 @@ public class FoldAnimator : MonoBehaviour
                 }
                 t1.transform.position = activeSides[0].transform.position;
                 t2.transform.position = activeSides[1].transform.position; 
-                Vector3 intial = t1.transform.position - t2.transform.position;
+                Vector3 midInit = new Vector3((t2.transform.position.x + t1.transform.position.x)/2,
+                                            (t2.transform.position.y + t1.transform.position.y)/2,
+                                            (t2.transform.position.z + t1.transform.position.z)/2);
+                Vector3 intial = Vector3.Normalize(t2.transform.position - t1.transform.position);
+                Debug.Log(intial);
                 //reparent transforms and rotate about axis
                 t1.transform.parent = parent.transform;
                 t2.transform.parent = parent.transform;    
                 parent.transform.RotateAround(center, axis, degrees);
-                Vector3 final = t1.transform.position - t2.transform.position;
+                Vector3 mid = new Vector3((t2.transform.position.x + t1.transform.position.x)/2,
+                                            (t2.transform.position.y + t1.transform.position.y)/2,
+                                            (t2.transform.position.z + t1.transform.position.z)/2);
+                Vector3 final = Vector3.Normalize(mid - midInit);
+                Debug.Log(final);
                 Destroy(parent);
+                Debug.Log(Vector3.Angle(intial, final));
                 if(Vector3.Angle(intial, final) > 90.0f){
                     Debug.Log("Cannot fold: would clip through adj paper");
                     return false;
