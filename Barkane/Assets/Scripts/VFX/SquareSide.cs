@@ -16,6 +16,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
     [SerializeField, HideInInspector] Material materialInstance;
     [SerializeField, HideInInspector] byte[] distanceTextureData;
     [SerializeField, HideInInspector] int distanceTextureWidth;
+    [SerializeField, HideInInspector] SerializedMesh meshData;
 
     public Material MaterialPrototype => materialPrototype;
 
@@ -28,28 +29,27 @@ public class SquareSide : MonoBehaviour, IRefreshable
             UpdateMesh();
         } else
         {
-            PushMaterial();
+            PushData();
         }
     }
 
-    private void Start()
-    {
-        PushMaterial();
-    }
-
-    private void PushMaterial()
+    private void PushData()
     {
         if (materialInstance == null)
         {
             materialInstance = new Material(materialPrototype)
             {
-                name = $"hydrated {materialPrototype.name}"
+                name = $"rehydrated {materialPrototype.name}"
             };
         }
         if (materialInstance != null)
         {
             var distanceTexture = new Texture2D(distanceTextureWidth, distanceTextureWidth);
             distanceTexture.LoadImage(distanceTextureData);
+            distanceTexture.Apply();
+
+            mFilter.sharedMesh = meshData.Rehydrated;
+
             materialInstance.SetTexture("Dist", distanceTexture);
             mRenderer.sharedMaterials = new Material[] { materialInstance };
         }
@@ -66,14 +66,15 @@ public class SquareSide : MonoBehaviour, IRefreshable
     public void UpdateMesh()
     {
         var (mesh, texture, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
-        mFilter.sharedMesh = mesh;
         distanceTextureData = texture.EncodeToPNG();
         distanceTextureWidth = texture.width;
         materialInstance = new Material(materialPrototype)
         {
             name = $"hydrated {materialPrototype.name}"
         };
-        PushMaterial();
+        meshData = new SerializedMesh(mesh);
+
+        PushData();
 
         while (transform.childCount > 0)
         {
