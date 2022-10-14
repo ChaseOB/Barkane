@@ -89,7 +89,7 @@ public class LevelManager : Singleton<LevelManager>
 
     public void SpawnLevel(GameObject level)
     {
-        instantiatedLevel = Instantiate(level, transform.position, Quaternion.identity);
+        instantiatedLevel = Instantiate(level, Vector3.zero, Quaternion.identity);
         FoldablePaper paper = instantiatedLevel.GetComponent<FoldablePaper>();
         Transform playerPos = paper.playerSpawn;
         if(playerInstance != null)
