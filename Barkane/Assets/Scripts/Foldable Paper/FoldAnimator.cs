@@ -228,7 +228,7 @@ public class FoldAnimator : MonoBehaviour
             parent2.transform.RotateAround(foldData.center, foldData.axis, foldData.degrees/(numChecks+1));
             foreach(GameObject go in copiesList)
             {
-                Debug.Log("collision check " + i);
+              //  Debug.Log("collision check " + i);
                 RaycastHit hit;
                 bool collide = Physics.Raycast(go.transform.position, go.transform.up, out hit, 0.1f, squareCollidingMask);
                // bool collide = Physics.BoxCast(go.transform.position, new Vector3(0.45f, 0.01f, 0.45f), go.transform.up, out hit, transform.rotation, 0.1f, squareCollidingMask);
