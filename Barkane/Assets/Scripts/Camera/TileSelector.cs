@@ -82,7 +82,6 @@ public class TileSelector : MonoBehaviour
     //C: These are only here for testing purposes
     private void OnFoldUp(InputValue value)
     {
-        Debug.Log("fold up");
         if(!value.isPressed || currJoint == null || !currJoint.isSelected)
             return;
         foldablePaper.TestFold(90);
