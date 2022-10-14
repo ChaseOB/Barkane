@@ -53,6 +53,27 @@ MonoBehaviour:
     loop: 0
     doRandomPitch: 0
     source: {fileID: 0}
+  - name: Fold Error
+    clip: {fileID: 8300000, guid: e939106eaef72c14cb4625aca55790cb, type: 3}
+    volume: 0.343
+    pitch: 0
+    loop: 0
+    doRandomPitch: 0
+    source: {fileID: 0}
+  - name: Ding
+    clip: {fileID: 8300000, guid: 97813041cb1920849aed8cee68e7dfdc, type: 3}
+    volume: 0.532
+    pitch: 0
+    loop: 0
+    doRandomPitch: 0
+    source: {fileID: 0}
+  - name: Fold
+    clip: {fileID: 8300000, guid: d333c2e5ab9782e439e6f5396fd3d74e, type: 3}
+    volume: 0.54
+    pitch: 0
+    loop: 0
+    doRandomPitch: 0
+    source: {fileID: 0}
   musicLists:
   - name: Cherry Blossom
     Tracks:

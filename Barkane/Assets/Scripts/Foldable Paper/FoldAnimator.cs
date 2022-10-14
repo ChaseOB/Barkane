@@ -22,12 +22,14 @@ public class FoldAnimator : MonoBehaviour
     {
         if(CheckCanFold(foldJoint, foldObjects, center, axis, degrees))
         {
+            AudioManager.Instance?.Play("Fold");
             Fold(foldJoint, foldObjects, center, axis, degrees);
             return true;
         }
         else
         {
             Debug.Log("You can't fold!");
+            AudioManager.Instance?.Play("Fold Error");
             //play error sound
         }
         return false;
@@ -36,7 +38,6 @@ public class FoldAnimator : MonoBehaviour
 
     public bool CheckCanFold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
     {
-        Debug.Log("checking fold");
         if(isFolding) return false;
         //C: check selected joints to ensure straight line
         HashSet<int> x = new HashSet<int>();
@@ -47,7 +48,6 @@ public class FoldAnimator : MonoBehaviour
         {
             if(pj.showLine)
             {
-                Debug.Log(Vector3Int.RoundToInt(pj.transform.position));
                 x.Add(Vector3Int.RoundToInt(pj.transform.position).x);
                 y.Add(Vector3Int.RoundToInt(pj.transform.position).y);
                 z.Add(Vector3Int.RoundToInt(pj.transform.position).z);
