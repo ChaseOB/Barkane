@@ -43,13 +43,13 @@ public class LevelManager : Singleton<LevelManager>
     {
         Debug.Log("loaded scene " + scene.name);
         if(levelScenes.Contains(scene.buildIndex))
-            LoadLevel(0, true);
+            LoadLevel(currLevelIndex, true);
     }
 
     public void LoadLevel(int index)
     {
+        currLevelIndex = index;
         SceneManager.LoadScene(1);
-        LoadLevel(index, true);
     }
 
     public void LoadLevel(int index, bool set = false)
@@ -140,6 +140,8 @@ public class LevelManager : Singleton<LevelManager>
     private IEnumerator OneSecTransition()
     {
         SetTransitionScreen(true);
+        if(UIManager.Instance != null)
+            UIManager.Instance.ToggleGroup(false);
         float elapsedTime = 0.0f;
         float time = 1.5f;
         while (elapsedTime < time)
@@ -149,12 +151,22 @@ public class LevelManager : Singleton<LevelManager>
             yield return null;
         }
         SetTransitionScreen(false);
+        if(UIManager.Instance != null)
+            UIManager.Instance.ToggleGroup(true);
     }
 
     private void OnResetLevel(InputValue value)
     {
         if(value.isPressed && instantiatedLevel != null)
             ResetLevel();
+    }
+
+    private void OnCancel(InputValue value)
+    {
+        if(value.isPressed){
+            LevelManager.Instance.UnloadLevel();
+            SceneManager.LoadScene(0);
+        }
     }
 
     public void EndLevel()

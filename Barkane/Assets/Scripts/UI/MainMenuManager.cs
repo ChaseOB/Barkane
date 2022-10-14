@@ -11,6 +11,11 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene(gameStartScene);
     }
 
+    public void LoadLevel(int level)
+    {
+        LevelManager.Instance.LoadLevel(level);
+    }
+
     public void StartLevelSelect() {
         SceneManager.LoadScene(gameStartScene);
     }

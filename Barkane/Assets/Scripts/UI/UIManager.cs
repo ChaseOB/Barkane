@@ -12,6 +12,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject shardCountGroup;
     public int menuIndex;
     public GameObject endLevelGroup;
+    public GameObject group;
 
     private void Awake() {
         InitializeSingleton();
@@ -23,6 +24,11 @@ public class UIManager : Singleton<UIManager>
             ResetCounts(g.numShards);
         else
             ResetCounts();
+    }
+
+    public void ToggleGroup(bool val)
+    {
+        group.SetActive(val);
     }
 
     public void ResetCounts(int numShards = 0)

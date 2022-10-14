@@ -2690,8 +2690,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 679742835}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+      - m_Target: {fileID: 1330438224}
+        m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
         m_MethodName: LoadLevel
         m_Mode: 3
         m_Arguments:
@@ -2740,17 +2740,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 658853426}
   m_CullTransparentMesh: 1
---- !u!114 &679742835 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5765191864672309409, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
-  m_PrefabInstance: {fileID: 5765191864199534541}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40d7d971e85b69e45866d18275eeb345, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &686650013
 GameObject:
   m_ObjectHideFlags: 0
@@ -3113,8 +3102,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 679742835}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+      - m_Target: {fileID: 1330438224}
+        m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
         m_MethodName: LoadLevel
         m_Mode: 3
         m_Arguments:
