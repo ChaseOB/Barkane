@@ -58,105 +58,7 @@ public class FoldAnimator : MonoBehaviour
             
     }
 
-    /*public List<List<PaperSquare>> FindOverlappingSquares()
-    {
-        List<List<PaperSquare>> overlapList = new List<List<PaperSquare>>();
-
-        Dictionary<Vector3, List<PaperSquare>> dict = new Dictionary<Vector3, List<PaperSquare>>();
-
-        foreach(PaperSquare ps in foldablePaper.PaperSquares) {
-            if(dict.ContainsKey(ps.transform.position))
-            {
-                dict[ps.transform.position].Add(ps);
-            }
-            else
-            {
-                List<PaperSquare> list = new List<PaperSquare>();
-                list.Add(ps);
-                dict.Add(ps.transform.position, list);
-            }
-        }
-
-        foreach (List<PaperSquare> list in dict.Values){
-            if(list.Count > 1)
-                overlapList.Add(list);
-        }
-        return overlapList;
-    }*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private void DetermineVisibleSides(List<GameObject> objectsToFold, Vector3 center, Vector3 axis, float degrees)
-    {
-        /*check sorting:
-
-            1. See if anything will leave its current stack
-                1a. if so, remove it from the stack and update stack visuals
-            2. See if anything will collide with another square
-                2a. if so, see if either square is in a stack
-                2b. if neither square is in a stack, create a new stack
-                2c. if one square is in a stack, add the other square to that stack
-                2d. if both squares are in stacks, merge the stacks together 
-
-
-
-
-            1. pre move
-            2. check overlapping squares and joints
-            3. move pre move back to get vectors
-            4. determine top/bottom based on vectors
-            5. pass this info along, change accordingly when move is done. 
-            */
-       // GameObject tempObj = new GameObject();
-       // GameObject target = new GameObject();
-       // tempObj.transform.position = center;
-      // target.transform.position = center;
-
-        //Dictionary<GameObject, GameObject> parents = new Dictionary<GameObject, GameObject>();
-        //Dictionary<PaperSquare, Vector3Int> targetLocs = new Dictionary<PaperSquare, Vector3Int>();
-       /* foreach(GameObject o in objectsToFold)
-        {
-            if(o.GetComponent<PaperSquare>())
-            {
-                PaperSquare square = o.GetComponent<PaperSquare>();
-                //Check if this square is currently in a stack. If it is, remove it
-                foldablePaper.TryRemoveSquare(square);
-
-                GameObject go = new GameObject();
-                go.transform.position = o.transform.position;
-                go.transform.RotateAround(center, axis, degrees);
-                foreach(PaperSquare ps in foldablePaper.PaperSquares)
-                {
-                    if(Vector3.Magnitude(ps.transform.position - go.transform.position) < 0.01f)
-                    {
-                        //ps is square being collided with 
-                        PaperSquareStack stack = foldablePaper.GetStackWith(ps);
-                        if(stack == null)
-                            stack = foldablePaper.GetStackWith(square);
-                        //see if there is an existing stack that this can be added to. If not, make a new stack 
-                        Debug.Log(ps.gameObject.name);
-                    }
-                }
-            }
-        }*/
-       // target.transform.RotateAround(center, axis, degrees);
-       // tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
-
-    }
+    
     private IEnumerator FoldHelper(FoldObjects objectsToFold, Vector3 center, Vector3 axis, float degrees, System.Action beforeFold = null, System.Action afterFold = null)
     {
         isFolding = true;
@@ -179,14 +81,15 @@ public class FoldAnimator : MonoBehaviour
         if(beforeFold != null)
             beforeFold();
 
+        StoreAllSquarePos();
         float t = 0;
-        bool first = true;
+        int wait = 1;
         while (t < foldDuration)
         {
             t += Time.deltaTime;
             tempObj.transform.RotateAround(center, axis, (degrees / foldDuration) * Time.deltaTime);
-            if(first){
-                first = false;
+            wait--;
+            if(wait == 0){
                 UpdateSquareVisibility(objectsToFold);
             }
             yield return null;
@@ -216,21 +119,189 @@ public class FoldAnimator : MonoBehaviour
              afterFold();
         UIManager.UpdateFoldCount(++foldCount);
     }
+    private void StoreAllSquarePos()
+    {
+        foreach(PaperSquare ps in foldablePaper.PaperSquares)
+        {
+            ps.StorePosition(ps.transform.position);
+        }
+    }
 
-    private void UpdateSquareVisibility(FoldObjects foldObjects){
+    private void UpdateSquareVisibility(FoldObjects foldObjects)
+    {
+        List<List<PaperSquare>> overlaps = foldablePaper.FindOverlappingSquares();
+
+        //C: at the start of a fold, we are looking to re-enable sides if the adj square has been removed;
+        //if(foldStart)
+        //{
+            foreach(List<PaperSquare> list in overlaps)
+            {
+                foreach(PaperSquare ps in list) 
+                {
+                    ps.CheckAndRemoveRefs(list);
+                }
+            }
+       //}
+
+        //C: at the end of a fold, we check positions to see if new squares have been added. If they have
+        //else
+        //{
+            foreach(List<PaperSquare> list in overlaps)
+            {
+                if(list.Count == 1) //C: only 1 square, enable both meshes
+                {
+                    list[0].topStack = null;
+                    list[0].bottomStack = null;
+                    list[0].ToggleBottom(true);
+                    list[0].ToggleTop(true);
+                }
+                else
+                {
+                    //List<PaperSquare> squaresInFold = new List<PaperSquare>();
+                     //We arbitrarily pick one side of the first square to be the "top", then add to this list based on the normals of the other square's top/bottoms
+                    //List<GameObject> topHalfList = new List<GameObject>(); 
+                    //List<GameObject> botHalfList = new List<GameObject>();
+                    Vector3 topHalfNorm = list[0].TopHalf.transform.up;
+                    
+                    List<GameObject> activeSides = new List<GameObject>();
+                    List<GameObject> activeFoldSides = new List<GameObject>();
+
+                    GameObject foldTop = null;
+                    GameObject foldBot = null;
+                    GameObject stationaryTop = null;
+                    GameObject stationaryBot = null;
+
+                    Vector3 prevPos = Vector3.zero;
+                   // Vector3 currPos = list[0];
+                    //C: there should be a total of 2 sides enabled in each list currently. We need to figure out which of them to now hide.
+                    foreach(PaperSquare ps in list) 
+                    {
+                        activeSides.AddRange(ps.GetOpenSides());
+                        if(foldObjects.foldSquares.Contains(ps.gameObject))
+                        {
+                            activeFoldSides.AddRange(ps.GetOpenSides());
+                            prevPos = ps.storedPos;
+                        }
+                    }
+
+                    foreach(GameObject go in activeSides)
+                    {
+                        if(activeFoldSides.Contains(go))
+                        {
+                            if(CoordUtils.ApproxSameVector(topHalfNorm, go.transform.up))
+                            {
+                                foldTop = go;
+                            }
+                            else
+                            {
+                                foldBot = go;
+                            }
+                        }
+                        else
+                        {
+                            if(CoordUtils.ApproxSameVector(topHalfNorm, go.transform.up))
+                            {
+                                stationaryTop = go;
+                            }
+                            else
+                            {
+                                stationaryBot = go;
+                            }
+                        }
+                    }
+                        //Check to see if we should like S top and F bot or F top and S bot
+
+                    float topDist = Vector3.Magnitude(prevPos - stationaryTop.transform.position);
+                    float botDist = Vector3.Magnitude(prevPos - stationaryBot.transform.position);
+                    if(topDist > botDist) //new square is on the bottom, join top of fold and bottom of stationary
+                    {
+                        foldTop.SetActive(false);
+                        stationaryBot.SetActive(false);
+                        PaperSquare foldSquare = foldTop.GetComponentInParent<PaperSquare>();
+                        PaperSquare statSquare = stationaryBot.GetComponentInParent<PaperSquare>();
+                        foldSquare.bottomStack = statSquare;
+                        statSquare.topStack = foldSquare;
+                        foldSquare.UpdateHitboxes();
+                        statSquare.UpdateHitboxes();
+                    }
+                    else //new fold square is on the top, join bot of fold and top of stationary
+                    {
+                        foldBot.SetActive(false);
+                        stationaryTop.SetActive(false);
+                        PaperSquare foldSquare = foldBot.GetComponentInParent<PaperSquare>();
+                        PaperSquare statSquare = stationaryTop.GetComponentInParent<PaperSquare>();
+                        foldSquare.topStack = statSquare;
+                        statSquare.bottomStack = foldSquare;
+                        foldSquare.UpdateHitboxes();
+                        statSquare.UpdateHitboxes();
+                    }
+                }
+            }
+        //}
+
+
         //update priority
-        foldObjects.UpdateSquarePriority(++internalCount);
+        /*foldObjects.UpdateSquarePriority(++internalCount);
         List<List<PaperSquare>> overlaps = foldablePaper.FindOverlappingSquares();
         foreach(List<PaperSquare> list in overlaps)
         {
-            Debug.Log("Overlapping Squares");
+            if(list.Count == 1) //C: only 1 square, enable both meshes
+            {
+                list[0].ToggleBottom(true);
+                list[0].ToggleTop(true);
+                //list[0].topSide.ToggleMesh(true);
+                //list[0].bottomSide.ToggleMesh(true);
+            }
+            else //C: otherwise we need to find 2 highest priority squares and see which of their meshes should be active, disable all other meshes.
+            {
+                foreach(PaperSquare ps in list)    
+                {
+                    //if(ps.topStack) == null;
+                }
+               /* list.Sort();
+                for(int i = 0; i < list.Count - 2; i++){
+                    list[i].ToggleBottom(false);
+                    list[i].ToggleTop(false);
+                }
+                PaperSquare s1 = list[list.Count - 1];
+                PaperSquare s2 = list[list.Count - 2];
+
+            //C: When we have the 2 highest priority squares, we can group the faces in the same direction together, then check the priority of those 
+            //faces that are in the same direction to determine which to display
+            //We arbitrarily pick one side of the first square to be the "top", then add to this list based on the normals of the other square's top/bottoms
+                List<SquareSide> topHalfList = new List<SquareSide>();
+                List<SquareSide> botHalfList = new List<SquareSide>();
+                Vector3 topHalfNorm = s1.TopHalf.transform.up;
+                foreach (PaperSquare square in list){
+                    if(CoordUtils.ApproxSameVector(topHalfNorm, square.TopHalf.transform.up))
+                    {
+                        topHalfList.Add(square.topSide);
+                        botHalfList.Add(square.bottomSide);
+                    }
+                    else
+                    {
+                        botHalfList.Add(square.topSide);
+                        topHalfList.Add(square.bottomSide);
+                    }*/
+               // }
+            
+            //We now have a list of 2 "top" faces and 2 "bottom" faces. We now want to check if we should enable the top of s1 and the bottom of s2 or 
+            //vice versa.
+
+           // }
+
+
+
+
+
+           /* Debug.Log("Overlapping Squares");
             //in each list of overlaps, we need to calculate the highest priorty top square and highest priority bottom square, then hide everything else
             List<SquareSide> topHalfList = new List<SquareSide>();
             List<SquareSide> botHalfList = new List<SquareSide>();
 
             //C: We arbitrarily pick one side of the first square to be the "top", then add to this list based on the normals of the other squares top/bottoms
             PaperSquare square1 = list[0];
-            Vector3 topHalfNorm = square1.TopHalf.transform.up;
+            //Vector3 topHalfNorm = square1.TopHalf.transform.up;
             //Vector3 botHalfNorm = square1.BottomHalf.transform.up;
             foreach (PaperSquare square in list){
                 if(CoordUtils.ApproxSameVector(topHalfNorm, square.TopHalf.transform.up))
@@ -255,9 +326,7 @@ public class FoldAnimator : MonoBehaviour
             for (int i = 0; i < topHalfList.Count; i++)
                 topHalfList[i].ToggleMesh(i == topHalfList.Count - 1);
             for (int i = 0; i < botHalfList.Count; i++)
-                botHalfList[i].ToggleMesh(i == botHalfList.Count - 1);
-        }
+                botHalfList[i].ToggleMesh(i == botHalfList.Count - 1);*/
     }
-
-
 }
+

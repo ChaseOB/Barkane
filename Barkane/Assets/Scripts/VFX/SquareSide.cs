@@ -8,7 +8,7 @@ using System.Collections;
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
-public class SquareSide : MonoBehaviour, IRefreshable, IComparable<SquareSide>
+public class SquareSide : MonoBehaviour, IRefreshable
 {
     [SerializeField] MeshFilter mFilter;
     [SerializeField] MeshRenderer mRenderer;
@@ -28,14 +28,6 @@ public class SquareSide : MonoBehaviour, IRefreshable, IComparable<SquareSide>
     //public List<int> priorityList = new List<int>(); //C: Used to help enable/disable meshes for overlapping squares
     public List<int> priority = new List<int>();
 
-
-    public int CompareTo(SquareSide other)
-    {
-        int index = 0;
-        while(other.priority[index] == this.priority[index])
-            index++;
-        return this.priority[index] - other.priority[index];
-    }
 
     void IRefreshable.Refresh()
     {
@@ -154,9 +146,9 @@ public class SquareSide : MonoBehaviour, IRefreshable, IComparable<SquareSide>
        // sprinkleParent.gameObject.SetActive(val);
     }
 
-    public void UpdateSquarePriority(int num)
-    {
-        priority.Insert(0, num);
-    }
+    //public void UpdateSquarePriority(int num)
+   // {
+   //     priority.Insert(0, num);
+   // }
     #endregion
 }

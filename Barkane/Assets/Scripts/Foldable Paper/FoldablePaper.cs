@@ -21,12 +21,16 @@ public class FoldablePaper : MonoBehaviour
     public Transform playerSpawn;
     public bool isComplete = false; //C: set to true when goal is reached
 
+    Dictionary<Vector3Int, List<PaperSquare>> squareLocs = new Dictionary<Vector3Int, List<PaperSquare>>();
+
+
     private void Awake() 
     {
         paperSquares = GetComponentsInChildren<PaperSquare>();   
         paperJoints = GetComponentsInChildren<PaperJoint>(); 
         foldAnimator = FindObjectOfType<FoldAnimator>();
         UpdateAdjList();
+        IntializeSquarePosList();
     }
 
 
@@ -50,6 +54,15 @@ public class FoldablePaper : MonoBehaviour
         foreach(PaperJoint pj in paperJoints)
         {
             adjListJointToSquare[pj] = pj.PaperSquares;
+        }
+    }
+
+    private void IntializeSquarePosList()
+    {
+        foreach(PaperSquare ps in paperSquares){
+            List<PaperSquare> list = new List<PaperSquare>();
+                list.Add(ps);
+                squareLocs.Add(Vector3Int.RoundToInt(ps.transform.position), list);
         }
     }
 
@@ -157,7 +170,7 @@ public class FoldablePaper : MonoBehaviour
         foreach(PaperSquare ps in paperSquares) {
             bool didAdd = false;
             foreach(Vector3 key in dict.Keys){
-                if (Vector3.Magnitude(key - ps.transform.position) < 0.001f) {
+                if (Vector3.Magnitude(key - ps.transform.position) < 0.0001f) {
                     dict[key].Add(ps);
                     didAdd = true;
                 }
@@ -167,6 +180,7 @@ public class FoldablePaper : MonoBehaviour
                 List<PaperSquare> list = new List<PaperSquare>();
                 list.Add(ps);
                 dict.Add(ps.transform.position, list);
+                Debug.Log(ps.transform.position);
             }
         }
 
