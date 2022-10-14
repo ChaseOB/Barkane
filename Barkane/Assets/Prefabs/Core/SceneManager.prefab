@@ -130,7 +130,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5765191864237858614
 RectTransform:
   m_ObjectHideFlags: 0
@@ -262,7 +262,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 8814069561603125229, guid: e6122d66d72e2f248828794196740204, type: 3}
   levelSwitchScreen: {fileID: 5765191864237858615}
   levelList:
-  - {fileID: 4510660754950133340, guid: 0631c4a0364edbb4d948915e94f319df, type: 3}
+  - {fileID: 600195184613495630, guid: 07ee2d13d3741fc448894f98083d42dd, type: 3}
   - {fileID: 4510660754950133340, guid: 2e54473a2df95cf469bcf82e5dc14c3f, type: 3}
   currLevelIndex: -1
   levelScenes: 01000000
