@@ -173,11 +173,11 @@ public class FoldAnimator : MonoBehaviour
                     //C: there should be a total of 2 sides enabled in each list currently. We need to figure out which of them to now hide.
                     foreach(PaperSquare ps in list) 
                     {
-                        activeSides.UnionWith(ps.GetOpenSides());
+                        activeSides.UnionWith(ps.GetOpenSides(!CoordUtils.ApproxSameVector(topHalfNorm, ps.TopHalf.transform.up)));
                         if(foldObjects.foldSquares.Contains(ps.gameObject))
                         {
                          //   Debug.Log($"{ps.gameObject.name} is in fold list on stack of size {list.Count}");
-                            activeFoldSides.UnionWith(ps.GetOpenSides());
+                            activeFoldSides.UnionWith(ps.GetOpenSides(!CoordUtils.ApproxSameVector(topHalfNorm, ps.TopHalf.transform.up)));
                             prevPos = ps.storedPos;
                         }
                     }
@@ -230,9 +230,9 @@ public class FoldAnimator : MonoBehaviour
                     float topDist = Vector3.Magnitude(prevPos - stationaryTop.transform.position);
                     float botDist = Vector3.Magnitude(prevPos - stationaryBot.transform.position);
                     if(topDist == botDist) Debug.Log("same dist");
+                    //foldTop.GetComponentInParent<PaperSquare>().invertForGetOpen = !CoordUtils.ApproxSameVector(foldTop.transform.up, foldTop.GetComponentInParent<PaperSquare>().TopHalf.transform.up);
                     if(topDist > botDist) //new square is on the bottom, join top of fold and bottom of stationary
                     {
-                        foldTop.GetComponentInParent<PaperSquare>().invertForGetOpen = !CoordUtils.ApproxSameVector(foldTop.transform.up, foldTop.GetComponentInParent<PaperSquare>().TopHalf.transform.up);
                         Debug.Log("top side");
                         foldTop.SetActive(false);
                         stationaryBot.SetActive(false);
