@@ -14,7 +14,7 @@ public class LevelManager : Singleton<LevelManager>
     private GameObject playerInstance = null;
     [SerializeField] private GameObject levelSwitchScreen; //C: Used to hid VFX Loading
     [SerializeField] private List<GameObject> levelList;
-    public int currLevelIndex = -1;
+    public int currLevelIndex = 0;
 
     public List<int> levelScenes = new List<int>();
 
