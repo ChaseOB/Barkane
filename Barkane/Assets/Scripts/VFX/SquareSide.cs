@@ -149,8 +149,9 @@ public class SquareSide : MonoBehaviour, IRefreshable, IComparable<SquareSide>
 
     public void ToggleMesh(bool val)
     {
+        Debug.Log("changing mesh");
         mRenderer.enabled = val;
-        sprinkleParent.gameObject.SetActive(val);
+       // sprinkleParent.gameObject.SetActive(val);
     }
 
     public void UpdateSquarePriority(int num)

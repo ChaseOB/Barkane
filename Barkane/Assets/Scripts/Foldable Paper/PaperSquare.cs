@@ -20,8 +20,8 @@ public class PaperSquare : MonoBehaviour
     public GameObject BottomHalf => bottomHalf;
     [SerializeField] private EdgeParticles edgeParticles;
 
-    private SquareSide topSide;
-    private SquareSide bottomSide;
+    public SquareSide topSide;
+    public SquareSide bottomSide;
 
 ////#if UNITY_EDITOR
     public Orientation orientation;

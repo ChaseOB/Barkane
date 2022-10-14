@@ -225,6 +225,37 @@ public class FoldAnimator : MonoBehaviour
         {
             Debug.Log("Overlapping Squares");
             //in each list of overlaps, we need to calculate the highest priorty top square and highest priority bottom square, then hide everything else
+            List<SquareSide> topHalfList = new List<SquareSide>();
+            List<SquareSide> botHalfList = new List<SquareSide>();
+
+            //C: We arbitrarily pick one side of the first square to be the "top", then add to this list based on the normals of the other squares top/bottoms
+            PaperSquare square1 = list[0];
+            Vector3 topHalfNorm = square1.TopHalf.transform.up;
+            //Vector3 botHalfNorm = square1.BottomHalf.transform.up;
+            foreach (PaperSquare square in list){
+                if(CoordUtils.ApproxSameVector(topHalfNorm, square.TopHalf.transform.up))
+                {
+                    topHalfList.Add(square.topSide);
+                    botHalfList.Add(square.bottomSide);
+                }
+                else
+                {
+                    botHalfList.Add(square.topSide);
+                    topHalfList.Add(square.bottomSide);
+                }
+                //Vector3 topHalfNorm = square.TopHalf.transform.up;
+                //Vector3 botHalfNorm = square.BottomHalf.transform.up;
+                //Debug.Log($"{square.gameObject.name} top vector {topHalfNorm} bottom vector {botHalfNorm}");
+           }
+
+            topHalfList.Sort();
+            botHalfList.Sort();
+            Debug.Log(topHalfList);
+            Debug.Log(botHalfList);
+            for (int i = 0; i < topHalfList.Count; i++)
+                topHalfList[i].ToggleMesh(i == topHalfList.Count - 1);
+            for (int i = 0; i < botHalfList.Count; i++)
+                botHalfList[i].ToggleMesh(i == botHalfList.Count - 1);
         }
     }
 

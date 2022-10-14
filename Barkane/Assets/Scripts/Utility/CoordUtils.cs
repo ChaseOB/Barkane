@@ -29,4 +29,8 @@ public static class CoordUtils
             && Mathf.RoundToInt(a.z) == Mathf.RoundToInt(b.z);
     }
 
+    public static bool ApproxSameVector(Vector3 a, Vector3 b) {
+        return(Vector3.Magnitude(a-b) < 0.0001f);
+    }
+
 }
