@@ -11,7 +11,6 @@ public class FoldAnimator : MonoBehaviour
     public GameObject SquareCollider;
 
     public int foldCount = 0;
-    private int internalCount = 0; //C: ticks more often than foldCount, used for priority in rendering squares
 
     public LayerMask squareCollidingMask;
 
@@ -26,6 +25,7 @@ public class FoldAnimator : MonoBehaviour
     {
         foldablePaper = FindObjectOfType<FoldablePaper>();
     }
+
     //C: Tries to fold the given objects. Returns true and folds if successful, returns false if this fold is not possible.
     public bool TryFold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
     {
@@ -465,96 +465,6 @@ public class FoldAnimator : MonoBehaviour
                     }
                 }
             }
-        //}
-
-
-        //update priority
-        /*foldObjects.UpdateSquarePriority(++internalCount);
-        List<List<PaperSquare>> overlaps = foldablePaper.FindOverlappingSquares();
-        foreach(List<PaperSquare> list in overlaps)
-        {
-            if(list.Count == 1) //C: only 1 square, enable both meshes
-            {
-                list[0].ToggleBottom(true);
-                list[0].ToggleTop(true);
-                //list[0].topSide.ToggleMesh(true);
-                //list[0].bottomSide.ToggleMesh(true);
-            }
-            else //C: otherwise we need to find 2 highest priority squares and see which of their meshes should be active, disable all other meshes.
-            {
-                foreach(PaperSquare ps in list)    
-                {
-                    //if(ps.topStack) == null;
-                }
-               /* list.Sort();
-                for(int i = 0; i < list.Count - 2; i++){
-                    list[i].ToggleBottom(false);
-                    list[i].ToggleTop(false);
-                }
-                PaperSquare s1 = list[list.Count - 1];
-                PaperSquare s2 = list[list.Count - 2];
-
-            //C: When we have the 2 highest priority squares, we can group the faces in the same direction together, then check the priority of those 
-            //faces that are in the same direction to determine which to display
-            //We arbitrarily pick one side of the first square to be the "top", then add to this list based on the normals of the other square's top/bottoms
-                List<SquareSide> topHalfList = new List<SquareSide>();
-                List<SquareSide> botHalfList = new List<SquareSide>();
-                Vector3 topHalfNorm = s1.TopHalf.transform.up;
-                foreach (PaperSquare square in list){
-                    if(CoordUtils.ApproxSameVector(topHalfNorm, square.TopHalf.transform.up))
-                    {
-                        topHalfList.Add(square.topSide);
-                        botHalfList.Add(square.bottomSide);
-                    }
-                    else
-                    {
-                        botHalfList.Add(square.topSide);
-                        topHalfList.Add(square.bottomSide);
-                    }*/
-               // }
-            
-            //We now have a list of 2 "top" faces and 2 "bottom" faces. We now want to check if we should enable the top of s1 and the bottom of s2 or 
-            //vice versa.
-
-           // }
-
-
-
-
-
-           /* Debug.Log("Overlapping Squares");
-            //in each list of overlaps, we need to calculate the highest priorty top square and highest priority bottom square, then hide everything else
-            List<SquareSide> topHalfList = new List<SquareSide>();
-            List<SquareSide> botHalfList = new List<SquareSide>();
-
-            //C: We arbitrarily pick one side of the first square to be the "top", then add to this list based on the normals of the other squares top/bottoms
-            PaperSquare square1 = list[0];
-            //Vector3 topHalfNorm = square1.TopHalf.transform.up;
-            //Vector3 botHalfNorm = square1.BottomHalf.transform.up;
-            foreach (PaperSquare square in list){
-                if(CoordUtils.ApproxSameVector(topHalfNorm, square.TopHalf.transform.up))
-                {
-                    topHalfList.Add(square.topSide);
-                    botHalfList.Add(square.bottomSide);
-                }
-                else
-                {
-                    botHalfList.Add(square.topSide);
-                    topHalfList.Add(square.bottomSide);
-                }
-                //Vector3 topHalfNorm = square.TopHalf.transform.up;
-                //Vector3 botHalfNorm = square.BottomHalf.transform.up;
-                //Debug.Log($"{square.gameObject.name} top vector {topHalfNorm} bottom vector {botHalfNorm}");
-           }
-
-            topHalfList.Sort();
-            botHalfList.Sort();
-            Debug.Log(topHalfList);
-            Debug.Log(botHalfList);
-            for (int i = 0; i < topHalfList.Count; i++)
-                topHalfList[i].ToggleMesh(i == topHalfList.Count - 1);
-            for (int i = 0; i < botHalfList.Count; i++)
-                botHalfList[i].ToggleMesh(i == botHalfList.Count - 1);*/
     }
 }
 

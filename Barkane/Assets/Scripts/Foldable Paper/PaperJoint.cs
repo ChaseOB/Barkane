@@ -10,10 +10,6 @@ public class PaperJoint : MonoBehaviour
     public bool isSelected = false; //true when this is the current selected fold
     public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
 
-    //private PaperJoint currentJoint;
-   // FoldablePaper foldablePaper;
-    //private bool isFirstCall = true;
-  //  List<PaperSquare> willBeFoldedPaperSquares = new List<PaperSquare>();
 
     [SerializeField] private List<PaperJoint> adjList = new List<PaperJoint>();
 

@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 [System.Serializable]
 [RequireComponent(typeof(EdgeParticles))]
-public class PaperSquare : MonoBehaviour, IComparable<PaperSquare>
+public class PaperSquare : MonoBehaviour
 {
 
     [SerializeField] private bool playerOccupied = false; //true if the player is on this square
@@ -24,8 +23,6 @@ public class PaperSquare : MonoBehaviour, IComparable<PaperSquare>
     public SquareSide topSide;
     public SquareSide bottomSide;
 
-    public List<int> priority = new List<int>();
-
     public GameObject topPlayerCol;
     public GameObject botPlayerCol;
 
@@ -39,24 +36,13 @@ public class PaperSquare : MonoBehaviour, IComparable<PaperSquare>
     public List<PaperJoint> adjacentJoints;
 //#endif
 
-    private void Awake() {
-        priority.Add(0);
-    }
+
     private void Start() 
     {
         edgeParticles = GetComponent<EdgeParticles>();
         storedPos = transform.position;
         topSide = TopHalf.GetComponent<SquareSide>();
         bottomSide = BottomHalf.GetComponent<SquareSide>();
-    }
-
-    
-    public int CompareTo(PaperSquare other)
-    {
-        int index = 0;
-        while(this.priority == other.priority)
-            index++;
-        return this.priority[index] - other.priority[index];
     }
 
     public void ToggleTop(bool val)
@@ -76,13 +62,6 @@ public class PaperSquare : MonoBehaviour, IComparable<PaperSquare>
         playerOccupied = value;
     }
 
-    public void UpdateSquarePriority(int priority)
-    {
-        this.priority.Insert(0, priority);
-        //topSide.UpdateSquarePriority(priority);
-        //bottomSide.UpdateSquarePriority(priority);
-    }
-
     //select is true when this region is selected and false when deselected
     public void OnFoldHighlight(bool select)
     {
@@ -95,6 +74,7 @@ public class PaperSquare : MonoBehaviour, IComparable<PaperSquare>
     //foldStart is true when starting a fold and false when ending a fold
     public void OnFold(bool foldStart)
     {
+
     }
 
     public void StorePosition(Vector3 pos)
@@ -180,20 +160,4 @@ public class PaperSquare : MonoBehaviour, IComparable<PaperSquare>
         return -1;
     }
 
-   // public static List<GameObject> FindClosestSides(PaperSquare s1, PaperSquare s2)
-   // {
-     //   int 
-   // }
-
-   /* 
-    public static void JoinSquares(PaperSquare top, PaperSquare bottom, bool invertBottomPos = false)
-    {
-        if(invertBottomPos)
-        {
-            top.topStack = bottom;
-            bottom.topStack = top;
-        }
-        top.bottomStack = bottom;
-        bottom.topStack = top;
-    }*/
 }

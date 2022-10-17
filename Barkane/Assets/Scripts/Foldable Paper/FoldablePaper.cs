@@ -8,8 +8,6 @@ public class FoldablePaper : MonoBehaviour
     public PaperSquare[] PaperSquares => paperSquares;
     [SerializeField] private PaperJoint[] paperJoints;
     public PaperJoint[] PaperJoints => paperJoints;
-    private List<PaperSquareStack> paperSquareStacks = new List<PaperSquareStack>();
-    public List<PaperSquareStack> PaperSquareStacks => paperSquareStacks;
     private Dictionary<PaperSquare,  List<PaperJoint>> adjListSquareToJoint;
     private Dictionary<PaperJoint,  List<PaperSquare>> adjListJointToSquare;
     public FoldAnimator foldAnimator;
@@ -66,42 +64,6 @@ public class FoldablePaper : MonoBehaviour
                 squareLocs.Add(Vector3Int.RoundToInt(ps.transform.position), list);
         }
     }
-
-    //C: Physics calculations should always be in FixedUpdate()
-    private void FixedUpdate() 
-    {
-       // CheckFoldCollisions();
-    }
-
-
-    //C: Given the currently selected fold objects, uses collision to check the directions that they can rotate in
-    private void CheckFoldCollisions()
-    {
-        int numChecks = 5;
-        if(foldJoint == null) return;
-        GameObject parent = new GameObject();
-        foreach(GameObject go in foldObjects.foldSquares)
-        {
-            GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
-            newSquare.transform.parent = parent.transform;
-        }
-        
-        //Ideally we should check every point along the rotation axis, but this is impracticle. 
-        for(int i = 1; i <= numChecks; i++) {
-
-        }
-
-        //First check obstacles
-
-
-        //Then check for intesecting squares
-
-
-
-        Destroy(parent);
-    }
-
-
 
 
     //C: Uses a modified DFS to determine which objects should be folded
@@ -191,31 +153,6 @@ public class FoldablePaper : MonoBehaviour
         }
         return overlapList;
     }
-
-
-    
-    //C: looks through the PSSes to see if this square is in a stack. If it is, remove it from the stack and update stack visuals.
-    //If there is only one square left in that PSS, the PSS is destroyed and removed.
-    public void TryRemoveSquare(PaperSquare ps)
-    {
-        foreach(PaperSquareStack pss in paperSquareStacks)
-        {
-            pss.TryRemoveSquare(ps);
-            if(pss.destroy)
-            {
-                paperSquareStacks.Remove(pss);
-                Destroy(pss);
-            }
-        }
-    }
-
-    public PaperSquareStack GetStackWith(PaperSquare ps)
-    {
-        foreach(PaperSquareStack pss in paperSquareStacks)
-            if (pss.Contains(ps))
-                return pss;
-        return null;
-    }
 }
 
 public class FoldObjects {
@@ -248,11 +185,4 @@ public class FoldObjects {
         
     }
 
-    public void UpdateSquarePriority(int priority)
-    {
-        foreach(GameObject go in foldSquares)
-        {
-            go.GetComponent<PaperSquare>().UpdateSquarePriority(priority);
-        }
-    }
 }
