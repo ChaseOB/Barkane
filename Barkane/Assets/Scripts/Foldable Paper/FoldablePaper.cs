@@ -105,6 +105,8 @@ public class FoldablePaper : MonoBehaviour
         if(pj == null) return;
         visitedJoints.Add(pj);
         isPlayerSide = pj.showLine ? !isPlayerSide : isPlayerSide; //C: if we cross the fold line, then this value changes. We're essentially slicing the graph into 2 parts
+        if(pj.showLine)
+            foldObjects.foldLineJoints.Add(pj.gameObject);
         if(isPlayerSide)
             playerSide.foldJoints.Add(pj.gameObject);
         else
@@ -156,21 +158,42 @@ public class FoldablePaper : MonoBehaviour
 }
 
 public class FoldObjects {
-    public List<GameObject> foldSquares;
-    public List<GameObject> foldJoints;
+    public List<GameObject> foldSquares; //C: every square being folded
+    public List<GameObject> foldJoints; //C: the non-line joints being folded
+    public List<GameObject> foldLineJoints; //C: joints along the fold line
     public Transform squareParent;
     public Transform jointParent;
 
     public FoldObjects() {
         foldSquares = new List<GameObject>();
         foldJoints = new List<GameObject>();
+        foldLineJoints = new List<GameObject>();
     }
 
     public FoldObjects(Transform sp, Transform jp) {
         foldSquares = new List<GameObject>();
         foldJoints = new List<GameObject>();
+        foldLineJoints = new List<GameObject>();
         squareParent = sp;
         jointParent = jp;
+    }
+
+    public void EnableJointMeshes()
+    {
+        foreach(GameObject go in foldLineJoints)
+        {
+            JointRenderer jr = go.GetComponent<PaperJoint>()?.JointRenderer;
+            jr?.EnableMeshAction();
+        }
+    }
+
+    public void DisableJointMeshes()
+    {
+        foreach(GameObject go in foldLineJoints)
+        {
+            JointRenderer jr = go.GetComponent<PaperJoint>()?.JointRenderer;
+            jr?.DisableMeshAction();
+        }
     }
 
     public void OnFoldHighlight(bool select)

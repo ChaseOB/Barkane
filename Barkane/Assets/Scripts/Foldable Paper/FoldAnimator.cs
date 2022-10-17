@@ -245,7 +245,7 @@ public class FoldAnimator : MonoBehaviour
 
         Debug.Log("end collision check");
 
-        //Destroy(parent2);
+        Destroy(parent2);
         raycastCheckDone = true;
         return true;
     }
@@ -257,7 +257,8 @@ public class FoldAnimator : MonoBehaviour
         {
             var foldJointRenderer = foldJoint.JointRenderer;
             if(foldJointRenderer != null)
-                StartCoroutine(FoldHelper(foldObjects, center, axis, degrees, foldJointRenderer.DisableMeshAction, foldJointRenderer.EnableMeshAction));
+                StartCoroutine(FoldHelper(foldObjects, center, axis, degrees, foldObjects.DisableJointMeshes, foldObjects.EnableJointMeshes));
+                //StartCoroutine(FoldHelper(foldObjects, center, axis, degrees, foldJointRenderer.DisableMeshAction, foldJointRenderer.EnableMeshAction));
             else
                 StartCoroutine(FoldHelper(foldObjects, center, axis, degrees));
         }
@@ -301,6 +302,9 @@ public class FoldAnimator : MonoBehaviour
             }
             yield return null;
         }
+        
+        //UpdateSquareVisibility(objectsToFold);
+
         target.transform.RotateAround(center, axis, degrees);
         tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 

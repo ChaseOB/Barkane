@@ -19,6 +19,11 @@ public class TileSelector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ReloadReferences();
+    }
+
+    public void ReloadReferences()
+    {
         camera = this.GetComponent<Camera>();
         foldAnimator = FindObjectOfType<FoldAnimator>();
         foldablePaper = FindObjectOfType<FoldablePaper>();
