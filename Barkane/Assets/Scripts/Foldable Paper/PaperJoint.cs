@@ -4,16 +4,12 @@ using UnityEngine;
 
 public class PaperJoint : MonoBehaviour
 {
-    [SerializeField] private List<PaperSqaure> paperSqaures;
-    public  List<PaperSqaure> PaperSqaures { get => paperSqaures;}
+    [SerializeField] private List<PaperSquare> paperSquares;
+    public  List<PaperSquare> PaperSquares { get => paperSquares;}
 
-    private bool isSelected = false; //true when this is the current selected fold
+    public bool isSelected = false; //true when this is the current selected fold
     public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
 
-    //private PaperJoint currentJoint;
-   // FoldablePaper foldablePaper;
-    //private bool isFirstCall = true;
-  //  List<PaperSqaure> willBeFoldedPaperSquares = new List<PaperSqaure>();
 
     [SerializeField] private List<PaperJoint> adjList = new List<PaperJoint>();
 
@@ -27,22 +23,6 @@ public class PaperJoint : MonoBehaviour
         if(capsuleCollider == null)
             capsuleCollider = GetComponent<CapsuleCollider>();
     }
-
-  /*  void Update(){
-        if (isSelected) {
-            if (isFirstCall) {
-                isFirstCall = !isFirstCall;
-                foldablePaper = FindObjectOfType<FoldablePaper>();
-                willBeFoldedPaperSquares = foldablePaper.GetWillBeFoldedSquares();
-                EmitEdgeParticles();
-            }
-        } else {
-            if (!isFirstCall) {
-                isFirstCall = !isFirstCall;
-                UnEmitParticles();
-            }
-        }
-    }*/
 
     public void Select()
     {
@@ -67,7 +47,6 @@ public class PaperJoint : MonoBehaviour
         
         jointRenderer?.ShowLine(value);
 
-        Debug.Log("Showing line for " + this.gameObject.name);
 
         foreach(PaperJoint pj in adjList)
             if(pj.showLine != value)
@@ -91,4 +70,19 @@ public class PaperJoint : MonoBehaviour
         if(other.gameObject.layer == 7)
             adjList.Remove(other.GetComponent<PaperJoint>());
     }
+
+#if UNITY_EDITOR
+    public void Remove()
+    {
+        if (gameObject != null)
+        {
+            //Debug.Log($"Destroying Joint {gameObject.name}");
+            foreach (PaperSquare square in PaperSquares)
+            {
+                square.adjacentJoints.Remove(this);
+            }
+            DestroyImmediate(this.gameObject);
+        }
+    }       
+#endif
 }

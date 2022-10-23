@@ -4,38 +4,45 @@ using UnityEngine;
 
 public class FoldablePaper : MonoBehaviour
 {
-    [SerializeField] private PaperSqaure[] paperSqaures;
-    public PaperSqaure[] PaperSqaures => paperSqaures;
+    [SerializeField] private PaperSquare[] paperSquares;
+    public PaperSquare[] PaperSquares => paperSquares;
     [SerializeField] private PaperJoint[] paperJoints;
-    private List<PaperSquareStack> paperSquareStacks = new List<PaperSquareStack>();
-    public List<PaperSquareStack> PaperSquareStacks => paperSquareStacks;
-    private Dictionary<PaperSqaure,  List<PaperJoint>> adjListSquareToJoint;
-    private Dictionary<PaperJoint,  List<PaperSqaure>> adjListJointToSquare;
+    public PaperJoint[] PaperJoints => paperJoints;
+    private Dictionary<PaperSquare,  List<PaperJoint>> adjListSquareToJoint;
+    private Dictionary<PaperJoint,  List<PaperSquare>> adjListJointToSquare;
     public FoldAnimator foldAnimator;
     private  FoldObjects playerSide;
     private  FoldObjects foldObjects;
-    private HashSet<PaperSqaure> visitedSquares = new HashSet<PaperSqaure>();
+    private HashSet<PaperSquare> visitedSquares = new HashSet<PaperSquare>();
     private HashSet<PaperJoint> visitedJoints = new HashSet<PaperJoint>();
     public PaperJoint foldJoint;
+    public GameObject SquareCollider;
+    public Transform playerSpawn;
+    public bool isComplete = false; //C: set to true when goal is reached
+
+    Dictionary<Vector3Int, List<PaperSquare>> squareLocs = new Dictionary<Vector3Int, List<PaperSquare>>();
 
 
     private void Awake() 
     {
-        paperSqaures = GetComponentsInChildren<PaperSqaure>();   
+        paperSquares = GetComponentsInChildren<PaperSquare>();   
         paperJoints = GetComponentsInChildren<PaperJoint>(); 
+        foldAnimator = FindObjectOfType<FoldAnimator>();
         UpdateAdjList();
+        IntializeSquarePosList();
     }
+
 
     private void UpdateAdjList()
     {
-        adjListSquareToJoint = new Dictionary<PaperSqaure,  List<PaperJoint>>();
-        adjListJointToSquare = new Dictionary<PaperJoint,  List<PaperSqaure>>();
-        foreach(PaperSqaure ps in paperSqaures)
+        adjListSquareToJoint = new Dictionary<PaperSquare,  List<PaperJoint>>();
+        adjListJointToSquare = new Dictionary<PaperJoint,  List<PaperSquare>>();
+        foreach(PaperSquare ps in paperSquares)
         {
             List<PaperJoint> adj = new List<PaperJoint>();
             foreach(PaperJoint pj in paperJoints)
             {
-                if(pj.PaperSqaures.Contains(ps))
+                if(pj.PaperSquares.Contains(ps))
                 {
                     adj.Add(pj);
                 }
@@ -45,9 +52,19 @@ public class FoldablePaper : MonoBehaviour
 
         foreach(PaperJoint pj in paperJoints)
         {
-            adjListJointToSquare[pj] = pj.PaperSqaures;
+            adjListJointToSquare[pj] = pj.PaperSquares;
         }
     }
+
+    private void IntializeSquarePosList()
+    {
+        foreach(PaperSquare ps in paperSquares){
+            List<PaperSquare> list = new List<PaperSquare>();
+                list.Add(ps);
+                squareLocs.Add(Vector3Int.RoundToInt(ps.transform.position), list);
+        }
+    }
+
 
     //C: Uses a modified DFS to determine which objects should be folded
     public void FindFoldObjects()
@@ -56,10 +73,10 @@ public class FoldablePaper : MonoBehaviour
         visitedSquares.Clear();
 
         playerSide = new FoldObjects();
-        foldObjects = new FoldObjects(paperSqaures[0].transform.parent, paperJoints[0].transform.parent);
+        foldObjects = new FoldObjects(paperSquares[0].transform.parent, paperJoints[0].transform.parent);
 
-        PaperSqaure playerSquare = null;
-        foreach(PaperSqaure ps in paperSqaures)
+        PaperSquare playerSquare = null;
+        foreach(PaperSquare ps in paperSquares)
             if(ps.PlayerOccupied)
                 playerSquare = ps;
         DFSHelperSquare(playerSquare, true);
@@ -68,7 +85,7 @@ public class FoldablePaper : MonoBehaviour
         foldObjects.OnFoldHighlight(true);
     }
 
-    private void DFSHelperSquare(PaperSqaure ps, bool isPlayerSide)
+    private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
     {
         if(ps == null) return;
         visitedSquares.Add(ps);
@@ -88,11 +105,13 @@ public class FoldablePaper : MonoBehaviour
         if(pj == null) return;
         visitedJoints.Add(pj);
         isPlayerSide = pj.showLine ? !isPlayerSide : isPlayerSide; //C: if we cross the fold line, then this value changes. We're essentially slicing the graph into 2 parts
+        if(pj.showLine)
+            foldObjects.foldLineJoints.Add(pj.gameObject);
         if(isPlayerSide)
             playerSide.foldJoints.Add(pj.gameObject);
         else
             foldObjects.foldJoints.Add(pj.gameObject);
-        foreach(PaperSqaure adjSquare in adjListJointToSquare[pj])
+        foreach(PaperSquare adjSquare in adjListJointToSquare[pj])
         {
             if(!visitedSquares.Contains(adjSquare))
                 DFSHelperSquare(adjSquare, isPlayerSide);
@@ -102,58 +121,85 @@ public class FoldablePaper : MonoBehaviour
     public void TestFold(float degrees)
     {
         FindFoldObjects();
-        if(foldJoint != null && foldJoint.canFold)
-            foldAnimator.Fold(foldJoint, foldObjects, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+        if(!isComplete && foldJoint != null && foldJoint.canFold)
+            foldAnimator.TryFold(foldJoint, foldObjects, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
     }
 
 
-    
-    //C: looks through the PSSes to see if this square is in a stack. If it is, remove it from the stack and update stack visuals.
-    //If there is only one square left in that PSS, the PSS is destroyed and removed.
-    public void TryRemoveSquare(PaperSqaure ps)
+    public List<List<PaperSquare>> FindOverlappingSquares()
     {
-        foreach(PaperSquareStack pss in paperSquareStacks)
-        {
-            pss.TryRemoveSquare(ps);
-            if(pss.destroy)
+        List<List<PaperSquare>> overlapList = new List<List<PaperSquare>>();
+
+        Dictionary<Vector3, List<PaperSquare>> dict = new Dictionary<Vector3, List<PaperSquare>>();
+
+        foreach(PaperSquare ps in paperSquares) {
+            bool didAdd = false;
+            foreach(Vector3 key in dict.Keys){
+                if (Vector3.Magnitude(key - ps.transform.position) < 0.0001f) {
+                    dict[key].Add(ps);
+                    didAdd = true;
+                }
+            }
+            if(!didAdd)
             {
-                paperSquareStacks.Remove(pss);
-                Destroy(pss);
+                List<PaperSquare> list = new List<PaperSquare>();
+                list.Add(ps);
+                dict.Add(ps.transform.position, list);
+//                Debug.Log(ps.transform.position);
             }
         }
-    }
 
-    public PaperSquareStack GetStackWith(PaperSqaure ps)
-    {
-        foreach(PaperSquareStack pss in paperSquareStacks)
-            if (pss.Contains(ps))
-                return pss;
-        return null;
+        foreach (List<PaperSquare> list in dict.Values){
+           // if(list.Count > 1)
+                overlapList.Add(list);
+        }
+        return overlapList;
     }
 }
 
 public class FoldObjects {
-    public List<GameObject> foldSquares;
-    public List<GameObject> foldJoints;
+    public List<GameObject> foldSquares; //C: every square being folded
+    public List<GameObject> foldJoints; //C: the non-line joints being folded
+    public List<GameObject> foldLineJoints; //C: joints along the fold line
     public Transform squareParent;
     public Transform jointParent;
 
     public FoldObjects() {
         foldSquares = new List<GameObject>();
         foldJoints = new List<GameObject>();
+        foldLineJoints = new List<GameObject>();
     }
 
     public FoldObjects(Transform sp, Transform jp) {
         foldSquares = new List<GameObject>();
         foldJoints = new List<GameObject>();
+        foldLineJoints = new List<GameObject>();
         squareParent = sp;
         jointParent = jp;
+    }
+
+    public void EnableJointMeshes()
+    {
+        foreach(GameObject go in foldLineJoints)
+        {
+            JointRenderer jr = go.GetComponent<PaperJoint>()?.JointRenderer;
+            jr?.EnableMeshAction();
+        }
+    }
+
+    public void DisableJointMeshes()
+    {
+        foreach(GameObject go in foldLineJoints)
+        {
+            JointRenderer jr = go.GetComponent<PaperJoint>()?.JointRenderer;
+            jr?.DisableMeshAction();
+        }
     }
 
     public void OnFoldHighlight(bool select)
     {
         foreach (GameObject go in foldSquares)
-            go.GetComponent<PaperSqaure>().OnFoldHighlight(select);
+            go.GetComponent<PaperSquare>().OnFoldHighlight(select);
     }
 
     //foldStart is true when starting a fold and false when ending a fold

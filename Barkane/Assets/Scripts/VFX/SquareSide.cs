@@ -2,6 +2,7 @@ using BarkaneEditor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
@@ -11,33 +12,51 @@ public class SquareSide : MonoBehaviour, IRefreshable
     [SerializeField] MeshFilter mFilter;
     [SerializeField] MeshRenderer mRenderer;
     [SerializeField] CrumbleMeshGenerator meshGenerator;
-    [SerializeField] Material materialPrototype;
+    [SerializeField] public Material materialPrototype;
 
-    [SerializeField, HideInInspector] Texture2D distanceTexture;
     [SerializeField, HideInInspector] Material materialInstance;
+    [SerializeField, HideInInspector] byte[] distanceTextureData;
+    [SerializeField, HideInInspector] int distanceTextureWidth;
+    [SerializeField, HideInInspector] SerializedMesh meshData;
 
     public Material MaterialPrototype => materialPrototype;
 
     public (Vector3[], Vector3[]) sprinkles;
+    public Transform sprinkleParent;
 
     void IRefreshable.Refresh()
     {
-        UpdateMesh();
-    }
-
-    private void Start()
-    {
-        PushMaterial();
-    }
-
-    private void PushMaterial()
-    {
-        if (materialInstance != null &&  distanceTexture != null)
+        if (Application.isEditor && !Application.isPlaying)
         {
+            UpdateMesh();
+        } else
+        {
+            PushData();
+        }
+    }
+
+    private void PushData()
+    {
+        if (materialInstance == null)
+        {
+            materialInstance = new Material(materialPrototype)
+            {
+                name = $"rehydrated {materialPrototype.name}"
+            };
+        }
+        if (materialInstance != null)
+        {
+            var distanceTexture = new Texture2D(distanceTextureWidth, distanceTextureWidth);
+            distanceTexture.LoadImage(distanceTextureData);
+            distanceTexture.Apply();
+
+            mFilter.sharedMesh = meshData.Rehydrated;
+
             materialInstance.SetTexture("Dist", distanceTexture);
             mRenderer.sharedMaterials = new Material[] { materialInstance };
         }
     }
+
 
     private void Update()
     {
@@ -49,11 +68,16 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public void UpdateMesh()
     {
-        var (mesh, material, texture, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
-        mFilter.sharedMesh = mesh;
-        distanceTexture = texture;
-        materialInstance = material;
-        PushMaterial();
+        var (mesh, texture, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
+        distanceTextureData = texture.EncodeToPNG();
+        distanceTextureWidth = texture.width;
+        materialInstance = new Material(materialPrototype)
+        {
+            name = $"hydrated {materialPrototype.name}"
+        };
+        meshData = new SerializedMesh(mesh);
+
+        PushData();
 
         while (transform.childCount > 0)
         {
@@ -62,17 +86,23 @@ public class SquareSide : MonoBehaviour, IRefreshable
                 DestroyImmediate(transform.GetChild(0).gameObject);
             } else
             {
-                throw new UnityException("VFXManager should not be evoked in the game!");
+                Destroy(transform.GetChild(0).gameObject);
+                //throw new UnityException("VFXManager should not be evoked in the game!");
             }
         }
 
-        for (int i = 0; i < sprinkleVerts.Length; i++)
-        {
-            var go = Instantiate(VFXManager.Theme.Sprinkle, transform);
-            go.transform.localPosition = sprinkleVerts[i];
-            go.transform.up = transform.rotation * sprinkleNorms[i];
-            go.transform.RotateAround(go.transform.up, Random.Range(0, 360));
-        }
+        //if (materialPrototype.shader == Shader.Find("Paper") && materialPrototype.GetInt("_UseSprinkles") == 1) //C: No GetBool, need to use GetInt. Also this is broken lol
+        //{
+            for (int i = 0; i < sprinkleVerts.Length; i++)
+            {
+                var go = Instantiate(VFXManager.Theme.Sprinkle, transform);
+                //go.transform.parent = sprinkleParent;
+                go.transform.localPosition = sprinkleVerts[i];
+                go.transform.up = transform.rotation * sprinkleNorms[i];
+                go.transform.RotateAround(go.transform.up, UnityEngine.Random.Range(0, 360));
+            }
+        //}
+        
     }
 
     /// <summary>
@@ -97,4 +127,15 @@ public class SquareSide : MonoBehaviour, IRefreshable
         Mathf.RoundToInt(transform.position.z));
 
     public static implicit operator (int, int, int)(SquareSide s) => s.Coordinate;
+
+
+    #region overlap
+
+    public void ToggleMesh(bool val)
+    {
+        Debug.Log("changing mesh");
+        mRenderer.enabled = val;
+       // sprinkleParent.gameObject.SetActive(val);
+    }
+    #endregion
 }
