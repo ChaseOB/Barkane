@@ -36,8 +36,7 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
 
         // sizeof(Vector3) doesn't work
         // instead we assume each float is 4 bytes, Vector2 is a C# struct of 2 floats
-        var vBuf = new ComputeBuffer(24, 2 * 4);
-        var normBuf = new RenderTexture(setting.resolution, setting.resolution, 24);
+        var vBuf = new ComputeBuffer(24, 2 * sizeof(float));
 
         var v2D = new Vector2[]
         {
@@ -165,13 +164,16 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
 
         // render texture creation and use
         // https://youtu.be/BrZ4pWwkpto
-        normBuf.enableRandomWrite = true;
-        normBuf.Create();
-        crumbleShader.SetTexture(0, "Result", normBuf);
+        var rt = new RenderTexture(setting.resolution, setting.resolution, 0)
+        {
+            enableRandomWrite = true
+        };
+        rt.Create();
+        crumbleShader.SetTexture(0, "Result", rt);
         Dispatch(crumbleShader);
 
-        blurShader.SetTexture(0, "Result", normBuf);
-        blurShader.SetTexture(1, "Result", normBuf);
+        blurShader.SetTexture(0, "Result", rt);
+        blurShader.SetTexture(1, "Result", rt);
 
         // repeat gaussian blur for several times
         for (int i = 0; i < setting.blurLoop; i++)
@@ -217,11 +219,11 @@ public class CrumbleMeshGenerator : MonoBehaviour, BarkaneEditor.ILoadable
         // transfer distance from GPU to CPu
         var cpuTexture = new Texture2D(setting.resolution, setting.resolution);
         // https://answers.unity.com/questions/37134/is-it-possible-to-save-rendertextures-into-png-fil.html
-        RenderTexture.active = normBuf;
+        RenderTexture.active = rt;
         cpuTexture.ReadPixels(new Rect(0, 0, setting.resolution, setting.resolution), 0, 0);
         cpuTexture.Apply();
         RenderTexture.active = null;
-        DestroyImmediate(normBuf);
+        DestroyImmediate(rt);
 
         return (m, cpuTexture, sprinkleVerts, sprinkleNorms);
     }

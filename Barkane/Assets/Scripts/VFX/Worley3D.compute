@@ -1,0 +1,102 @@
+#pragma kernel CSWorley
+
+int _Width;
+int _Density;
+StructuredBuffer<float3> _Pts1;
+StructuredBuffer<float3> _Pts2;
+StructuredBuffer<float3> _Pts3;
+
+RWTexture2D<float4> _Result; // changed to 2D for easier slicing
+float _z;
+
+// references Jushii https://github.com/jushii/WorleyNoise/blob/main/Assets/Shaders/Worley3D.compute
+// and Sebastian Lague's Worley3D shaders
+// it is a minimal implementation
+static const int3 offsets[] =
+{
+    int3(-1, -1, -1),
+    int3(0, -1, -1),
+    int3(1, -1, -1),
+    int3(-1, -1, 0),
+    int3(0, -1, 0),
+    int3(1, -1, 0),
+    int3(-1, -1, 1),
+    int3(0, -1, 1),
+    int3(1, -1, 1),
+    int3(-1, 0, -1),
+    int3(0, 0, -1),
+    int3(1, 0, -1),
+    int3(-1, 0, 0),
+    int3(0, 0, 0),
+    int3(1, 0, 0),
+    int3(-1, 0, 1),
+    int3(0, 0, 1),
+    int3(1, 0, 1),
+    int3(-1, 1, -1),
+    int3(0, 1, -1),
+    int3(1, 1, -1),
+    int3(-1, 1, 0),
+    int3(0, 1, 0),
+    int3(1, 1, 0),
+    int3(-1, 1, 1),
+    int3(0, 1, 1),
+    int3(1, 1, 1),
+};
+
+bool legal(int dim) {
+    return dim >= 0 && dim < _Width;
+}
+
+bool legal(int3 dims) {
+    return legal(dims.x) && legal(dims.y) && legal(dims.z);
+}
+
+int idx(int3 dims) {
+    return dims.x + _Width * (dims.y + _Width * (dims.z));
+}
+
+float4 extend(float3 xyz) {
+    return float4(xyz.x, xyz.y, xyz.z, 1);
+}
+
+[numthreads(8, 8, 1)]
+void CSWorley(uint3 id : SV_DispatchThreadID)
+{
+    float fWidth = (float)_Width;
+    float fDensity = (float)_Density;
+
+    // position in (0, resolution) range
+    float3 raw = float3(id.x, id.y, _z);
+    // position in (0, width) range
+    float3 pos = raw / fDensity;
+    float3 test01 = pos / fWidth;
+    int3 cell = floor(pos);
+
+    float3 sqMin3 = float3(10000, 10000, 10000);
+    // in a 3x3x3 kernel there are 27 cells
+    for (int i = 0; i < 27; i++) {
+        int3 neighbor = cell + offsets[i];
+        int3 samplingCoordinate = neighbor;
+        if (!legal(neighbor)) samplingCoordinate = (neighbor + fWidth) % fWidth;
+
+        int ptIdx = samplingCoordinate.x + _Width * (samplingCoordinate.y + _Width * samplingCoordinate.z);
+
+        float3 toNeighbor = neighbor - pos;
+
+        float3 displacement1 = _Pts1[ptIdx] + toNeighbor;
+        float3 displacement2 = _Pts2[ptIdx] + toNeighbor;
+        float3 displacement3 = _Pts3[ptIdx] + toNeighbor;
+
+        sqMin3 = float3(
+            min(sqMin3.x, dot(displacement1, displacement1)),
+            min(sqMin3.y, dot(displacement2, displacement2)),
+            min(sqMin3.z, dot(displacement3, displacement3))
+            );
+    }
+
+    // the furthest possible point is across the diagonal of the cube
+    // which is sqrt(3) * width
+    // instead of sqrt(x) / sqrt(3) we do the division first inside the sqrt
+    float3 dMin = sqrt(sqMin3 / 3.0);
+    _Result[id.xy] = extend(dMin);
+}
