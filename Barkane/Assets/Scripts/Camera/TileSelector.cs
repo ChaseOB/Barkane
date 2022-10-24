@@ -10,7 +10,7 @@ public class TileSelector : MonoBehaviour
     private PaperJoint hoverJoint;
     private PaperJoint currJoint;
 
-    [SerializeField] private PaperSqaure hoverSquare;
+    [SerializeField] private PaperSquare hoverSquare;
 
     public FoldablePaper foldablePaper;
     public FoldAnimator foldAnimator;
@@ -19,13 +19,21 @@ public class TileSelector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ReloadReferences();
+    }
+
+    public void ReloadReferences()
+    {
         camera = this.GetComponent<Camera>();
         foldAnimator = FindObjectOfType<FoldAnimator>();
+        foldablePaper = FindObjectOfType<FoldablePaper>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(foldablePaper.isComplete) return;
+
         RaycastHit info;
         Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
         RaycastHit[] hits = Physics.RaycastAll(ray, 100, LayerMask.GetMask("Joint"));
@@ -38,14 +46,14 @@ public class TileSelector : MonoBehaviour
             foreach (RaycastHit hit in hits)
             {
                 PaperJoint joint = hit.transform.gameObject.GetComponent<PaperJoint>();
-                if (hoverSquare != null && joint.PaperSqaures.Contains(hoverSquare))
+                if (hoverSquare != null && joint.PaperSquares.Contains(hoverSquare))
                     hoverJoint = joint;
             }
         }
 
         if(Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Paper")))
         {
-            hoverSquare = info.transform.gameObject.GetComponent<PaperSqaure>();
+            hoverSquare = info.transform.gameObject.GetComponent<PaperSquare>();
         } 
           
     }
@@ -53,7 +61,7 @@ public class TileSelector : MonoBehaviour
 
     private void OnClick(InputValue value)
     {
-        if(!value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
+        if(foldablePaper == null || foldablePaper.isComplete || !value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
             return;
         if(hoverJoint != null && hoverJoint.canFold)
         {
@@ -68,6 +76,8 @@ public class TileSelector : MonoBehaviour
         {
             currJoint?.Deselect();
             currJoint = null;
+            foldablePaper.foldJoint = null;
+
         }
 
         foldablePaper.FindFoldObjects();
@@ -77,15 +87,14 @@ public class TileSelector : MonoBehaviour
     //C: These are only here for testing purposes
     private void OnFoldUp(InputValue value)
     {
-        Debug.Log("fold up");
-        if(!value.isPressed)
+        if(!value.isPressed || currJoint == null || !currJoint.isSelected)
             return;
         foldablePaper.TestFold(90);
     }
 
     private void OnFoldDown(InputValue value)
     {
-        if(!value.isPressed)
+        if(!value.isPressed || currJoint == null || !currJoint.isSelected)
             return;
         foldablePaper.TestFold(-90);
     }
