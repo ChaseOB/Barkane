@@ -8,7 +8,7 @@ namespace BarkaneEditor
     public class TestTex3DSizer : MonoBehaviour
     {
 
-        [SerializeField, Range(0, 2)] private float scl;
+        [SerializeField, Range(0, 20)] private float scl;
 
         // Update is called once per frame
         void Update()

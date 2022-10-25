@@ -23,13 +23,14 @@ namespace BarkaneEditor
                 wrapMode = TextureWrapMode.Repeat
             };
 
-            var (pts1, pts2, pts3) = (PtsBuffer, PtsBuffer, PtsBuffer);
+            var (pts1, pts2, pts3, pts4) = (PtsBuffer, PtsBuffer, PtsBuffer, PtsBuffer);
 
             shader.SetInt("_Width", Width);
             shader.SetInt("_Density", Density);
             shader.SetBuffer(0, "_Pts1", pts1);
             shader.SetBuffer(0, "_Pts2", pts2);
             shader.SetBuffer(0, "_Pts3", pts3);
+            shader.SetBuffer(0, "_Pts4", pts4);
 
             var rt2D = new RenderTexture(Resolution, Resolution, 0)
             {
@@ -47,6 +48,7 @@ namespace BarkaneEditor
             pts1.Release();
             pts2.Release();
             pts3.Release();
+            pts4.Release();
             #endregion
 
         }
