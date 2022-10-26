@@ -8,187 +8,212 @@
 #endif
 
 const static uint steps = 4;
-const static float r = 1; // unity uses [-1, 1] object space meaning radius is always 1
+const static float r = .5; // unity uses [-1, 1] object space, but unity's default sphere is .5 radius
 
 float densityDrop(
 	float3 pos,
-	float dropoff,
-	float cutoff
+	float dropoff
 ) {
 	float sq = dot(pos, pos);
-	return max(0, 1 - dropoff * sq);
+	float t = sq / r;
+	return max(0, exp(-dropoff * t) - exp(-dropoff)); // the subtraction makes sure it is zeroed at 1
 }
 
 float densityAt(
 	UnitySamplerState worleyState,
 	UnityTexture3D worley,
+	float4 frequencies,
+	float4 weights,
 	float3 pos,
 	float scl,
 	float offset,
 	float baseDensity,
-	float densityDropoff,
-	float densityCutoff
+	float densityDropoff
 ) {
-	float4 weights = float4(0.3, 0.3, 0.2, 0.2);
-	float4 frequencies = float4(1, 1.5, 2.25, 3.375) * scl;
-
 	// originally the 1 - sample is built into the worley generation shader
 	// it is moved here to make the worley noise texture itself more usable elsewhere
 
 	float4 samples = float4(
-		1 - worley.Sample(worleyState, pos * frequencies.x + offset).r,
-		1 - worley.Sample(worleyState, pos * frequencies.y + offset).g,
-		1 - worley.Sample(worleyState, pos * frequencies.z + offset).b,
-		1 - worley.Sample(worleyState, pos * frequencies.w + offset).a
+		1 - worley.Sample(worleyState, pos * frequencies.x * scl + offset).r,
+		1 - worley.Sample(worleyState, pos * frequencies.y * scl + offset).g,
+		1 - worley.Sample(worleyState, pos * frequencies.z * scl + offset).b,
+		1 - worley.Sample(worleyState, pos * frequencies.w * scl + offset).a
 		);
 
-	return baseDensity * dot(weights, samples) * densityDrop(pos, densityDropoff, densityCutoff);
+	return baseDensity 
+		* dot(weights, samples) / (weights.x + weights.y + weights.z + weights.x)
+		* densityDrop(pos, densityDropoff);
+}
+
+// from http://killzone.dl.playstation.net/killzone/horizonzerodawn/presentations/Siggraph15_Schneider_Real-Time_Volumetric_Cloudscapes_of_Horizon_Zero_Dawn.pdf
+float powder(float l) {
+	return max(0, 1 - exp(-2 * l));
+}
+
+// Beer's law
+float beer(float l) {
+	return exp(-l);
+}
+
+float combinedAbsorption(float l) {
+	return lerp(powder(l), beer(l), 0.6);
 }
 
 float march(
 	UnitySamplerState worleyState,
 	UnityTexture3D worley,
+	float4 frequencies,
+	float4 weights,
 	float scl,
 	float offset,
-	float3 base,
+	float3 p,
 	// constant, must be in sync with Monolight constant!
 	// the shadergraph translates (-0.3213938, -0.7660444, 0.5566705) to object space
 	float3 l,
 	float sunAbsorption,
-	float cloudAbsorption,
-	float baseAbsorption,
 	float baseDensity,
-	float densityDropoff,
-	float densityCutoff
+	float densityDropoff
 ) {
 	// same indicator as below
-	float I = dot(base, l);
-	I = I * I - dot(base, base) + r * r;
-	if (I < 0) return baseAbsorption;
+	float I = dot(l, p);
+	float end = -I;
+
+	I = I * I - dot(p, p) + r * r;
 
 	// length between base point and exit point of the light ray in the sphere
-	float end = -dot(base, l) + sqrt(I);
-
-	float stepSize = end / (steps - 1);
-
+	end += sqrt(I);
+	float stepSize = end / steps;
 	float density = 0;
+	float3 samplePt = p;
 
 	for (uint i = 0; i < steps; i++) {
-		float t = (float) i / (steps - 1);
-		float3 samplePt = base + l * t;
+		float t = stepSize * (i + 1);
+		samplePt = p + l * t;
 
 		density += max(0, stepSize * densityAt(
 			worleyState,
 			worley,
+			frequencies,
+			weights,
 			samplePt,
 			scl,
 			offset,
 			baseDensity,
-			densityDropoff,
-			densityCutoff
+			densityDropoff
 		));
 	}
-	
+
 	// transmittance formula borrowed from
 	// http://killzone.dl.playstation.net/killzone/horizonzerodawn/presentations/Siggraph15_Schneider_Real-Time_Volumetric_Cloudscapes_of_Horizon_Zero_Dawn.pdf
 	// on pg 54 it mentions Beer's Law
-	return baseAbsorption + (1 - baseAbsorption) * exp(density * sunAbsorption);
+	float effectiveLength = density * sunAbsorption;
+	return combinedAbsorption(effectiveLength);
 }
 
 // Henyey-Greenstein formula borrowed from Sebastian Lague
 // to simulate scattering
-float hg(float a, float g) {
+float hg(float cosa, float g) {
 	float g2 = g * g;
-	return (1 - g2) / (4 * 3.1415 * pow(abs(1 + g2 - 2 * g * (a)), 1.5)); // abs added per suggestion of shader graph warnings
-}
-
-float phase(float a, float backScattering, float frontScattering) {
-	return lerp(hg(a, backScattering), hg(a, -frontScattering), .5);
+	return (1 - g2) / (4 * 3.1415 * pow(1 + g2 - 2 * g * cosa, 1.5));
 }
 
 void RaySampler_float(
-	float3 c2p,
-	float3 c,
+	float3 p,
+	float3 v,
+	float3 l,
+
 	UnitySamplerState worleyState,
 	UnityTexture3D worley,
 	float scl,
 	float offset,
-	float3 lightDir,
+	float4 frequencies,
+	float4 weights,
 
-	// not really sure how the absorption constants work
 	float sunAbsorption,
 	float cloudAbsorption,
-	float baseAbsorption,
-
-	// HG scattering stuff
-	float backScattering,
-	float frontScattering,
 
 	float baseDensity,
 	float densityDropoff,
-	float densityCutoff,
+
+	// phong-ish
+	float ambient,
+	float lambertian,
+	float HG,
+
+	float cutoff,
+	float hardborder,
 
 	out float transmittance,
-	out float energy
+	out float energy,
+	out float border,
+	out float4 debug
 ) {
-	float I = dot(c2p, c);
-	I = I * I - dot(c, c) + r * r;
-	float start = 0;
-	float end = 0;
+	float I = dot(v, p);
+	float end = -I;
 
-	if (I < 0)
-		discard;
-	else {
-		start = -dot(c2p, c) - sqrt(I);
-		end = -dot(c2p, c) + sqrt(I);
-	}
+	I = I * I - dot(p, p) + r * r;
+	end += sqrt(I);
 
 	// borrows from Sebastian Lague's
 	// https://github.com/SebLague/Clouds/blob/master/Assets/Scripts/Clouds/Shaders/Clouds.shader
 	energy = 0;
 	transmittance = 1;
 
-	float cosAngle = dot(c2p, lightDir); // switched to hard coded light
-	float phaseVal = phase(cosAngle, backScattering, frontScattering);
+	float cosAngle = dot(v, l); // switched to hard coded light
+	float phaseVal = hg(cosAngle, .9);
 
-	const float stepSize = (end - start) / (steps - 1);
+	const float stepSize = end / steps;
 
 	for (uint i = 0; i < steps; i++) {
-		float t = start + stepSize * i;
-		float3 pos = c + t * c2p;
+		float t = stepSize * (i + 1);
+		float3 pos = p + t * v;
 
 		float density = densityAt(
 			worleyState,
 			worley,
+			frequencies,
+			weights,
 			pos,
 			scl,
 			offset,
 			baseDensity,
-			densityDropoff,
-			densityCutoff
+			densityDropoff
 		);
 
-		if (density > 0) {
-			float lightTransmittance = march(
-				worleyState,
-				worley,
-				scl,
-				offset,
-				pos,
-				lightDir,
-				sunAbsorption,
-				cloudAbsorption,
-				baseAbsorption,
-				baseDensity,
-				densityDropoff,
-				densityCutoff
-			);
+		float lightTransmittance = march(
+			worleyState,
+			worley,
+			scl,
+			offset,
+			frequencies,
+			weights,
+			pos,
+			l,
+			sunAbsorption,
+			baseDensity,
+			densityDropoff
+		);
 
-			energy += density * stepSize * transmittance * lightTransmittance * phaseVal;
-			transmittance *= exp(-density * stepSize * cloudAbsorption);
-		}
+		energy += 
+			density * stepSize * transmittance 
+			* lightTransmittance * 
+			(ambient + dot(-l, v) * lambertian + HG * phaseVal);
+
+		transmittance *= exp(-density * stepSize * cloudAbsorption);
 
 		if (transmittance < 0.01) break; // early exit
+	}
+
+	debug = 0;
+	border = 0;
+
+	if (transmittance > cutoff) {
+		transmittance = 1;
+		energy = 0;
+	}
+	else if (cutoff - transmittance < hardborder) {
+		transmittance = 0;
+		border = 1;
 	}
 }
 

@@ -14,6 +14,10 @@ namespace BarkaneEditor
         void Update()
         {
             transform.localScale = scl * Vector3.one;
+            if (Application.isPlaying)
+            {
+                transform.position += Vector3.right * Time.deltaTime;
+            }
         }
     }
 
