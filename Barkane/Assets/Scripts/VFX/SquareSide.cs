@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Collections;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
@@ -24,10 +23,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public (Vector3[], Vector3[]) sprinkles;
     public Transform sprinkleParent;
-
-    //public List<int> priorityList = new List<int>(); //C: Used to help enable/disable meshes for overlapping squares
-    public List<int> priority = new List<int>();
-
 
     void IRefreshable.Refresh()
     {
@@ -62,9 +57,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
         }
     }
 
-    private void Awake() {
-        priority.Add(0);
-    }
 
     private void Update()
     {
@@ -145,10 +137,5 @@ public class SquareSide : MonoBehaviour, IRefreshable
         mRenderer.enabled = val;
        // sprinkleParent.gameObject.SetActive(val);
     }
-
-    //public void UpdateSquarePriority(int num)
-   // {
-   //     priority.Insert(0, num);
-   // }
     #endregion
 }

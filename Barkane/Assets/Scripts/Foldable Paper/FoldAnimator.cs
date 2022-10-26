@@ -11,19 +11,32 @@ public class FoldAnimator : MonoBehaviour
     public GameObject SquareCollider;
 
     public int foldCount = 0;
-    private int internalCount = 0; //C: ticks more often than foldCount, used for priority in rendering squares
+
+    public LayerMask squareCollidingMask;
+
+    public bool checkRaycast = false; //C: set to true when the rest of the check is good
+    public bool raycastCheckDone = false;
+    public FoldData foldData = new FoldData();
+    public Coroutine checkCoroutine = null;
+    public bool raycastCheckReturn = false;
+    public bool crDone = false;
 
     private void Start() 
     {
         foldablePaper = FindObjectOfType<FoldablePaper>();
     }
+
     //C: Tries to fold the given objects. Returns true and folds if successful, returns false if this fold is not possible.
     public bool TryFold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
     {
-        if(CheckCanFold(foldJoint, foldObjects, center, axis, degrees))
+        Debug.Log("trying to fold");
+        //C: we need to wait until FixedUpdate to check the colliders. So we Call CCF, then if that passes, we know we've created collider data
+        // that we need to call CheckColliders. If that passes, then it will call fold. 
+        if(CheckCanFold(foldJoint, foldObjects, center, axis, degrees)) 
         {
-            AudioManager.Instance?.Play("Fold");
-            Fold(foldJoint, foldObjects, center, axis, degrees);
+            checkCoroutine = StartCoroutine(WaitForColliderCheck(foldJoint, foldObjects, center, axis, degrees));
+            //AudioManager.Instance?.Play("Fold");
+           // Fold(foldJoint, foldObjects, center, axis, degrees);
             return true;
         }
         else
@@ -35,10 +48,37 @@ public class FoldAnimator : MonoBehaviour
         
     }
 
+    private void Update() {
+        if(crDone && checkCoroutine != null)
+        {
+            crDone = false;
+            StopCoroutine(checkCoroutine);
+            checkCoroutine = null;
+        }
+    }
+
+    public IEnumerator WaitForColliderCheck(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
+    {
+        Debug.Log("enter CR");
+        yield return new WaitUntil(() => raycastCheckDone);
+        Debug.Log("raycast done");
+        raycastCheckDone = false;
+        if(raycastCheckReturn){
+            Fold(foldJoint, foldObjects, center, axis, degrees);
+            raycastCheckReturn = false;
+        }
+        foldData = new FoldData();
+        crDone = true;
+    }
+
     public bool CheckCanFold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
     {
         if(isFolding) {
             Debug.Log("Cannot fold: You can't do 2 folds at once");
+            return false;
+        }
+        if(checkCoroutine != null){
+            Debug.Log("Cannot fold: currently checking colliders");
             return false;
         }
         //C: check selected joints to ensure straight line
@@ -113,17 +153,100 @@ public class FoldAnimator : MonoBehaviour
             }
         }
 
+        FoldData fd = new FoldData();
+        fd.axis = axis;
+        fd.center = center;
+        fd.degrees = degrees;
+        fd.foldJoint = foldJoint;
+        fd.foldObjects = foldObjects;
+
+        //C: need to transfer data out to be used for raycast stuff
+        foldData = fd;
+        checkRaycast = true;
+        return true;
         //C: The final check is for rotating into hitboxes (ie the player, other paper, obstacles, etc)
+        //We duplicate the square hitboxes and check several points along the rotation;
         
+       /* Debug.Log("check collision");
+        int numChecks = 10;
+        
+        GameObject parent2 = new GameObject();
+        List<GameObject> copiesList = new List<GameObject>();
+        foreach(GameObject go in foldObjects.foldSquares)
+        {
+            GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
+            newSquare.transform.parent = parent2.transform;
+            copiesList.Add(newSquare);
+        }
+        
+        //Ideally we should check every point along the rotation axis, but this is impracticle. 
+        for(int i = 1; i <= numChecks; i++) {
+            parent2.transform.RotateAround(center, axis, degrees/(numChecks+1));
+            foreach(GameObject go in copiesList)
+            {
+                RaycastHit hit;
+                bool collide = Physics.BoxCast(go.GetComponent<Collider>().bounds.center, transform.localScale, transform.forward, out hit, transform.rotation, 0, squareCollidingMask);
+                if(collide){
+                    Debug.Log($"Cannot Fold: hit {hit.transform.gameObject} when calculating fold path");
+                    Destroy(parent2);
+                    return false;
+                }
+            }
+        }
+
+        Debug.Log("end collision check");
+
+        Destroy(parent2);
 
 
-        //C: duplicate square hitboxes, check if they collide with any obsticles
+        //C: if we passed all these checks, then we can fold :)
+        return true;*/
+    }
 
-       // foreach(GameObject go in foldObjects.foldSquares)
-      //  {
-       //     Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
-       // }
+    private void FixedUpdate() {
+        if(checkRaycast)
+            raycastCheckReturn = CheckRayCast();
+    }
 
+    private bool CheckRayCast() {
+        Debug.Log("checking raycast...");
+        checkRaycast = false;
+        int numChecks = 10;
+        
+        GameObject parent2 = new GameObject();
+        parent2.transform.position = foldData.center;
+        List<GameObject> copiesList = new List<GameObject>();
+        foreach(GameObject go in foldData.foldObjects.foldSquares)
+        {
+            GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
+            newSquare.transform.parent = parent2.transform;
+            copiesList.Add(newSquare);
+        }
+        
+        //Ideally we should check every point along the rotation axis, but this is not feasible. 
+        for(int i = 1; i <= numChecks; i++) {
+            parent2.transform.RotateAround(foldData.center, foldData.axis, foldData.degrees/(numChecks+1));
+            foreach(GameObject go in copiesList)
+            {
+              //  Debug.Log("collision check " + i);
+                RaycastHit hit;
+                bool collide = Physics.Raycast(go.transform.position, go.transform.up, out hit, 0.1f, squareCollidingMask);
+               // bool collide = Physics.BoxCast(go.transform.position, new Vector3(0.45f, 0.01f, 0.45f), go.transform.up, out hit, transform.rotation, 0.1f, squareCollidingMask);
+                Debug.DrawRay(go.transform.position, go.transform.up * 0.1f, Color.red, 100);
+                if(collide){
+                    Debug.Log($"Cannot Fold: hit {hit.transform.gameObject.name} when calculating fold path");
+                    //Destroy(parent2);
+                    Debug.DrawRay(go.transform.position, hit.transform.position - go.transform.position, Color.green, 100);
+                    raycastCheckDone = true;
+                    return false;
+                }
+            }
+        }
+
+        Debug.Log("end collision check");
+
+        Destroy(parent2);
+        raycastCheckDone = true;
         return true;
     }
 
@@ -134,8 +257,8 @@ public class FoldAnimator : MonoBehaviour
         {
             var foldJointRenderer = foldJoint.JointRenderer;
             if(foldJointRenderer != null)
-          //  DetermineVisibleSides(objectsToFold, center, axis, degrees);
-                StartCoroutine(FoldHelper(foldObjects, center, axis, degrees, foldJointRenderer.DisableMeshAction, foldJointRenderer.EnableMeshAction));
+                StartCoroutine(FoldHelper(foldObjects, center, axis, degrees, foldObjects.DisableJointMeshes, foldObjects.EnableJointMeshes));
+                //StartCoroutine(FoldHelper(foldObjects, center, axis, degrees, foldJointRenderer.DisableMeshAction, foldJointRenderer.EnableMeshAction));
             else
                 StartCoroutine(FoldHelper(foldObjects, center, axis, degrees));
         }
@@ -145,6 +268,7 @@ public class FoldAnimator : MonoBehaviour
     
     private IEnumerator FoldHelper(FoldObjects objectsToFold, Vector3 center, Vector3 axis, float degrees, System.Action beforeFold = null, System.Action afterFold = null)
     {
+        AudioManager.Instance?.Play("Fold");
         isFolding = true;
         GameObject tempObj = new GameObject(); //used for reparenting/rotating
         GameObject target = new GameObject(); //used for setting correct position due to float jank
@@ -178,6 +302,9 @@ public class FoldAnimator : MonoBehaviour
             }
             yield return null;
         }
+        
+        //UpdateSquareVisibility(objectsToFold);
+
         target.transform.RotateAround(center, axis, degrees);
         tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 
@@ -342,96 +469,16 @@ public class FoldAnimator : MonoBehaviour
                     }
                 }
             }
-        //}
-
-
-        //update priority
-        /*foldObjects.UpdateSquarePriority(++internalCount);
-        List<List<PaperSquare>> overlaps = foldablePaper.FindOverlappingSquares();
-        foreach(List<PaperSquare> list in overlaps)
-        {
-            if(list.Count == 1) //C: only 1 square, enable both meshes
-            {
-                list[0].ToggleBottom(true);
-                list[0].ToggleTop(true);
-                //list[0].topSide.ToggleMesh(true);
-                //list[0].bottomSide.ToggleMesh(true);
-            }
-            else //C: otherwise we need to find 2 highest priority squares and see which of their meshes should be active, disable all other meshes.
-            {
-                foreach(PaperSquare ps in list)    
-                {
-                    //if(ps.topStack) == null;
-                }
-               /* list.Sort();
-                for(int i = 0; i < list.Count - 2; i++){
-                    list[i].ToggleBottom(false);
-                    list[i].ToggleTop(false);
-                }
-                PaperSquare s1 = list[list.Count - 1];
-                PaperSquare s2 = list[list.Count - 2];
-
-            //C: When we have the 2 highest priority squares, we can group the faces in the same direction together, then check the priority of those 
-            //faces that are in the same direction to determine which to display
-            //We arbitrarily pick one side of the first square to be the "top", then add to this list based on the normals of the other square's top/bottoms
-                List<SquareSide> topHalfList = new List<SquareSide>();
-                List<SquareSide> botHalfList = new List<SquareSide>();
-                Vector3 topHalfNorm = s1.TopHalf.transform.up;
-                foreach (PaperSquare square in list){
-                    if(CoordUtils.ApproxSameVector(topHalfNorm, square.TopHalf.transform.up))
-                    {
-                        topHalfList.Add(square.topSide);
-                        botHalfList.Add(square.bottomSide);
-                    }
-                    else
-                    {
-                        botHalfList.Add(square.topSide);
-                        topHalfList.Add(square.bottomSide);
-                    }*/
-               // }
-            
-            //We now have a list of 2 "top" faces and 2 "bottom" faces. We now want to check if we should enable the top of s1 and the bottom of s2 or 
-            //vice versa.
-
-           // }
-
-
-
-
-
-           /* Debug.Log("Overlapping Squares");
-            //in each list of overlaps, we need to calculate the highest priorty top square and highest priority bottom square, then hide everything else
-            List<SquareSide> topHalfList = new List<SquareSide>();
-            List<SquareSide> botHalfList = new List<SquareSide>();
-
-            //C: We arbitrarily pick one side of the first square to be the "top", then add to this list based on the normals of the other squares top/bottoms
-            PaperSquare square1 = list[0];
-            //Vector3 topHalfNorm = square1.TopHalf.transform.up;
-            //Vector3 botHalfNorm = square1.BottomHalf.transform.up;
-            foreach (PaperSquare square in list){
-                if(CoordUtils.ApproxSameVector(topHalfNorm, square.TopHalf.transform.up))
-                {
-                    topHalfList.Add(square.topSide);
-                    botHalfList.Add(square.bottomSide);
-                }
-                else
-                {
-                    botHalfList.Add(square.topSide);
-                    topHalfList.Add(square.bottomSide);
-                }
-                //Vector3 topHalfNorm = square.TopHalf.transform.up;
-                //Vector3 botHalfNorm = square.BottomHalf.transform.up;
-                //Debug.Log($"{square.gameObject.name} top vector {topHalfNorm} bottom vector {botHalfNorm}");
-           }
-
-            topHalfList.Sort();
-            botHalfList.Sort();
-            Debug.Log(topHalfList);
-            Debug.Log(botHalfList);
-            for (int i = 0; i < topHalfList.Count; i++)
-                topHalfList[i].ToggleMesh(i == topHalfList.Count - 1);
-            for (int i = 0; i < botHalfList.Count; i++)
-                botHalfList[i].ToggleMesh(i == botHalfList.Count - 1);*/
     }
+}
+
+//C: we should pass this insead of a bunch of params but i have 90 min to make this game work aaaaa
+public class FoldData 
+{
+    public PaperJoint foldJoint;
+    public FoldObjects foldObjects;
+    public Vector3 center;
+    public Vector3 axis;
+    public float degrees;
 }
 

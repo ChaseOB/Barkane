@@ -69,6 +69,8 @@ public class AudioManager : Singleton<AudioManager>
             return;
         }
 
+        if(s.source == null)
+            return;
         if (s.doRandomPitch)
             s.source.pitch = s.pitch * UnityEngine.Random.Range(.95f, 1.05f);
 
@@ -80,6 +82,9 @@ public class AudioManager : Singleton<AudioManager>
         if (musicLists == null)
             return;
         AudioClip s = musicLists[list].Tracks[ind];
+
+        if(ind > musicLists[list].Tracks.Length)
+            ind = 0;
 
         if (s == null)
         {

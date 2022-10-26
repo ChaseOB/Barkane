@@ -117,6 +117,7 @@ public class LevelManager : Singleton<LevelManager>
 
         FollowTarget.Instance.SetTargetAndPosition(playerInstance.transform);    
         FindObjectOfType<VFXManager>().Refresh();
+        FindObjectOfType<TileSelector>().ReloadReferences();
     }
 
     //C: used when switching from level back to a non-level scene

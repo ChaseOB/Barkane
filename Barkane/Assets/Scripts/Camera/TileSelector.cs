@@ -19,6 +19,11 @@ public class TileSelector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ReloadReferences();
+    }
+
+    public void ReloadReferences()
+    {
         camera = this.GetComponent<Camera>();
         foldAnimator = FindObjectOfType<FoldAnimator>();
         foldablePaper = FindObjectOfType<FoldablePaper>();
@@ -82,7 +87,6 @@ public class TileSelector : MonoBehaviour
     //C: These are only here for testing purposes
     private void OnFoldUp(InputValue value)
     {
-        Debug.Log("fold up");
         if(!value.isPressed || currJoint == null || !currJoint.isSelected)
             return;
         foldablePaper.TestFold(90);
