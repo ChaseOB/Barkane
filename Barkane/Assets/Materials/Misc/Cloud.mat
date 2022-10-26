@@ -54,16 +54,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Evolve: 0.1
+    - _Evolve: 0.3
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Steps: 10
+    - _offset: 15.32
+    - _scale: 0.75
     m_Colors:
     - _Dark: {r: 0.9433962, g: 0.9093146, b: 0.80544674, a: 0}
-    - _Frequencies: {r: 1, g: 1.5, b: 2.25, a: 3.375}
-    - _Light: {r: 1, g: 1, b: 1, a: 0}
+    - _Frequencies: {r: 1, g: 1.5, b: 3, a: 1}
+    - _Light: {r: 0.9716981, g: 0.9716981, b: 0.9716981, a: 0}
     - _Sky: {r: 0.4666667, g: 0.6509804, b: 0.91372555, a: 0}
-    - _Weights: {r: 2, g: 1, b: 0.5, a: 0.15}
+    - _Weights: {r: 2, g: 2, b: 0, a: 0}
     - _lightDir: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &1219249950073881674

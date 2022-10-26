@@ -33,15 +33,17 @@ float densityAt(
 	// originally the 1 - sample is built into the worley generation shader
 	// it is moved here to make the worley noise texture itself more usable elsewhere
 
-	float4 samples = float4(
-		1 - worley.Sample(worleyState, pos * frequencies.x * scl + offset).r,
-		1 - worley.Sample(worleyState, pos * frequencies.y * scl + offset).g,
-		1 - worley.Sample(worleyState, pos * frequencies.z * scl + offset).b,
-		1 - worley.Sample(worleyState, pos * frequencies.w * scl + offset).a
-		);
+	// the single sample actually looks better lol
+	//float4 samples = float4(
+		//1 - worley.Sample(worleyState, pos * frequencies.x * scl + offset).r,
+		//1 - worley.Sample(worleyState, pos * frequencies.y * scl + offset).g,
+		//1 - worley.Sample(worleyState, pos * frequencies.z * scl + offset).b,
+		//1 - worley.Sample(worleyState, pos * frequencies.w * scl + offset).a
+		//);
 
 	return baseDensity 
-		* dot(weights, samples) / (weights.x + weights.y + weights.z + weights.x)
+		* (1 - dot(weights, worley.Sample(worleyState, pos * scl + offset)) / (weights.x + weights.y + weights.z + weights.x))
+		// * dot(weights, samples) / (weights.x + weights.y + weights.z + weights.x)
 		* densityDrop(pos, densityDropoff);
 }
 
@@ -164,6 +166,8 @@ void RaySampler_float(
 
 	const float stepSize = end / steps;
 
+	float lambertianK = saturate(dot(-l, v));
+
 	for (uint i = 0; i < steps; i++) {
 		float t = stepSize * (i + 1);
 		float3 pos = p + t * v;
@@ -197,7 +201,7 @@ void RaySampler_float(
 		energy += 
 			density * stepSize * transmittance 
 			* lightTransmittance * 
-			(ambient + dot(-l, v) * lambertian + HG * phaseVal);
+			(ambient * combinedAbsorption(t) + lambertianK * lambertian + HG * phaseVal);
 
 		transmittance *= exp(-density * stepSize * cloudAbsorption);
 
