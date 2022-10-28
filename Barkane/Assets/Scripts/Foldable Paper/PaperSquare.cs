@@ -154,7 +154,6 @@ public class PaperSquare : MonoBehaviour
                 adjacentJoints.RemoveAt(0);
             } else
             {
-                Debug.Log("IM DELETING A JOINT");
                 DestroyImmediate(adjacentJoints[0].gameObject);    //This will automatically remove all references in other squares.
             }
         }

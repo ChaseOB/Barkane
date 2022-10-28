@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Analytics;
 using BarkaneEditor;
 
 [ExecuteAlways]
@@ -14,8 +12,8 @@ public class LevelEditorManager : MonoBehaviour
     public PaperSquares Squares => squares;
     [SerializeField] private PaperJoints joints;
 
-    [SerializeField] private GameObject squarePrefab;
-    [SerializeField] private GameObject jointPrefab;
+    [SerializeField] private Object squarePrefab;
+    [SerializeField] private Object jointPrefab;
 
     [SerializeField] private GameObject plane;
 
@@ -125,7 +123,12 @@ public class LevelEditorManager : MonoBehaviour
 
         Vector3 squareCenter = squares.GetAbsolutePosition(relPos);
         Quaternion rotation = Quaternion.Euler(OrientationExtension.GetEulerAngle(orientation));
-        GameObject squareObj = Instantiate(squarePrefab, squareCenter, rotation, squares.gameObject.transform);
+
+        GameObject squareObj = InstantiationExtension.InstantiateKeepPrefab(squarePrefab);
+        Debug.Log($"Instantiated Prefab: {squareObj}");
+        squareObj.transform.parent = squares.gameObject.transform;
+        squareObj.transform.position = squareCenter;
+        squareObj.transform.rotation = rotation;
         squareObj.name = $"Square {squares.numSquares}";
 
         PaperSquare square = squareObj.GetComponent<PaperSquare>();
@@ -193,7 +196,11 @@ public class LevelEditorManager : MonoBehaviour
         //capsule.direction = GetJointCapsuleDirection(squareOrient, jointOffset);
 
         Vector3 rot = GetJointDirection(squareOrient, jointOffset);
-        return Instantiate(jointPrefab, jointCenter, Quaternion.Euler(rot.x, rot.y, rot.z), joints.transform).GetComponent<PaperJoint>();
+        GameObject jointObj = InstantiationExtension.InstantiateKeepPrefab(jointPrefab);
+        jointObj.transform.position = jointCenter;
+        jointObj.transform.rotation = Quaternion.Euler(rot.x, rot.y, rot.z);
+        jointObj.transform.parent = joints.transform;
+        return jointObj.GetComponent<PaperJoint>();
     }
     
     private Vector3 GetJointDirection(Orientation squareOrientation, Vector3Int jointOffset)
