@@ -77,8 +77,7 @@ public class PaperJoint : MonoBehaviour
             adjList.Remove(other.GetComponent<PaperJoint>());
     }
 
-#if UNITY_EDITOR
-    public void Remove()
+    private void Remove()
     {
         if (gameObject != null)
         {
@@ -87,8 +86,6 @@ public class PaperJoint : MonoBehaviour
             {
                 square.adjacentJoints.Remove(this);
             }
-            DestroyImmediate(this.gameObject);
         }
     }       
-#endif
 }

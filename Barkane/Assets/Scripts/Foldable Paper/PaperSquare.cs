@@ -49,12 +49,14 @@ public class PaperSquare : MonoBehaviour
 
     private void OnDestroy()
     {
-        Debug.Log("Destroyed Paper Square");
+#if UNITY_EDITOR
         if (editorRelPos != null)
         {
             PaperSquares squares = GetComponentInParent<PaperSquares>();
-            squares.SetSquareAt((Vector3Int) editorRelPos, null);
+            squares.RemoveReference((Vector3Int) editorRelPos);
+            RemoveAdjacentJoints();
         }
+#endif
     }
 
     public void ToggleTop(bool val)
@@ -152,7 +154,8 @@ public class PaperSquare : MonoBehaviour
                 adjacentJoints.RemoveAt(0);
             } else
             {
-                adjacentJoints[0]?.Remove();
+                Debug.Log("IM DELETING A JOINT");
+                DestroyImmediate(adjacentJoints[0].gameObject);    //This will automatically remove all references in other squares.
             }
         }
     }

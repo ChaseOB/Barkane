@@ -23,9 +23,12 @@ public class LevelEditorManager : MonoBehaviour
     [SerializeField] private Orientation orientation;
 
     private BoxCollider meshCollider;
+
+    public static LevelEditorManager Instance { get; private set; }
     
     private void Awake()
     {
+        Instance = this;
         if (jointPrefab == null)
         {
             Debug.LogWarning("Joint prefab is null");
@@ -280,10 +283,9 @@ public class LevelEditorManager : MonoBehaviour
         {
             return false;
         }
-        Debug.Log("Square is a square");
+        //Debug.Log("Square is a square");
 
         squares.RemoveReference(relPos);
-
         square.RemoveAdjacentJoints();
         DestroyImmediate(square.gameObject);
         return true; 

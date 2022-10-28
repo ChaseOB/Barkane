@@ -37,12 +37,13 @@ public class PaperSquares : MonoBehaviour
     public void RefreshSquares()
     {
         paperSquares = new MonoBehaviour[SIZE, SIZE, SIZE];
+        numSquares = 0;
         PaperSquare[] squares = GetComponentsInChildren<PaperSquare>();
-        Debug.Log($"Detected square on awake: {squares.Length}");
         foreach (PaperSquare square in squares)
         {
             Vector3Int relPos = GetRelativePosition(square.transform.position);
             SetSquareAt(relPos, square);
+            numSquares++;
         }
     }
 
