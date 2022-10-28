@@ -14,7 +14,7 @@ public class LevelEditorManager : MonoBehaviour
     public PaperSquares Squares => squares;
     [SerializeField] private PaperJoints joints;
 
-    [SerializeField] private PaperSquare SquareCopy;
+    [SerializeField] private GameObject squarePrefab;
     [SerializeField] private GameObject jointPrefab;
 
     [SerializeField] private GameObject plane;
@@ -23,10 +23,6 @@ public class LevelEditorManager : MonoBehaviour
     [SerializeField] private Orientation orientation;
 
     private BoxCollider meshCollider;
-
-    private VFXManager vFXManager;
-
-
     
     private void Awake()
     {
@@ -35,11 +31,6 @@ public class LevelEditorManager : MonoBehaviour
             Debug.LogWarning("Joint prefab is null");
         }
         meshCollider = plane.GetComponent<BoxCollider>();
-        vFXManager = FindObjectOfType<VFXManager>();
-        if(vFXManager == null)
-        {
-            Debug.LogError("VFX Manager Not Found!");
-        }
     }
 
     private void Start()
@@ -50,7 +41,6 @@ public class LevelEditorManager : MonoBehaviour
             plane.transform.eulerAngles = OrientationExtension.XZ;
         }
         plane.transform.position = GetPosOnPlane(Vector3.zero);
-        SquareCopy = squares.GetCenter();
         HidePlane();
     }
 
@@ -123,27 +113,27 @@ public class LevelEditorManager : MonoBehaviour
 
     public bool AddSquare(Vector3Int relPos)
     {
-        PaperSquare square = squares.GetSquareAt(relPos);
+        squares.RefreshSquares();   //L: We might not want to do this every time for performance, but for now it works.
 
-        if (square != null)
+        if (squares.GetSquareAt(relPos) != null)
         {
             return false;
         }
 
         Vector3 squareCenter = squares.GetAbsolutePosition(relPos);
         Quaternion rotation = Quaternion.Euler(OrientationExtension.GetEulerAngle(orientation));
-        square = Instantiate(SquareCopy, squareCenter, rotation, squares.squareList.transform);
+        GameObject squareObj = Instantiate(squarePrefab, squareCenter, rotation, squares.gameObject.transform);
+        squareObj.name = $"Square {squares.numSquares}";
+
+        PaperSquare square = squareObj.GetComponent<PaperSquare>();
         square.orientation = orientation;
         squares.SetSquareAt(relPos, square);
-        square.name = $"Square {squares.numSquares}";
         Debug.Log($"Added Square at {relPos}");
 
+        square.adjacentJoints.Clear();
         AddJointsTo(relPos, square);
-        if(vFXManager == null)
-        {
-            vFXManager = FindObjectOfType<VFXManager>();
-        }
-        vFXManager.Refresh();
+
+        VFXManager.Instance?.Refresh();
         return true;
     }
 
@@ -175,18 +165,17 @@ public class LevelEditorManager : MonoBehaviour
         }
     }
 
-    private void AddJoint(Vector3Int currSquareRelPos, PaperSquare currSquare, PaperSquare nSquare, Vector3Int jointOffset)
+    private void AddJoint(Vector3Int currSquareRelPos, PaperSquare currSquare, PaperSquare neighborSquare, Vector3Int jointOffset)
     {
         PaperJoint joint = InstantiateJoint(currSquareRelPos, currSquare.orientation, jointOffset);
-        joint.name = $"Joint {currSquare.name} {nSquare.name}";
+        joint.name = $"Joint {currSquare.name} {neighborSquare.name}";
 
         //Update the joint's adjacent squares and the adjacent squares' joints.
-        joint.PaperSquares.Clear();
-        joint.PaperSquares.Add(currSquare);
-        joint.PaperSquares.Add(nSquare);
+        joint.PaperSquares.Clear();        joint.PaperSquares.Add(currSquare);
+        joint.PaperSquares.Add(neighborSquare);
 
         currSquare.adjacentJoints.Add(joint);
-        nSquare.adjacentJoints.Add(joint);
+        neighborSquare.adjacentJoints.Add(joint);
     }
 
     private PaperJoint InstantiateJoint(Vector3Int squareRelPos, Orientation squareOrient, Vector3Int jointOffset)
@@ -282,7 +271,8 @@ public class LevelEditorManager : MonoBehaviour
 
     public bool RemoveSquare(Vector3Int relPos)
     {
-       /* Debug.Log($"Removing Square at {relPos}");    C: Attempeing to run this crashes the game
+        squares.RefreshSquares();   //L: We might not want to do this every time for performance, but for now it works.
+        Debug.Log($"Removing Square at {relPos}");
         PaperSquare square = squares.GetSquareAt(relPos);
         //Debug.Log($"square is {square}");
 
@@ -290,16 +280,12 @@ public class LevelEditorManager : MonoBehaviour
         {
             return false;
         }
-        //Debug.Log("Square is a square");
+        Debug.Log("Square is a square");
 
         squares.RemoveReference(relPos);
-        if (square == SquareCopy)
-        {
-            SquareCopy = squares.GetCenter();
-        }
 
         square.RemoveAdjacentJoints();
-        DestroyImmediate(square.gameObject);*/
+        DestroyImmediate(square.gameObject);
         return true; 
     }
 

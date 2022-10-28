@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteAlways]
 public class PaperJoint : MonoBehaviour
 {
     [SerializeField] private List<PaperSquare> paperSquares;
@@ -22,6 +23,11 @@ public class PaperJoint : MonoBehaviour
     private void Start() {
         if(capsuleCollider == null)
             capsuleCollider = GetComponent<CapsuleCollider>();
+    }
+
+    private void OnDestroy()
+    {
+        Remove();
     }
 
     public void Select()

@@ -6,11 +6,9 @@ using UnityEngine;
 public class PaperSquares : MonoBehaviour
 {
     public const int SIZE = 43; // Should be 4k + 3 form, k is approximately # of valid squares per direction
-    public int numSquares = -1; //C: This will number squares correctly
+    public int numSquares = 0; //C: This will number squares correctly
     public readonly Vector3Int center = new Vector3Int(SIZE / 2, SIZE / 4 * 2, SIZE / 2);
     [SerializeField] private MonoBehaviour[,,] paperSquares = new MonoBehaviour[SIZE, SIZE, SIZE];
-    [SerializeField] public GameObject squareList;
-    // [SerializeField] GameObject jointList;
 
     public enum VertexType
     {
@@ -32,7 +30,15 @@ public class PaperSquares : MonoBehaviour
 
     private void Awake()
     {
-        PaperSquare[] squares = squareList.GetComponentsInChildren<PaperSquare>();
+        RefreshSquares();
+    }
+
+    //L: O(# of squares in scene)
+    public void RefreshSquares()
+    {
+        paperSquares = new MonoBehaviour[SIZE, SIZE, SIZE];
+        PaperSquare[] squares = GetComponentsInChildren<PaperSquare>();
+        Debug.Log($"Detected square on awake: {squares.Length}");
         foreach (PaperSquare square in squares)
         {
             Vector3Int relPos = GetRelativePosition(square.transform.position);
@@ -110,17 +116,30 @@ public class PaperSquares : MonoBehaviour
 
     public void SetSquareAt(Vector3Int relPos, PaperSquare square)
     {
-        if (relPos.x >= 0 && relPos.x < SIZE
+        bool posInBounds = relPos.x >= 0 && relPos.x < SIZE
         && relPos.y >= 0 && relPos.y < SIZE
-        && relPos.z >= 0 && relPos.z < SIZE)
+        && relPos.z >= 0 && relPos.z < SIZE;
+
+        if (posInBounds)
+        {
+            PaperSquare existingSquare = paperSquares[relPos.x, relPos.y, relPos.z] as PaperSquare;
+            if (existingSquare == null && square != null)
+            {
+                numSquares++;
+            } else if (existingSquare != null && square == null)
+            {
+                numSquares--;
+            }
+
             paperSquares[relPos.x, relPos.y, relPos.z] = square;
-        if(square != null)
-            numSquares++;
-        else
-            numSquares--;
+            if (square != null)
+            {
+                square.editorRelPos = relPos;
+            }
+        }
     }
 
-    void RemoveRefernceMessage(Vector3 position)
+    void RemoveReferenceAbsolute(Vector3 position)
     {
         RemoveReference(GetRelativePosition(position));
     }
@@ -129,19 +148,4 @@ public class PaperSquares : MonoBehaviour
     {
         SetSquareAt(relPos, null);
     }
-
-    //This goes through 44^3 values which is around 85k entries (don't do this unless necessary)
-    //public void RemoveAllReferences()
-    //{
-    //    for (int x = 0; x < SIZE; x++)
-    //    {
-    //        for(int y = 0; y < SIZE; y++)
-    //        {
-    //            for (int z = 0; z < SIZE; z++)
-    //            {
-    //                RemoveReference(new Vector3Int(x, y, z));
-    //            }
-    //        }
-    //    }
-    //}
 }
