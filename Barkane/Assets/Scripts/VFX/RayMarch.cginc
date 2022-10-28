@@ -22,7 +22,7 @@ float densityDrop(
 float densityAt(
 	UnitySamplerState worleyState,
 	UnityTexture3D worley,
-	float4 frequencies,
+	// float4 frequencies,
 	float4 weights,
 	float3 pos,
 	float scl,
@@ -64,7 +64,7 @@ float combinedAbsorption(float l) {
 float march(
 	UnitySamplerState worleyState,
 	UnityTexture3D worley,
-	float4 frequencies,
+	// float4 frequencies,
 	float4 weights,
 	float scl,
 	float offset,
@@ -95,7 +95,7 @@ float march(
 		density += max(0, stepSize * densityAt(
 			worleyState,
 			worley,
-			frequencies,
+			// frequencies,
 			weights,
 			samplePt,
 			scl,
@@ -128,7 +128,7 @@ void RaySampler_float(
 	UnityTexture3D worley,
 	float scl,
 	float offset,
-	float4 frequencies,
+	// float4 frequencies,
 	float4 weights,
 
 	float sunAbsorption,
@@ -146,6 +146,7 @@ void RaySampler_float(
 	float hardborder,
 
 	out float transmittance,
+	out float opacity,
 	out float energy,
 	out float border,
 	out float4 debug
@@ -175,7 +176,7 @@ void RaySampler_float(
 		float density = densityAt(
 			worleyState,
 			worley,
-			frequencies,
+			// frequencies,
 			weights,
 			pos,
 			scl,
@@ -189,7 +190,7 @@ void RaySampler_float(
 			worley,
 			scl,
 			offset,
-			frequencies,
+			// frequencies,
 			weights,
 			pos,
 			l,
@@ -219,6 +220,8 @@ void RaySampler_float(
 		transmittance = 0;
 		border = 1;
 	}
+
+	opacity = 1 - transmittance;
 }
 
 #endif 
