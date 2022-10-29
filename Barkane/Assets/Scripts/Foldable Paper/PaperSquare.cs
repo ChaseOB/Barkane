@@ -4,6 +4,7 @@ using UnityEngine;
 
 [System.Serializable]
 [RequireComponent(typeof(EdgeParticles))]
+[ExecuteAlways]
 public class PaperSquare : MonoBehaviour
 {
 
@@ -31,9 +32,10 @@ public class PaperSquare : MonoBehaviour
 
     public Vector3 storedPos;
 
-////#if UNITY_EDITOR
+    ////#if UNITY_EDITOR
+    public Vector3Int? editorRelPos = null;
     public Orientation orientation;
-    public List<PaperJoint> adjacentJoints;
+    public List<PaperJoint> adjacentJoints = new List<PaperJoint>();
 //#endif
 
 
@@ -43,6 +45,18 @@ public class PaperSquare : MonoBehaviour
         storedPos = transform.position;
         topSide = TopHalf.GetComponent<SquareSide>();
         bottomSide = BottomHalf.GetComponent<SquareSide>();
+    }
+
+    private void OnDestroy()
+    {
+#if UNITY_EDITOR
+        if (editorRelPos != null)
+        {
+            PaperSquares squares = GetComponentInParent<PaperSquares>();
+            squares.RemoveReference((Vector3Int) editorRelPos);
+            RemoveAdjacentJoints();
+        }
+#endif
     }
 
     public void ToggleTop(bool val)
@@ -135,7 +149,13 @@ public class PaperSquare : MonoBehaviour
     {
         while(adjacentJoints.Count > 0)
         {
-            adjacentJoints[0]?.Remove();
+            if (adjacentJoints[0] == null)
+            {
+                adjacentJoints.RemoveAt(0);
+            } else
+            {
+                DestroyImmediate(adjacentJoints[0].gameObject);    //This will automatically remove all references in other squares.
+            }
         }
     }
 #endif
