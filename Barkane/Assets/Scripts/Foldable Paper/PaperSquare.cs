@@ -53,7 +53,7 @@ public class PaperSquare : MonoBehaviour
         if (editorRelPos != null)
         {
             PaperSquares squares = GetComponentInParent<PaperSquares>();
-            squares.RemoveReference((Vector3Int) editorRelPos);
+            squares?.RemoveReference((Vector3Int) editorRelPos);
             RemoveAdjacentJoints();
         }
 #endif
