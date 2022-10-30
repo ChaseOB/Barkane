@@ -212,9 +212,49 @@ public class FoldAnimator : MonoBehaviour
             raycastCheckReturn = CheckRayCast();
     }
 
-    private bool CheckRayCast() {
+     private bool CheckRayCast() {
         Debug.Log("checking raycast...");
         checkRaycast = false;
+        int numRays = 5;
+        int numChecks = 10;
+        
+        GameObject parent2 = new GameObject();
+        parent2.transform.position = foldData.center;
+        List<GameObject> copiesList = new List<GameObject>();
+        foreach(GameObject go in foldData.foldObjects.foldSquares)
+        {
+            GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
+            newSquare.transform.parent = parent2.transform;
+            copiesList.Add(newSquare);
+        }
+        
+        //Ideally we should check every point along the rotation axis, but this is not feasible. 
+        for(int i = 1; i <= numChecks; i++) {
+            parent2.transform.RotateAround(foldData.center, foldData.axis, foldData.degrees/(numChecks+1));
+            foreach(GameObject go in copiesList)
+            {
+                SquareCast sc = go.GetComponent<SquareCast>();
+                RaycastHit hit;
+                bool collide = sc.SquareRaycast(out hit, squareCollidingMask);
+                if(collide)
+                {
+                    raycastCheckDone = true;
+                    return false;
+                }               
+            }
+        }
+
+        Debug.Log("end collision check");
+
+        Destroy(parent2);
+        raycastCheckDone = true;
+        return true;
+    }
+
+    /*private bool CheckRayCast() {
+        Debug.Log("checking raycast...");
+        checkRaycast = false;
+        int numRays = 5;
         int numChecks = 10;
         
         GameObject parent2 = new GameObject();
@@ -252,7 +292,7 @@ public class FoldAnimator : MonoBehaviour
         Destroy(parent2);
         raycastCheckDone = true;
         return true;
-    }
+    }*/
 
     //C: folds the given list of squares along the given line by the given number of degrees
     public void Fold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
