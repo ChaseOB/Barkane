@@ -5,13 +5,13 @@ using UnityEditor.EditorTools;
 [EditorTool("Add & Delete Squares", typeof(LevelEditorManager))]
 public class SquareAdder : EditorTool
 {
-    LevelEditorManager manager;
+    private LevelEditorManager levelEditor;
     // TODO: Use PrefabUtility.InstatitatePrefab to instantiate new PaperSquares
     [SerializeField] PaperSquare squarePrefab;
 
     private void OnEnable()
     {
-        manager = target as LevelEditorManager;
+        levelEditor = target as LevelEditorManager;
     }
 
     // TODO: Use Handles to deal with UnityGUI events
@@ -38,20 +38,20 @@ public class SquareAdder : EditorTool
         if (e.button == 0)
         {
             // Left click handlers
-            if (!manager.GetPlanePosition(mouseRay, out hitPoint))
+            if (!levelEditor.GetPlanePosition(mouseRay, out hitPoint))
             {
                 return;
             }
 
-            Vector3Int relPos = manager.GetNearestSquarePos(hitPoint);
+            Vector3Int relPos = levelEditor.GetNearestSquarePos(hitPoint);
 
             // Left click start
             if (e.type == EventType.MouseDown)
             {
                 GUIUtility.hotControl = id;
-                if (manager.AddSquare(relPos))
+                if (levelEditor.AddSquare(relPos))
                 {
-                    EditorUtility.SetDirty(manager.gameObject);
+                    EditorUtility.SetDirty(levelEditor.gameObject);
                 }
                 e.Use();
             }
@@ -59,9 +59,9 @@ public class SquareAdder : EditorTool
             // Left click drag
             else if (e.type == EventType.MouseDrag && GUIUtility.hotControl == id)
             {
-                if (manager.AddSquare(relPos))
+                if (levelEditor.AddSquare(relPos))
                 {
-                    EditorUtility.SetDirty(manager.gameObject);
+                    EditorUtility.SetDirty(levelEditor.gameObject);
                 }
                 e.Use();
             }
@@ -78,20 +78,20 @@ public class SquareAdder : EditorTool
             // Right click handlers
             Orientation orientation;
 
-            if (!manager.GetSquarePosition(mouseRay, out hitPoint, out orientation))
+            if (!levelEditor.GetSquarePosition(mouseRay, out hitPoint, out orientation))
             {
                 return;
             }
 
-            Vector3Int relPos = manager.GetNearestSquarePos(hitPoint, orientation);
+            Vector3Int relPos = levelEditor.GetNearestSquarePos(hitPoint, orientation);
 
             // Right click start
             if (e.type == EventType.MouseDown)
             {
                 GUIUtility.hotControl = id;
-                if (manager.RemoveSquare(relPos))
+                if (levelEditor.RemoveSquare(relPos))
                 {
-                    EditorUtility.SetDirty(manager.gameObject);
+                    EditorUtility.SetDirty(levelEditor.gameObject);
                 }
                 e.Use();
             }
@@ -99,9 +99,9 @@ public class SquareAdder : EditorTool
             // Right click drag
             else if (e.type == EventType.MouseDrag && GUIUtility.hotControl == id)
             {
-                if (manager.RemoveSquare(relPos))
+                if (levelEditor.RemoveSquare(relPos))
                 {
-                    EditorUtility.SetDirty(manager.gameObject);
+                    EditorUtility.SetDirty(levelEditor.gameObject);
                 }
                 e.Use();
             }
@@ -119,7 +119,7 @@ public class SquareAdder : EditorTool
     {
         if (!Application.isPlaying)
         {
-            manager.ShowPlane();
+            levelEditor.ShowPlane();
         }
     }
 
@@ -127,7 +127,7 @@ public class SquareAdder : EditorTool
     {
         if (!Application.isPlaying)
         {
-            manager.HidePlane();
+            levelEditor.HidePlane();
         }
     }
 }
