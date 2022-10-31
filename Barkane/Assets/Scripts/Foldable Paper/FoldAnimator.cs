@@ -30,6 +30,9 @@ public class FoldAnimator : MonoBehaviour
     public bool TryFold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
     {
         Debug.Log("trying to fold");
+
+        if(!ActionLockManager.Instance.TryTakeLock(this)) return false;
+
         //C: we need to wait until FixedUpdate to check the colliders. So we Call CCF, then if that passes, we know we've created collider data
         // that we need to call CheckColliders. If that passes, then it will call fold. 
         if(CheckCanFold(foldJoint, foldObjects, center, axis, degrees)) 
@@ -44,6 +47,7 @@ public class FoldAnimator : MonoBehaviour
             AudioManager.Instance?.Play("Fold Error");
             //play error sound
         }
+        ActionLockManager.Instance.TryRemoveLock(this);
         return false;
         
     }
@@ -329,6 +333,7 @@ public class FoldAnimator : MonoBehaviour
         if(afterFold != null)
              afterFold();
         UIManager.UpdateFoldCount(++foldCount);
+        ActionLockManager.Instance.TryRemoveLock(this);
     }
     private void StoreAllSquarePos()
     {

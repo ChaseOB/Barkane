@@ -221,7 +221,6 @@ MonoBehaviour:
     UVs: []
     Indices: 
   sprinkleParent: {fileID: 8328883883981057969}
-  priority: 00000000
 --- !u!114 &4332946852583158350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,7 +384,6 @@ MonoBehaviour:
     UVs: []
     Indices: 
   sprinkleParent: {fileID: 2704976227593553279}
-  priority: 00000000
 --- !u!114 &3583265718418767156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -534,10 +532,9 @@ MonoBehaviour:
   paperThickness: 0.001
   topHalf: {fileID: 2369556897618979814}
   bottomHalf: {fileID: 1793145467125830348}
-  edgeParticles: {fileID: 0}
-  topSide: {fileID: 0}
-  bottomSide: {fileID: 0}
-  priority: 
+  edgeParticles: {fileID: 7721798970483151979}
+  topSide: {fileID: 8869331940603878471}
+  bottomSide: {fileID: 3000609133104664072}
   topPlayerCol: {fileID: 6208710809326013470}
   botPlayerCol: {fileID: 398644310617893384}
   topStack: {fileID: 0}

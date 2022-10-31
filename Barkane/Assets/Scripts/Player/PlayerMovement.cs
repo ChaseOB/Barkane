@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 move = value.Get<Vector2>();
         if(isMoving) return;
+        if(!ActionLockManager.Instance.TryTakeLock(this)) return;
         if(move.y > 0.5)
             Move();
         else if (Mathf.Abs(move.x) > 0.5)
@@ -80,11 +81,13 @@ public class PlayerMovement : MonoBehaviour
         }
         transform.position = goal;
         isMoving = false;
+        ActionLockManager.Instance.TryRemoveLock(this);
     }
 
     private void Rotate(float degrees)
     {
-        StartCoroutine(RotateHelper(degrees));
+        if(ActionLockManager.Instance.TryTakeLock(this))
+            StartCoroutine(RotateHelper(degrees));
     }
 
     private IEnumerator RotateHelper(float degrees)
@@ -100,6 +103,7 @@ public class PlayerMovement : MonoBehaviour
         }
         transform.rotation = currRot * Quaternion.Euler(0, degrees, 0);
         isMoving = false;
+        ActionLockManager.Instance.TryRemoveLock(this);
     }
 
     #endregion
