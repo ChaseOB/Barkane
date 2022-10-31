@@ -189,6 +189,10 @@ PrefabInstance:
       value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 5017942549718730313, guid: 7dc14fbe13bdf424a823125d94798461, type: 3}
+      propertyPath: InitialModule.startSpeed.minScalar
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5017942549718730313, guid: 7dc14fbe13bdf424a823125d94798461, type: 3}
       propertyPath: LifetimeByEmitterSpeedModule.enabled
       value: 0
       objectReference: {fileID: 0}
@@ -1009,9 +1013,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaures:
-  - {fileID: 1829903606}
-  - {fileID: 1114580485}
+  paperSquares: []
+  isSelected: 0
   showLine: 0
   adjList: []
   capsuleCollider: {fileID: 0}
@@ -1687,6 +1690,15 @@ MonoBehaviour:
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   edgeParticles: {fileID: 0}
+  topSide: {fileID: 0}
+  bottomSide: {fileID: 0}
+  topPlayerCol: {fileID: 0}
+  botPlayerCol: {fileID: 0}
+  topStack: {fileID: 0}
+  bottomStack: {fileID: 0}
+  storedPos: {x: 0, y: 0, z: 0}
+  orientation: 0
+  adjacentJoints: []
 --- !u!65 &728306539
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2042,10 +2054,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f122d89b6bd2c34db5a8d13a8df5ac5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaures: []
+  paperSquares: []
   paperJoints: []
   foldAnimator: {fileID: 1166862080}
   foldJoint: {fileID: 0}
+  SquareCollider: {fileID: 0}
+  playerSpawn: {fileID: 0}
+  isComplete: 0
 --- !u!4 &792990534
 Transform:
   m_ObjectHideFlags: 0
@@ -2128,7 +2143,6 @@ MonoBehaviour:
   numShards: 1
   inactiveGoal: {fileID: 1399966283}
   activeGoal: {fileID: 1333820464}
-  showOnWin: {fileID: 273827936}
 --- !u!54 &843318306
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4770,6 +4784,15 @@ MonoBehaviour:
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   edgeParticles: {fileID: 0}
+  topSide: {fileID: 0}
+  bottomSide: {fileID: 0}
+  topPlayerCol: {fileID: 0}
+  botPlayerCol: {fileID: 0}
+  topStack: {fileID: 0}
+  bottomStack: {fileID: 0}
+  storedPos: {x: 0, y: 0, z: 0}
+  orientation: 0
+  adjacentJoints: []
 --- !u!65 &1114580486
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4849,6 +4872,15 @@ MonoBehaviour:
   foldDuration: 0.25
   isFolding: 0
   foldablePaper: {fileID: 0}
+  SquareCollider: {fileID: 0}
+  foldCount: 0
+  squareCollidingMask:
+    serializedVersion: 2
+    m_Bits: 0
+  checkRaycast: 0
+  raycastCheckDone: 0
+  raycastCheckReturn: 0
+  crDone: 0
 --- !u!1 &1179978656
 GameObject:
   m_ObjectHideFlags: 0
@@ -4904,6 +4936,15 @@ MonoBehaviour:
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   edgeParticles: {fileID: 0}
+  topSide: {fileID: 0}
+  bottomSide: {fileID: 0}
+  topPlayerCol: {fileID: 0}
+  botPlayerCol: {fileID: 0}
+  topStack: {fileID: 0}
+  bottomStack: {fileID: 0}
+  storedPos: {x: 0, y: 0, z: 0}
+  orientation: 0
+  adjacentJoints: []
 --- !u!65 &1179978659
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4968,6 +5009,15 @@ MonoBehaviour:
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   edgeParticles: {fileID: 0}
+  topSide: {fileID: 0}
+  bottomSide: {fileID: 0}
+  topPlayerCol: {fileID: 0}
+  botPlayerCol: {fileID: 0}
+  topStack: {fileID: 0}
+  bottomStack: {fileID: 0}
+  storedPos: {x: 0, y: 0, z: 0}
+  orientation: 0
+  adjacentJoints: []
 --- !u!4 &1184534836
 Transform:
   m_ObjectHideFlags: 0
@@ -5738,9 +5788,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaures:
-  - {fileID: 1829903606}
-  - {fileID: 728306538}
+  paperSquares: []
+  isSelected: 0
   showLine: 0
   adjList: []
   capsuleCollider: {fileID: 0}
@@ -6310,9 +6359,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaures:
-  - {fileID: 1179978658}
-  - {fileID: 1829903606}
+  paperSquares: []
+  isSelected: 0
   showLine: 0
   adjList: []
   capsuleCollider: {fileID: 1609842770}
@@ -6471,9 +6519,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c599dc3a2a632a04da7cfa0360ae70c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperSqaures:
-  - {fileID: 1184534835}
-  - {fileID: 728306538}
+  paperSquares: []
+  isSelected: 0
   showLine: 0
   adjList: []
   capsuleCollider: {fileID: 0}
@@ -6902,6 +6949,15 @@ MonoBehaviour:
   topHalf: {fileID: 0}
   bottomHalf: {fileID: 0}
   edgeParticles: {fileID: 0}
+  topSide: {fileID: 0}
+  bottomSide: {fileID: 0}
+  topPlayerCol: {fileID: 0}
+  botPlayerCol: {fileID: 0}
+  topStack: {fileID: 0}
+  bottomStack: {fileID: 0}
+  storedPos: {x: 0, y: 0, z: 0}
+  orientation: 0
+  adjacentJoints: []
 --- !u!65 &1829903607
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7164,7 +7220,6 @@ MonoBehaviour:
   numShards: 0
   inactiveGoal: {fileID: 0}
   activeGoal: {fileID: 0}
-  showOnWin: {fileID: 0}
 --- !u!65 &1924853867
 BoxCollider:
   m_ObjectHideFlags: 0
