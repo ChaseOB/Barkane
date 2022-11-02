@@ -139,6 +139,11 @@ public class FoldAnimator : MonoBehaviour
                 if(foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject)
                     != foldObjects.foldSquares.Contains(activeSides[1].GetComponentInParent<PaperSquare>().gameObject))
                 {
+                    /*C: Else, check position of the ends of the normal vectors before and after fold
+                    // if there is no clipping, then the points at the ends of the normals will be farther apart (point away)
+                    // than if there was clipping (point towards eachother). So we can check this fold and the other fold direction
+                    // by folding 180* after the intial fold and then comapare distances
+                    */
                     t1.transform.SetPositionAndRotation(activeSides[0].transform.position, activeSides[0].transform.rotation);
                     t2.transform.SetPositionAndRotation(activeSides[1].transform.position, activeSides[1].transform.rotation);        
                     if(foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject))
@@ -159,42 +164,18 @@ public class FoldAnimator : MonoBehaviour
                     Debug.DrawLine(t3, t4, Color.yellow, 30);
 
                     print($"{d1}, {d2}");
-                    Destroy(t1);
+               
+                    if(d1 < d2) {
+                        Debug.Log($"Cannot fold: would clip through adj paper {activeSides[0].transform.up} {activeSides[1].transform.up}");
+                            Destroy(t1);
                     Destroy(t2);
                     Destroy(parent);
-                    if(d1 < d2) {
-                        Debug.Log("Cannot fold: would clip through adj paper");
                         return false;
                     }
                 }
-               // }
-                //Debug.Log($"AS length: {activeSides.Count}");
-               // foreach(GameObject go in activeSides)
-               // {
-               //     Debug.Log($"{go.GetComponentInParent<PaperSquare>().name} {go.name} is active");
-                //}
-                /*t1.transform.position = activeSides[0].transform.position;
-                t2.transform.position = activeSides[1].transform.position; 
-                Vector3 midInit = new Vector3((t2.transform.position.x + t1.transform.position.x)/2,
-                                            (t2.transform.position.y + t1.transform.position.y)/2,
-                                            (t2.transform.position.z + t1.transform.position.z)/2);
-                Vector3 intial = Vector3.Normalize(t2.transform.position - t1.transform.position);
-                Debug.Log(intial);
-                //reparent transforms and rotate about axis
-                t1.transform.parent = parent.transform;
-                t2.transform.parent = parent.transform;    
-                parent.transform.RotateAround(center, axis, degrees);
-                Vector3 mid = new Vector3((t2.transform.position.x + t1.transform.position.x)/2,
-                                            (t2.transform.position.y + t1.transform.position.y)/2,
-                                            (t2.transform.position.z + t1.transform.position.z)/2);
-                Vector3 final = Vector3.Normalize(mid - midInit);
-                Debug.Log(final);
+                Destroy(t1);
+                Destroy(t2);
                 Destroy(parent);
-                Debug.Log(Vector3.Angle(intial, final));
-                if(Vector3.Angle(intial, final) > 90.0f){
-                    Debug.Log("Cannot fold: would clip through adj paper");
-                    return false;
-                }*/
             }
         }
 
@@ -221,12 +202,13 @@ public class FoldAnimator : MonoBehaviour
         checkRaycast = false;
         int numChecks = 10;
         
-        GameObject parent2 = new GameObject();
+        GameObject parent2 = new GameObject("parent 2");
         parent2.transform.position = foldData.center;
         List<GameObject> copiesList = new List<GameObject>();
         foreach(GameObject go in foldData.foldObjects.foldSquares)
         {
             GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
+            newSquare.name = "ns";
             newSquare.transform.parent = parent2.transform;
             copiesList.Add(newSquare);
             BlocksFold[] bf = go.GetComponentsInChildren<BlocksFold>();
@@ -234,6 +216,7 @@ public class FoldAnimator : MonoBehaviour
             {
                 GameObject obj = bfold.gameObject;
                 GameObject blockSquare = Instantiate(SquareCollider, obj.transform.position, go.transform.rotation);
+                blockSquare.name = "bs";
                // blockSquare.GetComponent<SquareCast>().showRay = true;
                 blockSquare.transform.parent = parent2.transform;
                 copiesList.Add(blockSquare);

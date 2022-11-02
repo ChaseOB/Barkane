@@ -19,12 +19,13 @@ public class FoldablePaper : MonoBehaviour
     public GameObject SquareCollider;
     public Transform playerSpawn;
     public bool isComplete = false; //C: set to true when goal is reached
-
+    public Vector3 centerPos;
     Dictionary<Vector3Int, List<PaperSquare>> squareLocs = new Dictionary<Vector3Int, List<PaperSquare>>();
-
+    public PaperSquare playerSquare;
 
     private void Awake() 
     {
+        CalculateCenter();
         paperSquares = GetComponentsInChildren<PaperSquare>();   
         paperJoints = GetComponentsInChildren<PaperJoint>(); 
         foldAnimator = FindObjectOfType<FoldAnimator>();
@@ -54,6 +55,21 @@ public class FoldablePaper : MonoBehaviour
         {
             adjListJointToSquare[pj] = pj.PaperSquares;
         }
+    }
+
+    private void Update() {
+        CalculateCenter();
+    }
+  
+    private void CalculateCenter() {
+        Vector3 center = Vector3.zero;
+        int i = 0;
+        foreach(PaperSquare ps in paperSquares){
+            center += ps.transform.localPosition;
+            i++;
+        }
+        center /= i;
+        centerPos = center;
     }
 
     private void IntializeSquarePosList()

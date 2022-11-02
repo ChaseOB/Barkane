@@ -32,6 +32,9 @@ public class PaperSquare : MonoBehaviour
 
     public Vector3 storedPos;
 
+    public bool topColActive = true;
+    public bool botColActive = true;
+
     ////#if UNITY_EDITOR
     public Vector3Int? editorRelPos = null;
     public Orientation orientation;
@@ -63,17 +66,29 @@ public class PaperSquare : MonoBehaviour
     {
         topHalf.SetActive(val);
         topPlayerCol.SetActive(val);
+        topColActive = val;
     }
 
     public void ToggleBottom(bool val)
     {
         bottomHalf.SetActive(val);
         botPlayerCol.SetActive(val);
+        botColActive = val;
     }
 
     public void SetPlayerOccupied(bool value)
     {
-        playerOccupied = value;
+        FoldablePaper foldablePaper = FindObjectOfType<FoldablePaper>();
+        if(value) {
+            if(foldablePaper.playerSquare == null) {
+                playerOccupied = true;
+                foldablePaper.playerSquare = this;
+            }
+        }
+        else {
+            playerOccupied = false;
+            foldablePaper.playerSquare = null;
+        }
     }
 
     //select is true when this region is selected and false when deselected
@@ -88,7 +103,9 @@ public class PaperSquare : MonoBehaviour
     //foldStart is true when starting a fold and false when ending a fold
     public void OnFold(bool foldStart)
     {
-
+        
+        topPlayerCol.SetActive(!foldStart && topColActive);
+        botPlayerCol.SetActive(!foldStart && botColActive);
     }
 
     public void StorePosition(Vector3 pos)
