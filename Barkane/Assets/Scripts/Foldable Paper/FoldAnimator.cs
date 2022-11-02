@@ -31,8 +31,10 @@ public class FoldAnimator : MonoBehaviour
     {
         Debug.Log("trying to fold");
 
-        if(!ActionLockManager.Instance.TryTakeLock(this)) return false;
-
+        if(!ActionLockManager.Instance.TryTakeLock(this)) {
+            Debug.Log("Can't fold: lock taken");
+            return false;
+        }
         //C: we need to wait until FixedUpdate to check the colliders. So we Call CCF, then if that passes, we know we've created collider data
         // that we need to call CheckColliders. If that passes, then it will call fold. 
         if(CheckCanFold(foldJoint, foldObjects, center, axis, degrees)) 
@@ -225,8 +227,18 @@ public class FoldAnimator : MonoBehaviour
             GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
             newSquare.transform.parent = parent2.transform;
             copiesList.Add(newSquare);
+            BlocksFold[] bf = go.GetComponentsInChildren<BlocksFold>();
+            foreach (BlocksFold bfold in bf)
+            {
+                GameObject obj = bfold.gameObject;
+                GameObject blockSquare = Instantiate(SquareCollider, obj.transform.position, go.transform.rotation);
+                blockSquare.GetComponent<SquareCast>().showRay = true;
+                blockSquare.transform.parent = parent2.transform;
+                copiesList.Add(blockSquare);
+            }
         }
         
+        //C: checks for squares running into other stuff
         //Ideally we should check every point along the rotation axis, but this is not feasible. 
         for(int i = 1; i <= numChecks; i++) 
         {
@@ -255,10 +267,11 @@ public class FoldAnimator : MonoBehaviour
                 j++;               
             }
         }
-
+        Destroy(parent2);
         Debug.Log("end collision check");
 
-        Destroy(parent2);
+        //C: Then need to check for blocked objects: this must be done much more often
+
         raycastCheckDone = true;
         return true;
     }
