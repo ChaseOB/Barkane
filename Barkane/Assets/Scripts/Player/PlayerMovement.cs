@@ -38,6 +38,9 @@ public class PlayerMovement : MonoBehaviour
             Move();
         else if (Mathf.Abs(move.x) > 0.5)
             Rotate(move.x > 0 ? 90.0f : -90.0f);
+        else
+            ActionLockManager.Instance.TryRemoveLock(this);
+
     }
 
     #endregion

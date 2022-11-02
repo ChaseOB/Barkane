@@ -107,13 +107,13 @@ public class FoldAnimator : MonoBehaviour
             }
         }
 
-        if((x.Count > 1 && y.Count >1) || (x.Count > 1 && z.Count >1) || (z.Count > 1 && y.Count >1)) {
+        if((x.Count > 1 && y.Count > 1) || (x.Count > 1 && z.Count > 1) || (z.Count > 1 && y.Count > 1)) {
             Debug.Log($"Cannot fold: joint is kinked. {x.Count} {y.Count} {z.Count}");
             return false;
         }
 
         //C: Check that we aren't folding though a back to back square by getting vector of top and bottom in square stack and ensuring that 
-        //the direction of that vector does not change 
+        // the direction of that vector does not change 
 
         List<List<PaperSquare>> overlaps = foldablePaper.FindOverlappingSquares();
         foreach(List<PaperSquare> list in overlaps)
@@ -122,6 +122,7 @@ public class FoldAnimator : MonoBehaviour
             //Vector3 newVec = Vector3.zero;
             if(list.Count > 1) //C: if count = 1 then only 1 square, can't fold through itself
             {
+                Debug.Log("Check Clip Square");
                 GameObject parent = new GameObject();
                 parent.transform.position = center;
                 List<GameObject> activeSides = new List<GameObject>();
@@ -134,12 +135,45 @@ public class FoldAnimator : MonoBehaviour
                     if(ps.TopHalf.activeSelf)
                         activeSides.Add(ps.TopHalf);
                 }
-                Debug.Log($"AS length: {activeSides.Count}");
-                foreach(GameObject go in activeSides)
+                //C: if the active sides of this stack are both in or both out of the fold, then they won't clip
+                if(foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject)
+                    != foldObjects.foldSquares.Contains(activeSides[1].GetComponentInParent<PaperSquare>().gameObject))
                 {
-                    Debug.Log($"{go.GetComponentInParent<PaperSquare>().name} {go.name} is active");
+                    t1.transform.SetPositionAndRotation(activeSides[0].transform.position, activeSides[0].transform.rotation);
+                    t2.transform.SetPositionAndRotation(activeSides[1].transform.position, activeSides[1].transform.rotation);        
+                    if(foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject))
+                        t1.transform.parent = parent.transform;
+                    else
+                        t2.transform.parent = parent.transform;    
+
+                    parent.transform.RotateAround(center, axis, degrees);
+                    Vector3 t3 = t1.transform.position + t1.transform.up * 0.1f;
+                    Vector3 t4 = t2.transform.position + t2.transform.up * 0.1f;
+                    float d1 = Vector3.Distance(t3, t4);
+                    Debug.DrawLine(t3, t4, Color.blue, 30);
+                    
+                    parent.transform.RotateAround(center, axis, 180);
+                    t3 = t1.transform.position + t1.transform.up * 0.1f;
+                    t4 = t2.transform.position + t2.transform.up * 0.1f;   
+                    float d2 = Vector3.Distance(t3, t4);
+                    Debug.DrawLine(t3, t4, Color.yellow, 30);
+
+                    print($"{d1}, {d2}");
+                    Destroy(t1);
+                    Destroy(t2);
+                    Destroy(parent);
+                    if(d1 < d2) {
+                        Debug.Log("Cannot fold: would clip through adj paper");
+                        return false;
+                    }
                 }
-                t1.transform.position = activeSides[0].transform.position;
+               // }
+                //Debug.Log($"AS length: {activeSides.Count}");
+               // foreach(GameObject go in activeSides)
+               // {
+               //     Debug.Log($"{go.GetComponentInParent<PaperSquare>().name} {go.name} is active");
+                //}
+                /*t1.transform.position = activeSides[0].transform.position;
                 t2.transform.position = activeSides[1].transform.position; 
                 Vector3 midInit = new Vector3((t2.transform.position.x + t1.transform.position.x)/2,
                                             (t2.transform.position.y + t1.transform.position.y)/2,
@@ -160,7 +194,7 @@ public class FoldAnimator : MonoBehaviour
                 if(Vector3.Angle(intial, final) > 90.0f){
                     Debug.Log("Cannot fold: would clip through adj paper");
                     return false;
-                }
+                }*/
             }
         }
 
@@ -210,7 +244,6 @@ public class FoldAnimator : MonoBehaviour
         //Ideally we should check every point along the rotation axis, but this is not feasible. 
         for(int i = 1; i <= numChecks; i++) 
         {
-            Debug.Log(i);
             parent2.transform.RotateAround(foldData.center, foldData.axis, foldData.degrees/(numChecks+1));
             int j = 0;
             foreach(GameObject go in copiesList)
@@ -242,49 +275,6 @@ public class FoldAnimator : MonoBehaviour
         raycastCheckDone = true;
         return true;
     }
-
-    /*private bool CheckRayCast() {
-        Debug.Log("checking raycast...");
-        checkRaycast = false;
-        int numRays = 5;
-        int numChecks = 10;
-        
-        GameObject parent2 = new GameObject();
-        parent2.transform.position = foldData.center;
-        List<GameObject> copiesList = new List<GameObject>();
-        foreach(GameObject go in foldData.foldObjects.foldSquares)
-        {
-            GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
-            newSquare.transform.parent = parent2.transform;
-            copiesList.Add(newSquare);
-        }
-        
-        //Ideally we should check every point along the rotation axis, but this is not feasible. 
-        for(int i = 1; i <= numChecks; i++) {
-            parent2.transform.RotateAround(foldData.center, foldData.axis, foldData.degrees/(numChecks+1));
-            foreach(GameObject go in copiesList)
-            {
-              //  Debug.Log("collision check " + i);
-                RaycastHit hit;
-                bool collide = Physics.Raycast(go.transform.position, go.transform.up, out hit, 0.1f, squareCollidingMask);
-               // bool collide = Physics.BoxCast(go.transform.position, new Vector3(0.45f, 0.01f, 0.45f), go.transform.up, out hit, transform.rotation, 0.1f, squareCollidingMask);
-                Debug.DrawRay(go.transform.position, go.transform.up * 0.1f, Color.red, 100);
-                if(collide){
-                    Debug.Log($"Cannot Fold: hit {hit.transform.gameObject.name} when calculating fold path");
-                    //Destroy(parent2);
-                    Debug.DrawRay(go.transform.position, hit.transform.position - go.transform.position, Color.green, 100);
-                    raycastCheckDone = true;
-                    return false;
-                }
-            }
-        }
-
-        Debug.Log("end collision check");
-
-        Destroy(parent2);
-        raycastCheckDone = true;
-        return true;
-    }*/
 
     //C: folds the given list of squares along the given line by the given number of degrees
     public void Fold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
@@ -367,6 +357,7 @@ public class FoldAnimator : MonoBehaviour
         UIManager.UpdateFoldCount(++foldCount);
         ActionLockManager.Instance.TryRemoveLock(this);
     }
+
     private void StoreAllSquarePos()
     {
         foreach(PaperSquare ps in foldablePaper.PaperSquares)
@@ -379,19 +370,12 @@ public class FoldAnimator : MonoBehaviour
     {
         List<List<PaperSquare>> overlaps = foldablePaper.FindOverlappingSquares();
 
-        //C: at the start of a fold, we are looking to re-enable sides if the adj square has been removed;
-        //if(foldStart)
-        //{
-            foreach(List<PaperSquare> list in overlaps)
-            {
-                foreach(PaperSquare ps in list) 
-                {
-                    ps.CheckAndRemoveRefs(list);
-                }
-            }
-       //}
+        foreach(List<PaperSquare> list in overlaps)
+            foreach(PaperSquare ps in list) 
+                ps.CheckAndRemoveRefs(list);
+                
+            
 
-        //C: at the end of a fold, we check positions to see if new squares have been added. If they have
         //else
         //{
             foreach(List<PaperSquare> list in overlaps)
