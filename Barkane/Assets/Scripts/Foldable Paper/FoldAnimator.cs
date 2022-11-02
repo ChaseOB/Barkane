@@ -32,7 +32,7 @@ public class FoldAnimator : MonoBehaviour
         Debug.Log("trying to fold");
 
         if(!ActionLockManager.Instance.TryTakeLock(this)) {
-            Debug.Log("Can't fold: lock taken");
+            Debug.Log($"Can't fold: lock taken by {ActionLockManager.Instance.LockObject}");
             return false;
         }
         //C: we need to wait until FixedUpdate to check the colliders. So we Call CCF, then if that passes, we know we've created collider data
@@ -72,6 +72,11 @@ public class FoldAnimator : MonoBehaviour
         if(raycastCheckReturn){
             Fold(foldJoint, foldObjects, center, axis, degrees);
             raycastCheckReturn = false;
+        }
+        else
+        {
+            ActionLockManager.Instance.TryRemoveLock(this);
+            AudioManager.Instance?.Play("Fold Error");
         }
         foldData = new FoldData();
         crDone = true;
@@ -170,43 +175,6 @@ public class FoldAnimator : MonoBehaviour
         foldData = fd;
         checkRaycast = true;
         return true;
-        //C: The final check is for rotating into hitboxes (ie the player, other paper, obstacles, etc)
-        //We duplicate the square hitboxes and check several points along the rotation;
-        
-       /* Debug.Log("check collision");
-        int numChecks = 10;
-        
-        GameObject parent2 = new GameObject();
-        List<GameObject> copiesList = new List<GameObject>();
-        foreach(GameObject go in foldObjects.foldSquares)
-        {
-            GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
-            newSquare.transform.parent = parent2.transform;
-            copiesList.Add(newSquare);
-        }
-        
-        //Ideally we should check every point along the rotation axis, but this is impracticle. 
-        for(int i = 1; i <= numChecks; i++) {
-            parent2.transform.RotateAround(center, axis, degrees/(numChecks+1));
-            foreach(GameObject go in copiesList)
-            {
-                RaycastHit hit;
-                bool collide = Physics.BoxCast(go.GetComponent<Collider>().bounds.center, transform.localScale, transform.forward, out hit, transform.rotation, 0, squareCollidingMask);
-                if(collide){
-                    Debug.Log($"Cannot Fold: hit {hit.transform.gameObject} when calculating fold path");
-                    Destroy(parent2);
-                    return false;
-                }
-            }
-        }
-
-        Debug.Log("end collision check");
-
-        Destroy(parent2);
-
-
-        //C: if we passed all these checks, then we can fold :)
-        return true;*/
     }
 
     private void FixedUpdate() {
@@ -232,7 +200,7 @@ public class FoldAnimator : MonoBehaviour
             {
                 GameObject obj = bfold.gameObject;
                 GameObject blockSquare = Instantiate(SquareCollider, obj.transform.position, go.transform.rotation);
-                blockSquare.GetComponent<SquareCast>().showRay = true;
+               // blockSquare.GetComponent<SquareCast>().showRay = true;
                 blockSquare.transform.parent = parent2.transform;
                 copiesList.Add(blockSquare);
             }
@@ -253,24 +221,23 @@ public class FoldAnimator : MonoBehaviour
                 if(collide) //C: We need to make sure the collision is with an object that is not part of the foldable objects group (these will move with the square)
                 {
                     PaperSquare ps =  hit.transform.gameObject.GetComponentInParent<PaperSquare>();
-                    if(ps != null) //C: if ps is null we hit the player, which will always block
+                    //C: There are 2 cases:
+                    //1: we hit the player. Then ps is null, and there is a collision
+                    //2: we hit an object/paper square. Then we need to check to see if it is in the fold side objects
+                    // if so, this collision doesn't matter. if not, then we can't fold
+                    if(ps == null || !foldData.foldObjects.foldSquares.Contains(ps.gameObject)) 
                     {
-                        GameObject square = ps.gameObject;
-                        if(!foldData.foldObjects.foldSquares.Contains(square))
-                        {
-                            Debug.Log($"Collision with {hit.transform.gameObject.name} on ray {i},{j}");
-                            raycastCheckDone = true;
-                            return false;
-                        }
+                        Debug.Log($"Collision with {hit.transform.gameObject.name} on ray {i},{j}");
+                        Destroy(parent2);
+                        raycastCheckDone = true;
+                        return false;
                     }
                 }
                 j++;               
             }
         }
         Destroy(parent2);
-        Debug.Log("end collision check");
-
-        //C: Then need to check for blocked objects: this must be done much more often
+        Debug.Log("end collision check, no collisions found");
 
         raycastCheckDone = true;
         return true;
