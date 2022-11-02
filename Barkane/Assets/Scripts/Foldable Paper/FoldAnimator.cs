@@ -215,7 +215,6 @@ public class FoldAnimator : MonoBehaviour
      private bool CheckRayCast() {
         Debug.Log("checking raycast...");
         checkRaycast = false;
-        int numRays = 5;
         int numChecks = 10;
         
         GameObject parent2 = new GameObject();
@@ -229,18 +228,31 @@ public class FoldAnimator : MonoBehaviour
         }
         
         //Ideally we should check every point along the rotation axis, but this is not feasible. 
-        for(int i = 1; i <= numChecks; i++) {
+        for(int i = 1; i <= numChecks; i++) 
+        {
+            Debug.Log(i);
             parent2.transform.RotateAround(foldData.center, foldData.axis, foldData.degrees/(numChecks+1));
+            int j = 0;
             foreach(GameObject go in copiesList)
             {
                 SquareCast sc = go.GetComponent<SquareCast>();
                 RaycastHit hit;
                 bool collide = sc.SquareRaycast(out hit, squareCollidingMask);
-                if(collide)
+                if(collide) //C: We need to make sure the collision is with an object that is not part of the foldable objects group (these will move with the square)
                 {
-                    raycastCheckDone = true;
-                    return false;
-                }               
+                    PaperSquare ps =  hit.transform.gameObject.GetComponentInParent<PaperSquare>();
+                    if(ps != null) //C: if ps is null we hit the player, which will always block
+                    {
+                        GameObject square = ps.gameObject;
+                        if(!foldData.foldObjects.foldSquares.Contains(square))
+                        {
+                            Debug.Log($"Collision with {hit.transform.gameObject.name} on ray {i},{j}");
+                            raycastCheckDone = true;
+                            return false;
+                        }
+                    }
+                }
+                j++;               
             }
         }
 

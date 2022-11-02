@@ -18,10 +18,10 @@ public class SquareCast : MonoBehaviour
             {
                 Debug.Log($"Cannot Fold: hit {h.transform.gameObject.name} when calculating fold path");
                 hit = h;
-                return false;
+                return true;
             }
         }
         hit = new RaycastHit();
-        return true;
+        return false;
     }
 }
