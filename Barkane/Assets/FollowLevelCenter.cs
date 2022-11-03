@@ -2,14 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FollowLevelCenter : Singleton<FollowTarget>
+public class FollowLevelCenter : MonoBehaviour
 {
     public FoldablePaper target;
-    public float speed = 1.0f;
+    public float speed = 0.2f;
 
     private void Awake() 
     {
-        InitializeSingleton();
         target = FindObjectOfType<FoldablePaper>();
     }
     
@@ -17,6 +16,7 @@ public class FollowLevelCenter : Singleton<FollowTarget>
     {
         if(!target)
             target = FindObjectOfType<FoldablePaper>();
-        transform.position = Vector3.Lerp(transform.position, target.centerPos, Time.deltaTime * speed);
+        Vector3 targetLoc = target.centerPos - new Vector3(0, target.centerPos.y, 0);
+        transform.position = Vector3.Lerp(transform.position, targetLoc, Time.deltaTime * speed);
     }
 }
