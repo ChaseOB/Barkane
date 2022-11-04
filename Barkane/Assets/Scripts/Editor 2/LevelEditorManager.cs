@@ -23,7 +23,11 @@ public class LevelEditorManager : MonoBehaviour
     private BoxCollider meshCollider;
 
     public static LevelEditorManager Instance { get; private set; }
-    
+
+#if UNITY_EDITOR
+    public static bool IsEditingPrefab => Instance != null && PrefabUtility.IsPartOfPrefabInstance(Instance);
+#endif
+
     private void Awake()
     {
         Instance = this;

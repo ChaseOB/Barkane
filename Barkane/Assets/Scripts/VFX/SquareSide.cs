@@ -61,13 +61,13 @@ public class SquareSide : MonoBehaviour, IRefreshable
     }
 
 
-    private void Update()
-    {
-        if (materialInstance != null)
-        {
-            materialInstance.SetVector("YOverride", transform.up);
-        }
-    }
+    //private void Update()
+    //{
+    //    if (materialInstance != null)
+    //    {
+    //        materialInstance.SetVector("YOverride", transform.up);
+    //    }
+    //}
 
     public void UpdateMesh()
     {
@@ -85,7 +85,9 @@ public class SquareSide : MonoBehaviour, IRefreshable
 #if UNITY_EDITOR
         var sprinkleCount = sprinkleVerts.Length;
 
-        var isPartOfPrefabInstance = PrefabUtility.IsPartOfPrefabInstance(this);
+        var isPartOfPrefabInstance = 
+            LevelEditorManager.Instance != null
+            && PrefabUtility.IsPartOfPrefabInstance(LevelEditorManager.Instance);
         var prefabRoot = isPartOfPrefabInstance ?
             PrefabUtility.GetOutermostPrefabInstanceRoot(this)
             : null as GameObject;
