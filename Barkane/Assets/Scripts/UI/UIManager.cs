@@ -69,6 +69,11 @@ public class UIManager : Singleton<UIManager>
         endLevelGroup.SetActive(true);
     }
 
+    public void ResetLevel()
+    {
+        endLevelGroup.SetActive(false);
+    }
+
     public void LoadNextLevel()
     {
         endLevelGroup.SetActive(false);

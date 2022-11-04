@@ -98,7 +98,8 @@ public class LevelManager : Singleton<LevelManager>
         if (instantiatedLevel != null) 
         {
             Destroy(instantiatedLevel);
-            SpawnLevel(level);        
+            SpawnLevel(level); 
+            UIManager.Instance.ResetLevel();       
         }
     }
 
@@ -140,6 +141,7 @@ public class LevelManager : Singleton<LevelManager>
     //C: this is what we're doing for now lol
     private IEnumerator OneSecTransition()
     {
+        ActionLockManager.Instance.ForceTakeLock(this);
         SetTransitionScreen(true);
         if(UIManager.Instance != null)
             UIManager.Instance.ToggleGroup(false);
@@ -154,20 +156,26 @@ public class LevelManager : Singleton<LevelManager>
         SetTransitionScreen(false);
         if(UIManager.Instance != null)
             UIManager.Instance.ToggleGroup(true);
+        ActionLockManager.Instance.ForceRemoveLock();
     }
 
     private void OnResetLevel(InputValue value)
     {
-        if(value.isPressed && instantiatedLevel != null)
-            ResetLevel();
+       // if(value.isPressed && instantiatedLevel != null)
+         //   ResetLevel();
     }
 
     private void OnCancel(InputValue value)
     {
-        if(value.isPressed){
-            LevelManager.Instance.UnloadLevel();
-            SceneManager.LoadScene(0);
-        }
+        //if(value.isPressed){
+        //    LevelManager.Instance.UnloadLevel();
+        //    SceneManager.LoadScene(0);
+        //}
+    }
+
+    public void ReturnToMenu() {
+        LevelManager.Instance.UnloadLevel();
+        SceneManager.LoadScene(0);
     }
 
     public void EndLevel()

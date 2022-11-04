@@ -135,6 +135,9 @@ public class FoldAnimator : MonoBehaviour
                     if(ps.TopHalf.activeSelf)
                         activeSides.Add(ps.TopHalf);
                 }
+                if(activeSides.Count != 2){
+                    Debug.LogError("<2 active sides in a single location (this should not happen)");
+                }
                 //C: if the active sides of this stack are both in or both out of the fold, then they won't clip
                 if(foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject)
                     != foldObjects.foldSquares.Contains(activeSides[1].GetComponentInParent<PaperSquare>().gameObject))
