@@ -14,9 +14,12 @@ public class FollowLevelCenter : MonoBehaviour
     
     void Update()
     {
-        if(!target)
+        if(target == null)
             target = FindObjectOfType<FoldablePaper>();
-        Vector3 targetLoc = target.centerPos - new Vector3(0, target.centerPos.y, 0);
-        transform.position = Vector3.Lerp(transform.position, targetLoc, Time.deltaTime * speed);
+        if(target != null)
+        {
+            Vector3 targetLoc = target.centerPos - new Vector3(0, target.centerPos.y, 0);
+            transform.position = Vector3.Lerp(transform.position, targetLoc, Time.deltaTime * speed);
+        }
     }
 }
