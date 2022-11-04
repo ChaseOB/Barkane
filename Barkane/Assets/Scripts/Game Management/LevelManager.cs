@@ -99,7 +99,6 @@ public class LevelManager : Singleton<LevelManager>
         {
             Destroy(instantiatedLevel);
             SpawnLevel(level); 
-            UIManager.Instance.ResetLevel();       
         }
     }
 
@@ -116,7 +115,7 @@ public class LevelManager : Singleton<LevelManager>
         }
         playerInstance= Instantiate(playerPrefab, playerPos.position, Quaternion.identity);
 
-        FollowTarget.Instance.SetTargetAndPosition(playerInstance.transform);    
+        FollowTarget.Instance.SetTargetAndPosition(playerInstance.GetComponent<PlayerMovement>().raycastStart);    
         FindObjectOfType<VFXManager>().Refresh();
         FindObjectOfType<TileSelector>().ReloadReferences();
     }

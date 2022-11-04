@@ -32,17 +32,19 @@ public class PauseManager : Singleton<PauseManager>
 
     public void ResetLevel()
     {
+        UnPause();
         LevelManager.Instance.ResetLevel();
     }
 
     public void ReturnToMenu()
     {
+        UnPause();
         LevelManager.Instance.ReturnToMenu();
     }
 
     private void OnCancel(InputValue value)
     {
-        Debug.Log("cancel");
+        Debug.Log("pause cancel");
         if(value.isPressed)
             TogglePause();
     }
