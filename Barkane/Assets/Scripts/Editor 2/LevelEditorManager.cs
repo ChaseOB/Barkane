@@ -5,6 +5,7 @@ using BarkaneEditor;
 [ExecuteAlways]
 public class LevelEditorManager : MonoBehaviour
 {
+#if UNITY_EDITOR
     private const int PAPER_LAYER = 6;
     private const int PaperMask = 1 << PAPER_LAYER;
 
@@ -24,9 +25,8 @@ public class LevelEditorManager : MonoBehaviour
 
     public static LevelEditorManager Instance { get; private set; }
 
-#if UNITY_EDITOR
     public static bool IsEditingPrefab => Instance != null && PrefabUtility.IsPartOfPrefabInstance(Instance);
-#endif
+
 
     private void Awake()
     {
@@ -339,4 +339,5 @@ public class LevelEditorManager : MonoBehaviour
         }
         return newPos;
     }
+#endif
 }

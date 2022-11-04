@@ -85,10 +85,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
 #if UNITY_EDITOR
         var sprinkleCount = sprinkleVerts.Length;
 
-        var isPartOfPrefabInstance = 
-            LevelEditorManager.Instance != null
-            && PrefabUtility.IsPartOfPrefabInstance(LevelEditorManager.Instance);
-        var prefabRoot = isPartOfPrefabInstance ?
+        var paperIsPrefab = LevelEditorManager.IsEditingPrefab;
+        var prefabRoot = paperIsPrefab ?
             PrefabUtility.GetOutermostPrefabInstanceRoot(this)
             : null as GameObject;
 
@@ -99,7 +97,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
         if (transform.childCount > sprinkleCount)
         {
-            if (isPartOfPrefabInstance)
+            if (paperIsPrefab)
             {
                 for (int i = transform.childCount; i < sprinkleCount; i++)
                 {
@@ -131,7 +129,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
             sprinkle.gameObject.SetActive(true);
         }
 
-        if (isPartOfPrefabInstance && prefabRoot != null)
+        if (paperIsPrefab && prefabRoot != null)
         {
             PrefabUtility.ApplyPrefabInstance(prefabRoot, InteractionMode.AutomatedAction);
         }
