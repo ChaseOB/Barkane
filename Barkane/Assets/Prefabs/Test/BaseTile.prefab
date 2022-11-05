@@ -123,8 +123,7 @@ Transform:
   m_LocalPosition: {x: 0, y: -0.0005, z: 0}
   m_LocalScale: {x: 2, y: 1, z: 2}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8328883883981057969}
+  m_Children: []
   m_Father: {fileID: 2815017080395894015}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
@@ -220,7 +219,6 @@ MonoBehaviour:
     Normals: []
     UVs: []
     Indices: 
-  sprinkleParent: {fileID: 8328883883981057969}
 --- !u!114 &4332946852583158350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,8 +284,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.0005, z: 0}
   m_LocalScale: {x: 2, y: 1, z: 2}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2704976227593553279}
+  m_Children: []
   m_Father: {fileID: 2815017080395894015}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -383,7 +380,6 @@ MonoBehaviour:
     Normals: []
     UVs: []
     Indices: 
-  sprinkleParent: {fileID: 2704976227593553279}
 --- !u!114 &3583265718418767156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -539,7 +535,9 @@ MonoBehaviour:
   botPlayerCol: {fileID: 398644310617893384}
   topStack: {fileID: 0}
   bottomStack: {fileID: 0}
-  storedPos: {x: 0, y: 0, z: 0}
+  storedPos: {x: 0, y: -1, z: 0}
+  topColActive: 1
+  botColActive: 1
   orientation: 0
   adjacentJoints: []
 --- !u!114 &7721798970483151979
@@ -646,68 +644,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!1 &7645236769379119131
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2704976227593553279}
-  m_Layer: 6
-  m_Name: SprinkleParent
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2704976227593553279
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7645236769379119131}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3406311093891142033}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &9101441738115570627
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8328883883981057969}
-  m_Layer: 6
-  m_Name: SprinkleParent
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8328883883981057969
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9101441738115570627}
-  m_LocalRotation: {x: -0, y: -0, z: -1, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2523465101833161944}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3812482688068280479
 PrefabInstance:
   m_ObjectHideFlags: 0
