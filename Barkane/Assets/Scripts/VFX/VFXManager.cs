@@ -29,10 +29,10 @@ namespace BarkaneEditor
         public static void DidReloadScripts()
         {
             var singleton = FindObjectOfType<VFXManager>();
-            if (singleton)
-            {
-                singleton.Refresh();
-            }
+            //if (singleton)
+            //{
+            //    singleton.Refresh();
+            //}
         }
 #endif
 

@@ -81,6 +81,7 @@ float march(
 	float end = -I;
 
 	I = I * I - dot(p, p) + r * r;
+	if (I < 0) return 0;
 
 	// length between base point and exit point of the light ray in the sphere
 	end += sqrt(I);
@@ -155,6 +156,7 @@ void RaySampler_float(
 	float end = -I;
 
 	I = I * I - dot(p, p) + r * r;
+	if (I < 0) discard;
 	end += sqrt(I);
 
 	// borrows from Sebastian Lague's
