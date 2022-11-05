@@ -24,11 +24,9 @@ public class FaceInspectorView : VisualElement
         if (face != null)
         {
             editor = Editor.CreateEditor(face);
+            Debug.Log(editor.GetType());
             IMGUIContainer container = new IMGUIContainer(() => editor.OnInspectorGUI());
             Add(container);
-
-            SerializedProperty faceTypeProperty = editor.serializedObject.FindProperty("faceType");
-            this.TrackPropertyValue(faceTypeProperty, OnPropertyChanged);
         }
     }
 
@@ -37,10 +35,5 @@ public class FaceInspectorView : VisualElement
         Clear();
         this.Unbind();
         UnityEngine.Object.DestroyImmediate(editor);
-    }
-
-    private void OnPropertyChanged(SerializedProperty property)
-    {
-        currFace.ChangeFaceType((FaceType) property.enumValueIndex);
     }
 }
