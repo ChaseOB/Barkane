@@ -59,28 +59,6 @@ public class PaperJoint : MonoBehaviour
                 pj.ShowLine(value);
     }
 
-   /* private void FixedUpdate() {
-        //UpdateAdjList();
-    }
-
-    private void UpdateAdjList() {
-        adjList.Clear();
-        Collider[] colliders = Physics.OverlapCapsule(capsuleCollider.center - (transform.forward* capsuleCollider.height * 1.1f/2),
-        capsuleCollider.center + (transform.forward * capsuleCollider.height * 1.1f/2), 
-        capsuleCollider.radius * 1.1f, 7, QueryTriggerInteraction.Collide);
-        Debug.Log(colliders.Length);
-        foreach(Collider other in colliders) {
-            PaperJoint joint = other.GetComponent<PaperJoint>();
-            Vector3 diff = this.transform.position - joint.transform.position;
-            int difX = Mathf.Abs(diff.x) > 0.1 ? 1 : 0;
-            int difY = Mathf.Abs(diff.y) > 0.1 ? 1 : 0;
-            int difZ = Mathf.Abs(diff.z) > 0.1 ? 1 : 0;
-            if(difX + difY + difZ == 1 || (difX + difY + difZ == 2 && 
-                (!joint.paperSquares.Contains(this.paperSquares[0]) && !joint.paperSquares.Contains(this.paperSquares[1])))) //C: 3-way XOR to check that the folds are along the same axis
-                adjList.Add(other.GetComponent<PaperJoint>());
-        }
-    }*/
-
     private void OnTriggerEnter(Collider other) {
         
         if(other.gameObject.layer == 7)
@@ -90,7 +68,7 @@ public class PaperJoint : MonoBehaviour
             int difX = Mathf.Abs(diff.x) > 0.1 ? 1 : 0;
             int difY = Mathf.Abs(diff.y) > 0.1 ? 1 : 0;
             int difZ = Mathf.Abs(diff.z) > 0.1 ? 1 : 0;
-            if(difX + difY + difZ == 1 || (difX + difY + difZ == 2 && DiffNormals(joint))) //C: 3-way XOR to check that the folds are along the same axis
+            if(difX + difY + difZ == 1 || (difX + difY + difZ == 2 && DiffNormals(joint))) //C: Either adjacent on same axis or adjacent on a diff axis but not connected to a square on this joint
                 adjList.Add(other.GetComponent<PaperJoint>());
         }
     }
