@@ -42,20 +42,49 @@ public class PaperSquareFace : MonoBehaviour
         {
             if (_faceObjectPrefabs == null)
             {
-                _faceObjectPrefabs = CreateFaceObjectPrefabs();
+                _faceObjectPrefabs = GetFaceObjectPrefabs();
             }
 
             return _faceObjectPrefabs;
         }
     }
+
+    //private Dictionary<FaceObjectType, bool> _faceObjectStatuses;
+
     private Dictionary<FaceObjectType, GameObject> _faceObjects = new Dictionary<FaceObjectType, GameObject>();
 
     private void OnValidate()
     {
-        _faceObjectPrefabs = CreateFaceObjectPrefabs();
-        foreach (var faceObject in _faceObjects.Keys)
+        _faceObjectPrefabs = GetFaceObjectPrefabs();
+
+        //RefreshFaceObjects(); //Dis sucks
+    }
+
+    private Dictionary<FaceObjectType, GameObject> GetFaceObjectPrefabs()
+    {
+        return new Dictionary<FaceObjectType, GameObject>()
         {
-            CreateFaceObject(faceObject);
+            {FaceObjectType.SHARD, shardPrefab },
+            {FaceObjectType.GOAL, goalPrefab },
+        };
+    }
+
+    private Dictionary<FaceObjectType, bool> GetFaceObjectStatuses()
+    {
+        return new Dictionary<FaceObjectType, bool>()
+        {
+            {FaceObjectType.SHARD, shard },
+            {FaceObjectType.GOAL, goal },
+        };
+    }
+
+    private void RefreshFaceObjects()
+    {
+        var faceObjectStatuses = GetFaceObjectStatuses();
+
+        foreach (FaceObjectType type in faceObjectStatuses.Keys)
+        {
+            SetFaceObject(type, faceObjectStatuses[type]);
         }
     }
 
@@ -81,18 +110,18 @@ public class PaperSquareFace : MonoBehaviour
     {
         if (status)
         {
-            CreateFaceObject(type);
+            CreateFaceObjectIfNotExists(type);
         } else
         {
-            DeleteFaceObject(type);
+            DeleteFaceObjectIfExists(type);
         }
     }
 
-    private void CreateFaceObject(FaceObjectType type)
+    private void CreateFaceObjectIfNotExists(FaceObjectType type)
     {
         if (!_faceObjects.ContainsKey(type) || _faceObjects[type] == null)
         {
-            _faceObjects.Add(type, InstantiationExtension.InstantiateKeepPrefab(FaceObjectPrefabs[type]));
+            _faceObjects.Add(type, InstantiationExtension.InstantiateKeepPrefab(_faceObjectPrefabs[type]));
 
             GameObject newObject = _faceObjects[type];
             newObject.transform.SetParent(transform);
@@ -101,22 +130,13 @@ public class PaperSquareFace : MonoBehaviour
         }
     }
 
-    private void DeleteFaceObject(FaceObjectType type)
+    private void DeleteFaceObjectIfExists(FaceObjectType type)
     {
         if (_faceObjects.ContainsKey(type))
         {
             DestroyImmediate(_faceObjects[type]);
             _faceObjects.Remove(type);
         }
-    }
-
-    private Dictionary<FaceObjectType, GameObject> CreateFaceObjectPrefabs()
-    {
-        return new Dictionary<FaceObjectType, GameObject>()
-        {
-            {FaceObjectType.SHARD, shardPrefab },
-            {FaceObjectType.GOAL, goalPrefab },
-        };
     }
 }
 
