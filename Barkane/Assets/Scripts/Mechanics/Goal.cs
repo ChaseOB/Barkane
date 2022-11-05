@@ -17,9 +17,15 @@ public class Goal : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.CompareTag("Player") && goalActive)
-            EndLevel();
+            StartCoroutine(WaitToEndLevel());
     }
 
+    //C: Used so player finishes moving
+    private IEnumerator WaitToEndLevel() {
+        yield return new WaitUntil(() => !ActionLockManager.Instance.IsLocked);
+        EndLevel();
+    }
+    
     private void EndLevel() {
         LevelManager.Instance.EndLevel();
         UIManager.Instance.EndLevel();

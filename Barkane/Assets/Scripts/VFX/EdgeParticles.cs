@@ -26,7 +26,8 @@ public class EdgeParticles : MonoBehaviour, BarkaneEditor.IRefreshable
                 FindAllChildrenPS();
             }
             foreach (ParticleSystem ps in listOfSystems) {
-                ps?.Play();
+                if(ps!= null)
+                    ps?.Play();
             }
         }
     }

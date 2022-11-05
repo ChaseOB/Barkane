@@ -135,11 +135,12 @@ public class FoldAnimator : MonoBehaviour
                     if(ps.TopHalf.activeSelf)
                         activeSides.Add(ps.TopHalf);
                 }
-                if(activeSides.Count != 2){
-                    Debug.LogError("<2 active sides in a single location (this should not happen)");
-                }
+               //if(activeSides.Count != 2){
+               //     Debug.LogError($"!2 active sides in a single location (this should not happen). Count: {activeSides.Count}");
+               // }
                 //C: if the active sides of this stack are both in or both out of the fold, then they won't clip
-                if(foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject)
+                if(activeSides.Count == 2 &&
+                    foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject)
                     != foldObjects.foldSquares.Contains(activeSides[1].GetComponentInParent<PaperSquare>().gameObject))
                 {
                     /*C: Else, check position of the ends of the normal vectors before and after fold
@@ -356,9 +357,11 @@ public class FoldAnimator : MonoBehaviour
     {
         List<List<PaperSquare>> overlaps = foldablePaper.FindOverlappingSquares();
 
-        foreach(List<PaperSquare> list in overlaps)
-            foreach(PaperSquare ps in list) 
-                ps.CheckAndRemoveRefs(list);
+        foreach(PaperSquare ps in foldablePaper.PaperSquares)
+            ps.ForceRefsUpdate();
+      //  foreach(List<PaperSquare> list in overlaps)
+            //foreach(PaperSquare ps in list) 
+             //   ps.CheckAndRemoveRefs(list);
                 
             
 

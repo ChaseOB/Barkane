@@ -68,7 +68,8 @@ public class FoldablePaper : MonoBehaviour
             center += ps.transform.localPosition;
             i++;
         }
-        center /= i;
+        if(i > 0)
+            center /= i;
         centerPos = center;
     }
 

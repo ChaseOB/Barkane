@@ -103,7 +103,6 @@ public class PaperSquare : MonoBehaviour
     //foldStart is true when starting a fold and false when ending a fold
     public void OnFold(bool foldStart)
     {
-        
         topPlayerCol.SetActive(!foldStart && topColActive);
         botPlayerCol.SetActive(!foldStart && botColActive);
     }
@@ -124,6 +123,13 @@ public class PaperSquare : MonoBehaviour
             ToggleBottom(true);
             bottomStack = null;
         }
+    }
+
+    public void ForceRefsUpdate(){
+        ToggleTop(true);
+        topStack = null;
+        ToggleBottom(true);
+        bottomStack = null;
     }
 
     public void UpdateHitboxes()
