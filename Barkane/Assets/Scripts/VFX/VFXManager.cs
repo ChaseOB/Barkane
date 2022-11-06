@@ -50,9 +50,8 @@ namespace BarkaneEditor
 
         internal void Refresh()
         {
-            Debug.Log("Refreshing?");
-            //Instance = this;
-
+            _instance = this;
+            UpdateTheme();
             if (themes == null || themes.Length != System.Enum.GetNames(typeof(ThemeChoice)).Length)
             {
                 throw new UnityException("Theme assets are referenced incorrectly in VFXManager.");
@@ -62,6 +61,14 @@ namespace BarkaneEditor
             foreach (var s in FindObjectsOfType<MonoBehaviour>())
             {
                 if (s is IRefreshable) (s as IRefreshable).Refresh();
+            }
+        }
+
+        internal void UpdateTheme()
+        {
+            foreach (PaperSquareFace p in FindObjectsOfType<PaperSquareFace>())
+            {
+                p.UpdateTheme(Theme);
             }
         }
 

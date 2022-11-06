@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c67e6b12a5b0bc24988d281f88c4b2d9, type: 3}
   m_Name: Snowy Snow
   m_EditorClassIdentifier: 
-  Sprinkle: {fileID: 0}
+  Sprinkle: {fileID: 6733450361054730935, guid: fec8249386d11c24bbe339c06b197d0c, type: 3}
+  WalkMat: {fileID: 2100000, guid: 9b1673c8a84ce9848b876ec5f4c550ea, type: 2}
+  UnWalkMat: {fileID: 2100000, guid: 3a0b5d57431d9264fa1ce7141e084c84, type: 2}

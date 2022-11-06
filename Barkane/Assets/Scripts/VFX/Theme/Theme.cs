@@ -6,5 +6,9 @@ using UnityEngine;
 public class Theme : ScriptableObject
 {
     public GameObject Sprinkle;
-    public Skybox skybox;
+
+    [Header("Materials")]
+    public Material WalkMat;
+    public Material UnWalkMat;
+
 }

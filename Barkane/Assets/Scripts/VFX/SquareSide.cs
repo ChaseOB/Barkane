@@ -25,7 +25,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public (Vector3[], Vector3[]) sprinkles;
     // A: unsure why this is needed
-    // public Transform sprinkleParent;
+    public Transform sprinkleParent;
+
 
     void IRefreshable.Refresh()
     {
@@ -61,6 +62,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
     }
 
 
+
     //private void Update()
     //{
     //    if (materialInstance != null)
@@ -90,25 +92,42 @@ public class SquareSide : MonoBehaviour, IRefreshable
             PrefabUtility.GetOutermostPrefabInstanceRoot(this)
             : null as GameObject;
 
+        if (paperIsPrefab)
+            {
+                foreach (Transform child in sprinkleParent.transform)
+                {
+                    Destroy(child.gameObject);
+                }
+            } else
+            {
+                 foreach (Transform child in sprinkleParent.transform)
+                {
+                    DestroyImmediate(child.gameObject);
+                }
+            }
+
+
         // Debug.Log($"Editing square side of prefab { prefabRoot }");
-        var newlyAdded = transform.childCount < sprinkleCount ?
-            new GameObject[sprinkleCount - transform.childCount]
+        var newlyAdded = sprinkleParent.transform.childCount < sprinkleCount ?
+            new GameObject[sprinkleCount - sprinkleParent.transform.childCount]
             : new GameObject[0];
 
-        if (transform.childCount > sprinkleCount)
+
+
+        if (sprinkleParent.transform.childCount > sprinkleCount)
         {
             if (paperIsPrefab)
             {
-                for (int i = transform.childCount; i < sprinkleCount; i++)
+                for (int i = sprinkleParent.transform.childCount; i < sprinkleCount; i++)
                 {
-                    var child = transform.GetChild(i);
+                    var child = sprinkleParent.transform.GetChild(i);
                     child.gameObject.SetActive(false);
                 }
             } else
             {
-                for (int i = sprinkleCount; i > transform.childCount; i--)
+                for (int i = sprinkleCount; i > sprinkleParent.transform.childCount; i--)
                 {
-                    DestroyImmediate(transform.GetChild(i - 1));
+                    DestroyImmediate(sprinkleParent.transform.GetChild(i - 1));
                 }
             }
         }
@@ -116,13 +135,14 @@ public class SquareSide : MonoBehaviour, IRefreshable
         for (int i = 0; i < newlyAdded.Length; i++)
         {
             newlyAdded[i] = Instantiate(VFXManager.Theme.Sprinkle, transform);
+            newlyAdded[i].transform.parent = sprinkleParent;
         }
 
         //if (materialPrototype.shader == Shader.Find("Paper") && materialPrototype.GetInt("_UseSprinkles") == 1) //C: No GetBool, need to use GetInt. Also this is broken lol
         //{
         for (int i = 0; i < sprinkleCount; i++)
         {
-            var sprinkle = transform.GetChild(i);
+            var sprinkle = sprinkleParent.transform.GetChild(i);
             sprinkle.localPosition = sprinkleVerts[i];
             sprinkle.up = transform.rotation * sprinkleNorms[i];
             sprinkle.Rotate(sprinkle.up, Random.value * 360f);
@@ -168,7 +188,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
     {
         Debug.Log("changing mesh");
         mRenderer.enabled = val;
-       // sprinkleParent.gameObject.SetActive(val);
+        sprinkleParent.gameObject.SetActive(val);
     }
     #endregion
 }

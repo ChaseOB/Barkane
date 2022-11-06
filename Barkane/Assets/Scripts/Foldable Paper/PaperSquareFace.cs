@@ -34,6 +34,18 @@ public class PaperSquareFace : MonoBehaviour
     [SerializeField] private GameObject shardPrefab;
     [SerializeField] private GameObject goalPrefab;
 
+    private Theme theme;
+
+    public void UpdateTheme(Theme t)
+    {
+        if(t != theme) {
+            theme = t;
+        }
+        walkMat = theme.WalkMat;
+        unWalkMat = theme.UnWalkMat;
+        ChangeFaceType();
+    }
+
     //L: This dictionary ensures only one of an object exists on a face at a time.
     private Dictionary<FaceObjectType, GameObject> _faceObjectPrefabs;
     public Dictionary<FaceObjectType, GameObject> FaceObjectPrefabs

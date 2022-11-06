@@ -135,7 +135,7 @@ public class FoldablePaper : MonoBehaviour
         }
     }
 
-    public void TestFold(float degrees)
+    public void TryFold(float degrees)
     {
         FindFoldObjects();
         if(!isComplete && foldJoint != null && foldJoint.canFold)
