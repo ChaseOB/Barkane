@@ -92,10 +92,27 @@ public class SquareSide : MonoBehaviour, IRefreshable
             PrefabUtility.GetOutermostPrefabInstanceRoot(this)
             : null as GameObject;
 
+        if (paperIsPrefab)
+            {
+                foreach (Transform child in sprinkleParent.transform)
+                {
+                    Destroy(child.gameObject);
+                }
+            } else
+            {
+                 foreach (Transform child in sprinkleParent.transform)
+                {
+                    DestroyImmediate(child.gameObject);
+                }
+            }
+
+
         // Debug.Log($"Editing square side of prefab { prefabRoot }");
         var newlyAdded = sprinkleParent.transform.childCount < sprinkleCount ?
             new GameObject[sprinkleCount - sprinkleParent.transform.childCount]
             : new GameObject[0];
+
+
 
         if (sprinkleParent.transform.childCount > sprinkleCount)
         {
