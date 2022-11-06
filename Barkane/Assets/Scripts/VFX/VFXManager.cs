@@ -21,7 +21,6 @@ namespace BarkaneEditor
         [SerializeField] private ThemeChoice themeChoice;
         [SerializeField] private Theme[] themes;
         public static Theme Theme => Instance.themes[(int)Instance.themeChoice];
-
         public static VFXManager Instance { get; private set; }
 
 #if UNITY_EDITOR
@@ -50,6 +49,15 @@ namespace BarkaneEditor
             {
                 if (s is IRefreshable) (s as IRefreshable).Refresh();
             }
+        }
+
+        internal void UpdateTheme()
+        {
+            foreach (PaperSquareFace p in FindObjectsOfType<PaperSquareFace>())
+            {
+                p.UpdateTheme(Theme);
+            }
+            Refresh();
         }
 
         //internal void Load(PlayModeStateChange change)
@@ -100,6 +108,10 @@ namespace BarkaneEditor
             if (GUILayout.Button("Refresh"))
             {
                 (target as VFXManager).Refresh();
+            }
+            if (GUILayout.Button("Update Theme"))
+            {
+                (target as VFXManager).UpdateTheme();
             }
         }
     }

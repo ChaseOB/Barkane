@@ -14,7 +14,18 @@ public class PaperSquareFace : MonoBehaviour
     [SerializeField] private BoxCollider playerWalk;
     [SerializeField] private SquareSide squareSide;
     public Material walkMat;
-    public Material unWalkMat; //C: Would be better to store these somewhere else in the future, but for now is fine
+    public Material unWalkMat; 
+    private Theme theme;
+
+    public void UpdateTheme(Theme t)
+    {
+        if(t != theme) {
+            theme = t;
+        }
+        walkMat = theme.WalkMat;
+        unWalkMat = theme.UnWalkMat;
+        ChangeFaceType(faceType);
+    }
 
     public void ChangeFaceType(FaceType faceType)
     {

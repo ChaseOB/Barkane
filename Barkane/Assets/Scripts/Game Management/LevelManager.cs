@@ -158,20 +158,6 @@ public class LevelManager : Singleton<LevelManager>
         ActionLockManager.Instance.ForceRemoveLock();
     }
 
-    private void OnResetLevel(InputValue value)
-    {
-       // if(value.isPressed && instantiatedLevel != null)
-         //   ResetLevel();
-    }
-
-    private void OnCancel(InputValue value)
-    {
-        //if(value.isPressed){
-        //    LevelManager.Instance.UnloadLevel();
-        //    SceneManager.LoadScene(0);
-        //}
-    }
-
     public void ReturnToMenu() {
         LevelManager.Instance.UnloadLevel();
         SceneManager.LoadScene(0);

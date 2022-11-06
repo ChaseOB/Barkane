@@ -27,6 +27,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
     // A: unsure why this is needed
     // public Transform sprinkleParent;
 
+
     void IRefreshable.Refresh()
     {
         if (Application.isEditor && !Application.isPlaying)
@@ -59,6 +60,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
             mRenderer.sharedMaterials = new Material[] { materialInstance };
         }
     }
+
 
 
     //private void Update()
