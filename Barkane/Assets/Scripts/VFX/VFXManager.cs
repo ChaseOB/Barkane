@@ -38,7 +38,7 @@ namespace BarkaneEditor
         internal void Refresh()
         {
             Instance = this;
-
+            UpdateTheme();
             if (themes == null || themes.Length != System.Enum.GetNames(typeof(ThemeChoice)).Length)
             {
                 throw new UnityException("Theme assets are referenced incorrectly in VFXManager.");
@@ -57,7 +57,6 @@ namespace BarkaneEditor
             {
                 p.UpdateTheme(Theme);
             }
-            Refresh();
         }
 
         //internal void Load(PlayModeStateChange change)
@@ -108,10 +107,6 @@ namespace BarkaneEditor
             if (GUILayout.Button("Refresh"))
             {
                 (target as VFXManager).Refresh();
-            }
-            if (GUILayout.Button("Update Theme"))
-            {
-                (target as VFXManager).UpdateTheme();
             }
         }
     }
