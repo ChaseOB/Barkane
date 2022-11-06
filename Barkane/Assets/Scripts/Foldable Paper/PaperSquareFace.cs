@@ -49,15 +49,11 @@ public class PaperSquareFace : MonoBehaviour
         }
     }
 
-    //private Dictionary<FaceObjectType, bool> _faceObjectStatuses;
-
     private Dictionary<FaceObjectType, GameObject> _faceObjects = new Dictionary<FaceObjectType, GameObject>();
 
     private void OnValidate()
     {
         _faceObjectPrefabs = GetFaceObjectPrefabs();
-
-        //RefreshFaceObjects(); //Dis sucks
     }
 
     private Dictionary<FaceObjectType, GameObject> GetFaceObjectPrefabs()
@@ -68,26 +64,6 @@ public class PaperSquareFace : MonoBehaviour
             {FaceObjectType.GOAL, goalPrefab },
         };
     }
-
-    private Dictionary<FaceObjectType, bool> GetFaceObjectStatuses()
-    {
-        return new Dictionary<FaceObjectType, bool>()
-        {
-            {FaceObjectType.SHARD, shard },
-            {FaceObjectType.GOAL, goal },
-        };
-    }
-
-    private void RefreshFaceObjects()
-    {
-        var faceObjectStatuses = GetFaceObjectStatuses();
-
-        foreach (FaceObjectType type in faceObjectStatuses.Keys)
-        {
-            SetFaceObject(type, faceObjectStatuses[type]);
-        }
-    }
-
 
     public void ChangeFaceType()
     {
@@ -134,7 +110,10 @@ public class PaperSquareFace : MonoBehaviour
     {
         if (_faceObjects.ContainsKey(type))
         {
-            DestroyImmediate(_faceObjects[type]);
+            if (_faceObjects[type] != null)
+            {
+                DestroyImmediate(_faceObjects[type]);
+            }
             _faceObjects.Remove(type);
         }
     }
