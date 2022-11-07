@@ -24,10 +24,10 @@ public class PaperSquareFace : MonoBehaviour
         }
         walkMat = theme.WalkMat;
         unWalkMat = theme.UnWalkMat;
-        ChangeFaceType(faceType, true);
+        ChangeFaceType(faceType);
     }
 
-    public void ChangeFaceType(FaceType faceType, bool themeChange = false)
+    public void ChangeFaceType(FaceType faceType)
     {
         this.faceType = faceType;
         if(faceType == FaceType.WALKABLE)
@@ -42,7 +42,6 @@ public class PaperSquareFace : MonoBehaviour
             squareSide.materialPrototype = unWalkMat;
             squareSide.UpdateMesh();        
         }
-        if(!themeChange)
-            Debug.Log($"Type of {gameObject.name} changed to {faceType}");
+        Debug.Log($"Type of {gameObject.name} changed to {faceType}");
     }
 }
