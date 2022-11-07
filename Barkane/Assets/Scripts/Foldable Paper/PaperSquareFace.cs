@@ -91,7 +91,6 @@ public class PaperSquareFace : MonoBehaviour
             squareSide.materialPrototype = unWalkMat;
             squareSide.UpdateMesh();        
         }
-        Debug.Log($"Type of {gameObject.name} changed to {faceType}");
     }
 
     public void SetFaceObject(FaceObjectType type, bool status)
