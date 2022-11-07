@@ -116,7 +116,7 @@ public class LevelManager : Singleton<LevelManager>
         playerInstance= Instantiate(playerPrefab, playerPos.position, Quaternion.identity);
 
         FollowTarget.Instance.SetTargetAndPosition(playerInstance.GetComponent<PlayerMovement>().raycastStart);    
-        FindObjectOfType<VFXManager>().Refresh();
+        VFXManager.Instance.Refresh();
         FindObjectOfType<TileSelector>().ReloadReferences();
     }
 

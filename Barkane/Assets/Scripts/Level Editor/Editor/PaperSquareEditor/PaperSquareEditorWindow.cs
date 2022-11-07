@@ -5,8 +5,7 @@ using UnityEngine.UIElements;
 
 public class PaperSquareEditorWindow : EditorWindow
 {
-    //private RadioButtonGroup typeButtonGroup;
-    //private Dictionary<TileType, RadioButton> tileTypeButtons;
+    private const string editorDir = "Assets/Scripts/Level Editor/Editor/PaperSquareEditor/";
 
     private FaceInspectorView _topInspector;
     private FaceInspectorView _bottomInspector;
@@ -33,7 +32,7 @@ public class PaperSquareEditorWindow : EditorWindow
         VisualElement root = rootVisualElement;
 
         // Import and build the editor from the UXML
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Scripts/Editor/PaperSquareEditor/PaperSquareEditorWindow.uxml");
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(editorDir + "PaperSquareEditorWindow.uxml");
         visualTree.CloneTree(root);
 
         //typeButtonGroup = root.Query<RadioButtonGroup>("TileTypes");
@@ -45,7 +44,7 @@ public class PaperSquareEditorWindow : EditorWindow
         UpdateSquareSelection(SquareSelector.SelectedSquare);
 
         // The style will be applied to the VisualElement and all of its children.
-        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Scripts/Editor/PaperSquareEditor/PaperSquareEditorWindow.uss");
+        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(editorDir + "PaperSquareEditorWindow.uss");
         root.styleSheets.Add(styleSheet);
     }
 

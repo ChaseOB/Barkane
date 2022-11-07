@@ -297,10 +297,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   faceType: 0
+  walkMat: {fileID: 2100000, guid: 7d38691261e550b418246567ee74ca4b, type: 2}
+  unWalkMat: {fileID: 2100000, guid: b1ca8b4131431084d91763e234484156, type: 2}
+  shard: 0
+  goal: 0
   playerWalk: {fileID: 9015388584628072935}
   squareSide: {fileID: 3000609133104664072}
-  walkMat: {fileID: 2100000, guid: 871f58141d0c54e42b1426597d52a27c, type: 2}
-  unWalkMat: {fileID: 2100000, guid: 09a3a23d6468f5041a83b5e95823c983, type: 2}
+  shardPrefab: {fileID: 3264400687938683259, guid: 0cf13e189a463a74d9ae924d1d63531b, type: 3}
+  goalPrefab: {fileID: 2654907975218644480, guid: bb928c25978c7cc4b9bc20dccbd1a1d5, type: 3}
 --- !u!1 &2369556897618979814
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,10 +512,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   faceType: 0
+  walkMat: {fileID: 2100000, guid: 7d38691261e550b418246567ee74ca4b, type: 2}
+  unWalkMat: {fileID: 2100000, guid: b1ca8b4131431084d91763e234484156, type: 2}
+  shard: 0
+  goal: 0
   playerWalk: {fileID: 6208710809326013457}
   squareSide: {fileID: 8869331940603878471}
-  walkMat: {fileID: 2100000, guid: 871f58141d0c54e42b1426597d52a27c, type: 2}
-  unWalkMat: {fileID: 2100000, guid: 09a3a23d6468f5041a83b5e95823c983, type: 2}
+  shardPrefab: {fileID: 3264400687938683259, guid: 0cf13e189a463a74d9ae924d1d63531b, type: 3}
+  goalPrefab: {fileID: 2654907975218644480, guid: bb928c25978c7cc4b9bc20dccbd1a1d5, type: 3}
 --- !u!1 &4440904289389382621
 GameObject:
   m_ObjectHideFlags: 0
@@ -666,7 +674,7 @@ MonoBehaviour:
   botPlayerCol: {fileID: 398644310617893384}
   topStack: {fileID: 0}
   bottomStack: {fileID: 0}
-  storedPos: {x: 0, y: -1, z: 0}
+  storedPos: {x: 0, y: 0, z: 0}
   topColActive: 1
   botColActive: 1
   orientation: 0

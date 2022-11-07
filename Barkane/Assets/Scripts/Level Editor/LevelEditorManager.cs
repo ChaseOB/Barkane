@@ -118,7 +118,7 @@ public class LevelEditorManager : MonoBehaviour
 
     public bool AddSquare(Vector3Int relPos)
     {
-        squares.RefreshSquares();   //L: We might not want to do this every time for performance, but for now it works.
+        squares.RefreshSquares();
 
         if (squares.GetSquareAt(relPos) != null)
         {
@@ -133,7 +133,7 @@ public class LevelEditorManager : MonoBehaviour
         squareObj.transform.parent = squares.gameObject.transform;
         squareObj.transform.position = squareCenter;
         squareObj.transform.rotation = rotation;
-        squareObj.name = $"Square {squares.numSquares}";
+        squareObj.name = $"Square {squares.numSquares+1}";
 
         PaperSquare square = squareObj.GetComponent<PaperSquare>();
         square.orientation = orientation;
@@ -285,7 +285,7 @@ public class LevelEditorManager : MonoBehaviour
 
     public bool RemoveSquare(Vector3Int relPos)
     {
-        squares.RefreshSquares();   //L: We might not want to do this every time for performance, but for now it works.
+        squares.RefreshSquares();
         Debug.Log($"Removing Square at {relPos}");
         PaperSquare square = squares.GetSquareAt(relPos);
         //Debug.Log($"square is {square}");
