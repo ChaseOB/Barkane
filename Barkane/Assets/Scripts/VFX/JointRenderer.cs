@@ -94,6 +94,7 @@ public class JointRenderer : MonoBehaviour, IRefreshable
 
         UpdateColors();
         UpdateGeometry(true);
+        UpdateGlowstick();
     }
 
     public bool IsAnimating = false;
@@ -226,6 +227,33 @@ public class JointRenderer : MonoBehaviour, IRefreshable
             maskFoldParticles?.UnEmit();
         }
     }
+
+#if UNITY_EDITOR
+    private void UpdateGlowstick()
+    {
+        var sticks = transform.parent.GetComponentsInChildren<GlowStick>();
+        if (sticks.Length == 0) return;
+        switch(sticks.Length)
+        {
+            case 0: return;
+            case 1:
+                var stick = sticks[0];
+                stick.SetFaces((a1.gameObject, b1.gameObject), (a2.gameObject, b2.gameObject));
+                break;
+            case 2:
+                var (stick1, stick2) = (sticks[0], sticks[1]);
+                if (stick1.SameSide(stick2))
+                    throw new UnityException("When 2 glowsticks on the same joint, they must be on the different side of the joint!");
+                var side1 = (a1.gameObject, b1.gameObject);
+                var side2 = (a2.gameObject, b2.gameObject);
+                stick1.SetFaces(side1, side2);
+                stick2.SetFaces(side1, side2);
+                break;
+            default:
+                throw new UnityException("There cannot be more than 2 glowsticks, at most 1 on each side of the joint!");
+        }
+    }
+#endif
 
     /// <summary>
     /// Update Joint appearance when the physical location/orientation of either side changes

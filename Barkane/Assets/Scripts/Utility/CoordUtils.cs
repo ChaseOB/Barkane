@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class CoordUtils
 {
-
+    public static (int, int, int) AsCoord(Vector3 v) => (Mathf.RoundToInt(v.x), Mathf.RoundToInt(v.y), Mathf.RoundToInt(v.z));
 
     public static int DiffAxisCount((int, int, int) a, (int, int, int) b)
         => (a.Item1 != b.Item1 ? 1 : 0) + (a.Item2 != b.Item2 ? 1 : 0) + (a.Item3 != b.Item3 ? 1 : 0);
