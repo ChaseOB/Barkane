@@ -184,8 +184,8 @@ MonoBehaviour:
   ScrollSenstivity: 0.2
   orbitDampen: 10
   scrollDampen: 6
-  minCameraDistance: 2
-  maxCameraDistance: 10
+  minCameraDistance: 3
+  maxCameraDistance: 6
   cameraDisabled: 1
 --- !u!114 &5353261048891426303
 MonoBehaviour:
@@ -229,7 +229,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e08d5f052230941429eab5fc1b22cc65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hoverSquare: {fileID: 0}
   foldablePaper: {fileID: 0}
+  foldAnimator: {fileID: 0}
 --- !u!1 &5353261049099573900
 GameObject:
   m_ObjectHideFlags: 0

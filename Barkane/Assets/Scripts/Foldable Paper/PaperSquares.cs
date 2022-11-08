@@ -124,13 +124,6 @@ public class PaperSquares : MonoBehaviour
         if (posInBounds)
         {
             PaperSquare existingSquare = paperSquares[relPos.x, relPos.y, relPos.z] as PaperSquare;
-            if (existingSquare == null && square != null)
-            {
-                numSquares++;
-            } else if (existingSquare != null && square == null)
-            {
-                numSquares--;
-            }
 
             paperSquares[relPos.x, relPos.y, relPos.z] = square;
             if (square != null)

@@ -98,7 +98,7 @@ public class LevelManager : Singleton<LevelManager>
         if (instantiatedLevel != null) 
         {
             Destroy(instantiatedLevel);
-            SpawnLevel(level);        
+            SpawnLevel(level); 
         }
     }
 
@@ -115,8 +115,8 @@ public class LevelManager : Singleton<LevelManager>
         }
         playerInstance= Instantiate(playerPrefab, playerPos.position, Quaternion.identity);
 
-        FollowTarget.Instance.SetTargetAndPosition(playerInstance.transform);    
-        FindObjectOfType<VFXManager>().Refresh();
+        FollowTarget.Instance.SetTargetAndPosition(playerInstance.GetComponent<PlayerMovement>().raycastStart);    
+        VFXManager.Instance.Refresh();
         FindObjectOfType<TileSelector>().ReloadReferences();
     }
 
@@ -140,6 +140,7 @@ public class LevelManager : Singleton<LevelManager>
     //C: this is what we're doing for now lol
     private IEnumerator OneSecTransition()
     {
+        ActionLockManager.Instance.ForceTakeLock(this);
         SetTransitionScreen(true);
         if(UIManager.Instance != null)
             UIManager.Instance.ToggleGroup(false);
@@ -154,20 +155,12 @@ public class LevelManager : Singleton<LevelManager>
         SetTransitionScreen(false);
         if(UIManager.Instance != null)
             UIManager.Instance.ToggleGroup(true);
+        ActionLockManager.Instance.ForceRemoveLock();
     }
 
-    private void OnResetLevel(InputValue value)
-    {
-        if(value.isPressed && instantiatedLevel != null)
-            ResetLevel();
-    }
-
-    private void OnCancel(InputValue value)
-    {
-        if(value.isPressed){
-            LevelManager.Instance.UnloadLevel();
-            SceneManager.LoadScene(0);
-        }
+    public void ReturnToMenu() {
+        LevelManager.Instance.UnloadLevel();
+        SceneManager.LoadScene(0);
     }
 
     public void EndLevel()

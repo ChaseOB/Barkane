@@ -16,10 +16,6 @@ public class MainMenuManager : MonoBehaviour
         LevelManager.Instance.LoadLevel(level);
     }
 
-    public void StartLevelSelect() {
-        SceneManager.LoadScene(gameStartScene);
-    }
-
     public void QuitGame() {
         Application.Quit();
     }

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class InstantiationExtension
 {
+#if UNITY_EDITOR
     //Source: https://answers.unity.com/questions/667865/prefabutilityinstantiateprefab-returns-null-in-edi.html
     public static GameObject InstantiateKeepPrefab(Object prefabObject)
     {
@@ -24,4 +25,5 @@ public class InstantiationExtension
             return GameObject.Instantiate(prefabObject) as GameObject;
         }
     }
+#endif
 }

@@ -26,15 +26,18 @@ public class EdgeParticles : MonoBehaviour, BarkaneEditor.IRefreshable
                 FindAllChildrenPS();
             }
             foreach (ParticleSystem ps in listOfSystems) {
-                ps.Play();
+                if(ps!= null)
+                    ps?.Play();
             }
         }
     }
 
     public void Unemit() {
         foreach (ParticleSystem ps in listOfSystems) {
-            ps.Pause();
-            ps.Clear();
+            if(ps != null) {
+            ps?.Pause();
+            ps?.Clear();
+            }
             //ps.Play();
         }
         isAwake = false;
@@ -42,6 +45,7 @@ public class EdgeParticles : MonoBehaviour, BarkaneEditor.IRefreshable
 
     public void Refresh()
     {
+        Debug.Log("ps refresh");
         edgeParticlesPrefabChild = gameObject.transform.Find("Edge Particles").gameObject;
         listOfSystems = new List<ParticleSystem>();
 

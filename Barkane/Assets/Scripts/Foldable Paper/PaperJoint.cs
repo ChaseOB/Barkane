@@ -60,6 +60,7 @@ public class PaperJoint : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
+        
         if(other.gameObject.layer == 7)
         {
             PaperJoint joint = other.GetComponent<PaperJoint>();
@@ -67,9 +68,22 @@ public class PaperJoint : MonoBehaviour
             int difX = Mathf.Abs(diff.x) > 0.1 ? 1 : 0;
             int difY = Mathf.Abs(diff.y) > 0.1 ? 1 : 0;
             int difZ = Mathf.Abs(diff.z) > 0.1 ? 1 : 0;
-            if(difX + difY + difZ == 1) //C: 3-way XOR to check that the folds are along the same axis
+            if(difX + difY + difZ == 1 || (difX + difY + difZ == 2 && DiffNormals(joint))) //C: Either adjacent on same axis or adjacent on a diff axis but not connected to a square on this joint
                 adjList.Add(other.GetComponent<PaperJoint>());
         }
+    }
+
+    private bool DiffNormals(PaperJoint joint)
+    {
+        if(!SameOrFlipped(paperSquares[0].transform.up,paperSquares[1].transform.up) ||
+        !SameOrFlipped(joint.paperSquares[0].transform.up,joint.paperSquares[1].transform.up))
+            return false;
+        return !SameOrFlipped(paperSquares[0].transform.up, paperSquares[0].transform.up);
+    }
+
+    private bool SameOrFlipped(Vector3 v1, Vector3 v2)
+    {
+        return v1 == v2 || v1 * -1 == v2;
     }
 
     private void OnTriggerExit(Collider other) {

@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public float turnDuration = 0.25f;
 
     [SerializeField] private GameObject targetPos;
-    [SerializeField] private Transform raycastStart;
+    public Transform raycastStart;
     [SerializeField] private GameObject marmalade;
 
     private bool isMoving = false;
@@ -38,6 +38,9 @@ public class PlayerMovement : MonoBehaviour
             Move();
         else if (Mathf.Abs(move.x) > 0.5)
             Rotate(move.x > 0 ? 90.0f : -90.0f);
+        else
+            ActionLockManager.Instance.TryRemoveLock(this);
+
     }
 
     #endregion

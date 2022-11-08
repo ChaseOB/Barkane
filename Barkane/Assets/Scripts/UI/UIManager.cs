@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class UIManager : Singleton<UIManager>
 {
     public TMP_Text shardCountText;
     public TMP_Text foldCountText;
+    public TMP_Text yourFoldCountText;
+    public TMP_Text bestFoldCountText;
 
     public GameObject shardCountGroup;
     public int menuIndex;
@@ -62,17 +65,31 @@ public class UIManager : Singleton<UIManager>
     public void UpdateFC(int numFolds)
     {
         foldCountText.text = numFolds.ToString();
+        yourFoldCountText.text = numFolds.ToString();
+        bestFoldCountText.text = numFolds.ToString();
+
     }
 
     public void EndLevel()
     {
+        Time.timeScale = 0;
         endLevelGroup.SetActive(true);
+    }
+
+    public void ResetLevel()
+    {
+        EventSystem.current.GetComponent<EventSystem>().SetSelectedGameObject(null);
+        Time.timeScale = 1;
+        LevelManager.Instance.ResetLevel();
+        endLevelGroup.SetActive(false);
     }
 
     public void LoadNextLevel()
     {
-        endLevelGroup.SetActive(false);
+        EventSystem.current.GetComponent<EventSystem>().SetSelectedGameObject(null);
+        Time.timeScale = 1;
         LevelManager.Instance.LoadNextLevel();
+        endLevelGroup.SetActive(false);
     }
 
     public void ReturnToMenu()

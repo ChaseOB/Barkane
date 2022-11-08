@@ -22,24 +22,36 @@ namespace BarkaneEditor
         [SerializeField] private Theme[] themes;
         public static Theme Theme => Instance.themes[(int)Instance.themeChoice];
 
-        public static VFXManager Instance { get; private set; }
+        private static VFXManager _instance;
+        public static VFXManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = GameObject.FindObjectOfType<VFXManager>();
+                }
+
+                return _instance;
+            }
+        }
 
 #if UNITY_EDITOR
         [UnityEditor.Callbacks.DidReloadScripts]
         public static void DidReloadScripts()
         {
             var singleton = FindObjectOfType<VFXManager>();
-            if (singleton)
-            {
-                singleton.Refresh();
-            }
+            //if (singleton)
+            //{
+            //    singleton.Refresh();
+            //}
         }
 #endif
 
         internal void Refresh()
         {
-            Instance = this;
-
+            _instance = this;
+            UpdateTheme();
             if (themes == null || themes.Length != System.Enum.GetNames(typeof(ThemeChoice)).Length)
             {
                 throw new UnityException("Theme assets are referenced incorrectly in VFXManager.");
@@ -49,6 +61,14 @@ namespace BarkaneEditor
             foreach (var s in FindObjectsOfType<MonoBehaviour>())
             {
                 if (s is IRefreshable) (s as IRefreshable).Refresh();
+            }
+        }
+
+        internal void UpdateTheme()
+        {
+            foreach (PaperSquareFace p in FindObjectsOfType<PaperSquareFace>())
+            {
+                p.UpdateTheme(Theme);
             }
         }
 

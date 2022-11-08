@@ -2,7 +2,9 @@ using BarkaneEditor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using System;
+using Random = UnityEngine.Random;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
@@ -22,7 +24,9 @@ public class SquareSide : MonoBehaviour, IRefreshable
     public Material MaterialPrototype => materialPrototype;
 
     public (Vector3[], Vector3[]) sprinkles;
+    // A: unsure why this is needed
     public Transform sprinkleParent;
+
 
     void IRefreshable.Refresh()
     {
@@ -58,13 +62,14 @@ public class SquareSide : MonoBehaviour, IRefreshable
     }
 
 
-    private void Update()
-    {
-        if (materialInstance != null)
-        {
-            materialInstance.SetVector("YOverride", transform.up);
-        }
-    }
+
+    //private void Update()
+    //{
+    //    if (materialInstance != null)
+    //    {
+    //        materialInstance.SetVector("YOverride", transform.up);
+    //    }
+    //}
 
     public void UpdateMesh()
     {
@@ -79,30 +84,78 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
         PushData();
 
-        while (transform.childCount > 0)
-        {
-            if (Application.isEditor)
+#if UNITY_EDITOR
+        var sprinkleCount = sprinkleVerts.Length;
+
+        var paperIsPrefab = LevelEditorManager.IsEditingPrefab;
+        var prefabRoot = paperIsPrefab ?
+            PrefabUtility.GetOutermostPrefabInstanceRoot(this)
+            : null as GameObject;
+
+        if (paperIsPrefab)
             {
-                DestroyImmediate(transform.GetChild(0).gameObject);
+                foreach (Transform child in sprinkleParent.transform)
+                {
+                    Destroy(child.gameObject);
+                }
             } else
             {
-                Destroy(transform.GetChild(0).gameObject);
-                //throw new UnityException("VFXManager should not be evoked in the game!");
+                 foreach (Transform child in sprinkleParent.transform)
+                {
+                    DestroyImmediate(child.gameObject);
+                }
             }
+
+
+        // Debug.Log($"Editing square side of prefab { prefabRoot }");
+        var newlyAdded = sprinkleParent.transform.childCount < sprinkleCount ?
+            new GameObject[sprinkleCount - sprinkleParent.transform.childCount]
+            : new GameObject[0];
+
+
+
+        if (sprinkleParent.transform.childCount > sprinkleCount)
+        {
+            if (paperIsPrefab)
+            {
+                for (int i = sprinkleParent.transform.childCount; i < sprinkleCount; i++)
+                {
+                    var child = sprinkleParent.transform.GetChild(i);
+                    child.gameObject.SetActive(false);
+                }
+            } else
+            {
+                for (int i = sprinkleCount; i > sprinkleParent.transform.childCount; i--)
+                {
+                    DestroyImmediate(sprinkleParent.transform.GetChild(i - 1));
+                }
+            }
+        }
+
+        for (int i = 0; i < newlyAdded.Length; i++)
+        {
+            newlyAdded[i] = Instantiate(VFXManager.Theme.Sprinkle, transform);
+            newlyAdded[i].transform.parent = sprinkleParent;
         }
 
         //if (materialPrototype.shader == Shader.Find("Paper") && materialPrototype.GetInt("_UseSprinkles") == 1) //C: No GetBool, need to use GetInt. Also this is broken lol
         //{
-            for (int i = 0; i < sprinkleVerts.Length; i++)
-            {
-                var go = Instantiate(VFXManager.Theme.Sprinkle, transform);
-                //go.transform.parent = sprinkleParent;
-                go.transform.localPosition = sprinkleVerts[i];
-                go.transform.up = transform.rotation * sprinkleNorms[i];
-                go.transform.RotateAround(go.transform.up, UnityEngine.Random.Range(0, 360));
-            }
+        for (int i = 0; i < sprinkleCount; i++)
+        {
+            var sprinkle = sprinkleParent.transform.GetChild(i);
+            sprinkle.localPosition = sprinkleVerts[i];
+            sprinkle.up = transform.rotation * sprinkleNorms[i];
+            sprinkle.Rotate(sprinkle.up, Random.value * 360f);
+            sprinkle.gameObject.SetActive(true);
+        }
+
+        if (paperIsPrefab && prefabRoot != null)
+        {
+            PrefabUtility.ApplyPrefabInstance(prefabRoot, InteractionMode.AutomatedAction);
+        }
         //}
-        
+#endif
+
     }
 
     /// <summary>
@@ -135,7 +188,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
     {
         Debug.Log("changing mesh");
         mRenderer.enabled = val;
-       // sprinkleParent.gameObject.SetActive(val);
+        sprinkleParent.gameObject.SetActive(val);
     }
     #endregion
 }
