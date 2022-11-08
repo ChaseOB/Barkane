@@ -85,7 +85,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
         PushData();
 
 #if UNITY_EDITOR
-        var sprinkleCount = sprinkleVerts.Length;
+       /* var sprinkleCount = sprinkleVerts.Length;
 
         var paperIsPrefab = LevelEditorManager.IsEditingPrefab;
         var prefabRoot = paperIsPrefab ?
@@ -148,11 +148,11 @@ public class SquareSide : MonoBehaviour, IRefreshable
             sprinkle.Rotate(sprinkle.up, Random.value * 360f);
             sprinkle.gameObject.SetActive(true);
         }
-
+        
         if (paperIsPrefab && prefabRoot != null)
         {
             PrefabUtility.ApplyPrefabInstance(prefabRoot, InteractionMode.AutomatedAction);
-        }
+        }*/
         //}
 #endif
 
