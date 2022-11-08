@@ -25,7 +25,7 @@ public class GlowStick : MonoBehaviour
     public void SetFaces((GameObject, GameObject) one, (GameObject, GameObject) two)
     {
         (m_FaceA, m_FaceB) = jointSide ? one : two;
-        if (bones.Length != 5 || bones.Contains(null))
+        if (bones.Length != 4 || bones.Contains(null))
             throw new UnityException("Bones Not Updated Correctly");
         FaceAView = m_FaceA;
         FaceBView = m_FaceB;
@@ -65,10 +65,10 @@ public class GlowStick : MonoBehaviour
         transform.localPosition = Vector3.zero;
 
         // always pin the ends
-        bones[0].position = pJoint + nJ2A * halfLength + nA * elevation;
-        bones[0].up = -nJ2A;
-        bones[4].position = pJoint + nJ2B * halfLength + nB * elevation;
-        bones[4].up = nJ2B;
+        // bones[0].position = pJoint + nJ2A * halfLength + nA * elevation;
+        // bones[0].up = -nJ2A;
+        // bones[4].position = pJoint + nJ2B * halfLength + nB * elevation;
+        // bones[4].up = nJ2B;
 
         // folded over, tricky case...
         if (a2B.sqrMagnitude < critical)
