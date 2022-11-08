@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <SplitView style="align-items: center; justify-content: center;">
+        <ui:VisualElement name="Top" style="min-width: 50%; justify-content: flex-start; align-items: center; width: 50%; height: 453px;">
+            <ui:Label text="Top Half" display-tooltip-when-elided="true" name="TopLabel" style="margin-bottom: 5px;" />
+            <FaceInspectorView name="TopInspector" style="width: 100%; height: auto; flex-grow: 0; min-width: 150px; max-width: none; flex-shrink: 0; margin-left: 10px; margin-right: 10px; padding-left: 10px; padding-right: 10px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="Bottom" style="min-width: auto; align-items: center; justify-content: flex-start; flex-basis: auto; flex-grow: 0; width: 50%;">
+            <ui:Label text="Bottom Half" display-tooltip-when-elided="true" name="BottomLabel" style="margin-bottom: 5px;" />
+            <FaceInspectorView name="BottomInspector" style="min-width: 150px; flex-grow: 0; flex-shrink: 0; width: 75%; margin-left: 10px; margin-right: 10px;" />
+        </ui:VisualElement>
+    </SplitView>
+</ui:UXML>

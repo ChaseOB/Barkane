@@ -116,7 +116,7 @@ public class LevelManager : Singleton<LevelManager>
         playerInstance= Instantiate(playerPrefab, playerPos.position, Quaternion.identity);
 
         FollowTarget.Instance.SetTargetAndPosition(playerInstance.GetComponent<PlayerMovement>().raycastStart);    
-        FindObjectOfType<VFXManager>().Refresh();
+        VFXManager.Instance.Refresh();
         FindObjectOfType<TileSelector>().ReloadReferences();
     }
 
@@ -156,20 +156,6 @@ public class LevelManager : Singleton<LevelManager>
         if(UIManager.Instance != null)
             UIManager.Instance.ToggleGroup(true);
         ActionLockManager.Instance.ForceRemoveLock();
-    }
-
-    private void OnResetLevel(InputValue value)
-    {
-       // if(value.isPressed && instantiatedLevel != null)
-         //   ResetLevel();
-    }
-
-    private void OnCancel(InputValue value)
-    {
-        //if(value.isPressed){
-        //    LevelManager.Instance.UnloadLevel();
-        //    SceneManager.LoadScene(0);
-        //}
     }
 
     public void ReturnToMenu() {
