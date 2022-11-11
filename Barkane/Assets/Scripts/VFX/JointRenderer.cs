@@ -23,6 +23,7 @@ public class JointRenderer : MonoBehaviour, IRefreshable
     [SerializeField] MeshFilter filter;
     [SerializeField] MeshRenderer meshRenderer;
 
+    public ((GameObject, GameObject), (GameObject, GameObject)) facePairs => ((a1.gameObject, b1.gameObject), (a2.gameObject, b2.gameObject));
     [SerializeField, HideInInspector] private SquareSide a1, a2, b1, b2;
     // base color for tile sides
     [SerializeField, HideInInspector] private Color colorA1, colorB1, colorA2, colorB2;
@@ -237,17 +238,14 @@ public class JointRenderer : MonoBehaviour, IRefreshable
         {
             case 0: return;
             case 1:
-                var stick = sticks[0];
-                stick.SetFaces((a1.gameObject, b1.gameObject), (a2.gameObject, b2.gameObject));
+                sticks[0].SetFaces(facePairs);
                 break;
             case 2:
                 var (stick1, stick2) = (sticks[0], sticks[1]);
                 if (stick1.SameSide(stick2))
                     throw new UnityException("When 2 glowsticks on the same joint, they must be on the different side of the joint!");
-                var side1 = (a1.gameObject, b1.gameObject);
-                var side2 = (a2.gameObject, b2.gameObject);
-                stick1.SetFaces(side1, side2);
-                stick2.SetFaces(side1, side2);
+                stick1.SetFaces(facePairs);
+                stick2.SetFaces(facePairs);
                 break;
             default:
                 throw new UnityException("There cannot be more than 2 glowsticks, at most 1 on each side of the joint!");

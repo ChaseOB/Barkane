@@ -6,22 +6,29 @@ using System.Linq;
 [ExecuteAlways]
 public class GlowStick : MonoBehaviour
 {
-    public GameObject FaceA => m_FaceA;
-    public GameObject FaceB => m_FaceB;
-
     [SerializeField] private bool jointSide; // true = side 1, false = side 2
     [SerializeField] private float elevation = .05f; // how far the glowstick "levitates" from the paper surface
     [SerializeField] private float halfLength = .5f; // how far the glowstick ends are from the joint
-    [SerializeField, Range(0, 0.2f)] private float critical = .05f;
     [SerializeField] private Transform[] bones;
 
-    private GameObject m_FaceA, m_FaceB;
+    [SerializeField] private GameObject m_FaceA, m_FaceB;
 
     [SerializeField] private SquareRenderSettings squareRenderSettings;
 
-#if UNITY_EDITOR
-    public void SetFaces((GameObject, GameObject) one, (GameObject, GameObject) two)
+    public void Start()
     {
+        if (Application.isPlaying)
+        {
+            // actively pull from parent
+            var jr = transform.parent.GetComponentInChildren<JointRenderer>();
+            SetFaces(jr.facePairs);
+        }
+    }
+
+#if UNITY_EDITOR
+    public void SetFaces(((GameObject, GameObject), (GameObject, GameObject)) pairs)
+    {
+        var (one, two) = pairs;
         (m_FaceA, m_FaceB) = jointSide ? one : two;
         if (bones.Length != 4 || bones.Contains(null))
             throw new UnityException("Bones Not Updated Correctly");
@@ -32,8 +39,13 @@ public class GlowStick : MonoBehaviour
 
     private void Update()
     {
-        if (m_FaceA == null || m_FaceB == null) return;
-
+        if (m_FaceA == null || m_FaceB == null)
+        {
+            if (Application.isPlaying)
+            {
+                Debug.LogError("glowstick faces not set appropriately");
+            }
+        }
         UpdateBones();
     }
 
@@ -60,11 +72,11 @@ public class GlowStick : MonoBehaviour
         var angFold = Vector3.SignedAngle(nJ2A, nJ2B, tJ);
         var nJ = Quaternion.AngleAxis(angFold / 2f, tJ) * -nJ2A;
 
-        if (angFold > 5f && angFold < 89f)
+        if (angFold > 10f && angFold < 80f)
             throw new UnityException("Cannot fold inwards");
 
         // folding outwards (270 degrees ~ 0 degrees, plus some margin)
-        if (angFold > -89f && angFold < 5f)
+        if (angFold > -80f && angFold < 10f)
         {
             // folding beyond 270 degrees
             bones[1].position = pJoint + nA * elevation;
@@ -75,7 +87,7 @@ public class GlowStick : MonoBehaviour
             bones[3].up = nJ2B;
         }
         // folding outwards (180 ~ 270 degrees)
-        else if (angFold <= -89f)
+        else if (angFold <= -80f)
         {
             bones[1].position = pJoint + nA * elevation;
             bones[2].position = pJoint + nJ * elevation;
