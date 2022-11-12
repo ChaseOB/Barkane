@@ -23,17 +23,13 @@ public class FoldAnimator : MonoBehaviour
 
 
 
-    //undo/redo
-    public Stack<Action> foldStack = new Stack<Action>();
-
-
     private void Start() 
     {
         foldablePaper = FindObjectOfType<FoldablePaper>();
     }
 
     //C: Tries to fold the given objects. Returns true and folds if successful, returns false if this fold is not possible.
-    public bool TryFold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
+    public bool TryFold(FoldData fd)
     {
         Debug.Log("trying to fold");
 
@@ -43,9 +39,9 @@ public class FoldAnimator : MonoBehaviour
         }
         //C: we need to wait until FixedUpdate to check the colliders. So we Call CCF, then if that passes, we know we've created collider data
         // that we need to call CheckColliders. If that passes, then it will call fold. 
-        if(CheckCanFold(foldJoint, foldObjects, center, axis, degrees)) 
+        if(CheckCanFold(fd)) 
         {
-            checkCoroutine = StartCoroutine(WaitForColliderCheck(foldJoint, foldObjects, center, axis, degrees));
+            checkCoroutine = StartCoroutine(WaitForColliderCheck(fd));
             //AudioManager.Instance?.Play("Fold");
            // Fold(foldJoint, foldObjects, center, axis, degrees);
             return true;
@@ -69,14 +65,14 @@ public class FoldAnimator : MonoBehaviour
         }
     }
 
-    public IEnumerator WaitForColliderCheck(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
+    public IEnumerator WaitForColliderCheck(FoldData fd)
     {
         Debug.Log("enter CR");
         yield return new WaitUntil(() => raycastCheckDone);
         Debug.Log("raycast done");
         raycastCheckDone = false;
         if(raycastCheckReturn){
-            Fold(foldJoint, foldObjects, center, axis, degrees);
+            Fold(fd);
             raycastCheckReturn = false;
         }
         else
@@ -88,7 +84,7 @@ public class FoldAnimator : MonoBehaviour
         crDone = true;
     }
 
-    public bool CheckCanFold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
+    public bool CheckCanFold(FoldData fd)
     {
         if(isFolding) {
             Debug.Log("Cannot fold: You can't do 2 folds at once");
@@ -130,7 +126,7 @@ public class FoldAnimator : MonoBehaviour
             {
                 Debug.Log("Check Clip Square");
                 GameObject parent = new GameObject();
-                parent.transform.position = center;
+                parent.transform.position = fd.center;
                 List<GameObject> activeSides = new List<GameObject>();
                 GameObject t1 = new GameObject();
                 GameObject t2 = new GameObject();
@@ -146,8 +142,8 @@ public class FoldAnimator : MonoBehaviour
                // }
                 //C: if the active sides of this stack are both in or both out of the fold, then they won't clip
                 if(activeSides.Count == 2 &&
-                    foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject)
-                    != foldObjects.foldSquares.Contains(activeSides[1].GetComponentInParent<PaperSquare>().gameObject))
+                    fd.foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject)
+                    != fd.foldObjects.foldSquares.Contains(activeSides[1].GetComponentInParent<PaperSquare>().gameObject))
                 {
                     /*C: Else, check position of the ends of the normal vectors before and after fold
                     // if there is no clipping, then the points at the ends of the normals will be farther apart (point away)
@@ -156,18 +152,18 @@ public class FoldAnimator : MonoBehaviour
                     */
                     t1.transform.SetPositionAndRotation(activeSides[0].transform.position, activeSides[0].transform.rotation);
                     t2.transform.SetPositionAndRotation(activeSides[1].transform.position, activeSides[1].transform.rotation);        
-                    if(foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject))
+                    if(fd.foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject))
                         t1.transform.parent = parent.transform;
                     else
                         t2.transform.parent = parent.transform;    
 
-                    parent.transform.RotateAround(center, axis, degrees);
+                    parent.transform.RotateAround(fd.center, fd.axis, fd.degrees);
                     Vector3 t3 = t1.transform.position + t1.transform.up * 0.1f;
                     Vector3 t4 = t2.transform.position + t2.transform.up * 0.1f;
                     float d1 = Vector3.Distance(t3, t4);
                     Debug.DrawLine(t3, t4, Color.blue, 30);
                     
-                    parent.transform.RotateAround(center, axis, 180);
+                    parent.transform.RotateAround(fd.center, fd.axis, 180);
                     t3 = t1.transform.position + t1.transform.up * 0.1f;
                     t4 = t2.transform.position + t2.transform.up * 0.1f;   
                     float d2 = Vector3.Distance(t3, t4);
@@ -188,13 +184,6 @@ public class FoldAnimator : MonoBehaviour
                 Destroy(parent);
             }
         }
-
-        FoldData fd = new FoldData();
-        fd.axis = axis;
-        fd.center = center;
-        fd.degrees = degrees;
-        fd.foldJoint = foldJoint;
-        fd.foldObjects = foldObjects;
 
         //C: need to transfer data out to be used for raycast stuff
         foldData = fd;
@@ -269,24 +258,26 @@ public class FoldAnimator : MonoBehaviour
         return true;
     }
 
-    //C: folds the given list of squares along the given line by the given number of degrees
-    public void Fold(PaperJoint foldJoint, FoldObjects foldObjects, Vector3 center, Vector3 axis, float degrees)
+    public void Fold(FoldData fd, bool fromStack = false, bool undo = false)
     {
         if(!isFolding) 
         {
-            var foldJointRenderer = foldJoint.JointRenderer;
+            var foldJointRenderer = fd.foldJoint.JointRenderer;
             if(foldJointRenderer != null)
-                StartCoroutine(FoldHelper(foldObjects, center, axis, degrees, foldObjects.DisableJointMeshes, foldObjects.EnableJointMeshes));
+                StartCoroutine(FoldHelper(fd, fromStack, undo, fd.foldObjects.DisableJointMeshes, fd.foldObjects.EnableJointMeshes));
                 //StartCoroutine(FoldHelper(foldObjects, center, axis, degrees, foldJointRenderer.DisableMeshAction, foldJointRenderer.EnableMeshAction));
             else
-                StartCoroutine(FoldHelper(foldObjects, center, axis, degrees));
+                StartCoroutine(FoldHelper(fd, fromStack, undo));
         }
             
     }
 
     
-    private IEnumerator FoldHelper(FoldObjects objectsToFold, Vector3 center, Vector3 axis, float degrees, System.Action beforeFold = null, System.Action afterFold = null)
+    private IEnumerator FoldHelper(FoldData fd, bool fromStack = false, bool undo = false, System.Action beforeFold = null, System.Action afterFold = null)
     {
+        FoldObjects objectsToFold = fd.foldObjects;
+        Vector3 center = fd.center;
+
         AudioManager.Instance?.Play("Fold");
         isFolding = true;
         GameObject tempObj = new GameObject(); //used for reparenting/rotating
@@ -314,7 +305,7 @@ public class FoldAnimator : MonoBehaviour
         while (t < foldDuration)
         {
             t += Time.deltaTime;
-            tempObj.transform.RotateAround(center, axis, (degrees / foldDuration) * Time.deltaTime);
+            tempObj.transform.RotateAround(center, fd.axis, (fd.degrees / foldDuration) * Time.deltaTime);
             wait--;
             if(wait == 0){
                 UpdateSquareVisibility(objectsToFold);
@@ -324,7 +315,7 @@ public class FoldAnimator : MonoBehaviour
         
         //UpdateSquareVisibility(objectsToFold);
 
-        target.transform.RotateAround(center, axis, degrees);
+        target.transform.RotateAround(center, fd.axis, fd.degrees);
         tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 
         foreach(GameObject o in objectsToFold.foldSquares)
@@ -347,7 +338,14 @@ public class FoldAnimator : MonoBehaviour
 
         if(afterFold != null)
              afterFold();
-        UIManager.UpdateFoldCount(++foldCount);
+        if(undo)
+            foldCount--;
+        else
+            foldCount++;
+        UIManager.UpdateFoldCount(foldCount);
+        if(!fromStack && !undo) {
+            UndoRedoManager.Instance.AddAction(fd);
+        }
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 
@@ -485,7 +483,10 @@ public class FoldAnimator : MonoBehaviour
                     }
                 }
             }
+
     }
+
+   
 }
 
 //C: we should pass this insead of a bunch of params but i have 90 min to make this game work aaaaa
@@ -497,18 +498,28 @@ public class FoldData: Action
     public Vector3 axis;
     public float degrees;
 
+    public FoldData() {}
+
+    public FoldData( PaperJoint fj, FoldObjects fo, Vector3 c, Vector3 a, float deg) {
+        foldJoint = fj;
+        foldObjects = fo;
+        center = c;
+        axis = a;
+        degrees = deg;
+    }
+
     public override Action GetInverse()
     {
         FoldData fd = (FoldData)this.MemberwiseClone();
         fd.degrees *= -1;
         return (Action)fd;
     }
+
+    public override void ExecuteAction(bool undo)
+    {
+       GameObject.FindObjectOfType<FoldAnimator>().Fold(this, true, undo);
+    }
 }
 
-//C: can be a fold or a player movement
-public abstract class Action
-{
-    public abstract Action GetInverse();
-   
-}
+
 

@@ -61,17 +61,20 @@ public class PlayerMovement : MonoBehaviour
         //C:If the raycast is true, then there is something in between the player and the movable location
     }
 
-    private void Move()
+    public void Move(bool fromStack = false, bool undo = false)
     {
-        if(CheckValidMove())
-            StartCoroutine(MoveHelper());
+        if(undo || CheckValidMove())
+            StartCoroutine(MoveHelper(fromStack, undo));
     }
 
-    private IEnumerator MoveHelper()
+    private IEnumerator MoveHelper(bool fromStack, bool undo)
     {
         isMoving = true;
         Vector3 curr = transform.position;
         Vector3 goal = targetPos.transform.position;
+        if(undo){
+            goal += 2 * (curr - goal);
+        }
         float t = 0;
         while (t < moveDuration)
         {
@@ -84,16 +87,21 @@ public class PlayerMovement : MonoBehaviour
         }
         transform.position = goal;
         isMoving = false;
+        if(!fromStack && !undo) {
+            PlayerMove pm = new PlayerMove();
+            pm.movetype = 1;
+            UndoRedoManager.Instance.AddAction(pm);
+        }
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 
-    private void Rotate(float degrees)
+    public void Rotate(float degrees, bool fromStack = false, bool undo = false)
     {
         if(ActionLockManager.Instance.TryTakeLock(this))
-            StartCoroutine(RotateHelper(degrees));
+            StartCoroutine(RotateHelper(degrees, fromStack, undo));
     }
 
-    private IEnumerator RotateHelper(float degrees)
+    private IEnumerator RotateHelper(float degrees, bool fromStack, bool undo)
     {
         Quaternion currRot = transform.rotation;
         isMoving = true;
@@ -106,9 +114,40 @@ public class PlayerMovement : MonoBehaviour
         }
         transform.rotation = currRot * Quaternion.Euler(0, degrees, 0);
         isMoving = false;
+        if(!fromStack && !undo) {
+            PlayerMove pm = new PlayerMove();
+            pm.movetype = (degrees > 0 ? 0: 2);
+            UndoRedoManager.Instance.AddAction(pm);
+        }
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 
     #endregion
     
 }
+
+public class PlayerMove: Action 
+{
+    //C: 0 = rotate right, 1 = move forward, 2 = rotate left, 3 = move back
+    public int movetype = 0;
+    public override Action GetInverse()
+    {
+        PlayerMove pm = (PlayerMove)this.MemberwiseClone();
+        pm.movetype = (this.movetype + 2) % 4;
+
+        return (Action) pm;
+    }
+
+    public override void ExecuteAction(bool undo)
+    {
+        PlayerMovement pm = GameObject.FindObjectOfType<PlayerMovement>();
+        if(movetype == 0)
+            pm.Rotate(90, true, undo);
+        else if(movetype == 2)
+            pm.Rotate(-90, true, undo);
+        else{
+            pm.Move(true, undo);
+        }
+    }
+}
+
