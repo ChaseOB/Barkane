@@ -80,7 +80,7 @@ public class FoldablePaper : MonoBehaviour
 
 
     //C: Uses a modified DFS to determine which objects should be folded
-    public void FindFoldObjects()
+    public FoldObjects FindFoldObjects()
     {
         visitedJoints.Clear();
         visitedSquares.Clear();
@@ -96,6 +96,7 @@ public class FoldablePaper : MonoBehaviour
 
         playerSide.OnFoldHighlight(false);
         foldObjects.OnFoldHighlight(true);
+        return foldObjects;
     }
 
     private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
@@ -163,7 +164,6 @@ public class FoldablePaper : MonoBehaviour
         }
 
         foreach (List<PaperSquare> list in dict.Values){
-           // if(list.Count > 1)
                 overlapList.Add(list);
         }
         return overlapList;
