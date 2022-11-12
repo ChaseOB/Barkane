@@ -8,8 +8,10 @@ public class GlowStick : MonoBehaviour
 {
     [SerializeField] private bool jointSide; // true = side 1, false = side 2
     [SerializeField] private float elevation = .05f; // how far the glowstick "levitates" from the paper surface
-    [SerializeField] private float halfLength = .5f; // how far the glowstick ends are from the joint
+    [SerializeField] private float halfLength = .5f;
+    private readonly float calibrateLength = .4657456f; // how far the glowstick ends are from the joint, this is measured once and kept
     [SerializeField] private Transform[] bones;
+    [SerializeField] private Transform bonesEnd;
 
     [SerializeField] private GameObject m_FaceA, m_FaceB;
 
@@ -20,9 +22,16 @@ public class GlowStick : MonoBehaviour
         if (Application.isPlaying)
         {
             // actively pull from parent
-            var jr = transform.parent.GetComponentInChildren<JointRenderer>();
-            SetFaces(jr.facePairs);
+            PullFaces();
         }
+        // calibrateLength = (bonesEnd.position - bones[3].position).magnitude;
+        // Debug.Log(calibrateLength);
+    }
+
+    private void PullFaces()
+    {
+        var jr = transform.parent.GetComponentInChildren<JointRenderer>();
+        SetFaces(jr.facePairs);
     }
 
 #if UNITY_EDITOR
@@ -37,18 +46,27 @@ public class GlowStick : MonoBehaviour
     public bool SameSide(GlowStick other) => jointSide == other.jointSide;
 #endif
 
-    private void Update()
+    private void LateUpdate()
     {
         if (m_FaceA == null || m_FaceB == null)
         {
             if (Application.isPlaying)
             {
-                Debug.LogError("glowstick faces not set appropriately");
+                try
+                {
+                    PullFaces();
+                } catch (System.Exception)
+                {
+                    Debug.LogError("glowstick faces not set appropriately");
+                }
             }
+        } else
+        {
+            UpdateBones();
         }
-        UpdateBones();
     }
 
+    public float angFold;
 
     private void UpdateBones()
     {
@@ -69,10 +87,10 @@ public class GlowStick : MonoBehaviour
 
         // decide midpoint and ending tip depending on folding case
         var tJ = Vector3.Cross(nA, -nJ2A); // tangent along joint
-        var angFold = Vector3.SignedAngle(nJ2A, nJ2B, tJ);
+        angFold = Vector3.SignedAngle(nJ2A, nJ2B, tJ);
         var nJ = Quaternion.AngleAxis(angFold / 2f, tJ) * -nJ2A;
 
-        if (angFold > 10f && angFold < 80f)
+        if (angFold >= 10f && angFold < 80f)
             throw new UnityException("Cannot fold inwards");
 
         // folding outwards (270 degrees ~ 0 degrees, plus some margin)
@@ -80,8 +98,9 @@ public class GlowStick : MonoBehaviour
         {
             // folding beyond 270 degrees
             bones[1].position = pJoint + nA * elevation;
-            bones[2].position = pJoint + nJ * elevation;
+            bones[2].position = pJoint + nJ * (elevation + squareRenderSettings.margin);
             bones[3].position = pJoint + nB * elevation;
+            bones[3].localScale = new Vector3(1, halfLength / calibrateLength, 1);
             bones[1].up = (bones[2].position - bones[1].position).normalized;
             bones[2].up = (bones[3].position - bones[2].position).normalized;
             bones[3].up = nJ2B;
@@ -92,6 +111,7 @@ public class GlowStick : MonoBehaviour
             bones[1].position = pJoint + nA * elevation;
             bones[2].position = pJoint + nJ * elevation;
             bones[3].position = pJoint + nB * elevation;
+            bones[3].localScale = new Vector3(1, halfLength / calibrateLength, 1);
             bones[1].up = (bones[2].position - bones[1].position).normalized;
             bones[2].up = (bones[3].position - bones[2].position).normalized;
             bones[3].up = nJ2B;
@@ -101,6 +121,7 @@ public class GlowStick : MonoBehaviour
         {
             bones[1].position = pJoint + nA * elevation + nJ2A * (elevation + squareRenderSettings.margin);
             bones[3].position = pJoint + nB * elevation + nJ2B * (elevation + squareRenderSettings.margin);
+            bones[3].localScale = new Vector3(1, (halfLength - elevation - squareRenderSettings.margin) / calibrateLength, 1);
             bones[2].position = (bones[1].position + bones[3].position) / 2f;
             bones[1].up = (bones[2].position - bones[1].position).normalized;
             bones[2].up = (bones[3].position - bones[1].position).normalized;

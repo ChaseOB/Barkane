@@ -47,16 +47,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jointSide: 1
   elevation: 0.05
-  halfLength: 0.5
-  critical: 0.0914
   bones:
   - {fileID: 6519577153748203158}
   - {fileID: 2790363164479904285}
   - {fileID: 3904911025725626085}
   - {fileID: 2254208680632489371}
+  bonesEnd: {fileID: 707750568047527359}
+  m_FaceA: {fileID: 0}
+  m_FaceB: {fileID: 0}
   squareRenderSettings: {fileID: 11400000, guid: 00da3e5a279381f4db225a4aa9679d6b, type: 2}
-  FaceAView: {fileID: 0}
-  FaceBView: {fileID: 0}
 --- !u!1001 &82241326495195791
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -125,6 +124,11 @@ PrefabInstance:
 --- !u!4 &481488723996247396 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 60c354d617be56d4bb009694ecca2d4d, type: 3}
+  m_PrefabInstance: {fileID: 82241326495195791}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &707750568047527359 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8577596522301511888, guid: 60c354d617be56d4bb009694ecca2d4d, type: 3}
   m_PrefabInstance: {fileID: 82241326495195791}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &2254208680632489371 stripped
