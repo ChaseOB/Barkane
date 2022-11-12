@@ -64,6 +64,14 @@ namespace BarkaneEditor
             }
         }
 
+        internal void Refresh<T>() where T: Object, IRefreshable
+        {
+            foreach (var t in FindObjectsOfType<MonoBehaviour>())
+            {
+                if (t is T) (t as T).Refresh();
+            }
+        }
+
         internal void UpdateTheme()
         {
             foreach (PaperSquareFace p in FindObjectsOfType<PaperSquareFace>())

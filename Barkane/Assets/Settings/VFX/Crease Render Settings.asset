@@ -15,5 +15,5 @@ MonoBehaviour:
   creaseMaterial: {fileID: 2100000, guid: 9e1dfe9053d0eaf448923530f341cbbf, type: 2}
   creaseSegmentCount: 22
   creaseDeviation: {x: 0.02, y: 0.01, z: 0.02}
-  tintCorrection: 0.07
-  overlapCreaseCorrectionFactor: 0.0085
+  tintCorrection: 0
+  overlapCreaseCorrectionFactor: 0.0094
