@@ -21,6 +21,12 @@ public class FoldAnimator : MonoBehaviour
     public bool raycastCheckReturn = false;
     public bool crDone = false;
 
+
+
+    //undo/redo
+    public Stack<Action> foldStack = new Stack<Action>();
+
+
     private void Start() 
     {
         foldablePaper = FindObjectOfType<FoldablePaper>();
@@ -483,12 +489,26 @@ public class FoldAnimator : MonoBehaviour
 }
 
 //C: we should pass this insead of a bunch of params but i have 90 min to make this game work aaaaa
-public class FoldData 
+public class FoldData: Action 
 {
     public PaperJoint foldJoint;
     public FoldObjects foldObjects;
     public Vector3 center;
     public Vector3 axis;
     public float degrees;
+
+    public override Action GetInverse()
+    {
+        FoldData fd = (FoldData)this.MemberwiseClone();
+        fd.degrees *= -1;
+        return (Action)fd;
+    }
+}
+
+//C: can be a fold or a player movement
+public abstract class Action
+{
+    public abstract Action GetInverse();
+   
 }
 

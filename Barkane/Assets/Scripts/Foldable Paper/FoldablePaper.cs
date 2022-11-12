@@ -62,15 +62,11 @@ public class FoldablePaper : MonoBehaviour
     }
   
     private void CalculateCenter() {
-        Vector3 center = Vector3.zero;
-        int i = 0;
-        foreach(PaperSquare ps in paperSquares){
-            center += ps.transform.localPosition;
-            i++;
+        List<Vector3> vectors = new List<Vector3>();
+         foreach(PaperSquare ps in paperSquares){
+            vectors.Add(ps.transform.localPosition);
         }
-        if(i > 0)
-            center /= i;
-        centerPos = center;
+        CoordUtils.CalculateCenter(vectors);
     }
 
     private void IntializeSquarePosList()
@@ -223,6 +219,15 @@ public class FoldObjects {
     public void OnFold(bool foldStart)
     {
         
+    }
+
+    public Vector3 CalculateCenter()
+    {
+        List<Vector3> vectors = new List<Vector3>();
+        foreach(GameObject ps in foldSquares){
+            vectors.Add(ps.transform.position);
+        }
+        return CoordUtils.CalculateCenter(vectors);
     }
 
 }

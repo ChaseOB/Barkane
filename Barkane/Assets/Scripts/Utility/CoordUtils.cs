@@ -33,4 +33,17 @@ public static class CoordUtils
         return(Vector3.Magnitude(a-b) < 0.0001f);
     }
 
+
+    public static Vector3 CalculateCenter(List<Vector3> vectors) {
+        Vector3 center = Vector3.zero;
+        int i = 0;
+        foreach(Vector3 v in vectors){
+            center += v;
+            i++;
+        }
+        if(i > 0)
+            center /= i;
+       return center;
+    }
+
 }
