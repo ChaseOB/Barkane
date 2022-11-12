@@ -238,14 +238,14 @@ public class JointRenderer : MonoBehaviour, IRefreshable
         {
             case 0: return;
             case 1:
-                sticks[0].SetFaces(facePairs);
+                sticks[0].PullFaces();
                 break;
             case 2:
                 var (stick1, stick2) = (sticks[0], sticks[1]);
                 if (stick1.SameSide(stick2))
                     throw new UnityException("When 2 glowsticks on the same joint, they must be on the different side of the joint!");
-                stick1.SetFaces(facePairs);
-                stick2.SetFaces(facePairs);
+                stick1.PullFaces();
+                stick2.PullFaces();
                 break;
             default:
                 throw new UnityException("There cannot be more than 2 glowsticks, at most 1 on each side of the joint!");
