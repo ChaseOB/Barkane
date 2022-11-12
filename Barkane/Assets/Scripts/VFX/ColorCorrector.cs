@@ -8,7 +8,7 @@ using BarkaneEditor;
 public class ColorCorrector : MonoBehaviour
 {
     public Color Target;
-    public Material mTarget;
+    public Material materialTarget;
 }
 
 #if UNITY_EDITOR
@@ -22,7 +22,7 @@ public class GammaCorrectorEditor : Editor
         base.OnInspectorGUI();
 
         var t = (target as ColorCorrector).Target;
-        var mat = (target as ColorCorrector).mTarget;
+        var mat = (target as ColorCorrector).materialTarget;
 
         if (GUILayout.Button("Reset to target"))
         {
