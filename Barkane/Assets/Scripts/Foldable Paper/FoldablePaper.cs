@@ -199,6 +199,7 @@ public class FoldObjects {
         {
             JointRenderer jr = go.GetComponent<PaperJoint>()?.JointRenderer;
             jr?.EnableMeshAction();
+            jr?.ShowLine(false);
         }
     }
 
@@ -208,6 +209,7 @@ public class FoldObjects {
         {
             JointRenderer jr = go.GetComponent<PaperJoint>()?.JointRenderer;
             jr?.DisableMeshAction();
+            jr?.ShowLine(true);
         }
     }
 
