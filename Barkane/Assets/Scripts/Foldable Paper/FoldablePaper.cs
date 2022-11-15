@@ -62,15 +62,11 @@ public class FoldablePaper : MonoBehaviour
     }
   
     private void CalculateCenter() {
-        Vector3 center = Vector3.zero;
-        int i = 0;
-        foreach(PaperSquare ps in paperSquares){
-            center += ps.transform.localPosition;
-            i++;
+        List<Vector3> vectors = new List<Vector3>();
+         foreach(PaperSquare ps in paperSquares){
+            vectors.Add(ps.transform.localPosition);
         }
-        if(i > 0)
-            center /= i;
-        centerPos = center;
+        CoordUtils.CalculateCenter(vectors);
     }
 
     private void IntializeSquarePosList()
@@ -84,7 +80,7 @@ public class FoldablePaper : MonoBehaviour
 
 
     //C: Uses a modified DFS to determine which objects should be folded
-    public void FindFoldObjects()
+    public FoldObjects FindFoldObjects()
     {
         visitedJoints.Clear();
         visitedSquares.Clear();
@@ -100,6 +96,7 @@ public class FoldablePaper : MonoBehaviour
 
         playerSide.OnFoldHighlight(false);
         foldObjects.OnFoldHighlight(true);
+        return foldObjects;
     }
 
     private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
@@ -138,8 +135,10 @@ public class FoldablePaper : MonoBehaviour
     public void TryFold(float degrees)
     {
         FindFoldObjects();
-        if(!isComplete && foldJoint != null && foldJoint.canFold)
-            foldAnimator.TryFold(foldJoint, foldObjects, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+        if(!isComplete && foldJoint != null && foldJoint.canFold) {
+            FoldData fd = new FoldData(foldJoint, foldObjects, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+            foldAnimator.TryFold(fd);
+        }
     }
 
 
@@ -167,7 +166,6 @@ public class FoldablePaper : MonoBehaviour
         }
 
         foreach (List<PaperSquare> list in dict.Values){
-           // if(list.Count > 1)
                 overlapList.Add(list);
         }
         return overlapList;
@@ -201,6 +199,7 @@ public class FoldObjects {
         {
             JointRenderer jr = go.GetComponent<PaperJoint>()?.JointRenderer;
             jr?.EnableMeshAction();
+            jr?.ShowLine(false);
         }
     }
 
@@ -210,6 +209,7 @@ public class FoldObjects {
         {
             JointRenderer jr = go.GetComponent<PaperJoint>()?.JointRenderer;
             jr?.DisableMeshAction();
+            jr?.ShowLine(true);
         }
     }
 
@@ -223,6 +223,15 @@ public class FoldObjects {
     public void OnFold(bool foldStart)
     {
         
+    }
+
+    public Vector3 CalculateCenter()
+    {
+        List<Vector3> vectors = new List<Vector3>();
+        foreach(GameObject ps in foldSquares){
+            vectors.Add(ps.transform.position);
+        }
+        return CoordUtils.CalculateCenter(vectors);
     }
 
 }
