@@ -16,6 +16,8 @@ public class ColorCorrector : MonoBehaviour
 public class GammaCorrectorEditor : Editor
 {
     private Color sample;
+    private Color adjust;
+    private Color tint;
 
     public override void OnInspectorGUI()
     {
@@ -35,12 +37,38 @@ public class GammaCorrectorEditor : Editor
 
         var corr = new Color(t.r * t.r / sample.r, t.g * t.g / sample.g, t.b * t.b / sample.b);
         GUILayout.Label("Corrected: ");
+        GUILayout.BeginHorizontal();
         EditorGUILayout.ColorField(corr);
-        if (GUILayout.Button("Correct target color"))
+        if (GUILayout.Button("Apply"))
         {
             mat.SetColor("_Color", corr);
+            adjust = corr;
             VFXManager.Instance.Refresh<SquareSide>();
         }
+        GUILayout.EndHorizontal();
+
+        GUILayout.Label("Adjust base color for finer tuning:");
+        GUILayout.BeginHorizontal();
+        adjust = EditorGUILayout.ColorField(adjust);
+        if (GUILayout.Button("Apply"))
+        {
+            mat.SetColor("_Color", adjust);
+            VFXManager.Instance.Refresh<SquareSide>();
+        }
+
+        GUILayout.EndHorizontal();
+
+        GUILayout.Label("Adjust edge tint:");
+
+        GUILayout.BeginHorizontal();
+        tint = EditorGUILayout.ColorField(adjust);
+        if (GUILayout.Button("Apply"))
+        {
+            mat.SetColor("_EdgeTint", tint);
+            VFXManager.Instance.Refresh<SquareSide>();
+        }
+
+        GUILayout.EndHorizontal();
     }
 }
 
