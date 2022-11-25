@@ -4,6 +4,13 @@ using UnityEngine;
 
 public static class CoordUtils
 {
+    public static Vector3 Clamp(Vector3 v)
+    {
+        return new Vector3(
+            Mathf.Round(v.x), Mathf.Round(v.y), Mathf.Round(v.z)
+            );
+    }
+
     public static (int, int, int) AsCoord(Vector3 v) => (Mathf.RoundToInt(v.x), Mathf.RoundToInt(v.y), Mathf.RoundToInt(v.z));
 
     public static int DiffAxisCount((int, int, int) a, (int, int, int) b)
