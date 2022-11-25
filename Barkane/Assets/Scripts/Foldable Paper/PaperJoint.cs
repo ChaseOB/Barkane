@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using BarkaneJoint;
 
 [ExecuteAlways]
 public class PaperJoint : MonoBehaviour
