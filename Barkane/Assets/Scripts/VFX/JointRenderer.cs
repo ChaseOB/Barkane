@@ -41,6 +41,11 @@ namespace BarkaneJoint
 
         internal JointGeometryData side1Geometry, side2Geometry;
 
+        // buffers
+        Vector3[] verts, norms;
+        Color[] colors;
+        Vector2[] uvs;
+
         /// <summary>
         /// Can be called manually in inspector or automatically by other scene editor utilities.
         /// </summary>
@@ -89,6 +94,7 @@ namespace BarkaneJoint
 
             UpdateColors();
             UpdateGlowstick();
+            RefreshBuffers();
         }
 
         public bool IsAnimating = false;
@@ -113,6 +119,12 @@ namespace BarkaneJoint
             // clamping done internally, no need to pass in both sides separately
             // here side1 chosen
             (side1Geometry, side2Geometry) = JointGeometryData.GetPairs(a1, b1, this);
+            // lock to world space orientation
+            transform.rotation = Quaternion.identity;
+        }
+
+        void LateUpdate()
+        {
             UpdateMesh();
         }
 
@@ -202,12 +214,13 @@ namespace BarkaneJoint
             //        Handles.Label(transform.localToWorldMatrix.MultiplyPoint3x4(vertices[i] + filter.sharedMesh.normals[i] * 0.1f), i.ToString());
             //    }
             //}
-            Gizmos.color = Color.red;
-            Gizmos.DrawRay(transform.position, side1Geometry.nJ);
-            Gizmos.color = Color.blue;
-            Gizmos.DrawRay(transform.position, side1Geometry.nJ2A);
-            Gizmos.color = Color.green;
-            Gizmos.DrawRay(transform.position, side1Geometry.tJ);
+
+            if (side1Geometry != null)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawRay(transform.position, side1Geometry.nJ);
+            }
+
         }
     #endif
 
@@ -245,21 +258,24 @@ namespace BarkaneJoint
         }
 #endif
 
+        private void RefreshBuffers()
+        {
+            // the pivots are duplicated
+            verts = new Vector3[8 * (settings.creaseSegmentCount + 1)];
+            norms = new Vector3[verts.Length];
+            colors = new Color[verts.Length];
+            uvs = new Vector2[verts.Length];
+        }
+
         private void UpdateMesh()
         {
-            // lock to world space orientation
-            transform.rotation = Quaternion.identity;
+            if (verts == null) RefreshBuffers();
 
-            // the pivots are duplicated
-            var verts = new Vector3[8 * (settings.creaseSegmentCount + 1)];
             // not actually submeshes, just mentally think of each side of each tile as a submesh
             // the order of the meshes follow the (a, b) (a, b) ordering of the pairs
             var submeshOffset = 2 * (settings.creaseSegmentCount + 1);
             var pivotOffset = settings.creaseSegmentCount + 1;
 
-            var norms = new Vector3[verts.Length];
-            var colors = new Color[verts.Length];
-            var uvs = new Vector2[verts.Length];
 
             var scaledSquareSize = squareRenderSettings.squareSize * (1 - squareRenderSettings.margin);
 
@@ -463,32 +479,11 @@ namespace BarkaneJoint
         }
     }
 
-    internal enum JointFoldQuadrant
-    {
-        /// <summary>
-        /// a to b angle decently small
-        /// </summary>
-        ONE,
-        /// <summary>
-        /// a to b angle large enough, but not folded over 180 (for reference), actual boundaries are soft
-        /// </summary>
-        TWO,
-        /// <summary>
-        /// a to b angle between 180 and 270 (for reference), actual boundaries are soft
-        /// </summary>
-        THREE,
-        /// <summary>
-        /// a to b angle larger than 270 (for reference), actual boundaries are soft
-        /// </summary>
-        FOUR
-    }
-
-    internal struct JointGeometryData
+    internal class JointGeometryData
     {
         public Vector3 pA, pB, pJ;
         public Vector3 nA, nB, nJ, nJ2A, nJ2B, tJ;
         public float a2b;
-        public JointFoldQuadrant quadrant;
 
         internal static (JointGeometryData, JointGeometryData) GetPairs(SquareSide a, SquareSide b, JointRenderer j)
         {
@@ -503,8 +498,13 @@ namespace BarkaneJoint
             var nJ2B = (pB - pJ).normalized;
 
             var tJ = Vector3.Cross(nA, nJ2A); // tangent along joint
-            var a2b = Vector3.SignedAngle(nJ2A, nJ2B, tJ);
-            var nJ = Quaternion.AngleAxis(a2b / 2f, tJ) * nJ2A;
+            var a2b = -Vector3.SignedAngle(nJ2A, nJ2B, tJ);
+
+            // for large angles pA and pB are easy to cancel each other out (pA + pB approximates pJ) which is bad bc the first method will have a 0
+            // for small angles nA and nB are easy to cancel each other out which is bad bc the second method will have a 0
+            // overall, we favor using the second method bc it's shorter, so the threshold is set to 5 degrees and not something larger
+            // it is possible to do this thresholding without the angle, but the angle is also used elsewhere so might as well
+            var nJ = (a2b < 5f && a2b > -5f ? pJ - (pA + pB) / 2 : nA + nB).normalized;
 
             JointGeometryData side1 = new JointGeometryData()
             {
@@ -534,30 +534,7 @@ namespace BarkaneJoint
                 nJ = -nJ
             };
 
-            side1.ResolveQuadrant();
-            side2.ResolveQuadrant();
-
             return (side1, side2);
-        }
-
-        private void ResolveQuadrant()
-        {
-            if (a2b >= 10f && a2b < 80f)
-            {
-                quadrant = JointFoldQuadrant.ONE;
-            }
-            else if (a2b > -80f && a2b < 10f)
-            {
-                quadrant = JointFoldQuadrant.FOUR;
-            }
-            else if (a2b <= -80f && a2b > -170f)
-            {
-                quadrant = JointFoldQuadrant.THREE;
-            }
-            else
-            {
-                quadrant = JointFoldQuadrant.TWO;
-            }
         }
     }
 }
