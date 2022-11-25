@@ -1,20 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using BarkaneJoint;
 using BarkaneEditor;
+using System.Drawing.Printing;
 
 [ExecuteAlways]
-public class GlowStick : SidedJointAddon, IRefreshable
+public class Tape : SidedJointAddon, IRefreshable
 {
-    [SerializeField] private GlowstickRenderSettings settingsInner, settingsOuter;
+    [SerializeField] private TapeRenderSettings settings;
     [SerializeField] private SquareRenderSettings squareRenderSettings;
+    [SerializeField] private MeshRenderer meshRenderer;
+    [SerializeField] private MeshFilter meshFilter;
 
-    [SerializeField] MeshRenderer innerRenderer, outerRenderer;
-    [SerializeField] MeshFilter innerFilter, outerFilter;
-
-    private Vector3[] vsInner, nsInner, vsOuter, nsOuter;
+    Vector3[] vs, ns;
+    Vector2[] ringShifts; // randomize corners to look less tidy
 
     private void Start()
     {
@@ -23,35 +23,37 @@ public class GlowStick : SidedJointAddon, IRefreshable
 
     private void LateUpdate()
     {
-        UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, vsInner, nsInner);
-        UpdateMesh(outerFilter, settingsOuter, squareRenderSettings.margin, vsOuter, nsOuter);
+        UpdateMesh(squareRenderSettings.margin);
     }
 
-    private void UpdateMesh(MeshFilter filter, GlowstickRenderSettings settings, float margin, Vector3[] vs, Vector3[] ns)
+    private void UpdateMesh(float margin)
     {
+
+        var g = FetchGeometry();
+
+        var firstSet = meshFilter.sharedMesh == null;
         Mesh m;
-        var firstSet = filter.sharedMesh == null;
         if (firstSet)
         {
             m = new Mesh();
-            m.MarkDynamic();
-            filter.sharedMesh = m;
-        } else
-        {
-            m = filter.sharedMesh;
+            meshFilter.sharedMesh = m;
         }
-
-        var g = FetchGeometry();
+        else
+        {
+            m = meshFilter.sharedMesh;
+        }
 
         // head A
         vs[0] = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2A * (settings.halfLength + margin) + g.nA * settings.elevation);
         ns[0] = transform.worldToLocalMatrix.MultiplyVector(g.nJ2A);
         Ring(
-            ref vs, ref ns, 
+            ref vs, ref ns,
             vs[0],
             transform.worldToLocalMatrix.MultiplyVector(g.nA),
             transform.worldToLocalMatrix.MultiplyVector(g.tJ),
-            1, settings);
+            transform.worldToLocalMatrix.MultiplyVector(g.nJ2A),
+            1,
+            ringShifts[0], ringShifts[1]);
         if (g.a2b > 20f && g.a2b < 160f) // bending inwards
         {
             // 3 inner joints collapse together
@@ -62,20 +64,21 @@ public class GlowStick : SidedJointAddon, IRefreshable
                 j,
                 transform.worldToLocalMatrix.MultiplyVector(g.nJ),
                 transform.worldToLocalMatrix.MultiplyVector(g.tJ),
-                1 + settings.resolution, settings, shrinkCorrection);
+                1 + 4);
             Ring(
                 ref vs, ref ns,
                 j,
                 transform.worldToLocalMatrix.MultiplyVector(g.nJ),
                 transform.worldToLocalMatrix.MultiplyVector(g.tJ),
-                1 + 2 * settings.resolution, settings, shrinkCorrection);
+                1 + 2 * 4);
             Ring(
                 ref vs, ref ns,
                 j,
                 transform.worldToLocalMatrix.MultiplyVector(g.nJ),
                 transform.worldToLocalMatrix.MultiplyVector(g.tJ),
-                1 + 3 * settings.resolution, settings, shrinkCorrection);
-        } else // bending outwards
+                1 + 3 * 4);
+        }
+        else // bending outwards
         {
             // near joint on side A
             var jA = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2A * margin + g.nA * settings.elevation);
@@ -84,7 +87,7 @@ public class GlowStick : SidedJointAddon, IRefreshable
                 jA,
                 transform.worldToLocalMatrix.MultiplyVector(g.nA),
                 transform.worldToLocalMatrix.MultiplyVector(g.tJ),
-                1 + settings.resolution, settings);
+                1 + 4);
             // joint
             var j = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ * settings.elevation);
             Ring(
@@ -92,7 +95,7 @@ public class GlowStick : SidedJointAddon, IRefreshable
                 j,
                 transform.worldToLocalMatrix.MultiplyVector(g.nJ),
                 transform.worldToLocalMatrix.MultiplyVector(g.tJ),
-                1 + 2 * settings.resolution, settings);
+                1 + 2 * 4);
             // near joint on side B
             var jB = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2B * margin + g.nB * settings.elevation);
             Ring(
@@ -100,8 +103,8 @@ public class GlowStick : SidedJointAddon, IRefreshable
                 jB,
                 transform.worldToLocalMatrix.MultiplyVector(g.nB),
                 transform.worldToLocalMatrix.MultiplyVector(g.tJ),
-                1 + 3 * settings.resolution, settings);
-        } 
+                1 + 3 * 4);
+        }
         // head B
         vs[vs.Length - 1] = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2B * (settings.halfLength + margin) + g.nB * settings.elevation);
         ns[ns.Length - 1] = transform.worldToLocalMatrix.MultiplyVector(g.nJ2B);
@@ -110,38 +113,53 @@ public class GlowStick : SidedJointAddon, IRefreshable
             vs[vs.Length - 1],
             transform.worldToLocalMatrix.MultiplyVector(g.nB),
             transform.worldToLocalMatrix.MultiplyVector(g.tJ),
-            1 + 4 * settings.resolution, settings);
+            transform.worldToLocalMatrix.MultiplyVector(g.nJ2B),
+            1 + 4 * 4,
+            ringShifts[2], ringShifts[3]);
 
         m.vertices = vs;
         m.normals = ns;
         m.MarkModified();
 
+
         if (firstSet)
         {
-            m.triangles = settings.indices;
+            m.triangles = settings.ids;
         }
     }
 
-    private void Ring(ref Vector3[] vs, ref Vector3[] ns, Vector3 o, Vector3 n, Vector3 t, int iStart, GlowstickRenderSettings settings, float rFactor = 1f)
+    private void Ring(ref Vector3[] vs, ref Vector3[] ns, Vector3 c, Vector3 n, Vector3 t, int iStart)
     {
-        for(int i = iStart, j = 0; i < iStart + settings.resolution; i++, j++)
-        {
-            var sin = settings.angles[j].x;
-            var cos = settings.angles[j].y;
+        var w = settings.width * t;
+        var h = settings.thickness * n;
+        vs[iStart] = c - w - h;
+        vs[iStart + 1] = c - w + h;
+        vs[iStart + 2] = c + w + h;
+        vs[iStart + 3] = c + w - h;
+    }
 
-            vs[i] = o + settings.radius * rFactor * (sin * n + cos * t);
-            ns[i] = sin * n + cos * t;
-        }
+    private void Ring(ref Vector3[] vs, ref Vector3[] ns, Vector3 c, Vector3 n, Vector3 t, Vector3 z, int iStart, Vector2 randomL, Vector2 randomR)
+    {
+        var w = settings.width * t;
+        var h = settings.thickness * n;
+        vs[iStart] = c - w - h + randomL.x * t + randomL.y * z;
+        vs[iStart + 1] = c - w + h + randomL.x * t + randomL.y * z;
+        vs[iStart + 2] = c + w + h + randomR.x * t + randomR.y * z;
+        vs[iStart + 3] = c + w - h + randomR.x * t + randomR.y * z;
     }
 
     public void Refresh()
     {
-        innerFilter.sharedMesh = null;
-        outerFilter.sharedMesh = null;
+        meshFilter.sharedMesh = null;
 
-        vsInner = new Vector3[5 * settingsInner.resolution + 2];
-        nsInner = new Vector3[5 * settingsInner.resolution + 2];
-        vsOuter = new Vector3[5 * settingsOuter.resolution + 2];
-        nsOuter = new Vector3[5 * settingsOuter.resolution + 2];
+        vs = new Vector3[5 * 4 + 2];
+        ns = new Vector3[5 * 4 + 2];
+
+        ringShifts = new Vector2[] {
+            new Vector2(Random.value * settings.randomizeX, Random.value * settings.randomizeY),
+            new Vector2(Random.value * settings.randomizeX, Random.value * settings.randomizeY),
+            new Vector2(Random.value * settings.randomizeX, Random.value * settings.randomizeY),
+            new Vector2(Random.value * settings.randomizeX, Random.value * settings.randomizeY)
+        };
     }
 }
