@@ -195,13 +195,13 @@ namespace BarkaneJoint
             }
         }
 
-        private void UpdateColors()
-        {
-            colorA1 = a1.EdgeTintedColor(settings.tintCorrection);
-            colorA2 = a2.EdgeTintedColor(settings.tintCorrection);
-            colorB1 = b1.EdgeTintedColor(settings.tintCorrection);
-            colorB2 = b2.EdgeTintedColor(settings.tintCorrection);
-        }
+    private void UpdateColors()
+    {
+        colorA1 = a1.EdgeTintedColor();
+        colorA2 = a2.EdgeTintedColor();
+        colorB1 = b1.EdgeTintedColor();
+        colorB2 = b2.EdgeTintedColor();
+    }
 
     #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
