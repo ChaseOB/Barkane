@@ -45,7 +45,7 @@ public class EdgeParticles : MonoBehaviour, BarkaneEditor.IRefreshable
 
     public void Refresh()
     {
-        Debug.Log("ps refresh");
+        // Debug.Log("ps refresh");
         edgeParticlesPrefabChild = gameObject.transform.Find("Edge Particles").gameObject;
         listOfSystems = new List<ParticleSystem>();
 

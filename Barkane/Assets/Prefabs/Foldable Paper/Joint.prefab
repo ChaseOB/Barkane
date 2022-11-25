@@ -162,6 +162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paperSquares: []
+  isSelected: 0
   showLine: 0
   adjList: []
   capsuleCollider: {fileID: 7650339220258648006}
