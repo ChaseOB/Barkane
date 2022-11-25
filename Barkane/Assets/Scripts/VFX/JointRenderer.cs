@@ -93,7 +93,8 @@ namespace BarkaneJoint
             }
 
             UpdateColors();
-            UpdateGlowstick();
+            ValidateSidedAddon<GlowStick>();
+            ValidateSidedAddon<Tape>();
             RefreshBuffers();
         }
 
@@ -238,9 +239,9 @@ namespace BarkaneJoint
         }
 
 #if UNITY_EDITOR
-        private void UpdateGlowstick()
+        private void ValidateSidedAddon<T>() where T:SidedJointAddon
         {
-            var sticks = transform.parent.GetComponentsInChildren<GlowStick>();
+            var sticks = transform.parent.GetComponentsInChildren<T>();
             if (sticks.Length == 0) return;
             switch(sticks.Length)
             {
@@ -250,10 +251,10 @@ namespace BarkaneJoint
                 case 2:
                     var (stick1, stick2) = (sticks[0], sticks[1]);
                     if (stick1.SameSide(stick2))
-                        throw new UnityException("When 2 glowsticks on the same joint, they must be on the different side of the joint!");
+                        throw new UnityException($"When 2 {typeof(T).Name} on the same joint, they must be on the different side of the joint!");
                     break;
                 default:
-                    throw new UnityException("There cannot be more than 2 glowsticks, at most 1 on each side of the joint!");
+                    throw new UnityException($"There cannot be more than 2 { typeof(T).Name }s, at most 1 on each side of the joint!");
             }
         }
 #endif
