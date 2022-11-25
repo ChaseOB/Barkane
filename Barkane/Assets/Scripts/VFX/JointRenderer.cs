@@ -276,12 +276,9 @@ namespace BarkaneJoint
             var submeshOffset = 2 * (settings.creaseSegmentCount + 1);
             var pivotOffset = settings.creaseSegmentCount + 1;
 
-
             var scaledSquareSize = squareRenderSettings.squareSize * (1 - squareRenderSettings.margin);
 
-            // prior calculations
-
-            for (int i = 0; i < settings.creaseSegmentCount + 1; i++)
+            for (int i = 0; i <= settings.creaseSegmentCount; i++)
             {
                 #region vertex filling
                 var t = ts[i] - 0.5f;
@@ -294,39 +291,11 @@ namespace BarkaneJoint
                 verts[i + 2 * submeshOffset] = pivotBase + squareRenderSettings.margin * side1Geometry.nJ2A + side2Geometry.nA * 0.0005f;
                 verts[i + 3 * submeshOffset] = pivotBase + squareRenderSettings.margin * side1Geometry.nJ2B + side2Geometry.nB * 0.0005f;
 
-                // randomize when angles are significant
-                if (side1Geometry.a2b > 10f && side2Geometry.a2b > 10f)
-                {
-                    verts[i + pivotOffset] = pivotBase;
-                    verts[i + pivotOffset + submeshOffset] = pivotBase;
-                    verts[i + pivotOffset + 2 * submeshOffset] = pivotBase;
-                    verts[i + pivotOffset + 3 * submeshOffset] = pivotBase;
-                } else
-                {
-                    verts[i + pivotOffset] =
-                        pivotBase
-                        + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * side1Geometry.tJ
-                        + randoms[i].y * side1Geometry.nJ
-                        + randoms[i].x * side1Geometry.nJ2A;
-
-                    verts[i + pivotOffset + submeshOffset] =
-                        pivotBase
-                        + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * side1Geometry.tJ
-                        + randoms[i].y * side1Geometry.nJ
-                        + randoms[i].x * side1Geometry.nJ2A;
-
-                    verts[i + pivotOffset + 2 * submeshOffset] =
-                        pivotBase
-                        + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * side1Geometry.tJ
-                        + randoms[i].y * side1Geometry.nJ
-                        + randoms[i].x * side1Geometry.nJ2A;
-
-                    verts[i + pivotOffset + 3 * submeshOffset] =
-                        pivotBase
-                        + (i == 0 || i == settings.creaseSegmentCount ? 0 : 1) * randoms[i].z * side1Geometry.tJ
-                        + randoms[i].y * side1Geometry.nJ
-                        + randoms[i].x * side1Geometry.nJ2A;
-                }
+                //// randomize when angles are significant
+                verts[i + pivotOffset] = pivotBase;
+                verts[i + pivotOffset + submeshOffset] = pivotBase;
+                verts[i + pivotOffset + 2 * submeshOffset] = pivotBase;
+                verts[i + pivotOffset + 3 * submeshOffset] = pivotBase;
                 #endregion
 
                 #region normals filling
@@ -378,6 +347,36 @@ namespace BarkaneJoint
                 uvs[i + pivotOffset + 2 * submeshOffset] = uvCenter;
                 uvs[i + pivotOffset + 3 * submeshOffset] = uvCenter;
                 #endregion
+            }
+
+            // randomize middle vertices
+            if (Mathf.Abs(side1Geometry.a2b) > 10f)
+            {
+                for (int i = 1; i < settings.creaseSegmentCount - 1; i++)
+                {
+                    var t = ts[i] - 0.5f;
+                    var pivotBase = t * scaledSquareSize * side1Geometry.tJ;
+
+                    verts[i + pivotOffset] +=
+                        randoms[i].z * side1Geometry.tJ
+                        + randoms[i].y * side1Geometry.nJ
+                        + randoms[i].x * side1Geometry.nJ2A;
+
+                    verts[i + pivotOffset + submeshOffset] +=
+                        randoms[i].z * side1Geometry.tJ
+                        + randoms[i].y * side1Geometry.nJ
+                        + randoms[i].x * side1Geometry.nJ2A;
+
+                    verts[i + pivotOffset + 2 * submeshOffset] +=
+                        randoms[i].z * side1Geometry.tJ
+                        + randoms[i].y * side1Geometry.nJ
+                        + randoms[i].x * side1Geometry.nJ2A;
+
+                    verts[i + pivotOffset + 3 * submeshOffset] +=
+                        randoms[i].z * side1Geometry.tJ
+                        + randoms[i].y * side1Geometry.nJ
+                        + randoms[i].x * side1Geometry.nJ2A;
+                }
             }
 
             // 3 points per triangle
