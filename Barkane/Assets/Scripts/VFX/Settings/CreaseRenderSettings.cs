@@ -9,8 +9,6 @@ public class CreaseRenderSettings : ScriptableObject
     [Range(0, 40)]
     public int creaseSegmentCount;
     public Vector3 creaseDeviation;
-    [Range(0, 1)]
-    public float tintCorrection;
     [Range(0, 0.1f)]
     public float overlapCreaseCorrectionFactor;
 }

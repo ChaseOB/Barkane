@@ -162,16 +162,18 @@ public class SquareSide : MonoBehaviour, IRefreshable
     /// see lerp in paper shader
     /// </summary>
     /// <returns>evaluates the properly tinted color for paper edge</returns>
-    public Color EdgeTintedColor(float correction)
+    public Color EdgeTintedColor()
     {
-        var baseColor = materialPrototype.GetColor("_Color");
-        var tintColor = materialPrototype.GetColor("_EdgeTint");
+        var baseColor = materialPrototype.GetColor("_Color").linear;
+        var tintColor = materialPrototype.GetColor("_EdgeTint").linear;
 
-        return new Color(
-            Mathf.Lerp(baseColor.r, tintColor.r, tintColor.a + correction),
-            Mathf.Lerp(baseColor.g, tintColor.g, tintColor.a + correction),
-            Mathf.Lerp(baseColor.b, tintColor.b, tintColor.a + correction)
-            ); 
+        var combined = new Color(
+            Mathf.Lerp(baseColor.r, tintColor.r, tintColor.a),
+            Mathf.Lerp(baseColor.g, tintColor.g, tintColor.a),
+            Mathf.Lerp(baseColor.b, tintColor.b, tintColor.a)
+            );
+
+        return combined;
     }
 
     public (int, int, int) Coordinate => (

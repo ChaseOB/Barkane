@@ -113,9 +113,9 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeBias: 0.001
-    - _Edge_Sharpness: 2200
-    - _Emphasize_Vertex: 10
+    - _EdgeBias: 0.00025
+    - _Edge_Sharpness: 1200
+    - _Emphasize_Vertex: 40
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
