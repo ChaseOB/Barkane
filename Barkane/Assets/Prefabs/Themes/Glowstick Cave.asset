@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Glowstick Cave
   m_EditorClassIdentifier: 
   Sprinkle: {fileID: 0}
-  WalkMat: {fileID: 2100000, guid: 9b1673c8a84ce9848b876ec5f4c550ea, type: 2}
-  UnWalkMat: {fileID: 2100000, guid: 3a0b5d57431d9264fa1ce7141e084c84, type: 2}
+  WalkMat: {fileID: 2100000, guid: 6b06cd29cb3811643ab996abb7b74839, type: 2}
+  UnWalkMat: {fileID: 2100000, guid: 072396b20eba60e4aa9b10d099a62d55, type: 2}
