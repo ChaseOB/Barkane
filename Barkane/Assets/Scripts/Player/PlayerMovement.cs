@@ -90,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
         if(!fromStack && !undo) {
             PlayerMove pm = new PlayerMove();
             pm.movetype = 1;
-            UndoRedoManager.Instance.AddAction(pm);
+            UndoRedoManager.Instance?.AddAction(pm);
         }
         ActionLockManager.Instance.TryRemoveLock(this);
     }
@@ -117,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
         if(!fromStack && !undo) {
             PlayerMove pm = new PlayerMove();
             pm.movetype = (degrees > 0 ? 0: 2);
-            UndoRedoManager.Instance.AddAction(pm);
+            UndoRedoManager.Instance?.AddAction(pm);
         }
         ActionLockManager.Instance.TryRemoveLock(this);
     }

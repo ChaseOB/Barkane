@@ -9,10 +9,11 @@ public class Goal : MonoBehaviour
     private bool goalActive = false;
     [SerializeField] private GameObject inactiveGoal;
     [SerializeField] private GameObject activeGoal;
+    [SerializeField] private GameObject goalPlane;
+
 
     private void Start() {
-        if (numShardsCollected >= numShards)
-            ActivateGoal();
+        ActivateGoal(numShardsCollected >= numShards);
     }
 
     private void OnTriggerEnter(Collider other) {
@@ -40,10 +41,11 @@ public class Goal : MonoBehaviour
             ActivateGoal();
     }
 
-    private void ActivateGoal()
+    private void ActivateGoal(bool val = true)
     {
-        goalActive = true;
-        inactiveGoal.SetActive(false);
-        activeGoal.SetActive(true);
+        goalActive = val;
+        inactiveGoal.SetActive(!val);
+        activeGoal.SetActive(val);
+        goalPlane.SetActive(val);
     }
 }
