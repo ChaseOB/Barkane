@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Goal : MonoBehaviour
+public class Goal : MonoBehaviour, IThemedItem
 {
     public int numShards;
     private int numShardsCollected;
@@ -11,6 +11,7 @@ public class Goal : MonoBehaviour
     [SerializeField] private GameObject activeGoal;
     [SerializeField] private GameObject goalPlane;
 
+    [SerializeField] private List<Material> swirlMaterials;
 
     private void Start() {
         ActivateGoal(numShardsCollected >= numShards);
@@ -30,6 +31,12 @@ public class Goal : MonoBehaviour
     private void EndLevel() {
         LevelManager.Instance.EndLevel();
         UIManager.Instance.EndLevel();
+    }
+
+    public void UpdateTheme(Theme t) {
+        activeGoal.GetComponent<MeshRenderer>().material = t.crystalMat;
+        goalPlane.GetComponent<MeshRenderer>().material = swirlMaterials[(int)t.themeEnum];
+
     }
 
     public void CollectShard()

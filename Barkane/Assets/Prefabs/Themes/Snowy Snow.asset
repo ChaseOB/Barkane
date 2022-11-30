@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: Snowy Snow
   m_EditorClassIdentifier: 
   Sprinkle: {fileID: 6733450361054730935, guid: fec8249386d11c24bbe339c06b197d0c, type: 3}
+  themeEnum: 1
   WalkMat: {fileID: 2100000, guid: 9b1673c8a84ce9848b876ec5f4c550ea, type: 2}
   UnWalkMat: {fileID: 2100000, guid: 3a0b5d57431d9264fa1ce7141e084c84, type: 2}
+  crystalMat: {fileID: 2100000, guid: ba98e81b7d74d3f4aafafefbecd17dbe, type: 2}

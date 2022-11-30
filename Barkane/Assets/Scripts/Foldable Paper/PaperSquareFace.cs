@@ -17,7 +17,7 @@ public enum FaceObjectType
 }
 
 [ExecuteInEditMode]
-public class PaperSquareFace : MonoBehaviour
+public class PaperSquareFace : MonoBehaviour, IThemedItem
 {
     [Header("Surface")]
     [SerializeField] private FaceType faceType;

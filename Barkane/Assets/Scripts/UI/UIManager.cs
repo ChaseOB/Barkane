@@ -42,7 +42,7 @@ public class UIManager : Singleton<UIManager>
 
     public static void UpdateShardCount(int currShards, int totalShards)
     {
-        Instance.UpdateSC(currShards, totalShards);
+        Instance?.UpdateSC(currShards, totalShards);
     }
 
     public void UpdateSC(int currShards, int totalShards)

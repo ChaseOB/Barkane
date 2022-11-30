@@ -98,6 +98,10 @@ MonoBehaviour:
   inactiveGoal: {fileID: 2654907975775782997}
   activeGoal: {fileID: 2654907975575420462}
   goalPlane: {fileID: 2797200993066839656}
+  swirlMaterials:
+  - {fileID: 2100000, guid: 9b7eef24d95cadb4eb1f3783badd428d, type: 2}
+  - {fileID: 2100000, guid: d94406731e9f77f42b36f88bf266e32c, type: 2}
+  - {fileID: 2100000, guid: 1762792845e845f419bae92f6a3d45cc, type: 2}
 --- !u!54 &2654907975218644540
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -126,12 +130,12 @@ GameObject:
   - component: {fileID: 2654907975575420461}
   - component: {fileID: 2654907975575420460}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: activeGoal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2654907975575420463
 Transform:
   m_ObjectHideFlags: 0
@@ -209,12 +213,12 @@ GameObject:
   - component: {fileID: 2654907975775782992}
   - component: {fileID: 2654907975775782995}
   m_Layer: 0
-  m_Name: Cylinder (1)
+  m_Name: inactiveGoal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2654907975775782994
 Transform:
   m_ObjectHideFlags: 0
@@ -258,7 +262,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0bbf3e7c898443f4fa93705d64a1f01e, type: 2}
+  - {fileID: 2100000, guid: e4c6eaba3b595f945be5f27de9362d5d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

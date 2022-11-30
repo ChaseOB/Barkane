@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrystalShard : MonoBehaviour
+public class CrystalShard : MonoBehaviour, IThemedItem
 {
     [SerializeField] public Goal goal; 
     [SerializeField] private GameObject model;
     [SerializeField] private GameObject inactiveModel;
+    [SerializeField] private List<Material> materials;
 
     public bool crystalActive = true; //C: True except when in caves and no glowstick in area
     public bool particlesActive = true; //C: True except when in caves and no glowstick active
@@ -31,6 +32,10 @@ public class CrystalShard : MonoBehaviour
         prevVal = currentVal;
         model.transform.Rotate(Vector3.up, rotateSpeed * 0.1f);
         inactiveModel.transform.Rotate(Vector3.up, rotateSpeed * 0.1f);
+    }
+    
+    public void UpdateTheme(Theme t) {
+        model.GetComponentInChildren<MeshRenderer>().material = t.crystalMat;
     }
 
     public void Collect()

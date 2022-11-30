@@ -2,16 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
 
 namespace BarkaneEditor
 {
-    public enum ThemeChoice
-    {
-        CherryBlossom,
-        SnowySnow,
-        GlowstickCave,
-        CardboardCastle
-    }
 
 #if UNITY_EDITOR
     [InitializeOnLoad, ExecuteInEditMode]
@@ -51,7 +45,6 @@ namespace BarkaneEditor
         internal void Refresh()
         {
             _instance = this;
-            UpdateTheme();
             if (themes == null || themes.Length != System.Enum.GetNames(typeof(ThemeChoice)).Length)
             {
                 throw new UnityException("Theme assets are referenced incorrectly in VFXManager.");
@@ -74,9 +67,9 @@ namespace BarkaneEditor
 
         internal void UpdateTheme()
         {
-            foreach (PaperSquareFace p in FindObjectsOfType<PaperSquareFace>())
+            foreach (var t in FindObjectsOfType<MonoBehaviour>().OfType<IThemedItem>())
             {
-                p.UpdateTheme(Theme);
+                t.UpdateTheme(Theme);
             }
         }
 
@@ -128,6 +121,10 @@ namespace BarkaneEditor
             if (GUILayout.Button("Refresh"))
             {
                 (target as VFXManager).Refresh();
+            }
+            if (GUILayout.Button("Update Theme"))
+            {
+                (target as VFXManager).UpdateTheme();
             }
         }
     }
