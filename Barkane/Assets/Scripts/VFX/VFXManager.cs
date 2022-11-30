@@ -71,6 +71,7 @@ namespace BarkaneEditor
             {
                 t.UpdateTheme(Theme);
             }
+            Refresh();
         }
 
         //internal void Load(PlayModeStateChange change)

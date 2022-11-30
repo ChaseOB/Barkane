@@ -12,22 +12,20 @@ public class LevelManager : Singleton<LevelManager>
     private GameObject instantiatedLevel;
     [SerializeField] private GameObject playerPrefab;
     private GameObject playerInstance = null;
-    [SerializeField] private GameObject levelSwitchScreen; //C: Used to hid VFX Loading
+    [SerializeField] private GameObject levelSwitchScreen; //C: Used to hide VFX Loading
     [SerializeField] private List<GameObject> levelList;
     public int currLevelIndex = 0;
 
     public List<int> levelScenes = new List<int>();
 
+    public Theme currLevelTheme;
 
-    public Transform marmStart;
-    public Transform marmEnd;
-    public GameObject marmIcon;
+    public ImageAnimator imageAnimator;
 
     private void Awake() 
     {
         InitializeSingleton(this.gameObject);
         DontDestroyOnLoad(gameObject);
-        ChangeSkybox("CB");
     }
 
     
@@ -76,7 +74,7 @@ public class LevelManager : Singleton<LevelManager>
     }
 
     public void SwitchLevel(GameObject level) {
-        StartCoroutine(OneSecTransition());
+        StartCoroutine(ShowTransition());
         this.level = level;
         if (instantiatedLevel != null) {
             Destroy(instantiatedLevel);
@@ -85,7 +83,7 @@ public class LevelManager : Singleton<LevelManager>
     }
 
     public void SwitchLevel(string level) {
-        StartCoroutine(OneSecTransition());
+        StartCoroutine(ShowTransition());
         this.level = (GameObject) Resources.Load("Prefabs/" + level);
         if (instantiatedLevel != null) {
             Destroy(instantiatedLevel);
@@ -94,7 +92,7 @@ public class LevelManager : Singleton<LevelManager>
     }
 
     public void ResetLevel() {
-        StartCoroutine(OneSecTransition());
+        StartCoroutine(ShowTransition());
         if (instantiatedLevel != null) 
         {
             Destroy(instantiatedLevel);
@@ -123,7 +121,7 @@ public class LevelManager : Singleton<LevelManager>
     //C: used when switching from level back to a non-level scene
     public void UnloadLevel()
     {
-        StartCoroutine(OneSecTransition());
+        StartCoroutine(ShowTransition());
         if (instantiatedLevel != null) 
             Destroy(instantiatedLevel);
         instantiatedLevel = null;
@@ -138,21 +136,22 @@ public class LevelManager : Singleton<LevelManager>
     }
 
     //C: this is what we're doing for now lol
-    private IEnumerator OneSecTransition()
+    private IEnumerator ShowTransition()
     {
         ActionLockManager.Instance.ForceTakeLock(this);
         SetTransitionScreen(true);
         if(UIManager.Instance != null)
             UIManager.Instance.ToggleGroup(false);
         float elapsedTime = 0.0f;
-        float time = 1.5f;
+        float time = 2.5f;
+        imageAnimator.Play();
         while (elapsedTime < time)
         {
-            marmIcon.transform.position = Vector3.Lerp(marmStart.position, marmEnd.position, (elapsedTime/time));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
         SetTransitionScreen(false);
+        imageAnimator.Stop();
         if(UIManager.Instance != null)
             UIManager.Instance.ToggleGroup(true);
         ActionLockManager.Instance.ForceRemoveLock();
@@ -168,11 +167,4 @@ public class LevelManager : Singleton<LevelManager>
         instantiatedLevel.GetComponent<FoldablePaper>().isComplete = true;
     }
 
-    public void ChangeSkybox(Material skybox) {
-        RenderSettings.skybox = skybox;
-    }
-
-    public void ChangeSkybox(string skybox) {
-        RenderSettings.skybox = (Material) Resources.Load(skybox);
-    }
 }

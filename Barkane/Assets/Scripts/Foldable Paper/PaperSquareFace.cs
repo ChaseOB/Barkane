@@ -34,15 +34,11 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
     [SerializeField] private GameObject shardPrefab;
     [SerializeField] private GameObject goalPrefab;
 
-    private Theme theme;
 
     public void UpdateTheme(Theme t)
     {
-        if(t != theme) {
-            theme = t;
-        }
-        walkMat = theme.WalkMat;
-        unWalkMat = theme.UnWalkMat;
+        walkMat = t.WalkMat;
+        unWalkMat = t.UnWalkMat;
         ChangeFaceType();
     }
 
