@@ -9,11 +9,12 @@ public class Theme : ScriptableObject
 
     [Header("Materials")]
     public Material WalkMat;
+    public Color WalkColor, WalkColorDark, WalkEdgeTint;
     public Material UnWalkMat;
+    public Color UnwalkColor, UnwalkTint;
     public Material crystalMat;
     
     [Header("Render Related")]
     public Color Silhouette;
     public Material Skybox;
-
 }

@@ -37,4 +37,14 @@ public class MaskFoldParticles : MonoBehaviour, BarkaneEditor.IRefreshable
             listOfSystems.Add(ps);
         }
     }
+
+    public void EditorRefresh()
+    {
+        Refresh();
+    }
+
+    public void RuntimeRefresh()
+    {
+        Refresh();
+    }
 }

@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Crease Render Settings
   m_EditorClassIdentifier: 
   creaseMaterial: {fileID: 2100000, guid: 9e1dfe9053d0eaf448923530f341cbbf, type: 2}
-  creaseSegmentCount: 22
-  creaseDeviation: {x: 0.02, y: 0.01, z: 0.02}
-  tintCorrection: 0
+  creaseSegmentCount: 10
+  creaseDeviation: {x: 0.03, y: 0.005, z: 0.04}
   overlapCreaseCorrectionFactor: 0.0094

@@ -15,7 +15,12 @@ MonoBehaviour:
   Sprinkle: {fileID: 8436179723297161049, guid: 1ea3a159bfda6994c9bb49f702624ca5, type: 3}
   themeEnum: 0
   WalkMat: {fileID: 2100000, guid: 871f58141d0c54e42b1426597d52a27c, type: 2}
+  WalkColor: {r: 0.60784316, g: 0.9607844, b: 0.5921569, a: 0}
+  WalkColorDark: {r: 0.45882356, g: 0.87843144, b: 0.5647059, a: 0}
+  WalkEdgeTint: {r: 0.45882356, g: 0.87843144, b: 0.5647059, a: 0.2784314}
   UnWalkMat: {fileID: 2100000, guid: 09a3a23d6468f5041a83b5e95823c983, type: 2}
+  UnwalkColor: {r: 0.19607845, g: 0.7960785, b: 1, a: 0}
+  UnwalkTint: {r: 1, g: 1, b: 1, a: 0.27058825}
   crystalMat: {fileID: 2100000, guid: 0bbf3e7c898443f4fa93705d64a1f01e, type: 2}
   Silhouette: {r: 1, g: 0.41960785, b: 0.44705883, a: 1}
   Skybox: {fileID: 2100000, guid: 6976b207a1b779042b3289e46a55aaee, type: 2}

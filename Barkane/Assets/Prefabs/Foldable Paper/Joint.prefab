@@ -238,10 +238,6 @@ MonoBehaviour:
   a2: {fileID: 0}
   b1: {fileID: 0}
   b2: {fileID: 0}
-  colorA1: {r: 0.49039456, g: 0.77295506, b: 0.47783625, a: 1}
-  colorB1: {r: 0.70317954, g: 0.92470896, b: 1, a: 1}
-  colorA2: {r: 0.49039456, g: 0.77295506, b: 0.47783625, a: 1}
-  colorB2: {r: 0.49039456, g: 0.77295506, b: 0.47783625, a: 1}
   randoms:
   - {x: 0.009071915, y: -0.0017378175, z: -0.016599964}
   - {x: -0.013757819, y: 0.002613362, z: 0.0068467115}
@@ -292,7 +288,7 @@ MonoBehaviour:
   - 1
   indicator: {fileID: 482529356090007759}
   maskFoldParticles: {fileID: 7214889616483195651}
-  foldState: 1
+  materialPrototype: {fileID: 2100000, guid: 9e1dfe9053d0eaf448923530f341cbbf, type: 2}
   IsAnimating: 0
 --- !u!33 &7650339220833805929
 MeshFilter:

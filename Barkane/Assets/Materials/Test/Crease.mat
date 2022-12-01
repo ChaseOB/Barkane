@@ -43,8 +43,8 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlbedoCorrection: 0.861
-    - _Crease_Albedo_Base: -0.1
-    - _Crease_Albedo_Multiplier: 34.3
+    - _Crease_Albedo_Base: 13.9
+    - _Crease_Albedo_Multiplier: 34.34
     - _EdgeTintAdj: 122.73
     - _QueueControl: 0
     - _QueueOffset: 0

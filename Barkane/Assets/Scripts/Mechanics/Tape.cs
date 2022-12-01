@@ -6,7 +6,7 @@ using BarkaneEditor;
 using System.Drawing.Printing;
 
 [ExecuteAlways]
-public class Tape : SidedJointAddon, IDynamicMesh
+public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
 {
     [SerializeField] private TapeRenderSettings settings;
     [SerializeField] private SquareRenderSettings squareRenderSettings;
@@ -23,7 +23,7 @@ public class Tape : SidedJointAddon, IDynamicMesh
 
     private void UpdateMesh(float margin)
     {
-        if (vs == null || vs.Length != VCount()) ClearAndInitBuffers();
+        if (vs == null || vs.Length != settings.VCount) ClearAndInitBuffers(settings);
 
         var g = FetchGeometry();
 
@@ -115,8 +115,6 @@ public class Tape : SidedJointAddon, IDynamicMesh
 
         m.vertices = vs;
         m.normals = ns;
-        m.MarkModified();
-
 
         if (firstSet)
         {
@@ -144,17 +142,12 @@ public class Tape : SidedJointAddon, IDynamicMesh
         vs[iStart + 3] = c + w - h + randomR.x * t + randomR.y * z;
     }
 
-    public int VCount()
-    {
-        return 5 * 4 + 2;
-    }
-
-    public void ClearAndInitBuffers()
+    public void ClearAndInitBuffers(TapeRenderSettings settings)
     {
         meshFilter.sharedMesh = null;
 
-        vs = new Vector3[VCount()];
-        ns = new Vector3[VCount()];
+        vs = new Vector3[settings.VCount];
+        ns = new Vector3[settings.VCount];
 
         ringShifts = new Vector2[] {
             new Vector2(Random.value * settings.randomizeX, Random.value * settings.randomizeY),

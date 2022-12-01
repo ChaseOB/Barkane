@@ -22,21 +22,20 @@ public class SquareSide : MonoBehaviour, IRefreshable
     [SerializeField, HideInInspector] SerializedMesh meshData;
 
     public Material MaterialPrototype => materialPrototype;
+    [SerializeField, HideInInspector] public Color baseColor, tintColor;
 
     public (Vector3[], Vector3[]) sprinkles;
     // A: unsure why this is needed
     public Transform sprinkleParent;
 
-
-    void IRefreshable.Refresh()
+    void IRefreshable.EditorRefresh()
     {
-        if (Application.isEditor && !Application.isPlaying)
-        {
-            UpdateMesh();
-        } else
-        {
-            PushData();
-        }
+        UpdateMesh();
+    }
+
+    void IRefreshable.RuntimeRefresh()
+    {
+        PushData();
     }
 
     private void PushData()
@@ -57,22 +56,16 @@ public class SquareSide : MonoBehaviour, IRefreshable
             mFilter.sharedMesh = meshData.Rehydrated;
 
             materialInstance.SetTexture("Dist", distanceTexture);
+            materialInstance.SetColor("_Color", baseColor);
+            materialInstance.SetColor("_EdgeTint", tintColor);
+
             mRenderer.sharedMaterials = new Material[] { materialInstance };
         }
     }
 
-
-
-    //private void Update()
-    //{
-    //    if (materialInstance != null)
-    //    {
-    //        materialInstance.SetVector("YOverride", transform.up);
-    //    }
-    //}
-
     public void UpdateMesh()
     {
+
         var (mesh, texture, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
         distanceTextureData = texture.EncodeToPNG();
         distanceTextureWidth = texture.width;
@@ -156,24 +149,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
         //}
 #endif
 
-    }
-
-    /// <summary>
-    /// see lerp in paper shader
-    /// </summary>
-    /// <returns>evaluates the properly tinted color for paper edge</returns>
-    public Color EdgeTintedColor()
-    {
-        var baseColor = materialPrototype.GetColor("_Color").linear;
-        var tintColor = materialPrototype.GetColor("_EdgeTint").linear;
-
-        var combined = new Color(
-            Mathf.Lerp(baseColor.r, tintColor.r, tintColor.a),
-            Mathf.Lerp(baseColor.g, tintColor.g, tintColor.a),
-            Mathf.Lerp(baseColor.b, tintColor.b, tintColor.a)
-            );
-
-        return combined;
     }
 
     public (int, int, int) Coordinate => (

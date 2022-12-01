@@ -51,17 +51,36 @@ namespace BarkaneEditor
             }
 
             Load();
-            foreach (var s in FindObjectsOfType<MonoBehaviour>())
+            if (Application.isEditor && !Application.isPlaying) {
+                foreach (var s in FindObjectsOfType<MonoBehaviour>())
+                {
+                    if (s is IRefreshable) (s as IRefreshable).EditorRefresh();
+                }
+            } else
             {
-                if (s is IRefreshable) (s as IRefreshable).Refresh();
+                foreach (var s in FindObjectsOfType<MonoBehaviour>())
+                {
+                    if (s is IRefreshable) (s as IRefreshable).RuntimeRefresh();
+                }
             }
+            
         }
 
         internal void Refresh<T>() where T: Object, IRefreshable
         {
-            foreach (var t in FindObjectsOfType<MonoBehaviour>())
+            if (Application.isEditor && !Application.isPlaying)
             {
-                if (t is T) (t as T).Refresh();
+                foreach (var t in FindObjectsOfType<MonoBehaviour>())
+                {
+                    if (t is T) (t as IRefreshable).EditorRefresh();
+                }
+            }
+            else
+            {
+                foreach (var t in FindObjectsOfType<MonoBehaviour>())
+                {
+                    if (t is T) (t as IRefreshable).RuntimeRefresh();
+                }
             }
         }
 
@@ -103,7 +122,8 @@ namespace BarkaneEditor
 
     public interface IRefreshable
     {
-        void Refresh();
+        void EditorRefresh();
+        void RuntimeRefresh();
     }
 
     public interface ILoadable

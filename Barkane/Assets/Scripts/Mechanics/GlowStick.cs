@@ -6,7 +6,7 @@ using BarkaneJoint;
 using BarkaneEditor;
 
 [ExecuteAlways]
-public class GlowStick : SidedJointAddon, IDynamicMesh
+public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>
 {
     [SerializeField] private GlowstickRenderSettings settingsInner, settingsOuter;
     [SerializeField] private SquareRenderSettings squareRenderSettings;
@@ -18,13 +18,14 @@ public class GlowStick : SidedJointAddon, IDynamicMesh
 
     private void LateUpdate()
     {
+        if (vsInner == null || vsInner.Length != settingsInner.VCount) ClearAndInitBuffers(settingsInner);
+        if (vsOuter == null || vsOuter.Length != settingsOuter.VCount) ClearAndInitBuffers(settingsOuter);
         UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, vsInner, nsInner);
         UpdateMesh(outerFilter, settingsOuter, squareRenderSettings.margin, vsOuter, nsOuter);
     }
 
     private void UpdateMesh(MeshFilter filter, GlowstickRenderSettings settings, float margin, Vector3[] vs, Vector3[] ns)
     {
-        if (vsInner == null || vsInner.Length != VCount()) ClearAndInitBuffers();
 
         Mesh m;
         var firstSet = filter.sharedMesh == null;
@@ -111,7 +112,6 @@ public class GlowStick : SidedJointAddon, IDynamicMesh
 
         m.vertices = vs;
         m.normals = ns;
-        m.MarkModified();
 
         if (firstSet)
         {
@@ -131,12 +131,7 @@ public class GlowStick : SidedJointAddon, IDynamicMesh
         }
     }
 
-    public int VCount()
-    {
-        return 5 * settingsInner.resolution + 2;
-    }
-
-    public void ClearAndInitBuffers()
+    public void ClearAndInitBuffers(GlowstickRenderSettings settings)
     {
         innerFilter.sharedMesh = null;
         outerFilter.sharedMesh = null;

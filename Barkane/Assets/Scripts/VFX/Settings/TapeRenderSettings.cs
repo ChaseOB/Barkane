@@ -5,7 +5,7 @@ using UnityEngine;
 namespace BarkaneJoint
 {
     [CreateAssetMenu(menuName = "Barkane/Settings/Tape Render Settings")]
-    public class TapeRenderSettings : ScriptableObject
+    public class TapeRenderSettings : ScriptableObject, IDynamicMeshRenderSettings
     {
         [Range(0f, 0.2f)]
         public float elevation;
@@ -20,6 +20,8 @@ namespace BarkaneJoint
 
         // a tape is just a 4 sided column
         [HideInInspector] public int[] ids = ColumnMeshIndex.Create(4);
+
+        public int VCount => 22;
     }
 
 }

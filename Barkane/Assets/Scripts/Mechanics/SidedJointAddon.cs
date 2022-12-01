@@ -20,8 +20,7 @@ public abstract class SidedJointAddon : MonoBehaviour
     }
 }
 
-public interface IDynamicMesh
+public interface IDynamicMesh<T> where T : IDynamicMeshRenderSettings
 {
-    int VCount();
-    void ClearAndInitBuffers();
+    void ClearAndInitBuffers(T settings);
 }
