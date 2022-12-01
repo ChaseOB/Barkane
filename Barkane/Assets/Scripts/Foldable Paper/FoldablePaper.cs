@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using BarkaneJoint;
 
-public class FoldablePaper : MonoBehaviour, IThemedItem
+[RequireComponent(typeof(VFXThemeAdapter))]
+public class FoldablePaper : MonoBehaviour
 {
     [SerializeField] private PaperSquare[] paperSquares;
     public PaperSquare[] PaperSquares => paperSquares;
@@ -23,8 +24,6 @@ public class FoldablePaper : MonoBehaviour, IThemedItem
     public Vector3 centerPos;
     Dictionary<Vector3Int, List<PaperSquare>> squareLocs = new Dictionary<Vector3Int, List<PaperSquare>>();
     public PaperSquare playerSquare;
-
-    private Theme theme;
 
     private void Awake() 
     {
@@ -70,11 +69,6 @@ public class FoldablePaper : MonoBehaviour, IThemedItem
             vectors.Add(ps.transform.localPosition);
         }
         CoordUtils.CalculateCenter(vectors);
-    }
-
-    public void UpdateTheme(Theme t)
-    {
-        theme = t;
     }
 
     private void IntializeSquarePosList()

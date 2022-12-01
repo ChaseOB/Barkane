@@ -17,3 +17,5 @@ MonoBehaviour:
   WalkMat: {fileID: 2100000, guid: 9b1673c8a84ce9848b876ec5f4c550ea, type: 2}
   UnWalkMat: {fileID: 2100000, guid: 3a0b5d57431d9264fa1ce7141e084c84, type: 2}
   crystalMat: {fileID: 2100000, guid: ba98e81b7d74d3f4aafafefbecd17dbe, type: 2}
+  Silhouette: {r: 0.9843137, g: 0.79607844, b: 0.14509805, a: 1}
+  Skybox: {fileID: 2100000, guid: 850bafc37e7f5794f9f620181036cca5, type: 2}

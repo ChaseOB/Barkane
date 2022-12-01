@@ -62,9 +62,10 @@ GameObject:
   - component: {fileID: 5353261048891426300}
   - component: {fileID: 5353261048891426303}
   - component: {fileID: 5353261048891426302}
+  - component: {fileID: 5767196381127843225}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -232,6 +233,15 @@ MonoBehaviour:
   hoverSquare: {fileID: 0}
   foldablePaper: {fileID: 0}
   foldAnimator: {fileID: 0}
+--- !u!45 &5767196381127843225
+Skybox:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5353261048891426297}
+  m_Enabled: 1
+  m_CustomSkybox: {fileID: 0}
 --- !u!1 &5353261049099573900
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,5 +11,9 @@ public class Theme : ScriptableObject
     public Material WalkMat;
     public Material UnWalkMat;
     public Material crystalMat;
+    
+    [Header("Render Related")]
+    public Color Silhouette;
+    public Material Skybox;
 
 }
