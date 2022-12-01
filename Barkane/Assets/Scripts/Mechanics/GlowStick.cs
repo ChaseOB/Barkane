@@ -6,7 +6,7 @@ using BarkaneJoint;
 using BarkaneEditor;
 
 [ExecuteAlways]
-public class GlowStick : SidedJointAddon, IRefreshable
+public class GlowStick : SidedJointAddon, IDynamicMesh
 {
     [SerializeField] private GlowstickRenderSettings settingsInner, settingsOuter;
     [SerializeField] private SquareRenderSettings squareRenderSettings;
@@ -16,11 +16,6 @@ public class GlowStick : SidedJointAddon, IRefreshable
 
     private Vector3[] vsInner, nsInner, vsOuter, nsOuter;
 
-    private void Start()
-    {
-        Refresh();
-    }
-
     private void LateUpdate()
     {
         UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, vsInner, nsInner);
@@ -29,6 +24,8 @@ public class GlowStick : SidedJointAddon, IRefreshable
 
     private void UpdateMesh(MeshFilter filter, GlowstickRenderSettings settings, float margin, Vector3[] vs, Vector3[] ns)
     {
+        if (vsInner == null || vsInner.Length != VCount()) ClearAndInitBuffers();
+
         Mesh m;
         var firstSet = filter.sharedMesh == null;
         if (firstSet)
@@ -134,7 +131,12 @@ public class GlowStick : SidedJointAddon, IRefreshable
         }
     }
 
-    public void Refresh()
+    public int VCount()
+    {
+        return 5 * settingsInner.resolution + 2;
+    }
+
+    public void ClearAndInitBuffers()
     {
         innerFilter.sharedMesh = null;
         outerFilter.sharedMesh = null;

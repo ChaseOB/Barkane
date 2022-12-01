@@ -19,3 +19,9 @@ public abstract class SidedJointAddon : MonoBehaviour
         return jointSide ? jr.side1Geometry : jr.side2Geometry;
     }
 }
+
+public interface IDynamicMesh
+{
+    int VCount();
+    void ClearAndInitBuffers();
+}

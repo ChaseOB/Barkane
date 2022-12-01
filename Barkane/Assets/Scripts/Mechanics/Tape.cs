@@ -6,7 +6,7 @@ using BarkaneEditor;
 using System.Drawing.Printing;
 
 [ExecuteAlways]
-public class Tape : SidedJointAddon, IRefreshable
+public class Tape : SidedJointAddon, IDynamicMesh
 {
     [SerializeField] private TapeRenderSettings settings;
     [SerializeField] private SquareRenderSettings squareRenderSettings;
@@ -16,11 +16,6 @@ public class Tape : SidedJointAddon, IRefreshable
     Vector3[] vs, ns;
     Vector2[] ringShifts; // randomize corners to look less tidy
 
-    private void Start()
-    {
-        Refresh();
-    }
-
     private void LateUpdate()
     {
         UpdateMesh(squareRenderSettings.margin);
@@ -28,6 +23,7 @@ public class Tape : SidedJointAddon, IRefreshable
 
     private void UpdateMesh(float margin)
     {
+        if (vs == null || vs.Length != VCount()) ClearAndInitBuffers();
 
         var g = FetchGeometry();
 
@@ -148,12 +144,17 @@ public class Tape : SidedJointAddon, IRefreshable
         vs[iStart + 3] = c + w - h + randomR.x * t + randomR.y * z;
     }
 
-    public void Refresh()
+    public int VCount()
+    {
+        return 5 * 4 + 2;
+    }
+
+    public void ClearAndInitBuffers()
     {
         meshFilter.sharedMesh = null;
 
-        vs = new Vector3[5 * 4 + 2];
-        ns = new Vector3[5 * 4 + 2];
+        vs = new Vector3[VCount()];
+        ns = new Vector3[VCount()];
 
         ringShifts = new Vector2[] {
             new Vector2(Random.value * settings.randomizeX, Random.value * settings.randomizeY),

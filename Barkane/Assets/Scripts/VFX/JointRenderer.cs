@@ -9,7 +9,7 @@ namespace BarkaneJoint
     [ExecuteAlways]
     [RequireComponent(typeof(MeshRenderer))]
     [RequireComponent(typeof(MeshFilter))]
-    public class JointRenderer : MonoBehaviour, IRefreshable
+    public class JointRenderer : MonoBehaviour, IRefreshable, IDynamicMesh
     {
         /**
          * FOR THE CONTEXT OF JOINT VFX...
@@ -95,7 +95,6 @@ namespace BarkaneJoint
             UpdateColors();
             ValidateSidedAddon<GlowStick>();
             ValidateSidedAddon<Tape>();
-            RefreshBuffers();
         }
 
         public bool IsAnimating = false;
@@ -259,7 +258,12 @@ namespace BarkaneJoint
         }
 #endif
 
-        private void RefreshBuffers()
+        public int VCount()
+        {
+            return 8 * (settings.creaseSegmentCount + 1);
+        }
+
+        public void ClearAndInitBuffers()
         {
             // the pivots are duplicated
             verts = new Vector3[8 * (settings.creaseSegmentCount + 1)];
@@ -270,7 +274,7 @@ namespace BarkaneJoint
 
         private void UpdateMesh()
         {
-            if (verts == null) RefreshBuffers();
+            if (verts == null || verts.Length != VCount()) ClearAndInitBuffers();
 
             // not actually submeshes, just mentally think of each side of each tile as a submesh
             // the order of the meshes follow the (a, b) (a, b) ordering of the pairs
