@@ -18,6 +18,7 @@ public class CrystalShard : MonoBehaviour, IThemedItem
     private Vector3 prevVal = Vector3.zero;
 
     [SerializeField] private new ParticleSystem particleSystem;
+    public List<Gradient> themePartColors = new List<Gradient>();
 
     private void Start() {
         goal = FindObjectOfType<Goal>();
@@ -36,6 +37,9 @@ public class CrystalShard : MonoBehaviour, IThemedItem
     
     public void UpdateTheme(Theme t) {
         model.GetComponentInChildren<MeshRenderer>().material = t.crystalMat;
+        var col = particleSystem.colorOverLifetime;
+        col.color = themePartColors[(int)t.themeEnum];
+
     }
 
     public void Collect()

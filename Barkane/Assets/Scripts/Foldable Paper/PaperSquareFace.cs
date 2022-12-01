@@ -14,6 +14,7 @@ public enum FaceObjectType
 {
     SHARD,
     GOAL,
+    CONETREE,
 }
 
 [ExecuteInEditMode]
@@ -27,13 +28,14 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
     [Header("Objects")]
     [SerializeField] private bool shard;
     [SerializeField] private bool goal;
+    [SerializeField] private bool coneTree;
 
     [Header("References")]
     [SerializeField] private BoxCollider playerWalk;
     [SerializeField] private SquareSide squareSide;
     [SerializeField] private GameObject shardPrefab;
     [SerializeField] private GameObject goalPrefab;
-
+    [SerializeField] private GameObject coneTreePrefab;
 
     public void UpdateTheme(Theme t)
     {
@@ -70,6 +72,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
         {
             {FaceObjectType.SHARD, shardPrefab },
             {FaceObjectType.GOAL, goalPrefab },
+            {FaceObjectType.CONETREE, coneTreePrefab }
         };
     }
 
@@ -139,6 +142,8 @@ public class PaperSquareFaceEditor : Editor
             { "faceType", (prop, face) => face.ChangeFaceType() },
             { "shard", (prop, face) => face.SetFaceObject(FaceObjectType.SHARD, prop.boolValue) },
             { "goal", (prop, face) => face.SetFaceObject(FaceObjectType.GOAL, prop.boolValue) },
+            { "coneTree", (prop, face) => face.SetFaceObject(FaceObjectType.CONETREE, prop.boolValue) },
+
         };
     }
 
