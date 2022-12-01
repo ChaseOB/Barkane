@@ -86,6 +86,7 @@ MonoBehaviour:
   targetPos: {fileID: 8814069562315018364}
   raycastStart: {fileID: 8814069560652256591}
   marmalade: {fileID: 4244448886005839375}
+  cameraTrackingTransform: {fileID: 3579411083869187253}
   moveVertCurve:
     serializedVersion: 2
     m_Curve:

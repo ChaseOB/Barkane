@@ -4777,7 +4777,19 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 6d28e5e09478f87498b9f7b3451e11f8, type: 3}
   - {fileID: 21300000, guid: a315f806848e20b48b096c4e9e673f05, type: 3}
   image: {fileID: 1730095011}
-  fps: 6
+  fps: 4
+--- !u!114 &1719070854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1719070846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d52569e9ff7c13e48b9764b1cd393f03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1730095011 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5765191865007140967, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
@@ -5566,6 +5578,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5765191864237858610, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5765191864237858610, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
       propertyPath: m_PlaneDistance
       value: 101
       objectReference: {fileID: 0}
@@ -5631,16 +5647,20 @@ PrefabInstance:
       objectReference: {fileID: 1719070850}
     - target: {fileID: 5765191864672309409, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
       propertyPath: levelList.Array.size
-      value: 5
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5765191864672309409, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
+      propertyPath: levelScenes.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5765191864672309409, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
       propertyPath: levelList.Array.data[0]
       value: 
-      objectReference: {fileID: 2501785642603486857, guid: 1e61557786d05804e91b794f14bd438b, type: 3}
+      objectReference: {fileID: 11400000, guid: e78364d75a6b0f54a94089b09d0110aa, type: 2}
     - target: {fileID: 5765191864672309409, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
       propertyPath: levelList.Array.data[1]
       value: 
-      objectReference: {fileID: 230806219003024787, guid: 4d0653af10209bd44bde8eb689b9212d, type: 3}
+      objectReference: {fileID: 11400000, guid: 41a75cb3be4fff9439bed5d0e90bf0d6, type: 2}
     - target: {fileID: 5765191864672309409, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
       propertyPath: levelList.Array.data[2]
       value: 
@@ -5653,6 +5673,10 @@ PrefabInstance:
       propertyPath: levelList.Array.data[4]
       value: 
       objectReference: {fileID: 4338771579923792694, guid: 4967151815711d847bb00b160e431411, type: 3}
+    - target: {fileID: 5765191864672309409, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
+      propertyPath: levelScenes.Array.data[1]
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5765191864672309414, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
       propertyPath: m_RootOrder
       value: 4

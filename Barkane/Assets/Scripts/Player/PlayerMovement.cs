@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject targetPos;
     public Transform raycastStart;
     [SerializeField] private GameObject marmalade;
+    public Transform cameraTrackingTransform;
 
     private bool isMoving = false;
     private bool validMoveLoc = false; //true if the tile in front of the player is a valid move location
@@ -24,7 +25,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start() 
     {
-        marmaladeY = marmalade.transform.position.y;    
+        marmaladeY = marmalade.transform.position.y;
+        cameraTrackingTransform = raycastStart;    
     }
 
     #region input

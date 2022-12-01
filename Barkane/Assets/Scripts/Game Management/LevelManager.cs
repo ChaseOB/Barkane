@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using BarkaneEditor;
-using UnityEngine.InputSystem;
 
 
 public class LevelManager : Singleton<LevelManager>
 {
-    private GameObject level;
+    private Level level;
     private GameObject instantiatedLevel;
+
     [SerializeField] private GameObject playerPrefab;
     private GameObject playerInstance = null;
+
     [SerializeField] private GameObject levelSwitchScreen; //C: Used to hide VFX Loading
-    [SerializeField] private List<GameObject> levelList;
+    [SerializeField] private List<Level> levelList;
     public int currLevelIndex = 0;
 
     public List<int> levelScenes = new List<int>();
@@ -27,33 +28,27 @@ public class LevelManager : Singleton<LevelManager>
         InitializeSingleton(this.gameObject);
         DontDestroyOnLoad(gameObject);
     }
-
     
-    private void OnEnable() {
+    void OnEnable()
+    {
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
+    
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if(level != null & levelScenes.Contains(scene.buildIndex))
+            SpawnLevel(level);
+    }
 
-    private void OnDisable() {
+    void OnDisable()
+    {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        Debug.Log("loaded scene " + scene.name);
-        if(levelScenes.Contains(scene.buildIndex))
-            LoadLevel(currLevelIndex, true);
-    }
-
+    //Handles index setting, special case of last level
     public void LoadLevel(int index)
     {
         currLevelIndex = index;
-        SceneManager.LoadScene(1);
-    }
-
-    public void LoadLevel(int index, bool set = false)
-    {
-        if(set)
-            currLevelIndex = index;
         if (index >= levelList.Count) 
             OnCompleteLastLevel();
         else
@@ -73,37 +68,32 @@ public class LevelManager : Singleton<LevelManager>
         SceneManager.LoadScene(0);
     }
 
-    public void SwitchLevel(GameObject level) {
+    //Handles scene and theme switching
+    public void SwitchLevel(Level level) {
         StartCoroutine(ShowTransition());
         this.level = level;
         if (instantiatedLevel != null) {
             Destroy(instantiatedLevel);
         }
-        SpawnLevel(level);
+        if(currLevelTheme == null || level.theme != currLevelTheme)
+        {
+            SceneManager.LoadScene(levelScenes[(int)level.theme.themeEnum]);
+            //TODO: Update audio
+        }
+        else
+            SpawnLevel(level);
     }
 
-    public void SwitchLevel(string level) {
-        StartCoroutine(ShowTransition());
-        this.level = (GameObject) Resources.Load("Prefabs/" + level);
-        if (instantiatedLevel != null) {
-            Destroy(instantiatedLevel);
-        }
-        SpawnLevel(this.level);
-    }
 
     public void ResetLevel() {
-        StartCoroutine(ShowTransition());
-        if (instantiatedLevel != null) 
-        {
-            Destroy(instantiatedLevel);
-            SpawnLevel(level); 
-        }
+        SwitchLevel(level);
     }
 
 
-    public void SpawnLevel(GameObject level)
+    //Handles actual spawning of paper object
+    public void SpawnLevel(Level level)
     {
-        instantiatedLevel = Instantiate(level, Vector3.zero, Quaternion.identity);
+        instantiatedLevel = Instantiate(level.levelObject, Vector3.zero, Quaternion.identity);
         FoldablePaper paper = instantiatedLevel.GetComponent<FoldablePaper>();
         Transform playerPos = paper.playerSpawn;
         if(playerInstance != null)
@@ -113,7 +103,7 @@ public class LevelManager : Singleton<LevelManager>
         }
         playerInstance= Instantiate(playerPrefab, playerPos.position, Quaternion.identity);
 
-        FollowTarget.Instance.SetTargetAndPosition(playerInstance.GetComponent<PlayerMovement>().raycastStart);    
+        FollowTarget.Instance.SetTargetAndPosition(playerInstance.GetComponent<PlayerMovement>().cameraTrackingTransform);    
         VFXManager.Instance.Refresh();
         FindObjectOfType<TileSelector>().ReloadReferences();
     }
@@ -128,18 +118,13 @@ public class LevelManager : Singleton<LevelManager>
         if(playerInstance != null)
             Destroy(playerInstance);
         playerInstance = null;
+        currLevelTheme = null;
     }
 
-    public void SetTransitionScreen(bool val)
-    {
-        levelSwitchScreen.SetActive(val);
-    }
-
-    //C: this is what we're doing for now lol
     private IEnumerator ShowTransition()
     {
         ActionLockManager.Instance.ForceTakeLock(this);
-        SetTransitionScreen(true);
+        levelSwitchScreen.SetActive(true);
         if(UIManager.Instance != null)
             UIManager.Instance.ToggleGroup(false);
         float elapsedTime = 0.0f;
@@ -150,7 +135,7 @@ public class LevelManager : Singleton<LevelManager>
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        SetTransitionScreen(false);
+        levelSwitchScreen.SetActive(false);
         imageAnimator.Stop();
         if(UIManager.Instance != null)
             UIManager.Instance.ToggleGroup(true);
