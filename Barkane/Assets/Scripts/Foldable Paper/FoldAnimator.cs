@@ -217,7 +217,8 @@ public class FoldAnimator : MonoBehaviour
     }
 
     private bool CheckRayCast() {
-        return CheckRayCast(foldData.foldObjects) && CheckRayCast(foldData.playerFoldObjects, true);
+        return CheckRayCast(foldData.foldObjects); 
+        //&& CheckRayCast(foldData.playerFoldObjects, true);
     }
 
     /* FOLD CHECK 3: PAPER AND OBJECT COLLISION
@@ -238,6 +239,8 @@ public class FoldAnimator : MonoBehaviour
         GameObject parent2 = new GameObject("parent 2");
         parent2.transform.position = foldData.center;
         List<GameObject> copiesList = new List<GameObject>();
+        List<GameObject> obstList = new List<GameObject>();
+        Dictionary<GameObject, Vector3> colliderDict = new Dictionary<GameObject, Vector3>();
         foreach(GameObject go in fo.foldSquares)
         {
             GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
@@ -245,20 +248,27 @@ public class FoldAnimator : MonoBehaviour
             newSquare.transform.parent = parent2.transform;
             copiesList.Add(newSquare);
             BlocksFold[] bf = go.GetComponentsInChildren<BlocksFold>();
+            //if(!invertFold){
             foreach (BlocksFold bfold in bf)
             {
                 GameObject obj = bfold.gameObject;
                 BoxCollider[] colliders = obj.GetComponentsInChildren<BoxCollider>();
                 foreach(BoxCollider c in colliders)
                 {
-                    GameObject blockSquare = Instantiate(SquareCollider, c.transform.position + c.center, go.transform.rotation);
+                    GameObject blockSquare = Instantiate(SquareCollider, 
+                                                c.transform.position, 
+                                                go.transform.rotation);
+                    Debug.Log(c.center);
                     blockSquare.name = "bs";
                     blockSquare.GetComponent<SquareCast>().showRay = true;
+                    blockSquare.transform.position = blockSquare.transform.position + blockSquare.transform.rotation * c.center;
                     blockSquare.transform.parent = parent2.transform;
                     copiesList.Add(blockSquare);
+                    obstList.Add(blockSquare);
+                    colliderDict.Add(blockSquare, c.size / 2);
                 }
-                
-            }
+            }    
+            //}
         }
         
         //C: checks for squares running into other stuff
@@ -285,17 +295,37 @@ public class FoldAnimator : MonoBehaviour
                     // if so, this collision doesn't matter. if not, then we can't fold
                     //print(invertFold);
                     if(invertFold && ps == null)
-                        Debug.Log("collision 1A ignored"); //1a, ignore. 
+                        Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to special case 1A"); //1a, ignore. 
                     else if(ps == null || !fo.foldSquares.Contains(ps.gameObject)) 
                     {
-                        Debug.Log($"Collision with {hit.transform.gameObject.name} on ray {i},{j}");
+                        Debug.Log($"Collision with {hit.transform.gameObject.name} on ray {i},{j}. Invert  {invertFold}");
                         Destroy(parent2);
                         raycastCheckDone = true;
                         return false;
                     }
-                    Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored");
+                    if(ps == null)
+                        Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to null paper square. Invert  {invertFold}");
+                    else
+                        Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to same side collision. Invert  {invertFold}");
                 }
                 j++;               
+            }
+            foreach (GameObject go in obstList)
+            {
+                Collider[] hits = Physics.OverlapBox(go.transform.position, colliderDict[go], go.transform.rotation, squareCollidingMask);
+                foreach(Collider c in hits)
+                {
+                    PaperSquare ps =  c.transform.gameObject.GetComponentInParent<PaperSquare>();
+                    //if(invertFold && ps == null)
+                      //  Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to special case 1A"); //1a, ignore. 
+                    if(ps == null || !fo.foldSquares.Contains(ps.gameObject)) 
+                    {
+                        Debug.Log($"Collision with {c.transform.gameObject.name}. Invert  {invertFold}");
+                        Destroy(parent2);
+                        raycastCheckDone = true;
+                        return false;
+                    }
+                }
             }
         }
         Destroy(parent2);

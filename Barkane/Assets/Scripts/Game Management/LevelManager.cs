@@ -48,6 +48,7 @@ public class LevelManager : Singleton<LevelManager>
     //Handles index setting, special case of last level
     public void LoadLevel(int index)
     {
+        
         currLevelIndex = index;
         if (index >= levelList.Count) 
             OnCompleteLastLevel();
