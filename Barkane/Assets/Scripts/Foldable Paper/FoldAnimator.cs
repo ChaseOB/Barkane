@@ -381,6 +381,7 @@ public class FoldAnimator : MonoBehaviour
         StoreAllSquarePos();
         float t = 0;
         int wait = 1;
+        fd.foldJoint.OnFold();
         while (t < foldDuration)
         {
             t += Time.deltaTime;
