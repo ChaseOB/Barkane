@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
+using BarkaneJoint;
 
 namespace BarkaneEditor
 {
@@ -51,35 +52,32 @@ namespace BarkaneEditor
             }
 
             Load();
-            if (!Application.isPlaying) {
-                foreach (var s in FindObjectsOfType<MonoBehaviour>())
-                {
-                    if (s is IRefreshable) (s as IRefreshable).EditorRefresh();
-                }
-            } else
-            {
-                foreach (var s in FindObjectsOfType<MonoBehaviour>())
-                {
-                    if (s is IRefreshable) (s as IRefreshable).RuntimeRefresh();
-                }
-            }
-            
+
+            Refresh<EdgeParticles>();
+            Refresh<MaskFoldParticles>();
+            Refresh<JointRenderer>();
+            Refresh<SquareSizeManager>();
+            Refresh<SquareSide>();
+            Refresh<GlowStick>();
         }
 
-        internal void Refresh<T>() where T: Object, IRefreshable
+        internal void Refresh<T>() where T: MonoBehaviour, IRefreshable
         {
             if (!Application.isPlaying)
             {
-                foreach (var t in FindObjectsOfType<MonoBehaviour>())
+#if UNITY_EDITOR
+                foreach (var t in FindObjectsOfType<T>())
                 {
-                    if (t is T) (t as IRefreshable).EditorRefresh();
+                    t.EditorRefresh();
+                    EditorUtility.SetDirty(t);
                 }
+#endif
             }
             else
             {
-                foreach (var t in FindObjectsOfType<MonoBehaviour>())
+                foreach (var t in FindObjectsOfType<T>())
                 {
-                    if (t is T) (t as IRefreshable).RuntimeRefresh();
+                    t.RuntimeRefresh();
                 }
             }
         }
