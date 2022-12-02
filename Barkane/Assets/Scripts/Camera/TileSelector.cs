@@ -162,6 +162,8 @@ public class TileSelector : MonoBehaviour
             if(currJoint == hoverJoint)
                 return;
             currJoint?.Deselect();
+            Destroy(ghostFold);
+            Destroy(ghostFold2);
             currJoint = hoverJoint;
             currJoint.Select();
             foldablePaper.foldJoint = currJoint;
