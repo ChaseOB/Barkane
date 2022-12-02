@@ -94,7 +94,13 @@ public class FoldAnimator : MonoBehaviour
             Debug.Log("Cannot fold: currently checking colliders");
             return false;
         }
-        //C: check selected joints to ensure straight line
+
+        /* FOLD CHECK 1: KINKED JOINTS
+            This checks that the selected joint lies within a single plane. If it does, this might be a valid fold. If not, 
+            This is not a valid fold and we return false
+
+            KNOWN ISSUES: None
+        */
         HashSet<int> x = new HashSet<int>();
         HashSet<int> y = new HashSet<int>();
         HashSet<int> z = new HashSet<int>();
@@ -114,9 +120,27 @@ public class FoldAnimator : MonoBehaviour
             return false;
         }
 
-        //C: Check that we aren't folding though a back to back square by getting vector of top and bottom in square stack and ensuring that 
-        // the direction of that vector does not change 
+        //handles clipping of back-to-back paper
+        if(!CheckPaperClipping(fd))
+            return false;
 
+        //C: need to transfer data out to be used for raycast stuff
+        foldData = fd;
+        checkRaycast = true;
+        return true;
+    }
+
+    /* FOLD CHECK 2: PAPER CLIPPING
+            This checks that back to back squares do not clip through eachother. This is because the squares are so
+            thin that squares at the same location will not be caught using the raycast, thus another approach is needed.
+
+            This part of the check also updates the visibile faces of each square
+            KNOWN ISSUES: 
+            -pretty good with 2 squares, not so much for higher quantities 
+            -sorting is straight up wrong sometimes. 
+        */
+    private bool CheckPaperClipping(FoldData fd)
+    {
         List<List<PaperSquare>> overlaps = foldablePaper.FindOverlappingSquares();
         foreach(List<PaperSquare> list in overlaps)
         {
@@ -173,9 +197,9 @@ public class FoldAnimator : MonoBehaviour
                
                     if(d1 < d2) {
                         Debug.Log($"Cannot fold: would clip through adj paper {activeSides[0].transform.up} {activeSides[1].transform.up}");
-                            Destroy(t1);
-                    Destroy(t2);
-                    Destroy(parent);
+                        Destroy(t1);
+                        Destroy(t2);
+                        Destroy(parent);
                         return false;
                     }
                 }
@@ -184,10 +208,6 @@ public class FoldAnimator : MonoBehaviour
                 Destroy(parent);
             }
         }
-
-        //C: need to transfer data out to be used for raycast stuff
-        foldData = fd;
-        checkRaycast = true;
         return true;
     }
 
@@ -196,7 +216,21 @@ public class FoldAnimator : MonoBehaviour
             raycastCheckReturn = CheckRayCast();
     }
 
-     private bool CheckRayCast() {
+    private bool CheckRayCast() {
+        return CheckRayCast(foldData.foldObjects) && CheckRayCast(foldData.playerFoldObjects, true);
+    }
+
+    /* FOLD CHECK 3: PAPER AND OBJECT COLLISION
+            This checks that Paper squares do not clip through other squares or obstacles. This also checks that obstacles do not clip 
+            through squares. Becuas it is easier to check for squares colliding with objects than vice versa, 
+            this check is run twice, once with the "real" fold and once by folding the player side object in 
+            the opposite direction 
+
+            KNOWN ISSUES: 
+            -won't let you fold crystal into player
+            -clipping squares through objects is hard, but clipping objects into squares is easy (fixed?)
+        */
+    private bool CheckRayCast(FoldObjects fo, bool invertFold = false) {
         Debug.Log("checking raycast...");
         checkRaycast = false;
         int numChecks = 10;
@@ -204,7 +238,7 @@ public class FoldAnimator : MonoBehaviour
         GameObject parent2 = new GameObject("parent 2");
         parent2.transform.position = foldData.center;
         List<GameObject> copiesList = new List<GameObject>();
-        foreach(GameObject go in foldData.foldObjects.foldSquares)
+        foreach(GameObject go in fo.foldSquares)
         {
             GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
             newSquare.name = "ns";
@@ -229,9 +263,12 @@ public class FoldAnimator : MonoBehaviour
         
         //C: checks for squares running into other stuff
         //Ideally we should check every point along the rotation axis, but this is not feasible. 
+        float degrees = foldData.degrees;
+        if(invertFold)
+            degrees *= -1;
         for(int i = 1; i <= numChecks; i++) 
         {
-            parent2.transform.RotateAround(foldData.center, foldData.axis, foldData.degrees/(numChecks+1));
+            parent2.transform.RotateAround(foldData.center, foldData.axis, degrees/(numChecks+1));
             int j = 0;
             foreach(GameObject go in copiesList)
             {
@@ -243,15 +280,20 @@ public class FoldAnimator : MonoBehaviour
                     PaperSquare ps =  hit.transform.gameObject.GetComponentInParent<PaperSquare>();
                     //C: There are 2 cases:
                     //1: we hit the player. Then ps is null, and there is a collision
+                    //1a: if we are on the player side fold, ignore this case
                     //2: we hit an object/paper square. Then we need to check to see if it is in the fold side objects
                     // if so, this collision doesn't matter. if not, then we can't fold
-                    if(ps == null || !foldData.foldObjects.foldSquares.Contains(ps.gameObject)) 
+                    //print(invertFold);
+                    if(invertFold && ps == null)
+                        Debug.Log("collision 1A ignored"); //1a, ignore. 
+                    else if(ps == null || !fo.foldSquares.Contains(ps.gameObject)) 
                     {
                         Debug.Log($"Collision with {hit.transform.gameObject.name} on ray {i},{j}");
                         Destroy(parent2);
                         raycastCheckDone = true;
                         return false;
                     }
+                    Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored");
                 }
                 j++;               
             }
@@ -489,15 +531,17 @@ public class FoldData: Action
 {
     public PaperJoint foldJoint;
     public FoldObjects foldObjects;
+    public FoldObjects playerFoldObjects;
     public Vector3 center;
     public Vector3 axis;
     public float degrees;
 
     public FoldData() {}
 
-    public FoldData( PaperJoint fj, FoldObjects fo, Vector3 c, Vector3 a, float deg) {
+    public FoldData(PaperJoint fj, FoldObjects fo, FoldObjects pfo, Vector3 c, Vector3 a, float deg) {
         foldJoint = fj;
         foldObjects = fo;
+        playerFoldObjects = fo;
         center = c;
         axis = a;
         degrees = deg;

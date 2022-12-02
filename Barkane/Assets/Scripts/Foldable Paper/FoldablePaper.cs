@@ -82,12 +82,14 @@ public class FoldablePaper : MonoBehaviour
 
 
     //C: Uses a modified DFS to determine which objects should be folded
-    public FoldObjects FindFoldObjects()
+    // Returns fold side objects first, player side objects second (we need player side objects for
+    // testing collision)
+    public FoldObjects[] FindFoldObjects()
     {
         visitedJoints.Clear();
         visitedSquares.Clear();
 
-        playerSide = new FoldObjects();
+        playerSide = new FoldObjects(paperSquares[0].transform.parent, paperJoints[0].transform.parent);
         foldObjects = new FoldObjects(paperSquares[0].transform.parent, paperJoints[0].transform.parent);
 
         PaperSquare playerSquare = null;
@@ -98,7 +100,10 @@ public class FoldablePaper : MonoBehaviour
 
         playerSide.OnFoldHighlight(false);
         foldObjects.OnFoldHighlight(true);
-        return foldObjects;
+        FoldObjects[] returnArr = new FoldObjects[2];
+        returnArr[0] = playerSide;
+        returnArr[1] = foldObjects;
+        return returnArr;
     }
 
     private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
@@ -138,7 +143,7 @@ public class FoldablePaper : MonoBehaviour
     {
         FindFoldObjects();
         if(!isComplete && foldJoint != null && foldJoint.canFold) {
-            FoldData fd = new FoldData(foldJoint, foldObjects, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+            FoldData fd = new FoldData(foldJoint, foldObjects, playerSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
             foldAnimator.TryFold(fd);
         }
     }
