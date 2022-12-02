@@ -114,14 +114,15 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EdgeBias: 0.001
-    - _Edge_Sharpness: 1500
-    - _Emphasize_Vertex: 40
+    - _Edge_Sharpness: 2500
+    - _Emphasize_Vertex: 10
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Level: 4
+    - _Level: 2
     - _Metallic: 0
+    - _NormalStrength: 18.03
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueControl: 0
