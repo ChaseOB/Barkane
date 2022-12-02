@@ -19,7 +19,7 @@ namespace BarkaneJoint
         public float randomizeX, randomizeY;
 
         // a tape is just a 4 sided column
-        [HideInInspector] public int[] ids = ColumnMeshIndex.Create(4);
+        public int[] ids = ColumnMeshIndex.Create(4);
 
         public int VCount => 22;
     }

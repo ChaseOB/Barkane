@@ -82,15 +82,11 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
         {
             playerWalk.enabled = true;
             squareSide.materialPrototype = theme.WalkMat;
-            squareSide.baseColor = darkened ? theme.WalkColorDark : theme.WalkColor;
-            squareSide.tintColor = theme.WalkEdgeTint;
         }
         else if(faceType == FaceType.UNWALKABLE)
         {
             playerWalk.enabled = false;
             squareSide.materialPrototype = theme.UnWalkMat;
-            squareSide.baseColor = theme.UnwalkColor;
-            squareSide.tintColor = theme.UnwalkTint;
         }
         squareSide.UpdateMesh();
     }

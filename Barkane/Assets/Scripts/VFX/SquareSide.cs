@@ -16,13 +16,12 @@ public class SquareSide : MonoBehaviour, IRefreshable
     [SerializeField] CrumbleMeshGenerator meshGenerator;
     [SerializeField] public Material materialPrototype;
 
-    [SerializeField, HideInInspector] Material materialInstance;
+    [HideInInspector] public Material materialInstance;
     [SerializeField, HideInInspector] byte[] distanceTextureData;
     [SerializeField, HideInInspector] int distanceTextureWidth;
     [SerializeField, HideInInspector] SerializedMesh meshData;
 
     public Material MaterialPrototype => materialPrototype;
-    [SerializeField, HideInInspector] public Color baseColor, tintColor;
 
     public (Vector3[], Vector3[]) sprinkles;
     // A: unsure why this is needed
@@ -54,11 +53,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
             distanceTexture.Apply();
 
             mFilter.sharedMesh = meshData.Rehydrated;
-
             materialInstance.SetTexture("Dist", distanceTexture);
-            materialInstance.SetColor("_Color", baseColor);
-            materialInstance.SetColor("_EdgeTint", tintColor);
-
             mRenderer.sharedMaterials = new Material[] { materialInstance };
         }
     }

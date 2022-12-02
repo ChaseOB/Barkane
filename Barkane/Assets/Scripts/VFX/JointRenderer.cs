@@ -26,7 +26,7 @@ namespace BarkaneJoint
         [SerializeField] MeshRenderer mrA1, mrA2, mrB1, mrB2;
 
         public ((GameObject, GameObject), (GameObject, GameObject)) facePairs => ((a1.gameObject, b1.gameObject), (a2.gameObject, b2.gameObject));
-        [SerializeField, HideInInspector] private SquareSide a1, a2, b1, b2;
+        [SerializeField] private SquareSide a1, a2, b1, b2;
 
         [SerializeField, HideInInspector] private Vector3[] randoms;
 
@@ -335,8 +335,8 @@ namespace BarkaneJoint
             {
                 name = $"{mat.name} {name}"
             };
-            m.SetColor("_Color", src.baseColor);
-            m.SetColor("_EdgeTint", src.tintColor);
+            m.SetColor("_Color", src.materialInstance.GetColor("_Color"));
+            m.SetColor("_EdgeTint", src.materialInstance.GetColor("_EdgeTint"));
             return m;
         }
 
@@ -348,7 +348,11 @@ namespace BarkaneJoint
 
             f.sharedMesh.MarkDynamic();
 
-            mr.sharedMaterial = BindColor(materialPrototype, side, name);
+            // A: for whatever reason, setting this during play darkens the color
+            if (!Application.isPlaying)
+            {
+                mr.sharedMaterial = BindColor(materialPrototype, side, name);
+            }
         }
 
         private void FullSetup()

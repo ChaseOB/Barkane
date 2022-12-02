@@ -17,8 +17,8 @@ namespace BarkaneJoint
         public float elevation;
         [Range(0, 32)]
         public int resolution;
-        [HideInInspector] public int[] indices;
-        [HideInInspector] public Vector2[] angles;
+        public int[] indices;
+        public Vector2[] angles;
 
         public int VCount => 5 * resolution + 2;
     }
@@ -48,6 +48,9 @@ namespace BarkaneJoint
 
                     (target as GlowstickRenderSettings).indices = ids;
                     Debug.Log(string.Join(", ", ids));
+
+
+                    EditorUtility.SetDirty(target);
                 } else
                 {
                     throw new UnityException("Resolution must be at least 2");

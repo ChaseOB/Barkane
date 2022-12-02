@@ -102,8 +102,8 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
                 1 + 3 * 4);
         }
         // head B
-        vs[vs.Length - 1] = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2B * (settings.halfLength + margin) + g.nB * settings.elevation);
-        ns[ns.Length - 1] = transform.worldToLocalMatrix.MultiplyVector(g.nJ2B);
+        vs[^1] = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2B * (settings.halfLength + margin) + g.nB * settings.elevation);
+        ns[^1] = transform.worldToLocalMatrix.MultiplyVector(g.nJ2B);
         Ring(
             ref vs, ref ns,
             vs[vs.Length - 1],
