@@ -6,6 +6,7 @@ public class Theme : ScriptableObject
 {
     public GameObject Sprinkle;
     public ThemeChoice themeEnum;
+    public string musicStringName;
 
     [Header("Materials")]
     public Material WalkMat;

@@ -79,7 +79,7 @@ public class LevelManager : Singleton<LevelManager>
         if(currLevelTheme == null || level.theme != currLevelTheme)
         {
             SceneManager.LoadScene(levelScenes[(int)level.theme.themeEnum]);
-            //TODO: Update audio
+            AudioManager.Instance.PlayList(level.theme.musicStringName);
         }
         else
             SpawnLevel(level);

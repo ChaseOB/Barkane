@@ -79,6 +79,7 @@ public class AudioManager : Singleton<AudioManager>
 
     public void PlayMusic(int list, int ind)
     {
+        source.Stop();
         if (musicLists == null)
             return;
         AudioClip s = musicLists[list].Tracks[ind];

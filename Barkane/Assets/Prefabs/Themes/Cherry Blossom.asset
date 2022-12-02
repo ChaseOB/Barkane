@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Sprinkle: {fileID: 8436179723297161049, guid: 1ea3a159bfda6994c9bb49f702624ca5, type: 3}
   themeEnum: 0
+  musicStringName: Cherry Blossom
   WalkMat: {fileID: 2100000, guid: 871f58141d0c54e42b1426597d52a27c, type: 2}
   WalkColor: {r: 0.58431375, g: 0.96862745, b: 0.5686275, a: 1}
   WalkTint: {r: 0.4251958, g: 0.8584906, b: 0.5355633, a: 0.34117648}

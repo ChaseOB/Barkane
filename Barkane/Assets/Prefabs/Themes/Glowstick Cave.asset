@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Sprinkle: {fileID: 0}
   themeEnum: 2
+  musicStringName: Caves
   WalkMat: {fileID: 2100000, guid: 6b06cd29cb3811643ab996abb7b74839, type: 2}
   WalkColor: {r: 0.38039216, g: 0.38039216, b: 0.7921569, a: 1}
   WalkTint: {r: 0.2509804, g: 0.2509804, b: 0.42352945, a: 0.16862746}
