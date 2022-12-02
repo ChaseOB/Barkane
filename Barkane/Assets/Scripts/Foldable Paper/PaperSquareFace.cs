@@ -90,7 +90,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
         }
         squareSide.UpdateMesh();
     }
-
+#if UNITY_EDITOR
     public void SetFaceObject(FaceObjectType type, bool status)
     {
         if (status)
@@ -114,6 +114,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
             newObject.transform.localRotation = Quaternion.identity;
         }
     }
+#endif
 
     private void DeleteFaceObjectIfExists(FaceObjectType type)
     {

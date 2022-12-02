@@ -137,8 +137,6 @@ public class CreaseRenderSettingsEditor : Editor
             t.ts[t.creaseSegmentCount] = .5f;
 
             Debug.Log(string.Join(", ", t.ts));
-
-            EditorUtility.SetDirty(target);
         }
     }
 }

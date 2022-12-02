@@ -81,15 +81,14 @@ namespace BarkaneJoint
                     2 * (Random.value - 0.5f) * settings.creaseDeviation.z);
             }
 
+#if UNITY_EDITOR
             ValidateSidedAddon<GlowStick>();
             ValidateSidedAddon<Tape>();
+#endif
             UpdateMesh(true);
         }
 
-        void IRefreshable.RuntimeRefresh()
-        {
-
-        }
+        void IRefreshable.RuntimeRefresh() { }
 
         public bool IsAnimating = false;
 
