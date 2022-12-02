@@ -5,7 +5,7 @@ using BarkaneJoint;
 using BarkaneEditor;
 
 [ExecuteAlways]
-public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>
+public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>, IRefreshable
 {
     [SerializeField] private GlowstickRenderSettings settingsInner, settingsOuter;
     [SerializeField] private SquareRenderSettings squareRenderSettings;
@@ -17,22 +17,21 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>
 
     private void LateUpdate()
     {
-        if (vsInner == null || vsInner.Length != settingsInner.VCount) ClearAndInitBuffers(settingsInner);
-        if (vsOuter == null || vsOuter.Length != settingsOuter.VCount) ClearAndInitBuffers(settingsOuter);
         UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, vsInner, nsInner);
         UpdateMesh(outerFilter, settingsOuter, squareRenderSettings.margin, vsOuter, nsOuter);
     }
 
-    private void UpdateMesh(MeshFilter filter, GlowstickRenderSettings settings, float margin, Vector3[] vs, Vector3[] ns)
+    private void UpdateMesh(MeshFilter filter, GlowstickRenderSettings settings, float margin, Vector3[] vs, Vector3[] ns, bool force = false)
     {
 
         Mesh m;
-        var firstSet = filter.sharedMesh == null || vs == null || vs.Length != settings.VCount;
+        var firstSet = force || filter.sharedMesh == null || vs == null || vs.Length != settings.VCount;
         if (firstSet)
         {
+            ClearAndInitBuffers(settings);
             m = new Mesh();
             m.MarkDynamic();
-            filter.sharedMesh = m;
+            filter.sharedMesh = m; 
         } else
         {
             m = filter.sharedMesh;
@@ -104,7 +103,7 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>
         ns[^1] = transform.worldToLocalMatrix.MultiplyVector(g.nJ2B);
         Ring(
             ref vs, ref ns,
-            vs[vs.Length - 1],
+            vs[^1],
             transform.worldToLocalMatrix.MultiplyVector(g.nB),
             transform.worldToLocalMatrix.MultiplyVector(g.tJ),
             1 + 4 * settings.resolution, settings);
@@ -132,9 +131,27 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>
 
     public void ClearAndInitBuffers(GlowstickRenderSettings settings)
     {
-        vsInner = new Vector3[settings.VCount];
-        nsInner = new Vector3[settings.VCount];
-        vsOuter = new Vector3[settings.VCount];
-        nsOuter = new Vector3[settings.VCount];
+        if (settings == settingsInner)
+        {
+            vsInner = new Vector3[settingsInner.VCount];
+            nsInner = new Vector3[settingsInner.VCount];
+        }
+        if (settings == settingsOuter)
+        {
+            vsOuter = new Vector3[settingsOuter.VCount];
+            nsOuter = new Vector3[settingsOuter.VCount];
+        }
+    }
+
+    public void EditorRefresh()
+    {
+        UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, vsInner, nsInner, true);
+        UpdateMesh(outerFilter, settingsOuter, squareRenderSettings.margin, vsOuter, nsOuter, true);
+    }
+
+    public void RuntimeRefresh()
+    {
+        UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, vsInner, nsInner, true);
+        UpdateMesh(outerFilter, settingsOuter, squareRenderSettings.margin, vsOuter, nsOuter, true);
     }
 }
