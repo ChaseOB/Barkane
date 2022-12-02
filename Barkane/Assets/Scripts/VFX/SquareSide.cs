@@ -27,31 +27,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
     // A: unsure why this is needed
     public Transform sprinkleParent;
 
-    public float br, bg, bb, ba, tr, tg, tb, ta;
-
-    public Color BaseColor
-    {
-        get => new Color(br, bg, bb, ba);
-        set
-        {
-            br = value.r;
-            bg = value.g;
-            bb = value.b;
-            ba = value.a;
-        }
-    }
-
-    public Color TintColor
-    {
-        get => new Color(tr, tg, tb, ta);
-        set
-        {
-            tr = value.r;
-            tg = value.g;
-            tb = value.b;
-            ta = value.a;
-        }
-    }
+    public Color BaseColor, TintColor;
 
     void IRefreshable.EditorRefresh()
     {

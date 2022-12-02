@@ -92,6 +92,10 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
             squareSide.BaseColor = theme.UnwalkColor;
             squareSide.TintColor = theme.UnwalkTint;
         }
+
+#if UNITY_EDITOR
+        EditorUtility.SetDirty(squareSide);
+#endif
         squareSide.UpdateMesh();
     }
 #if UNITY_EDITOR

@@ -102,11 +102,12 @@ public class CreaseRenderSettings : ScriptableObject, IDynamicMeshRenderSettings
         return (trisA1, trisA2, trisB1, trisB2);
     }
 
+    [HideInInspector]
     public int[]
         tA1CCW, tA2CCW, tB1CCW, tB2CCW,
         tA1CW, tA2CW, tB1CW, tB2CW;
 
-    public float[] ts;
+    [HideInInspector] public float[] ts;
 }
 
 [CustomEditor(typeof(CreaseRenderSettings))]
@@ -137,6 +138,8 @@ public class CreaseRenderSettingsEditor : Editor
             t.ts[t.creaseSegmentCount] = .5f;
 
             Debug.Log(string.Join(", ", t.ts));
+
+            EditorUtility.SetDirty(target as CreaseRenderSettings);
         }
     }
 }
