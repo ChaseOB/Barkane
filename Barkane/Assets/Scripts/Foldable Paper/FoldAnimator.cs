@@ -415,7 +415,8 @@ public class FoldAnimator : MonoBehaviour
         isFolding = false;
 
         UpdateSquareVisibility(objectsToFold);
-
+        
+        FindObjectOfType<TileSelector>().TryMakeNewGhost();
         if(afterFold != null)
              afterFold();
         if(undo)

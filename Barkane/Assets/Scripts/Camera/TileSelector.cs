@@ -85,8 +85,19 @@ public class TileSelector : MonoBehaviour
         }
     }
 
+    public void TryMakeNewGhost()
+    {
+        if(currJoint != null && currJoint.canFold)
+        {
+            currJoint.Select();
+            foldablePaper.foldJoint = currJoint;
+            CreateGhostFold();
+        }
+    }
     private void CreateGhostFold()
     {
+                    foldObjects = foldablePaper.FindFoldObjects()[1];
+
         HashSet<int> x = new HashSet<int>();
         HashSet<int> y = new HashSet<int>();
         HashSet<int> z = new HashSet<int>();
@@ -154,7 +165,6 @@ public class TileSelector : MonoBehaviour
             currJoint = hoverJoint;
             currJoint.Select();
             foldablePaper.foldJoint = currJoint;
-            foldObjects = foldablePaper.FindFoldObjects()[1];
             CreateGhostFold();
         }
         else
@@ -170,8 +180,6 @@ public class TileSelector : MonoBehaviour
             currJoint = null;
             foldablePaper.foldJoint = null;*/
         }
-
-        
     }
 
     private void OnRightClick(InputValue value)
@@ -181,12 +189,14 @@ public class TileSelector : MonoBehaviour
         currJoint?.Deselect();
         currJoint = null;
         foldablePaper.foldJoint = null;
-        if(ghostFold != null)
+        if(ghostFold != null){
             Destroy(ghostFold);
+            Destroy(ghostFold2);
+        }
     }
 
 
-    private void OnFoldUp(InputValue value)
+   /* private void OnFoldUp(InputValue value)
     {
         if(!value.isPressed || currJoint == null || !currJoint.isSelected)
             return;
@@ -198,5 +208,5 @@ public class TileSelector : MonoBehaviour
         if(!value.isPressed || currJoint == null || !currJoint.isSelected)
             return;
         foldablePaper.TryFold(-90);
-    }
+    }*/
 }
