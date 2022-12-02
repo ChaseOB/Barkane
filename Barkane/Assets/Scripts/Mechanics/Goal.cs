@@ -2,17 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Goal : MonoBehaviour
+public class Goal : MonoBehaviour, IThemedItem
 {
     public int numShards;
     private int numShardsCollected;
     private bool goalActive = false;
     [SerializeField] private GameObject inactiveGoal;
     [SerializeField] private GameObject activeGoal;
+    [SerializeField] private GameObject goalPlane;
+
+    [SerializeField] private List<Material> swirlMaterials;
 
     private void Start() {
-        if (numShardsCollected >= numShards)
-            ActivateGoal();
+        ActivateGoal(numShardsCollected >= numShards);
     }
 
     private void OnTriggerEnter(Collider other) {
@@ -31,6 +33,11 @@ public class Goal : MonoBehaviour
         UIManager.Instance.EndLevel();
     }
 
+    public void UpdateTheme(Theme t) {
+        activeGoal.GetComponent<MeshRenderer>().material = t.crystalMat;
+        goalPlane.GetComponent<MeshRenderer>().material = swirlMaterials[(int)t.themeEnum];
+    }
+
     public void CollectShard()
     {
         numShardsCollected++;
@@ -40,10 +47,11 @@ public class Goal : MonoBehaviour
             ActivateGoal();
     }
 
-    private void ActivateGoal()
+    private void ActivateGoal(bool val = true)
     {
-        goalActive = true;
-        inactiveGoal.SetActive(false);
-        activeGoal.SetActive(true);
+        goalActive = val;
+        inactiveGoal.SetActive(!val);
+        activeGoal.SetActive(val);
+        goalPlane.SetActive(val);
     }
 }

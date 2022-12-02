@@ -93,8 +93,10 @@ namespace BarkaneJoint
             }
 
             UpdateColors();
+            #if UNITY_EDITOR
             ValidateSidedAddon<GlowStick>();
             ValidateSidedAddon<Tape>();
+            #endif
             RefreshBuffers();
         }
 

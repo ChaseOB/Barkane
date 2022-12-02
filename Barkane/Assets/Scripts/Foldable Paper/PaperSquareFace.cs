@@ -14,10 +14,11 @@ public enum FaceObjectType
 {
     SHARD,
     GOAL,
+    CONETREE,
 }
 
 [ExecuteInEditMode]
-public class PaperSquareFace : MonoBehaviour
+public class PaperSquareFace : MonoBehaviour, IThemedItem
 {
     [Header("Surface")]
     [SerializeField] private FaceType faceType;
@@ -27,22 +28,19 @@ public class PaperSquareFace : MonoBehaviour
     [Header("Objects")]
     [SerializeField] private bool shard;
     [SerializeField] private bool goal;
+    [SerializeField] private bool coneTree;
 
     [Header("References")]
     [SerializeField] private BoxCollider playerWalk;
     [SerializeField] private SquareSide squareSide;
     [SerializeField] private GameObject shardPrefab;
     [SerializeField] private GameObject goalPrefab;
-
-    private Theme theme;
+    [SerializeField] private GameObject coneTreePrefab;
 
     public void UpdateTheme(Theme t)
     {
-        if(t != theme) {
-            theme = t;
-        }
-        walkMat = theme.WalkMat;
-        unWalkMat = theme.UnWalkMat;
+        walkMat = t.WalkMat;
+        unWalkMat = t.UnWalkMat;
         ChangeFaceType();
     }
 
@@ -74,6 +72,7 @@ public class PaperSquareFace : MonoBehaviour
         {
             {FaceObjectType.SHARD, shardPrefab },
             {FaceObjectType.GOAL, goalPrefab },
+            {FaceObjectType.CONETREE, coneTreePrefab }
         };
     }
 
@@ -92,7 +91,7 @@ public class PaperSquareFace : MonoBehaviour
             squareSide.UpdateMesh();        
         }
     }
-
+#if UNITY_EDITOR
     public void SetFaceObject(FaceObjectType type, bool status)
     {
         if (status)
@@ -116,6 +115,7 @@ public class PaperSquareFace : MonoBehaviour
             newObject.transform.localRotation = Quaternion.identity;
         }
     }
+#endif
 
     private void DeleteFaceObjectIfExists(FaceObjectType type)
     {
@@ -143,6 +143,8 @@ public class PaperSquareFaceEditor : Editor
             { "faceType", (prop, face) => face.ChangeFaceType() },
             { "shard", (prop, face) => face.SetFaceObject(FaceObjectType.SHARD, prop.boolValue) },
             { "goal", (prop, face) => face.SetFaceObject(FaceObjectType.GOAL, prop.boolValue) },
+            { "coneTree", (prop, face) => face.SetFaceObject(FaceObjectType.CONETREE, prop.boolValue) },
+
         };
     }
 

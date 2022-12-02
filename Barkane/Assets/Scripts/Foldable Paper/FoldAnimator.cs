@@ -214,11 +214,16 @@ public class FoldAnimator : MonoBehaviour
             foreach (BlocksFold bfold in bf)
             {
                 GameObject obj = bfold.gameObject;
-                GameObject blockSquare = Instantiate(SquareCollider, obj.transform.position, go.transform.rotation);
-                blockSquare.name = "bs";
-               // blockSquare.GetComponent<SquareCast>().showRay = true;
-                blockSquare.transform.parent = parent2.transform;
-                copiesList.Add(blockSquare);
+                BoxCollider[] colliders = obj.GetComponentsInChildren<BoxCollider>();
+                foreach(BoxCollider c in colliders)
+                {
+                    GameObject blockSquare = Instantiate(SquareCollider, c.transform.position + c.center, go.transform.rotation);
+                    blockSquare.name = "bs";
+                    blockSquare.GetComponent<SquareCast>().showRay = true;
+                    blockSquare.transform.parent = parent2.transform;
+                    copiesList.Add(blockSquare);
+                }
+                
             }
         }
         
@@ -342,7 +347,7 @@ public class FoldAnimator : MonoBehaviour
             foldCount++;
         UIManager.UpdateFoldCount(foldCount);
         if(!fromStack && !undo) {
-            UndoRedoManager.Instance.AddAction(fd);
+            UndoRedoManager.Instance?.AddAction(fd);
         }
         ActionLockManager.Instance.TryRemoveLock(this);
     }

@@ -10,7 +10,7 @@ public class ActionLockManager : Singleton<ActionLockManager>
     public Object LockObject => lockObject;
 
     private void Awake() {
-        InitializeSingleton();
+        InitializeSingleton(this);
     }
 
 
