@@ -204,9 +204,10 @@ public class FoldObjects {
     {
         foreach(GameObject go in foldLineJoints)
         {
-            JointRenderer jr = go.GetComponent<PaperJoint>()?.JointRenderer;
+            PaperJoint pj = go.GetComponent<PaperJoint>();
+            JointRenderer jr = pj?.JointRenderer;
             jr?.EnableMeshAction();
-            jr?.ShowLine(false);
+            jr?.ShowLine(false, true);
         }
     }
 
@@ -214,7 +215,8 @@ public class FoldObjects {
     {
         foreach(GameObject go in foldLineJoints)
         {
-            JointRenderer jr = go.GetComponent<PaperJoint>()?.JointRenderer;
+            PaperJoint pj = go.GetComponent<PaperJoint>();
+            JointRenderer jr = pj?.JointRenderer;
             jr?.DisableMeshAction();
             jr?.ShowLine(true);
         }

@@ -263,6 +263,8 @@ public class FoldAnimator : MonoBehaviour
                     blockSquare.GetComponent<SquareCast>().showRay = true;
                     blockSquare.transform.position = blockSquare.transform.position + blockSquare.transform.rotation * c.center;
                     blockSquare.transform.parent = parent2.transform;
+                    if(bfold.GetComponentInParent<CrystalShard>())
+                        blockSquare.tag = "NoBlockPlayer";
                     copiesList.Add(blockSquare);
                     obstList.Add(blockSquare);
                     colliderDict.Add(blockSquare, c.size / 2);
@@ -318,7 +320,8 @@ public class FoldAnimator : MonoBehaviour
                     PaperSquare ps =  c.transform.gameObject.GetComponentInParent<PaperSquare>();
                     //if(invertFold && ps == null)
                       //  Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to special case 1A"); //1a, ignore. 
-                    if(ps == null || !fo.foldSquares.Contains(ps.gameObject)) 
+                    if(ps == null && go.tag == "NoBlockPlayer");
+                    else if(ps == null || !fo.foldSquares.Contains(ps.gameObject)) 
                     {
                         Debug.Log($"Collision with {c.transform.gameObject.name}. Invert  {invertFold}");
                         Destroy(parent2);

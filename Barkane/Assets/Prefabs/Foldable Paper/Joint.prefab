@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 20973ee25d128b54a95fee7182d776ca, type: 2}
+  - {fileID: 2100000, guid: 1dd6878bf7a928e4e943bccf7002dfa2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -613,6 +613,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7650339220258648004}
     m_Modifications:
+    - target: {fileID: 7963069467186209407, guid: 4ca3e24a99073a24c97a4d2fb3727c42, type: 3}
+      propertyPath: lengthInSec
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 7963069467563708634, guid: 4ca3e24a99073a24c97a4d2fb3727c42, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -660,6 +664,10 @@ PrefabInstance:
     - target: {fileID: 7963069467563708637, guid: 4ca3e24a99073a24c97a4d2fb3727c42, type: 3}
       propertyPath: m_Name
       value: MaskFoldParticles
+      objectReference: {fileID: 0}
+    - target: {fileID: 7963069467846335371, guid: 4ca3e24a99073a24c97a4d2fb3727c42, type: 3}
+      propertyPath: lengthInSec
+      value: 0.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ca3e24a99073a24c97a4d2fb3727c42, type: 3}

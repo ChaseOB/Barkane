@@ -201,10 +201,10 @@ namespace BarkaneJoint
         }
     #endif
 
-        public void ShowLine(bool value)
+        public void ShowLine(bool value, bool staySelected = false)
         {
-            indicator.SetActive(value);
-            if (value)
+            indicator.SetActive(value || staySelected);
+            if (value || staySelected)
             {
                 maskFoldParticles?.Emit();
             }

@@ -29,6 +29,7 @@ public class MaskFoldParticles : MonoBehaviour, BarkaneEditor.IRefreshable, IThe
         }
         foreach (ParticleSystem ps in listOfSystems)
         {
+            ps.Emit(80);
             ps.Play();
         }
     }
