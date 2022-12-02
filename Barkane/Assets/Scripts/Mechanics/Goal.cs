@@ -28,7 +28,7 @@ public class Goal : MonoBehaviour, IThemedItem
         EndLevel();
     }
     
-    private void EndLevel() {
+    public void EndLevel() {
         LevelManager.Instance.EndLevel();
         UIManager.Instance.EndLevel();
     }

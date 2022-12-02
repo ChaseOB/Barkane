@@ -198,13 +198,15 @@ public class TileSelector : MonoBehaviour
     }
 
 
-   /* private void OnFoldUp(InputValue value)
+    private void OnFoldUp(InputValue value)
     {
-        if(!value.isPressed || currJoint == null || !currJoint.isSelected)
-            return;
-        foldablePaper.TryFold(90);
+        if(!value.isPressed) return;
+        FindObjectOfType<Goal>().EndLevel();
+        //if(!value.isPressed || currJoint == null || !currJoint.isSelected)
+          //  return;
+       // foldablePaper.TryFold(90);
     }
-
+/*
     private void OnFoldDown(InputValue value)
     {
         if(!value.isPressed || currJoint == null || !currJoint.isSelected)
