@@ -346,12 +346,7 @@ namespace BarkaneJoint
             };
 
             f.sharedMesh.MarkDynamic();
-
-            // A: for whatever reason, setting this during play darkens the color
-            if (!Application.isPlaying)
-            {
-                mr.sharedMaterial = BindColor(materialPrototype, side, name);
-            }
+            mr.sharedMaterial = BindColor(materialPrototype, side, name);
         }
 
         private void FullSetup()

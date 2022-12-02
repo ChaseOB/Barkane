@@ -6,6 +6,7 @@ using UnityEditor;
 using System;
 using Random = UnityEngine.Random;
 
+[Serializable]
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
@@ -26,6 +27,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
     public (Vector3[], Vector3[]) sprinkles;
     // A: unsure why this is needed
     public Transform sprinkleParent;
+
+    public Color baseColor, tintColor;
 
     void IRefreshable.EditorRefresh()
     {
@@ -54,7 +57,10 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
             mFilter.sharedMesh = meshData.Rehydrated;
             materialInstance.SetTexture("Dist", distanceTexture);
-            mRenderer.sharedMaterials = new Material[] { materialInstance };
+            materialInstance.SetColor("_Color", baseColor);
+            materialInstance.SetColor("_EdgeTint", tintColor);
+            mRenderer.sharedMaterial = materialInstance;
+            
         }
     }
 

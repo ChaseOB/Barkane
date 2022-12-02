@@ -8,8 +8,10 @@ public class Theme : ScriptableObject
     public ThemeChoice themeEnum;
 
     [Header("Materials")]
-    public Material WalkMat, WalkMatDark;
+    public Material WalkMat;
+    public Color WalkColor, WalkColorDark, WalkTint;
     public Material UnWalkMat;
+    public Color UnwalkColor, UnwalkTint;
     public Material crystalMat;
     
     [Header("Render Related")]

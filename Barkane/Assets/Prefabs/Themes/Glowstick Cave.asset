@@ -17,7 +17,7 @@ MonoBehaviour:
   WalkMat: {fileID: 2100000, guid: 6b06cd29cb3811643ab996abb7b74839, type: 2}
   WalkColor: {r: 0.29411766, g: 0.29411766, b: 0.5568628, a: 0}
   WalkColorDark: {r: 0.2509804, g: 0.2509804, b: 0.42352945, a: 0}
-  WalkEdgeTint: {r: 0.2509804, g: 0.2509804, b: 0.42352945, a: 0.24705882}
+  WalkTint: {r: 0.2509804, g: 0.2509804, b: 0.42352945, a: 0.4392157}
   UnWalkMat: {fileID: 2100000, guid: 072396b20eba60e4aa9b10d099a62d55, type: 2}
   UnwalkColor: {r: 0.098039225, g: 0.6901961, b: 0.5882353, a: 0}
   UnwalkTint: {r: 0.75294125, g: 1, b: 0.427451, a: 0.4117647}
