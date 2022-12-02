@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using BarkaneJoint;
 
+[RequireComponent(typeof(VFXThemeAdapter))]
 public class FoldablePaper : MonoBehaviour
 {
     [SerializeField] private PaperSquare[] paperSquares;

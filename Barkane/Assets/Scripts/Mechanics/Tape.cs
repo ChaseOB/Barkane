@@ -6,7 +6,7 @@ using BarkaneEditor;
 using System.Drawing.Printing;
 
 [ExecuteAlways]
-public class Tape : SidedJointAddon, IRefreshable
+public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
 {
     [SerializeField] private TapeRenderSettings settings;
     [SerializeField] private SquareRenderSettings squareRenderSettings;
@@ -16,11 +16,6 @@ public class Tape : SidedJointAddon, IRefreshable
     Vector3[] vs, ns;
     Vector2[] ringShifts; // randomize corners to look less tidy
 
-    private void Start()
-    {
-        Refresh();
-    }
-
     private void LateUpdate()
     {
         UpdateMesh(squareRenderSettings.margin);
@@ -28,6 +23,7 @@ public class Tape : SidedJointAddon, IRefreshable
 
     private void UpdateMesh(float margin)
     {
+        if (vs == null || vs.Length != settings.VCount) ClearAndInitBuffers(settings);
 
         var g = FetchGeometry();
 
@@ -106,8 +102,8 @@ public class Tape : SidedJointAddon, IRefreshable
                 1 + 3 * 4);
         }
         // head B
-        vs[vs.Length - 1] = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2B * (settings.halfLength + margin) + g.nB * settings.elevation);
-        ns[ns.Length - 1] = transform.worldToLocalMatrix.MultiplyVector(g.nJ2B);
+        vs[^1] = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2B * (settings.halfLength + margin) + g.nB * settings.elevation);
+        ns[^1] = transform.worldToLocalMatrix.MultiplyVector(g.nJ2B);
         Ring(
             ref vs, ref ns,
             vs[vs.Length - 1],
@@ -119,8 +115,6 @@ public class Tape : SidedJointAddon, IRefreshable
 
         m.vertices = vs;
         m.normals = ns;
-        m.MarkModified();
-
 
         if (firstSet)
         {
@@ -148,12 +142,12 @@ public class Tape : SidedJointAddon, IRefreshable
         vs[iStart + 3] = c + w - h + randomR.x * t + randomR.y * z;
     }
 
-    public void Refresh()
+    public void ClearAndInitBuffers(TapeRenderSettings settings)
     {
         meshFilter.sharedMesh = null;
 
-        vs = new Vector3[5 * 4 + 2];
-        ns = new Vector3[5 * 4 + 2];
+        vs = new Vector3[settings.VCount];
+        ns = new Vector3[settings.VCount];
 
         ringShifts = new Vector2[] {
             new Vector2(Random.value * settings.randomizeX, Random.value * settings.randomizeY),

@@ -22,8 +22,6 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
 {
     [Header("Surface")]
     [SerializeField] private FaceType faceType;
-    [SerializeField] private Material walkMat;
-    [SerializeField] private Material unWalkMat; //C: Would be better to store these somewhere else in the future, but for now is fine
 
     [Header("Objects")]
     [SerializeField] private bool shard;
@@ -37,10 +35,11 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private GameObject coneTreePrefab;
 
+    [SerializeField, HideInInspector] Theme theme;
+
     public void UpdateTheme(Theme t)
     {
-        walkMat = t.WalkMat;
-        unWalkMat = t.UnWalkMat;
+        theme = t;
         ChangeFaceType();
     }
 
@@ -81,15 +80,22 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
         if (faceType == FaceType.WALKABLE)
         {
             playerWalk.enabled = true;
-            squareSide.materialPrototype = walkMat;
-            squareSide.UpdateMesh();
+            squareSide.materialPrototype = theme.WalkMat;
+            squareSide.BaseColor = theme.WalkColor;
+            squareSide.TintColor = theme.WalkTint;
         }
         else if(faceType == FaceType.UNWALKABLE)
         {
             playerWalk.enabled = false;
-            squareSide.materialPrototype = unWalkMat;
-            squareSide.UpdateMesh();        
+            squareSide.materialPrototype = theme.UnWalkMat;
+            squareSide.BaseColor = theme.UnwalkColor;
+            squareSide.TintColor = theme.UnwalkTint;
         }
+
+#if UNITY_EDITOR
+        EditorUtility.SetDirty(squareSide);
+#endif
+        squareSide.UpdateMesh();
     }
 #if UNITY_EDITOR
     public void SetFaceObject(FaceObjectType type, bool status)

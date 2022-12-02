@@ -7,7 +7,7 @@ using UnityEngine;
 namespace BarkaneJoint
 {
     [CreateAssetMenu(menuName = "Barkane/Settings/Glowstick Render Settings")]
-    public class GlowstickRenderSettings : ScriptableObject
+    public class GlowstickRenderSettings : ScriptableObject, IDynamicMeshRenderSettings
     {
         [Range(0f, 1f)]
         public float halfLength;
@@ -19,6 +19,8 @@ namespace BarkaneJoint
         public int resolution;
         [HideInInspector] public int[] indices;
         [HideInInspector] public Vector2[] angles;
+
+        public int VCount => 5 * resolution + 2;
     }
 
 #if UNITY_EDITOR
@@ -46,6 +48,9 @@ namespace BarkaneJoint
 
                     (target as GlowstickRenderSettings).indices = ids;
                     Debug.Log(string.Join(", ", ids));
+
+
+                    EditorUtility.SetDirty(target as GlowstickRenderSettings);
                 } else
                 {
                     throw new UnityException("Resolution must be at least 2");

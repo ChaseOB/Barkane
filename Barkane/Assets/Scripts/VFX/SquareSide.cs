@@ -16,7 +16,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
     [SerializeField] CrumbleMeshGenerator meshGenerator;
     [SerializeField] public Material materialPrototype;
 
-    [SerializeField, HideInInspector] Material materialInstance;
+    [HideInInspector] public Material materialInstance;
     [SerializeField, HideInInspector] byte[] distanceTextureData;
     [SerializeField, HideInInspector] int distanceTextureWidth;
     [SerializeField, HideInInspector] SerializedMesh meshData;
@@ -27,16 +27,16 @@ public class SquareSide : MonoBehaviour, IRefreshable
     // A: unsure why this is needed
     public Transform sprinkleParent;
 
+    public Color BaseColor, TintColor;
 
-    void IRefreshable.Refresh()
+    void IRefreshable.EditorRefresh()
     {
-        if (Application.isEditor && !Application.isPlaying)
-        {
-            UpdateMesh();
-        } else
-        {
-            PushData();
-        }
+        UpdateMesh();
+    }
+
+    void IRefreshable.RuntimeRefresh()
+    {
+        PushData();
     }
 
     private void PushData()
@@ -55,24 +55,18 @@ public class SquareSide : MonoBehaviour, IRefreshable
             distanceTexture.Apply();
 
             mFilter.sharedMesh = meshData.Rehydrated;
-
             materialInstance.SetTexture("Dist", distanceTexture);
-            mRenderer.sharedMaterials = new Material[] { materialInstance };
+            mRenderer.sharedMaterial = materialInstance;
+
         }
+        materialInstance.SetColor("_Color", BaseColor);
+        materialInstance.SetColor("_EdgeTint", TintColor);
+        materialInstance.SetVector("_NormalOffset", new Vector2(Random.value, Random.value));
     }
-
-
-
-    //private void Update()
-    //{
-    //    if (materialInstance != null)
-    //    {
-    //        materialInstance.SetVector("YOverride", transform.up);
-    //    }
-    //}
 
     public void UpdateMesh()
     {
+
         var (mesh, texture, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
         distanceTextureData = texture.EncodeToPNG();
         distanceTextureWidth = texture.width;
@@ -156,24 +150,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
         //}
 #endif
 
-    }
-
-    /// <summary>
-    /// see lerp in paper shader
-    /// </summary>
-    /// <returns>evaluates the properly tinted color for paper edge</returns>
-    public Color EdgeTintedColor()
-    {
-        var baseColor = materialPrototype.GetColor("_Color").linear;
-        var tintColor = materialPrototype.GetColor("_EdgeTint").linear;
-
-        var combined = new Color(
-            Mathf.Lerp(baseColor.r, tintColor.r, tintColor.a),
-            Mathf.Lerp(baseColor.g, tintColor.g, tintColor.a),
-            Mathf.Lerp(baseColor.b, tintColor.b, tintColor.a)
-            );
-
-        return combined;
     }
 
     public (int, int, int) Coordinate => (

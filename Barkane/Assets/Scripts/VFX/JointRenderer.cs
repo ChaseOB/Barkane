@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using BarkaneEditor;
+using UnityEngine.Rendering;
+using UnityEngine.ProBuilder;
 
 namespace BarkaneJoint
 {
     [ExecuteAlways]
-    [RequireComponent(typeof(MeshRenderer))]
-    [RequireComponent(typeof(MeshFilter))]
-    public class JointRenderer : MonoBehaviour, IRefreshable
+    public class JointRenderer : MonoBehaviour, IRefreshable, IDynamicMesh<CreaseRenderSettings>
     {
         /**
          * FOR THE CONTEXT OF JOINT VFX...
@@ -22,35 +22,31 @@ namespace BarkaneJoint
         [SerializeField] CreaseRenderSettings settings;
         [SerializeField] SquareRenderSettings squareRenderSettings;
 
-        [SerializeField] MeshFilter filter;
-        [SerializeField] MeshRenderer meshRenderer;
+        [SerializeField] MeshFilter fA1, fA2, fB1, fB2;
+        [SerializeField] MeshRenderer mrA1, mrA2, mrB1, mrB2;
 
         public ((GameObject, GameObject), (GameObject, GameObject)) facePairs => ((a1.gameObject, b1.gameObject), (a2.gameObject, b2.gameObject));
         [SerializeField, HideInInspector] private SquareSide a1, a2, b1, b2;
-        // base color for tile sides
-        [SerializeField, HideInInspector] private Color colorA1, colorB1, colorA2, colorB2;
 
         [SerializeField, HideInInspector] private Vector3[] randoms;
-
-        // time points (t in 0~1) for both anchors and pivots
-        // anchors are along the side of the tile faces
-        [SerializeField, HideInInspector] private float[] ts;
 
         [SerializeField] private GameObject indicator;
         [SerializeField] private MaskFoldParticles maskFoldParticles;
 
         internal JointGeometryData side1Geometry, side2Geometry;
 
+        [SerializeField] private Material materialPrototype;
+
         // buffers
-        Vector3[] verts, norms;
-        Color[] colors;
-        Vector2[] uvs;
+        private Vector3[] vA1, vA2, vB1, vB2;// nA1, nA2, nB1, nB2;
+
+        float scaledSquareSize => squareRenderSettings.squareSize * (1 - squareRenderSettings.margin);
 
         /// <summary>
         /// Can be called manually in inspector or automatically by other scene editor utilities.
         /// </summary>
         /// <exception cref="UnityException"></exception>
-        void IRefreshable.Refresh()
+        void IRefreshable.EditorRefresh()
         {
             var parent = transform.parent.GetComponent<PaperJoint>();
             if (parent.PaperSquares.Count < 2)
@@ -75,16 +71,9 @@ namespace BarkaneJoint
             else
                 throw new UnityException("Cannot find square side reference in joint renderer parent");
 
-            ts = new float[settings.creaseSegmentCount + 1];
-            for (int i = 0; i < settings.creaseSegmentCount + 1; i++)
-            {
-                ts[i] = i / (float)settings.creaseSegmentCount;
-            }
-            ts[settings.creaseSegmentCount] = 1;
-
             randoms = new Vector3[settings.creaseSegmentCount + 1];
 
-            for (int i = 0; i < settings.creaseSegmentCount + 1; i++)
+            for (int i = 0; i <= settings.creaseSegmentCount; i++)
             {
                 randoms[i] = new Vector3(
                     2 * (Random.value - 0.5f) * settings.creaseDeviation.x,
@@ -92,28 +81,22 @@ namespace BarkaneJoint
                     2 * (Random.value - 0.5f) * settings.creaseDeviation.z);
             }
 
-            UpdateColors();
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             ValidateSidedAddon<GlowStick>();
             ValidateSidedAddon<Tape>();
-            #endif
-            RefreshBuffers();
+#endif
+            UpdateMesh(true);
         }
+
+        void IRefreshable.RuntimeRefresh() { }
 
         public bool IsAnimating = false;
 
         public System.Action DisableMeshAction => new System.Action(delegate() {
-           // indicator.SetActive(false);
-            // meshRenderer.enabled = false;
         });
 
         public System.Action EnableMeshAction => new System.Action(delegate ()
         {
-            //indicator.SetActive(true);
-            // FormPairs(a1, a2, b1, b2);
-            // colors stay the same across folds
-            // UpdateColors();
-            // meshRenderer.enabled = true;
         });
 
         void Update()
@@ -198,14 +181,6 @@ namespace BarkaneJoint
             }
         }
 
-    private void UpdateColors()
-    {
-        colorA1 = a1.EdgeTintedColor();
-        colorA2 = a2.EdgeTintedColor();
-        colorB1 = b1.EdgeTintedColor();
-        colorB2 = b2.EdgeTintedColor();
-    }
-
     #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
@@ -218,12 +193,11 @@ namespace BarkaneJoint
             //    }
             //}
 
-            if (side1Geometry != null)
-            {
-                Gizmos.color = Color.red;
-                Gizmos.DrawRay(transform.position, side1Geometry.nJ);
-            }
-
+            //if (side1Geometry != null)
+            //{
+            //    Gizmos.color = Color.red;
+            //    Gizmos.DrawRay(transform.position, side1Geometry.nJ);
+            //}
         }
     #endif
 
@@ -260,224 +234,153 @@ namespace BarkaneJoint
             }
         }
 #endif
-
-        private void RefreshBuffers()
+        public void ClearAndInitBuffers(CreaseRenderSettings settings)
         {
             // the pivots are duplicated
-            verts = new Vector3[8 * (settings.creaseSegmentCount + 1)];
-            norms = new Vector3[verts.Length];
-            colors = new Color[verts.Length];
-            uvs = new Vector2[verts.Length];
+            vA1 = new Vector3[settings.VCount];
+            vA2 = new Vector3[settings.VCount];
+            vB1 = new Vector3[settings.VCount];
+            vB2 = new Vector3[settings.VCount];
         }
 
-        private void UpdateMesh()
+        private void UpdateVertexNormals()
         {
-            if (verts == null) RefreshBuffers();
-
-            // not actually submeshes, just mentally think of each side of each tile as a submesh
-            // the order of the meshes follow the (a, b) (a, b) ordering of the pairs
-            var submeshOffset = 2 * (settings.creaseSegmentCount + 1);
-            var pivotOffset = settings.creaseSegmentCount + 1;
-
-            var scaledSquareSize = squareRenderSettings.squareSize * (1 - squareRenderSettings.margin);
-
             for (int i = 0; i <= settings.creaseSegmentCount; i++)
             {
                 #region vertex filling
-                var t = ts[i] - 0.5f;
+                var t = settings.ts[i];
                 var pivotBase = t * scaledSquareSize * side1Geometry.tJ;
-            
+                var margin = squareRenderSettings.margin + .001f;
+
                 // note that the margin is also affected by the size setting
                 // the margin applies to a 01 (uv) square which is sized to produce the actual square
-                verts[i] = pivotBase + squareRenderSettings.margin * side1Geometry.nJ2A + side1Geometry.nA * 0.0005f;
-                verts[i + submeshOffset] = pivotBase + squareRenderSettings.margin * side1Geometry.nJ2B + side1Geometry.nB * 0.0005f;
-                verts[i + 2 * submeshOffset] = pivotBase + squareRenderSettings.margin * side1Geometry.nJ2A + side2Geometry.nA * 0.0005f;
-                verts[i + 3 * submeshOffset] = pivotBase + squareRenderSettings.margin * side1Geometry.nJ2B + side2Geometry.nB * 0.0005f;
+                vA1[i] = pivotBase + margin * side1Geometry.nJ2A;// + side1Geometry.nA * 0.0006f;
+                vB1[i] = pivotBase + margin * side1Geometry.nJ2B;// + side1Geometry.nB * 0.0006f;
+                vA2[i] = pivotBase + margin * side1Geometry.nJ2A;// + side2Geometry.nA * 0.0006f;
+                vB2[i] = pivotBase + margin * side1Geometry.nJ2B;// + side2Geometry.nB * 0.0006f;
 
                 //// randomize when angles are significant
-                verts[i + pivotOffset] = pivotBase;
-                verts[i + pivotOffset + submeshOffset] = pivotBase;
-                verts[i + pivotOffset + 2 * submeshOffset] = pivotBase;
-                verts[i + pivotOffset + 3 * submeshOffset] = pivotBase;
+                vA1[i + settings.PivotOffset] = pivotBase;
+                vB1[i + settings.PivotOffset] = pivotBase;
+                vA2[i + settings.PivotOffset] = pivotBase;
+                vB2[i + settings.PivotOffset] = pivotBase;
                 #endregion
 
-                #region normals filling
+                //#region normals filling
+                //// note that the margin is also affected by the size setting
+                //// the margin applies to a 01 (uv) square which is sized to produce the actual square
+                //ns[i] = side1Geometry.nA;
+                //ns[i + settings.SubmeshOffset] = side1Geometry.nB;
+                //ns[i + 2 * settings.SubmeshOffset] = side2Geometry.nA;
+                //ns[i + 3 * settings.SubmeshOffset] = side2Geometry.nB;
 
-                // note that the margin is also affected by the size setting
-                // the margin applies to a 01 (uv) square which is sized to produce the actual square
-                norms[i] = side1Geometry.nA;
-                norms[i + submeshOffset] = side1Geometry.nB;
-                norms[i + 2 * submeshOffset] = side2Geometry.nA;
-                norms[i + 3 * submeshOffset] = side2Geometry.nB;
-
-                // all pivots point to crease normal
-                norms[i + pivotOffset] = side1Geometry.nJ;
-                norms[i + pivotOffset + submeshOffset] = side1Geometry.nJ;
-                norms[i + pivotOffset + 2 * submeshOffset] = side2Geometry.nJ;
-                norms[i + pivotOffset + 3 * submeshOffset] = side2Geometry.nJ;
-                #endregion
-
-                #region colors filling
-
-                // note that the margin is also affected by the size setting
-                // the margin applies to a 01 (uv) square which is sized to produce the actual square
-                colors[i] = colorA1;
-                colors[i + submeshOffset] = colorB1;
-                colors[i + 2 * submeshOffset] = colorA2;
-                colors[i + 3 * submeshOffset] = colorB2;
-
-                // the same pivots are duplicated to avoid color bleeding
-                colors[i + pivotOffset] = colorA1;
-                colors[i + pivotOffset + submeshOffset] = colorB1;
-                colors[i + pivotOffset + 2 * submeshOffset] = colorA2;
-                colors[i + pivotOffset + 3 * submeshOffset] = colorB2;
-                #endregion
-
-                #region uvs filling
-
-                // uvx always measure how "deep" in the cease it is (1 at the pivot, 1 - margin at the anchors)
-                // uvy always link to t itself
-                var uvSide = new Vector2(1 - squareRenderSettings.margin, ts[i]);
-                var uvCenter = new Vector2(1, ts[i]);
-                uvs[i] = uvSide;
-                uvs[i + submeshOffset] = uvSide;
-                uvs[i + 2 * submeshOffset] = uvSide;
-                uvs[i + 3 * submeshOffset] = uvSide;
-
-                // the same pivots are duplicated to avoid color bleeding
-                uvs[i + pivotOffset] = uvCenter;
-                uvs[i + pivotOffset + submeshOffset] = uvCenter;
-                uvs[i + pivotOffset + 2 * submeshOffset] = uvCenter;
-                uvs[i + pivotOffset + 3 * submeshOffset] = uvCenter;
-                #endregion
+                //// all pivots point to crease normal
+                //ns[i + settings.PivotOffset] = side1Geometry.nJ;
+                //ns[i + settings.PivotOffset + settings.SubmeshOffset] = side1Geometry.nJ;
+                //ns[i + settings.PivotOffset + 2 * settings.SubmeshOffset] = side2Geometry.nJ;
+                //ns[i + settings.PivotOffset + 3 * settings.SubmeshOffset] = side2Geometry.nJ;
+                //#endregion
             }
 
-            // randomize middle vertices
+            // randomize middle vertices at significant fold angles
             if (Mathf.Abs(side1Geometry.a2b) > 10f)
             {
                 for (int i = 1; i < settings.creaseSegmentCount - 1; i++)
                 {
-                    var t = ts[i] - 0.5f;
-                    var pivotBase = t * scaledSquareSize * side1Geometry.tJ;
-
-                    verts[i + pivotOffset] +=
+                    vA1[i + settings.PivotOffset] +=
                         randoms[i].z * side1Geometry.tJ
                         + randoms[i].y * side1Geometry.nJ
                         + randoms[i].x * side1Geometry.nJ2A;
 
-                    verts[i + pivotOffset + submeshOffset] +=
+                    vB1[i + settings.PivotOffset] +=
                         randoms[i].z * side1Geometry.tJ
                         + randoms[i].y * side1Geometry.nJ
                         + randoms[i].x * side1Geometry.nJ2A;
 
-                    verts[i + pivotOffset + 2 * submeshOffset] +=
+                    vA2[i + settings.PivotOffset] +=
                         randoms[i].z * side1Geometry.tJ
                         + randoms[i].y * side1Geometry.nJ
                         + randoms[i].x * side1Geometry.nJ2A;
 
-                    verts[i + pivotOffset + 3 * submeshOffset] +=
+                    vB2[i + settings.PivotOffset] +=
                         randoms[i].z * side1Geometry.tJ
                         + randoms[i].y * side1Geometry.nJ
                         + randoms[i].x * side1Geometry.nJ2A;
+
+                    //// note that the margin is also affected by the size setting
+                    //// the margin applies to a 01 (uv) square which is sized to produce the actual square
+                    //ns[i] = side1Geometry.nA;
+                    //ns[i + settings.SubmeshOffset] = side1Geometry.nB;
+                    //ns[i + 2 * settings.SubmeshOffset] = side2Geometry.nA;
+                    //ns[i + 3 * settings.SubmeshOffset] = side2Geometry.nB;
+
+                    //// all pivots point to crease normal
+                    //ns[i + settings.PivotOffset] = side1Geometry.nJ;
+                    //ns[i + settings.PivotOffset + settings.SubmeshOffset] = side1Geometry.nJ;
+                    //ns[i + settings.PivotOffset + 2 * settings.SubmeshOffset] = side2Geometry.nJ;
+                    //ns[i + settings.PivotOffset + 3 * settings.SubmeshOffset] = side2Geometry.nJ;
                 }
             }
 
-            // 3 points per triangle
-            // 4 stripes per mesh
-            // 2 triangles per each segment on each stripe
-            var tris = new int[3 * 4 * 2 * settings.creaseSegmentCount];
-            var triOffset = 3 * 2 * settings.creaseSegmentCount;
+            fA1.sharedMesh.vertices = vA1;
+            fA2.sharedMesh.vertices = vA2;
+            fB1.sharedMesh.vertices = vB1;
+            fB2.sharedMesh.vertices = vB2;
+        }
 
-            var useCCW = Vector3.Dot(Vector3.Cross(verts[pivotOffset] - verts[0], verts[1] - verts[0]), side1Geometry.nA) < 0;
-
-            if (useCCW)
+        private Material BindColor(Material mat, SquareSide src, string name)
+        {
+            var m = new Material(mat)
             {
-                for (int i = 0, j = 0; i < settings.creaseSegmentCount; i++, j += 3 * 2)
-                {
-                    tris[j] = i;
-                    tris[j + 1] = i + 1;
-                    tris[j + 2] = i + pivotOffset;
-                    tris[j + 3] = i + 1;
-                    tris[j + 4] = i + pivotOffset + 1;
-                    tris[j + 5] = i + pivotOffset;
+                name = $"{mat.name} {name}"
+            };
+            m.SetColor("_Color", src.BaseColor);
+            m.SetColor("_EdgeTint", src.TintColor);
+            return m;
+        }
 
-                    tris[triOffset + j] = i + submeshOffset;
-                    tris[triOffset + j + 1] = i + submeshOffset + pivotOffset;
-                    tris[triOffset + j + 2] = i + submeshOffset + 1;
-                    tris[triOffset + j + 3] = i + submeshOffset + 1;
-                    tris[triOffset + j + 4] = i + submeshOffset + pivotOffset;
-                    tris[triOffset + j + 5] = i + submeshOffset + pivotOffset + 1;
+        private void Setup(SquareSide side, MeshFilter f, MeshRenderer mr, string name)
+        {
+            f.sharedMesh = new Mesh() {
+                name = $"Joint Mesh {name}",
+            };
 
-                    tris[2 * triOffset + j] = i + 2 * submeshOffset;
-                    tris[2 * triOffset + j + 1] = i + 2 * submeshOffset + pivotOffset;
-                    tris[2 * triOffset + j + 2] = i + 2 * submeshOffset + 1;
-                    tris[2 * triOffset + j + 3] = i + 2 * submeshOffset + 1;
-                    tris[2 * triOffset + j + 4] = i + 2 * submeshOffset + pivotOffset;
-                    tris[2 * triOffset + j + 5] = i + 2 * submeshOffset + pivotOffset + 1;
+            f.sharedMesh.MarkDynamic();
+            mr.sharedMaterial = BindColor(materialPrototype, side, name);
+        }
 
-                    tris[3 * triOffset + j] = i + 3 * submeshOffset;
-                    tris[3 * triOffset + j + 1] = i + 3 * submeshOffset + 1;
-                    tris[3 * triOffset + j + 2] = i + 3 * submeshOffset + pivotOffset;
-                    tris[3 * triOffset + j + 3] = i + 3 * submeshOffset + 1;
-                    tris[3 * triOffset + j + 4] = i + 3 * submeshOffset + pivotOffset + 1;
-                    tris[3 * triOffset + j + 5] = i + 3 * submeshOffset + pivotOffset;
-                }
-            } else
+        private void FullSetup()
+        {
+            Setup(a1, fA1, mrA1, "A1");
+            Setup(a2, fA2, mrA2, "A2");
+            Setup(b1, fB1, mrB1, "B1");
+            Setup(b2, fB2, mrB2, "B2");
+        }
+
+        private void UpdateMesh(bool force=false)
+        {
+            var init = force || vA1 == null || vA1.Length != settings.VCount;
+
+            if (init)
             {
-                for (int i = 0, j = 0; i < settings.creaseSegmentCount; i++, j += 3 * 2)
-                {
-                    tris[j] = i;
-                    tris[j + 1] = i + pivotOffset;
-                    tris[j + 2] = i + 1;
-                    tris[j + 3] = i + 1;
-                    tris[j + 4] = i + pivotOffset;
-                    tris[j + 5] = i + pivotOffset + 1;
-
-                    tris[triOffset + j] = i + submeshOffset;
-                    tris[triOffset + j + 1] = i + submeshOffset + 1;
-                    tris[triOffset + j + 2] = i + submeshOffset + pivotOffset;
-                    tris[triOffset + j + 3] = i + submeshOffset + 1;
-                    tris[triOffset + j + 4] = i + submeshOffset + pivotOffset + 1;
-                    tris[triOffset + j + 5] = i + submeshOffset + pivotOffset;
-
-                    tris[2 * triOffset + j] = i + 2 * submeshOffset;
-                    tris[2 * triOffset + j + 1] = i + 2 * submeshOffset + 1;
-                    tris[2 * triOffset + j + 2] = i + 2 * submeshOffset + pivotOffset;
-                    tris[2 * triOffset + j + 3] = i + 2 * submeshOffset + 1;
-                    tris[2 * triOffset + j + 4] = i + 2 * submeshOffset + pivotOffset + 1;
-                    tris[2 * triOffset + j + 5] = i + 2 * submeshOffset + pivotOffset;
-
-                    tris[3 * triOffset + j] = i + 3 * submeshOffset;
-                    tris[3 * triOffset + j + 1] = i + 3 * submeshOffset + pivotOffset;
-                    tris[3 * triOffset + j + 2] = i + 3 * submeshOffset + 1;
-                    tris[3 * triOffset + j + 3] = i + 3 * submeshOffset + 1;
-                    tris[3 * triOffset + j + 4] = i + 3 * submeshOffset + pivotOffset;
-                    tris[3 * triOffset + j + 5] = i + 3 * submeshOffset + pivotOffset + 1;
-                }
+                ClearAndInitBuffers(settings);
+                FullSetup();
             }
 
-            if (filter.sharedMesh == null)
+            UpdateVertexNormals();
+
+            if (init)
             {
-                filter.sharedMesh = new Mesh()
-                {
-                    name = "Joint Mesh",
-                    vertices = verts,
-                    normals = norms,
-                    colors = colors,
-                    uv = uvs,
-                    triangles = tris
-                };
-                filter.sharedMesh.MarkDynamic();
-            } else
-            {
-                var m = filter.sharedMesh;
-                m.name = "Joint Mesh";
-                m.vertices = verts;
-                m.normals = norms;
-                m.colors = colors;
-                m.uv = uvs;
-                m.triangles = tris;
+                fA1.sharedMesh.triangles = settings.tA1CCW;
+                fA2.sharedMesh.triangles = settings.tA2CCW;
+                fB1.sharedMesh.triangles = settings.tB1CCW;
+                fB2.sharedMesh.triangles = settings.tB2CCW;
             }
+
+            //fA1.sharedMesh.RecalculateNormals();
+            //fA2.sharedMesh.RecalculateNormals();
+            //fB1.sharedMesh.RecalculateNormals();
+            //fB2.sharedMesh.RecalculateNormals();
         }
     }
 
