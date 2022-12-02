@@ -122,7 +122,7 @@ Material:
     - _GlossyReflections: 0
     - _Level: 2
     - _Metallic: 0
-    - _NormalStrength: 18.03
+    - _NormalStrength: 10
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueControl: 0
@@ -137,11 +137,11 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     - _metallic: 0.57
-    - _smoothness: 0.15
+    - _smoothness: 0.25
     m_Colors:
     - YOverride: {r: 0, g: 1, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0, g: 0.8679245, b: 0.73789114, a: 1}
+    - _Color: {r: 0.05490196, g: 0.6901961, b: 0.59607846, a: 1}
     - _EdgeTint: {r: 1, g: 1, b: 1, a: 0.87058824}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _NormalOffset: {r: 0, g: 0, b: 0, a: 0}
