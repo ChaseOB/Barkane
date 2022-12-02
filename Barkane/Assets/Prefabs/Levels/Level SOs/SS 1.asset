@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e7cf2c46ece0374682d71ab95d0203c, type: 3}
-  m_Name: CB 6
+  m_Name: SS 1
   m_EditorClassIdentifier: 
-  levelName: CB 1
-  levelObject: {fileID: 5891739611208886361, guid: eb76a31a87787964ca4dba1c80fbad00, type: 3}
-  theme: {fileID: 11400000, guid: 23f30d238faa36944a41821ae891be95, type: 2}
+  levelName: SS Test
+  levelObject: {fileID: 5011483799435242494, guid: f720b9d0e9e9a3c498d2a6b6acaccbb7, type: 3}
+  theme: {fileID: 11400000, guid: f76e961422aa7114fa728acfcd66523b, type: 2}

@@ -78,11 +78,11 @@ public class LevelManager : Singleton<LevelManager>
         }
         if(currLevelTheme == null || level.theme != currLevelTheme)
         {
-            SceneManager.LoadScene(levelScenes[(int)level.theme.themeEnum]);
             AudioManager.Instance.PlayList(level.theme.musicStringName);
         }
-        else
-            SpawnLevel(level);
+        SceneManager.LoadScene(levelScenes[(int)level.theme.themeEnum]);
+        //else
+         //   SpawnLevel(level);
     }
 
 
@@ -107,6 +107,7 @@ public class LevelManager : Singleton<LevelManager>
         FollowTarget.Instance.SetTargetAndPosition(playerInstance.GetComponent<PlayerMovement>().cameraTrackingTransform);    
         VFXManager.Instance.Refresh();
         FindObjectOfType<TileSelector>().ReloadReferences();
+        currLevelTheme = level.theme;
     }
 
     //C: used when switching from level back to a non-level scene
