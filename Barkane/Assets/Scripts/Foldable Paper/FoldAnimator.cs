@@ -216,7 +216,21 @@ public class FoldAnimator : MonoBehaviour
             raycastCheckReturn = CheckRayCast();
     }
 
-     private bool CheckRayCast() {
+    private bool CheckRayCast() {
+        return CheckRayCast(foldData.foldObjects) && CheckRayCast(foldData.playerFoldObjects, true);
+    }
+
+    /* FOLD CHECK 3: PAPER AND OBJECT COLLISION
+            This checks that Paper squares do not clip through other squares or obstacles. This also checks that obstacles do not clip 
+            through squares. Becuas it is easier to check for squares colliding with objects than vice versa, 
+            this check is run twice, once with the "real" fold and once by folding the player side object in 
+            the opposite direction 
+
+            KNOWN ISSUES: 
+            -won't let you fold crystal into player
+            -clipping squares through objects is hard, but clipping objects into squares is easy (fixed?)
+        */
+    private bool CheckRayCast(FoldObjects fo, bool invertFold = false) {
         Debug.Log("checking raycast...");
         checkRaycast = false;
         int numChecks = 10;
@@ -224,7 +238,7 @@ public class FoldAnimator : MonoBehaviour
         GameObject parent2 = new GameObject("parent 2");
         parent2.transform.position = foldData.center;
         List<GameObject> copiesList = new List<GameObject>();
-        foreach(GameObject go in foldData.foldObjects.foldSquares)
+        foreach(GameObject go in fo.foldSquares)
         {
             GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
             newSquare.name = "ns";
@@ -249,9 +263,12 @@ public class FoldAnimator : MonoBehaviour
         
         //C: checks for squares running into other stuff
         //Ideally we should check every point along the rotation axis, but this is not feasible. 
+        float degrees = foldData.degrees;
+        if(invertFold)
+            degrees *= -1;
         for(int i = 1; i <= numChecks; i++) 
         {
-            parent2.transform.RotateAround(foldData.center, foldData.axis, foldData.degrees/(numChecks+1));
+            parent2.transform.RotateAround(foldData.center, foldData.axis, degrees/(numChecks+1));
             int j = 0;
             foreach(GameObject go in copiesList)
             {
@@ -263,15 +280,20 @@ public class FoldAnimator : MonoBehaviour
                     PaperSquare ps =  hit.transform.gameObject.GetComponentInParent<PaperSquare>();
                     //C: There are 2 cases:
                     //1: we hit the player. Then ps is null, and there is a collision
+                    //1a: if we are on the player side fold, ignore this case
                     //2: we hit an object/paper square. Then we need to check to see if it is in the fold side objects
                     // if so, this collision doesn't matter. if not, then we can't fold
-                    if(ps == null || !foldData.foldObjects.foldSquares.Contains(ps.gameObject)) 
+                    //print(invertFold);
+                    if(invertFold && ps == null)
+                        Debug.Log("collision 1A ignored"); //1a, ignore. 
+                    else if(ps == null || !fo.foldSquares.Contains(ps.gameObject)) 
                     {
                         Debug.Log($"Collision with {hit.transform.gameObject.name} on ray {i},{j}");
                         Destroy(parent2);
                         raycastCheckDone = true;
                         return false;
                     }
+                    Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored");
                 }
                 j++;               
             }
