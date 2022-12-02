@@ -61,6 +61,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
         }
         materialInstance.SetColor("_Color", BaseColor);
         materialInstance.SetColor("_EdgeTint", TintColor);
+        materialInstance.SetVector("_NormalOffset", new Vector2(Random.value, Random.value));
     }
 
     public void UpdateMesh()
