@@ -11,24 +11,28 @@ public class GlowStickLogic : MonoBehaviour
     public MeshRenderer innerRenderer;
     public List<Material> materials = new List<Material>();
     //called whenever the joint the glowstick is on is folded;
-    public void OnFold()
+    public void OnFold(PaperJoint callJoint, PaperJoint foldJoint)
     {
-        if(state == GlowstickState.OFF);
         if(state == GlowstickState.CRACKED)
         {
             lifetime--;
+            Debug.Log($"Glowstick has {lifetime} folds left");
             if(lifetime == 0)
             {
                 state = GlowstickState.OFF;
                 ToggleGSBoxes(false);
                 innerRenderer.material = materials[2];
+                foreach (CrystalShard shard in FindObjectsOfType<CrystalShard>())
+                    shard.ActivateParticles(false);
             }
         }
-        if(state == GlowstickState.PRIMED)
+        if(state == GlowstickState.PRIMED && callJoint == foldJoint)
         {
             state = GlowstickState.CRACKED;
             ToggleGSBoxes(true);
             innerRenderer.material = materials[1];
+            foreach (CrystalShard shard in FindObjectsOfType<CrystalShard>())
+                shard.ActivateParticles(true);
         }
     }
 
