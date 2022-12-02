@@ -104,10 +104,10 @@ public class PaperJoint : MonoBehaviour
         }
     }       
 
-    public void OnFold(PaperJoint foldJoint)
+    public void OnFold()
     {
         GlowStickLogic[] sticks = GetComponentsInChildren<GlowStickLogic>();
         foreach (GlowStickLogic g in sticks)
-            g.OnFold(this, foldJoint);
+            g.OnFold(showLine);
     }
 }

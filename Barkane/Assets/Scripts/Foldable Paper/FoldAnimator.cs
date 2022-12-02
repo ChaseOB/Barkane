@@ -382,7 +382,7 @@ public class FoldAnimator : MonoBehaviour
         float t = 0;
         int wait = 1;
         foreach(PaperJoint pj in foldablePaper.PaperJoints)
-            pj.OnFold(fd.foldJoint);
+            pj.OnFold();
         while (t < foldDuration)
         {
             t += Time.deltaTime;

@@ -6,12 +6,12 @@ public class GlowStickLogic : MonoBehaviour
 {
     public int lifetime = 4; //the number of folds this glowstick will be active for
     public GlowstickState state = GlowstickState.PRIMED;
-    public BoxCollider box1;
-    public BoxCollider box2;
+    public GlowstickBox box1;
+    public GlowstickBox box2;
     public MeshRenderer innerRenderer;
     public List<Material> materials = new List<Material>();
     //called whenever the joint the glowstick is on is folded;
-    public void OnFold(PaperJoint callJoint, PaperJoint foldJoint)
+    public void OnFold(bool foldJoint)
     {
         if(state == GlowstickState.CRACKED)
         {
@@ -26,7 +26,7 @@ public class GlowStickLogic : MonoBehaviour
                     shard.ActivateParticles(false);
             }
         }
-        if(state == GlowstickState.PRIMED && callJoint == foldJoint)
+        if(state == GlowstickState.PRIMED && foldJoint)
         {
             state = GlowstickState.CRACKED;
             ToggleGSBoxes(true);
@@ -39,8 +39,8 @@ public class GlowStickLogic : MonoBehaviour
     //toggles the boxes which activate the crystals;
     public void ToggleGSBoxes(bool toggle)
     {
-       // box1.enabled = toggle;
-       // box2.enabled = toggle;
+        box1.glowstickActive = toggle;
+        box2.glowstickActive = toggle;
     }
 }
 

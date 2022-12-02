@@ -58,12 +58,13 @@ public class CrystalShard : MonoBehaviour, IThemedItem
             particleSystem.Play();
         }
         else {
-            particleSystem.Pause();
+            particleSystem.Stop();
         }
     }
 
     public void ActivateCrystal(bool val)
     {
+        Debug.Log("Activating Crystal");
         crystalActive = val;
         if(crystalActive) {
             model.SetActive(true);
