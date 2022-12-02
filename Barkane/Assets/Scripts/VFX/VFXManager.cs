@@ -78,6 +78,10 @@ namespace BarkaneEditor
             {
                 p.UpdateTheme(Theme);
             }
+
+            foreach (MaskFoldParticles mfp in FindObjectsOfType<MaskFoldParticles>()) {
+                mfp.UpdateTheme(Theme);
+            }
         }
 
         //internal void Load(PlayModeStateChange change)

@@ -10,5 +10,7 @@ public class Theme : ScriptableObject
     [Header("Materials")]
     public Material WalkMat;
     public Material UnWalkMat;
-
+    public Material JointParticle;
+    public Gradient JointParticleGrad1;
+    public Gradient JointParticleGrad2;
 }

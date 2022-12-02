@@ -6,7 +6,20 @@ public class MaskFoldParticles : MonoBehaviour, BarkaneEditor.IRefreshable
 {
     [SerializeField] List<ParticleSystem> listOfSystems;
     private bool isAwake;
-    
+    private Theme theme;
+
+    public void UpdateTheme(Theme t)
+    {
+        if(t != theme) {
+            theme = t;
+        }
+
+        foreach (ParticleSystem ps in listOfSystems)
+        {
+            ps.GetComponent<ParticleSystemRenderer>().material = theme.JointParticle;
+        }
+
+    }
     public void Emit()
     {
         if (!isAwake)
@@ -16,6 +29,7 @@ public class MaskFoldParticles : MonoBehaviour, BarkaneEditor.IRefreshable
         }
         foreach (ParticleSystem ps in listOfSystems)
         {
+            // ps.GetComponent<ParticleSystemRenderer>().material = theme.JointParticle;
             ps.Play();
         }
     }
@@ -24,7 +38,8 @@ public class MaskFoldParticles : MonoBehaviour, BarkaneEditor.IRefreshable
     {
         foreach (ParticleSystem ps in listOfSystems)
         {
-            ps.Stop();
+            ps.Pause();
+            ps.Clear();
         }
     }
 
