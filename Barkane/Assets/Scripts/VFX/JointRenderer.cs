@@ -26,7 +26,7 @@ namespace BarkaneJoint
         [SerializeField] MeshRenderer mrA1, mrA2, mrB1, mrB2;
 
         public ((GameObject, GameObject), (GameObject, GameObject)) facePairs => ((a1.gameObject, b1.gameObject), (a2.gameObject, b2.gameObject));
-        [SerializeField] private SquareSide a1, a2, b1, b2;
+        [SerializeField, HideInInspector] private SquareSide a1, a2, b1, b2;
 
         [SerializeField, HideInInspector] private Vector3[] randoms;
 
@@ -250,7 +250,7 @@ namespace BarkaneJoint
                 #region vertex filling
                 var t = settings.ts[i];
                 var pivotBase = t * scaledSquareSize * side1Geometry.tJ;
-                var margin = squareRenderSettings.margin + .0005f;
+                var margin = squareRenderSettings.margin + .001f;
 
                 // note that the margin is also affected by the size setting
                 // the margin applies to a 01 (uv) square which is sized to produce the actual square
