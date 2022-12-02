@@ -9,6 +9,7 @@ public class MainMenuManager : MonoBehaviour
     public GameObject playMenu;
     public GameObject mainMenu;
     public GameObject levelSelect;
+    public GameObject credits;
 
     public void StartGame() {
         LevelManager.Instance.LoadLevel(0);
@@ -29,6 +30,12 @@ public class MainMenuManager : MonoBehaviour
     {
         levelSelect.SetActive(toggle);
         playMenu.SetActive(!toggle);
+    }
+
+    public void ToggleCredits(bool toggle)
+    {
+       credits.SetActive(toggle);
+        mainMenu.SetActive(!toggle); 
     }
 
     public void QuitGame() {
