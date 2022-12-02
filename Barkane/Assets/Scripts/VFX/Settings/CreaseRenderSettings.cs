@@ -13,7 +13,7 @@ public class CreaseRenderSettings : ScriptableObject, IDynamicMeshRenderSettings
     [Range(0, 0.1f)]
     public float overlapCreaseCorrectionFactor;
 
-    public int VCount => 8 * (creaseSegmentCount + 1);
+    public int VCount => 2 * (creaseSegmentCount + 1);
 
     // buffer index constants
     public int SubmeshOffset => 2 * (creaseSegmentCount + 1);
@@ -122,14 +122,14 @@ public class CreaseRenderSettingsEditor : Editor
             var t = target as CreaseRenderSettings;
             var CCW = t.GetTris(true);
             t.tA1CCW = CCW.Item1;
-            t.tB1CCW = CCW.Item2;
-            t.tA2CCW = CCW.Item3;
-            t.tB2CCW = CCW.Item4;
+            t.tB1CCW = CCW.Item1;
+            t.tA2CCW = CCW.Item1;
+            t.tB2CCW = CCW.Item1;
             var CW = t.GetTris(false);
             t.tA1CW = CW.Item1;
-            t.tB1CW = CW.Item2;
-            t.tA2CW = CW.Item3;
-            t.tB2CW = CW.Item4;
+            t.tB1CW = CW.Item1;
+            t.tA2CW = CW.Item1;
+            t.tB2CW = CW.Item1;
 
             t.ts = new float[t.creaseSegmentCount + 1];
             for (int i = 0; i < t.creaseSegmentCount + 1; i++)

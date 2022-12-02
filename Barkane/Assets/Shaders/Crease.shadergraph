@@ -1302,7 +1302,7 @@
     "m_Hidden": false,
     "m_ShaderOutputName": "_Vector1",
     "m_StageCapability": 3,
-    "m_Value": 1.0,
+    "m_Value": 0.9995999932289124,
     "m_DefaultValue": 0.0,
     "m_Labels": []
 }

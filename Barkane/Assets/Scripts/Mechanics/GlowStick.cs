@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using BarkaneJoint;
 using BarkaneEditor;
 
@@ -28,7 +27,7 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>
     {
 
         Mesh m;
-        var firstSet = filter.sharedMesh == null;
+        var firstSet = filter.sharedMesh == null || vs == null || vs.Length != settings.VCount;
         if (firstSet)
         {
             m = new Mesh();
@@ -101,8 +100,8 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>
                 1 + 3 * settings.resolution, settings);
         } 
         // head B
-        vs[vs.Length - 1] = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2B * (settings.halfLength + margin) + g.nB * settings.elevation);
-        ns[ns.Length - 1] = transform.worldToLocalMatrix.MultiplyVector(g.nJ2B);
+        vs[^1] = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2B * (settings.halfLength + margin) + g.nB * settings.elevation);
+        ns[^1] = transform.worldToLocalMatrix.MultiplyVector(g.nJ2B);
         Ring(
             ref vs, ref ns,
             vs[vs.Length - 1],
@@ -133,12 +132,9 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>
 
     public void ClearAndInitBuffers(GlowstickRenderSettings settings)
     {
-        innerFilter.sharedMesh = null;
-        outerFilter.sharedMesh = null;
-
-        vsInner = new Vector3[5 * settingsInner.resolution + 2];
-        nsInner = new Vector3[5 * settingsInner.resolution + 2];
-        vsOuter = new Vector3[5 * settingsOuter.resolution + 2];
-        nsOuter = new Vector3[5 * settingsOuter.resolution + 2];
+        vsInner = new Vector3[settings.VCount];
+        nsInner = new Vector3[settings.VCount];
+        vsOuter = new Vector3[settings.VCount];
+        nsOuter = new Vector3[settings.VCount];
     }
 }

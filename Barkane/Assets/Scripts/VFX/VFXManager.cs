@@ -51,7 +51,7 @@ namespace BarkaneEditor
             }
 
             Load();
-            if (Application.isEditor && !Application.isPlaying) {
+            if (!Application.isPlaying) {
                 foreach (var s in FindObjectsOfType<MonoBehaviour>())
                 {
                     if (s is IRefreshable) (s as IRefreshable).EditorRefresh();
@@ -68,7 +68,7 @@ namespace BarkaneEditor
 
         internal void Refresh<T>() where T: Object, IRefreshable
         {
-            if (Application.isEditor && !Application.isPlaying)
+            if (!Application.isPlaying)
             {
                 foreach (var t in FindObjectsOfType<MonoBehaviour>())
                 {

@@ -17,8 +17,8 @@ namespace BarkaneJoint
         public float elevation;
         [Range(0, 32)]
         public int resolution;
-        [HideInInspector] public int[] indices;
-        [HideInInspector] public Vector2[] angles;
+        [SerializeField, HideInInspector] public int[] indices;
+        [SerializeField, HideInInspector] public Vector2[] angles;
 
         public int VCount => 5 * resolution + 2;
     }
