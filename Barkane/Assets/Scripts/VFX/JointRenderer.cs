@@ -88,7 +88,10 @@ namespace BarkaneJoint
             UpdateMesh(true);
         }
 
-        void IRefreshable.RuntimeRefresh() { }
+        void IRefreshable.RuntimeRefresh() {
+            UpdateGeometryData();
+            UpdateMesh(true);
+        }
 
         public bool IsAnimating = false;
 
@@ -101,6 +104,12 @@ namespace BarkaneJoint
 
         void Update()
         {
+            UpdateGeometryData();
+        }
+
+        void UpdateGeometryData()
+        {
+
             if (a1 == null || a2 == null || b1 == null || b2 == null) return;
             // clamping done internally, no need to pass in both sides separately
             // here side1 chosen
