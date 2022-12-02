@@ -362,27 +362,27 @@ namespace BarkaneJoint
         private void UpdateMesh(bool force=false)
         {
             var init = force || vA1 == null || vA1.Length != settings.VCount;
+
             if (init)
             {
                 ClearAndInitBuffers(settings);
                 FullSetup();
-                return;
             }
 
             UpdateVertexNormals();
 
             if (init)
             {
-                fA1.sharedMesh.triangles = settings.tA1CW;
-                fA2.sharedMesh.triangles = settings.tA2CW;
-                fB1.sharedMesh.triangles = settings.tB1CW;
-                fB2.sharedMesh.triangles = settings.tB2CW;
+                fA1.sharedMesh.triangles = settings.tA1CCW;
+                fA2.sharedMesh.triangles = settings.tA2CCW;
+                fB1.sharedMesh.triangles = settings.tB1CCW;
+                fB2.sharedMesh.triangles = settings.tB2CCW;
             }
 
-            fA1.sharedMesh.MarkModified();
-            fA2.sharedMesh.MarkModified();
-            fB1.sharedMesh.MarkModified();
-            fB2.sharedMesh.MarkModified();
+            //fA1.sharedMesh.RecalculateNormals();
+            //fA2.sharedMesh.RecalculateNormals();
+            //fB1.sharedMesh.RecalculateNormals();
+            //fB2.sharedMesh.RecalculateNormals();
         }
     }
 

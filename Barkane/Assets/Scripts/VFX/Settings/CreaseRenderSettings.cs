@@ -43,26 +43,26 @@ public class CreaseRenderSettings : ScriptableObject, IDynamicMeshRenderSettings
                 trisA1[j + 4] = i + PivotOffset + 1;
                 trisA1[j + 5] = i + PivotOffset;
 
-                trisB1[j + 0] = i + SubmeshOffset;
-                trisB1[j + 1] = i + SubmeshOffset + PivotOffset;
-                trisB1[j + 2] = i + SubmeshOffset + 1;
-                trisB1[j + 3] = i + SubmeshOffset + 1;
-                trisB1[j + 4] = i + SubmeshOffset + PivotOffset;
-                trisB1[j + 5] = i + SubmeshOffset + PivotOffset + 1;
+                trisB1[j + 0] = i;
+                trisB1[j + 1] = i + PivotOffset;
+                trisB1[j + 2] = i + 1;
+                trisB1[j + 3] = i + 1;
+                trisB1[j + 4] = i + PivotOffset;
+                trisB1[j + 5] = i + PivotOffset + 1;
 
-                trisA2[j + 0] = i + 2 * SubmeshOffset;
-                trisA2[j + 1] = i + 2 * SubmeshOffset + PivotOffset;
-                trisA2[j + 2] = i + 2 * SubmeshOffset + 1;
-                trisA2[j + 3] = i + 2 * SubmeshOffset + 1;
-                trisA2[j + 4] = i + 2 * SubmeshOffset + PivotOffset;
-                trisA2[j + 5] = i + 2 * SubmeshOffset + PivotOffset + 1;
+                trisA2[j + 0] = i;
+                trisA2[j + 1] = i + PivotOffset;
+                trisA2[j + 2] = i + 1;
+                trisA2[j + 3] = i + 1;
+                trisA2[j + 4] = i + PivotOffset;
+                trisA2[j + 5] = i + PivotOffset + 1;
 
-                trisB2[j + 0] = i + 3 * SubmeshOffset;
-                trisB2[j + 1] = i + 3 * SubmeshOffset + 1;
-                trisB2[j + 2] = i + 3 * SubmeshOffset + PivotOffset;
-                trisB2[j + 3] = i + 3 * SubmeshOffset + 1;
-                trisB2[j + 4] = i + 3 * SubmeshOffset + PivotOffset + 1;
-                trisB2[j + 5] = i + 3 * SubmeshOffset + PivotOffset;
+                trisB2[j + 0] = i;
+                trisB2[j + 1] = i + 1;
+                trisB2[j + 2] = i + PivotOffset;
+                trisB2[j + 3] = i + 1;
+                trisB2[j + 4] = i + PivotOffset + 1;
+                trisB2[j + 5] = i + PivotOffset;
             }
         }
         else
@@ -76,26 +76,26 @@ public class CreaseRenderSettings : ScriptableObject, IDynamicMeshRenderSettings
                 trisA1[j + 4] = i + PivotOffset;
                 trisA1[j + 5] = i + PivotOffset + 1;
 
-                trisB1[j + 0] = i + SubmeshOffset;
-                trisB1[j + 1] = i + SubmeshOffset + 1;
-                trisB1[j + 2] = i + SubmeshOffset + PivotOffset;
-                trisB1[j + 3] = i + SubmeshOffset + 1;
-                trisB1[j + 4] = i + SubmeshOffset + PivotOffset + 1;
-                trisB1[j + 5] = i + SubmeshOffset + PivotOffset;
+                trisB1[j + 0] = i;
+                trisB1[j + 1] = i;
+                trisB1[j + 2] = i + PivotOffset;
+                trisB1[j + 3] = i + 1;
+                trisB1[j + 4] = i + PivotOffset + 1;
+                trisB1[j + 5] = i + PivotOffset;
 
-                trisA2[j + 0] = i + 2 * SubmeshOffset;
-                trisA2[j + 1] = i + 2 * SubmeshOffset + 1;
-                trisA2[j + 2] = i + 2 * SubmeshOffset + PivotOffset;
-                trisA2[j + 3] = i + 2 * SubmeshOffset + 1;
-                trisA2[j + 4] = i + 2 * SubmeshOffset + PivotOffset + 1;
-                trisA2[j + 5] = i + 2 * SubmeshOffset + PivotOffset;
+                trisA2[j + 0] = i;
+                trisA2[j + 1] = i + 1;
+                trisA2[j + 2] = i + PivotOffset;
+                trisA2[j + 3] = i + 1;
+                trisA2[j + 4] = i + PivotOffset + 1;
+                trisA2[j + 5] = i + PivotOffset;
 
-                trisB2[j + 0] = i + 3 * SubmeshOffset;
-                trisB2[j + 1] = i + 3 * SubmeshOffset + PivotOffset;
-                trisB2[j + 2] = i + 3 * SubmeshOffset + 1;
-                trisB2[j + 3] = i + 3 * SubmeshOffset + 1;
-                trisB2[j + 4] = i + 3 * SubmeshOffset + PivotOffset;
-                trisB2[j + 5] = i + 3 * SubmeshOffset + PivotOffset + 1;
+                trisB2[j + 0] = i;
+                trisB2[j + 1] = i + PivotOffset;
+                trisB2[j + 2] = i + 1;
+                trisB2[j + 3] = i + 1;
+                trisB2[j + 4] = i + PivotOffset;
+                trisB2[j + 5] = i + PivotOffset + 1;
             }
         }
 
@@ -122,14 +122,14 @@ public class CreaseRenderSettingsEditor : Editor
             var t = target as CreaseRenderSettings;
             var CCW = t.GetTris(true);
             t.tA1CCW = CCW.Item1;
-            t.tB1CCW = CCW.Item1;
-            t.tA2CCW = CCW.Item1;
-            t.tB2CCW = CCW.Item1;
+            t.tB1CCW = CCW.Item2;
+            t.tA2CCW = CCW.Item3;
+            t.tB2CCW = CCW.Item4;
             var CW = t.GetTris(false);
             t.tA1CW = CW.Item1;
-            t.tB1CW = CW.Item1;
-            t.tA2CW = CW.Item1;
-            t.tB2CW = CW.Item1;
+            t.tB1CW = CW.Item2;
+            t.tA2CW = CW.Item3;
+            t.tB2CW = CW.Item4;
 
             t.ts = new float[t.creaseSegmentCount + 1];
             for (int i = 0; i < t.creaseSegmentCount + 1; i++)

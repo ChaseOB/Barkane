@@ -17,11 +17,11 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
 
     private void LateUpdate()
     {
-        UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, vsInner, nsInner);
-        UpdateMesh(outerFilter, settingsOuter, squareRenderSettings.margin, vsOuter, nsOuter);
+        UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, ref vsInner, ref nsInner);
+        UpdateMesh(outerFilter, settingsOuter, squareRenderSettings.margin, ref vsOuter, ref nsOuter);
     }
 
-    private void UpdateMesh(MeshFilter filter, GlowstickRenderSettings settings, float margin, Vector3[] vs, Vector3[] ns, bool force = false)
+    private void UpdateMesh(MeshFilter filter, GlowstickRenderSettings settings, float margin, ref Vector3[] vs, ref Vector3[] ns, bool force = false)
     {
 
         Mesh m;
@@ -145,13 +145,13 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
 
     public void EditorRefresh()
     {
-        UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, vsInner, nsInner, true);
-        UpdateMesh(outerFilter, settingsOuter, squareRenderSettings.margin, vsOuter, nsOuter, true);
+        UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, ref vsInner, ref nsInner, true);
+        UpdateMesh(outerFilter, settingsOuter, squareRenderSettings.margin, ref vsOuter, ref nsOuter, true);
     }
 
     public void RuntimeRefresh()
     {
-        UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, vsInner, nsInner, true);
-        UpdateMesh(outerFilter, settingsOuter, squareRenderSettings.margin, vsOuter, nsOuter, true);
+        UpdateMesh(innerFilter, settingsInner, squareRenderSettings.margin, ref vsInner, ref nsInner, true);
+        UpdateMesh(outerFilter, settingsOuter, squareRenderSettings.margin, ref vsOuter, ref nsOuter, true);
     }
 }
