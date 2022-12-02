@@ -59,8 +59,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
             mRenderer.sharedMaterial = materialInstance;
 
         }
-
-        Debug.Log(BaseColor);
         materialInstance.SetColor("_Color", BaseColor);
         materialInstance.SetColor("_EdgeTint", TintColor);
     }

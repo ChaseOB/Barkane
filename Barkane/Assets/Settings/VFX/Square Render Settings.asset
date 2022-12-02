@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2000b04bfeafac247a140bcab26b7541, type: 3}
   m_Name: Square Render Settings
   m_EditorClassIdentifier: 
-  margin: 0.101
+  margin: 0.053
   creaseMaterial: {fileID: 2100000, guid: 68a95989fe9f5a54196acd957c93a5aa, type: 2}

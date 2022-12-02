@@ -35,7 +35,6 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private GameObject coneTreePrefab;
 
-    [SerializeField] private bool darkened;
     [SerializeField, HideInInspector] Theme theme;
 
     public void UpdateTheme(Theme t)
@@ -82,7 +81,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
         {
             playerWalk.enabled = true;
             squareSide.materialPrototype = theme.WalkMat;
-            squareSide.BaseColor = darkened ? theme.WalkColor : theme.WalkColorDark;
+            squareSide.BaseColor = theme.WalkColor;
             squareSide.TintColor = theme.WalkTint;
         }
         else if(faceType == FaceType.UNWALKABLE)
