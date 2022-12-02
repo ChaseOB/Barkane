@@ -94,7 +94,13 @@ public class FoldAnimator : MonoBehaviour
             Debug.Log("Cannot fold: currently checking colliders");
             return false;
         }
-        //C: check selected joints to ensure straight line
+
+        /* FOLD CHECK 1: KINKED JOINTS
+            This checks that the selected joint lies within a single plane. If it does, this might be a valid fold. If not, 
+            This is not a valid fold and we return false
+
+            KNOWN ISSUES: None
+        */
         HashSet<int> x = new HashSet<int>();
         HashSet<int> y = new HashSet<int>();
         HashSet<int> z = new HashSet<int>();
@@ -114,9 +120,27 @@ public class FoldAnimator : MonoBehaviour
             return false;
         }
 
-        //C: Check that we aren't folding though a back to back square by getting vector of top and bottom in square stack and ensuring that 
-        // the direction of that vector does not change 
+        //handles clipping of back-to-back paper
+        if(!CheckPaperClipping(fd))
+            return false;
 
+        //C: need to transfer data out to be used for raycast stuff
+        foldData = fd;
+        checkRaycast = true;
+        return true;
+    }
+
+    /* FOLD CHECK 2: PAPER CLIPPING
+            This checks that back to back squares do not clip through eachother. This is because the squares are so
+            thin that squares at the same location will not be caught using the raycast, thus another approach is needed.
+
+            This part of the check also updates the visibile faces of each square
+            KNOWN ISSUES: 
+            -pretty good with 2 squares, not so much for higher quantities 
+            -sorting is straight up wrong sometimes. 
+        */
+    private bool CheckPaperClipping(FoldData fd)
+    {
         List<List<PaperSquare>> overlaps = foldablePaper.FindOverlappingSquares();
         foreach(List<PaperSquare> list in overlaps)
         {
@@ -173,9 +197,9 @@ public class FoldAnimator : MonoBehaviour
                
                     if(d1 < d2) {
                         Debug.Log($"Cannot fold: would clip through adj paper {activeSides[0].transform.up} {activeSides[1].transform.up}");
-                            Destroy(t1);
-                    Destroy(t2);
-                    Destroy(parent);
+                        Destroy(t1);
+                        Destroy(t2);
+                        Destroy(parent);
                         return false;
                     }
                 }
@@ -184,10 +208,6 @@ public class FoldAnimator : MonoBehaviour
                 Destroy(parent);
             }
         }
-
-        //C: need to transfer data out to be used for raycast stuff
-        foldData = fd;
-        checkRaycast = true;
         return true;
     }
 
@@ -489,15 +509,17 @@ public class FoldData: Action
 {
     public PaperJoint foldJoint;
     public FoldObjects foldObjects;
+    public FoldObjects playerFoldObjects;
     public Vector3 center;
     public Vector3 axis;
     public float degrees;
 
     public FoldData() {}
 
-    public FoldData( PaperJoint fj, FoldObjects fo, Vector3 c, Vector3 a, float deg) {
+    public FoldData(PaperJoint fj, FoldObjects fo, FoldObjects pfo, Vector3 c, Vector3 a, float deg) {
         foldJoint = fj;
         foldObjects = fo;
+        playerFoldObjects = fo;
         center = c;
         axis = a;
         degrees = deg;

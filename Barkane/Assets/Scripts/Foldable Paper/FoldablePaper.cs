@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using BarkaneJoint;
 
-public class FoldablePaper : MonoBehaviour, IThemedItem
+public class FoldablePaper : MonoBehaviour
 {
     [SerializeField] private PaperSquare[] paperSquares;
     public PaperSquare[] PaperSquares => paperSquares;
@@ -23,8 +23,6 @@ public class FoldablePaper : MonoBehaviour, IThemedItem
     public Vector3 centerPos;
     Dictionary<Vector3Int, List<PaperSquare>> squareLocs = new Dictionary<Vector3Int, List<PaperSquare>>();
     public PaperSquare playerSquare;
-
-    private Theme theme;
 
     private void Awake() 
     {
@@ -72,11 +70,6 @@ public class FoldablePaper : MonoBehaviour, IThemedItem
         CoordUtils.CalculateCenter(vectors);
     }
 
-    public void UpdateTheme(Theme t)
-    {
-        theme = t;
-    }
-
     private void IntializeSquarePosList()
     {
         foreach(PaperSquare ps in paperSquares){
@@ -88,12 +81,14 @@ public class FoldablePaper : MonoBehaviour, IThemedItem
 
 
     //C: Uses a modified DFS to determine which objects should be folded
-    public FoldObjects FindFoldObjects()
+    // Returns fold side objects first, player side objects second (we need player side objects for
+    // testing collision)
+    public FoldObjects[] FindFoldObjects()
     {
         visitedJoints.Clear();
         visitedSquares.Clear();
 
-        playerSide = new FoldObjects();
+        playerSide = new FoldObjects(paperSquares[0].transform.parent, paperJoints[0].transform.parent);
         foldObjects = new FoldObjects(paperSquares[0].transform.parent, paperJoints[0].transform.parent);
 
         PaperSquare playerSquare = null;
@@ -104,7 +99,10 @@ public class FoldablePaper : MonoBehaviour, IThemedItem
 
         playerSide.OnFoldHighlight(false);
         foldObjects.OnFoldHighlight(true);
-        return foldObjects;
+        FoldObjects[] returnArr = new FoldObjects[2];
+        returnArr[0] = playerSide;
+        returnArr[1] = foldObjects;
+        return returnArr;
     }
 
     private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
@@ -144,7 +142,7 @@ public class FoldablePaper : MonoBehaviour, IThemedItem
     {
         FindFoldObjects();
         if(!isComplete && foldJoint != null && foldJoint.canFold) {
-            FoldData fd = new FoldData(foldJoint, foldObjects, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+            FoldData fd = new FoldData(foldJoint, foldObjects, playerSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
             foldAnimator.TryFold(fd);
         }
     }

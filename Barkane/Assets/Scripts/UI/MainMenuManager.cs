@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 public class MainMenuManager : MonoBehaviour
 {
     public int gameStartScene;
+    public GameObject playMenu;
+    public GameObject mainMenu;
+    public GameObject levelSelect;
 
     public void StartGame() {
         LevelManager.Instance.LoadLevel(0);
@@ -14,6 +17,18 @@ public class MainMenuManager : MonoBehaviour
     public void LoadLevel(int level)
     {
         LevelManager.Instance.LoadLevel(level);
+    }
+
+    public void TogglePlayMenu(bool toggle)
+    {
+        playMenu.SetActive(toggle);
+        mainMenu.SetActive(!toggle);
+    }
+
+    public void ToggleLevelSelect(bool toggle)
+    {
+        levelSelect.SetActive(toggle);
+        playMenu.SetActive(!toggle);
     }
 
     public void QuitGame() {
