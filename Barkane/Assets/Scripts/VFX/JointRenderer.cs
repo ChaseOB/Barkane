@@ -334,8 +334,8 @@ namespace BarkaneJoint
             {
                 name = $"{mat.name} {name}"
             };
-            m.SetColor("_Color", src.materialInstance.GetColor("_Color"));
-            m.SetColor("_EdgeTint", src.materialInstance.GetColor("_EdgeTint"));
+            m.SetColor("_Color", src.BaseColor);
+            m.SetColor("_EdgeTint", src.TintColor);
             return m;
         }
 
