@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MaskFoldParticles : MonoBehaviour, BarkaneEditor.IRefreshable
+public class MaskFoldParticles : MonoBehaviour, BarkaneEditor.IRefreshable, IThemedItem
 {
     [SerializeField] List<ParticleSystem> listOfSystems;
     private bool isAwake;
@@ -29,7 +29,6 @@ public class MaskFoldParticles : MonoBehaviour, BarkaneEditor.IRefreshable
         }
         foreach (ParticleSystem ps in listOfSystems)
         {
-            // ps.GetComponent<ParticleSystemRenderer>().material = theme.JointParticle;
             ps.Play();
         }
     }

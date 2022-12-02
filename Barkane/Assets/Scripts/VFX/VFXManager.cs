@@ -71,10 +71,6 @@ namespace BarkaneEditor
             {
                 t.UpdateTheme(Theme);
             }
-
-            foreach (MaskFoldParticles mfp in FindObjectsOfType<MaskFoldParticles>()) {
-                mfp.UpdateTheme(Theme);
-            }
             Refresh();
         }
 
