@@ -176,6 +176,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2773600120299688264}
   - component: {fileID: 2912257702277624556}
+  - component: {fileID: 9094291230536060804}
   m_Layer: 0
   m_Name: Glowstick
   m_TagString: Untagged
@@ -220,3 +221,19 @@ MonoBehaviour:
   outerRenderer: {fileID: 2936709759105875678}
   innerFilter: {fileID: 8473178751686472979}
   outerFilter: {fileID: 3793431923575683205}
+--- !u!114 &9094291230536060804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7294308738936855268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f288cb6a69e21248abcf435c3f23492, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifetime: 4
+  state: 0
+  box1: {fileID: 0}
+  box2: {fileID: 0}

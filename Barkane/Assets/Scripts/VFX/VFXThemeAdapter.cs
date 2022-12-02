@@ -20,6 +20,8 @@ public class VFXThemeAdapter : MonoBehaviour, IThemedItem
         // var skybox = Camera.main.GetComponent<Skybox>();
         if(bakedTheme != null)
             silhouette.SetColor("_BaseColor", bakedTheme.Silhouette);
+        else
+            silhouette.SetColor("_BaseColor", Color.cyan);
         // skybox.material = bakedTheme.Skybox;
     }
 }
