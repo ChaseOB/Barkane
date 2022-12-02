@@ -26,7 +26,10 @@ public class PlayerMovement : MonoBehaviour
     private void Start() 
     {
         marmaladeY = marmalade.transform.position.y;
-        cameraTrackingTransform = raycastStart;    
+    }
+
+    private void Update() {
+       cameraTrackingTransform.position = new Vector3(marmalade.transform.position.x, marmaladeY, marmalade.transform.position.z);
     }
 
     #region input

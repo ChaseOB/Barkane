@@ -185,8 +185,8 @@ MonoBehaviour:
   ScrollSenstivity: 0.2
   orbitDampen: 10
   scrollDampen: 6
-  minCameraDistance: 3
-  maxCameraDistance: 6
+  minCameraDistance: 2
+  maxCameraDistance: 7
   cameraDisabled: 1
 --- !u!114 &5353261048891426303
 MonoBehaviour:
