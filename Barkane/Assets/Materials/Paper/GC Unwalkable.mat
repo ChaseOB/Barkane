@@ -140,8 +140,8 @@ Material:
     m_Colors:
     - YOverride: {r: 0, g: 1, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0, g: 0.8679245, b: 0.73789114, a: 1}
-    - _EdgeTint: {r: 1, g: 1, b: 1, a: 0.87058824}
+    - _Color: {r: 0.21693665, g: 0.21693665, b: 0.7075472, a: 1}
+    - _EdgeTint: {r: 0.042052325, g: 0.042052325, b: 0.5943396, a: 0.87058824}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
