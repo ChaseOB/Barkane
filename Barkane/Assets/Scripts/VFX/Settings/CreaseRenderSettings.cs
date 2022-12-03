@@ -110,6 +110,7 @@ public class CreaseRenderSettings : ScriptableObject, IDynamicMeshRenderSettings
     [HideInInspector] public float[] ts;
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(CreaseRenderSettings))]
 public class CreaseRenderSettingsEditor : Editor
 {
@@ -143,3 +144,4 @@ public class CreaseRenderSettingsEditor : Editor
         }
     }
 }
+#endif

@@ -8,7 +8,6 @@ public class SquareSizeManager : MonoBehaviour, IRefreshable
 {
     [SerializeField] SquareRenderSettings settings;
 
-#if UNITY_EDITOR
     [SerializeField, HideInInspector] float currsize = 0.5f;
 
     void Refresh()
@@ -31,5 +30,4 @@ public class SquareSizeManager : MonoBehaviour, IRefreshable
     {
         Refresh();
     }
-#endif
 }
