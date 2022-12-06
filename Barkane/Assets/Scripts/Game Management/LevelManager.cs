@@ -120,14 +120,12 @@ public class LevelManager : Singleton<LevelManager>
     //C: used when switching from level back to a non-level scene
     public void UnloadLevel()
     {
-        StartCoroutine(ShowTransition());
-        if (instantiatedLevel != null) 
-            Destroy(instantiatedLevel);
+        //StartCoroutine(ShowTransition());
+        StartCoroutine(LoadLevelAsynch(0));
         instantiatedLevel = null;
-        if(playerInstance != null)
-            Destroy(playerInstance);
         playerInstance = null;
         currLevelTheme = null;
+        level = null;
     }
 
     private IEnumerator LoadLevelAsynch(int sceneIndex)
@@ -167,30 +165,8 @@ public class LevelManager : Singleton<LevelManager>
         ActionLockManager.Instance.ForceRemoveLock();
     }
 
-    private IEnumerator ShowTransition()
-    {
-        ActionLockManager.Instance.ForceTakeLock(this);
-        levelSwitchScreen.SetActive(true);
-        if(UIManager.Instance != null)
-            UIManager.Instance.ToggleGroup(false);
-        float elapsedTime = 0.0f;
-        float time = 2.5f;
-        imageAnimator.Play();
-        while (elapsedTime < time)
-        {
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        levelSwitchScreen.SetActive(false);
-        imageAnimator.Stop();
-        if(UIManager.Instance != null)
-            UIManager.Instance.ToggleGroup(true);
-        ActionLockManager.Instance.ForceRemoveLock();
-    }
-
     public void ReturnToMenu() {
-        LevelManager.Instance.UnloadLevel();
-        SceneManager.LoadScene(0);
+        UnloadLevel();
     }
 
     public void EndLevel()
