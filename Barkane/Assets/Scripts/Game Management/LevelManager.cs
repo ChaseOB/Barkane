@@ -61,7 +61,7 @@ public class LevelManager : Singleton<LevelManager>
         LoadLevel(++currLevelIndex);
     }
 
-    //C: allows us to do something special on last level completion
+    //C: allows us to do something special on last level completion. currently returns to main menu.
     public void OnCompleteLastLevel()
     {
         UIManager.Instance.endLevelGroup.SetActive(false);
@@ -71,7 +71,7 @@ public class LevelManager : Singleton<LevelManager>
 
     //Handles scene and theme switching
     public void SwitchLevel(Level level) {
-        StartCoroutine(ShowTransition());
+       /* StartCoroutine(ShowTransition());
         this.level = level;
         if (instantiatedLevel != null) {
             Destroy(instantiatedLevel);
@@ -80,7 +80,14 @@ public class LevelManager : Singleton<LevelManager>
         {
             AudioManager.Instance.PlayList(level.theme.musicStringName);
         }
-        SceneManager.LoadScene(levelScenes[(int)level.theme.themeEnum]);
+        SceneManager.LoadScene(levelScenes[(int)level.theme.themeEnum]);*/
+
+        this.level = level;
+        if(currLevelTheme == null || level.theme != currLevelTheme)
+        {
+            AudioManager.Instance.PlayList(level.theme.musicStringName);
+        }
+        StartCoroutine(LoadLevelAsynch(levelScenes[(int)level.theme.themeEnum]));
         //else
          //   SpawnLevel(level);
     }
@@ -121,6 +128,43 @@ public class LevelManager : Singleton<LevelManager>
             Destroy(playerInstance);
         playerInstance = null;
         currLevelTheme = null;
+    }
+
+    private IEnumerator LoadLevelAsynch(int sceneIndex)
+    {
+        ActionLockManager.Instance.ForceTakeLock(this);
+        levelSwitchScreen.SetActive(true);
+        if(UIManager.Instance != null)
+            UIManager.Instance.ToggleGroup(false);
+        
+        imageAnimator.Play();
+
+        if (instantiatedLevel != null) {
+            Destroy(instantiatedLevel);
+        }
+
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneIndex);
+        print("starting asynch load");
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+        print("end asynch load");
+
+        //bonus placebo time
+        float elapsedTime = 0.0f;
+        float time = 2.5f;
+        while (elapsedTime < time)
+        {
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        levelSwitchScreen.SetActive(false);
+        imageAnimator.Stop();
+        if(UIManager.Instance != null)
+            UIManager.Instance.ToggleGroup(true);
+        ActionLockManager.Instance.ForceRemoveLock();
     }
 
     private IEnumerator ShowTransition()

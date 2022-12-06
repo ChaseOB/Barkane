@@ -10,6 +10,12 @@ public class GlowStickLogic : MonoBehaviour
     public GlowstickBox box2;
     public MeshRenderer innerRenderer;
     public List<Material> materials = new List<Material>();
+    private CrystalShard[] shards;
+
+    private void Start() {
+        shards = FindObjectsOfType<CrystalShard>();
+    }
+
     //called whenever the joint the glowstick is on is folded;
     public void OnFold(bool foldJoint)
     {
@@ -22,7 +28,7 @@ public class GlowStickLogic : MonoBehaviour
                 state = GlowstickState.OFF;
                 ToggleGSBoxes(false);
                 innerRenderer.material = materials[2];
-                foreach (CrystalShard shard in FindObjectsOfType<CrystalShard>())
+                foreach (CrystalShard shard in shards)
                     shard.ActivateParticles(false);
             }
         }
@@ -31,7 +37,7 @@ public class GlowStickLogic : MonoBehaviour
             state = GlowstickState.CRACKED;
             ToggleGSBoxes(true);
             innerRenderer.material = materials[1];
-            foreach (CrystalShard shard in FindObjectsOfType<CrystalShard>())
+            foreach (CrystalShard shard in shards)
                 shard.ActivateParticles(true);
         }
     }
