@@ -120,6 +120,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
             _faceObjects.Add(type, InstantiationExtension.InstantiateKeepPrefab(_faceObjectPrefabs[type]));
 
             GameObject newObject = _faceObjects[type];
+            newObject.transform.localRotation = transform.rotation;
             newObject.transform.SetParent(transform);
             newObject.transform.localPosition = Vector3.zero;
             newObject.transform.localRotation = Quaternion.identity;
