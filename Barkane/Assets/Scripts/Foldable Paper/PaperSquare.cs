@@ -39,6 +39,8 @@ public class PaperSquare : MonoBehaviour
     public Vector3Int? editorRelPos = null;
     public Orientation orientation;
     public List<PaperJoint> adjacentJoints = new List<PaperJoint>();
+
+    private FoldablePaper foldablePaper;
 //#endif
 
 
@@ -48,6 +50,7 @@ public class PaperSquare : MonoBehaviour
         storedPos = transform.position;
         topSide = TopHalf.GetComponent<SquareSide>();
         bottomSide = BottomHalf.GetComponent<SquareSide>();
+        foldablePaper = FindObjectOfType<FoldablePaper>();
     }
 
     private void OnDestroy()
@@ -78,7 +81,6 @@ public class PaperSquare : MonoBehaviour
 
     public void SetPlayerOccupied(bool value)
     {
-        FoldablePaper foldablePaper = FindObjectOfType<FoldablePaper>();
         if(value) {
             if(foldablePaper.playerSquare == null) {
                 playerOccupied = true;

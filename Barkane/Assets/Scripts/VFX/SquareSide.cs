@@ -152,6 +152,12 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     }
 
+    public void updateLayer(bool player) {
+        if(player)
+            gameObject.layer = LayerMask.NameToLayer("PaperNoOutline");
+        else
+            gameObject.layer = LayerMask.NameToLayer("Paper");
+    }
     public (int, int, int) Coordinate => (
         Mathf.RoundToInt(transform.position.x),
         Mathf.RoundToInt(transform.position.y),

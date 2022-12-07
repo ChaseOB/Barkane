@@ -24,6 +24,8 @@ public class TileSelector : MonoBehaviour
     public float ddist;
     public List<Vector3> posList = new List<Vector3>();
     public List<Vector3> posList2 = new List<Vector3>();
+    public LayerMask paperMask;
+    public LayerMask jointMask;
 
 
 
@@ -47,7 +49,7 @@ public class TileSelector : MonoBehaviour
 
         RaycastHit info;
         Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
-        RaycastHit[] hits = Physics.RaycastAll(ray, 100, LayerMask.GetMask("Joint"));
+        RaycastHit[] hits = Physics.RaycastAll(ray, 100, jointMask);
         if(hits.Length == 0)
             hoverJoint = null;
         else if (hits.Length == 1)
@@ -62,7 +64,7 @@ public class TileSelector : MonoBehaviour
             }
         }
 
-        if(Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Paper")))
+        if(Physics.Raycast(ray, out info, 100, paperMask))
         {
             hoverSquare = info.transform.gameObject.GetComponent<PaperSquare>();
         } 

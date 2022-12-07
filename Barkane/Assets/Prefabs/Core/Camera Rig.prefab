@@ -240,6 +240,12 @@ MonoBehaviour:
   ddist: 0
   posList: []
   posList2: []
+  paperMask:
+    serializedVersion: 2
+    m_Bits: 1088
+  jointMask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!114 &3938678172716900455
 MonoBehaviour:
   m_ObjectHideFlags: 0
