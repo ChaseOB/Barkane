@@ -15,4 +15,4 @@ MonoBehaviour:
   levelName: CB 1
   levelObject: {fileID: 1501338517567066037, guid: 7c15b563fb2c30545bd10a74fe1b4c9b, type: 3}
   theme: {fileID: 11400000, guid: 23f30d238faa36944a41821ae891be95, type: 2}
-  cosmeticUnlock: Blossom
+  cosmeticUnlock: 

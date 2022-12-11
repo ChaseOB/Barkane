@@ -7861,7 +7861,7 @@ MonoBehaviour:
   button: {fileID: 1407957942}
   selection: {fileID: 0}
   cosmeticName: SwagGlasses
-  unlockDefault: 1
+  unlockDefault: 0
 --- !u!1 &1999617166
 GameObject:
   m_ObjectHideFlags: 0
