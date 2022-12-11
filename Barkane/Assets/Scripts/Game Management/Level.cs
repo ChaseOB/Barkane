@@ -8,4 +8,6 @@ public class Level : ScriptableObject
     public string levelName;
     public GameObject levelObject;
     public Theme theme;
+
+    public string cosmeticUnlock;
 }

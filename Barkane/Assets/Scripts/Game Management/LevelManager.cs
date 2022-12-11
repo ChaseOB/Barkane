@@ -171,7 +171,13 @@ public class LevelManager : Singleton<LevelManager>
 
     public void EndLevel()
     {
+        
         instantiatedLevel.GetComponent<FoldablePaper>().isComplete = true;
+        
+        //Unlock Cosmetics if there are any
+        if(level.cosmeticUnlock != string.Empty){
+            PlayerPrefs.SetInt($"CosmeticUnlock{level.cosmeticUnlock}", 1);
+        }
     }
 
 }
