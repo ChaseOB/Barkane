@@ -10,6 +10,7 @@ public class MainMenuManager : MonoBehaviour
     public GameObject mainMenu;
     public GameObject levelSelect;
     public GameObject credits;
+    public GameObject cosmetics;
 
     public void StartGame() {
         LevelManager.Instance.LoadLevel(0);
@@ -34,9 +35,16 @@ public class MainMenuManager : MonoBehaviour
 
     public void ToggleCredits(bool toggle)
     {
-       credits.SetActive(toggle);
+        credits.SetActive(toggle);
         mainMenu.SetActive(!toggle); 
     }
+
+    public void ToggleCosmetics(bool toggle)
+    {
+        cosmetics.SetActive(toggle);
+        mainMenu.SetActive(!toggle); 
+    }
+
 
     public void QuitGame() {
         Application.Quit();

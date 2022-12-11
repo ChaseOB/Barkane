@@ -12,17 +12,21 @@ public class PlayerCosmetics : Singleton<PlayerCosmetics>
 
     private void Awake() {
         InitializeSingleton(this.gameObject);
-        
+
         if(CosmeticGOs.Count != CosmeticNames.Count)
             Debug.LogWarning("Cosmetic GO and names counts are not equal");
 
         cosmeticDict = new Dictionary<string, GameObject>();
         for(int i = 0; i < CosmeticNames.Count; i++) 
             cosmeticDict.Add(CosmeticNames[i], CosmeticGOs[i]);
+        
+        EnableCosmetic(PlayerPrefs.GetString("CurrentCosmetic", "None"));
     }
 
     public void EnableCosmetic(string name)
     {
+        if(name == "None") return;
+        
         enabledCosmetic?.SetActive(false);
         GameObject go = cosmeticDict[name];
         if(go == null) {
