@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class FoldChecker : MonoBehaviour
 {
-    //This class checks the validity of a given fold
-
     public GameObject SquareCollider;
     public LayerMask squareCollidingMask;
 
-    //Checks if the given fold data is a valid fold. If so, returns true. If not, returns
-    //false
+    //Checks if the given fold data is a valid fold. If so, returns true. If not, returns false
     public bool CheckFoldBool(FoldData foldData)
     {
         FoldFailureType failureType = CheckFold(foldData);
@@ -33,8 +30,8 @@ public class FoldChecker : MonoBehaviour
             return FoldFailureType.KINKED;
         if(!CheckPaperClipping(foldData))
             return FoldFailureType.PAPERCLIP;
-
-
+        if(!CheckCollision(foldData))
+            return FoldFailureType.COLLISION;
         return FoldFailureType.NONE;
     }
 
@@ -67,16 +64,16 @@ public class FoldChecker : MonoBehaviour
         return true;
     }
 
-        /* FOLD CHECK 2: PAPER CLIPPING
-            This checks that back to back squares do not clip through eachother. This is because the squares are so
-            thin that squares at the same location will not be caught using the raycast, thus another approach is needed.
+    /* FOLD CHECK 2: PAPER CLIPPING
+        This checks that back to back squares do not clip through eachother. This is because the squares are so
+        thin that squares at the same location will not be caught using the raycast, thus another approach is needed.
 
-            This part of the check also updates the visibile faces of each square
-            KNOWN ISSUES: 
-            -pretty good with 2 squares, not so much for higher quantities 
-            -sorting is straight up wrong sometimes. 
-            -generally janky and unreliable, needs a total overhaul
-        */
+        This part of the check also updates the visibile faces of each square
+        KNOWN ISSUES: 
+        -pretty good with 2 squares, not so much for higher quantities 
+        -sorting is straight up wrong sometimes. 
+        -generally janky and unreliable, needs a total overhaul
+    */
 
     private bool CheckPaperClipping(FoldData fd)
     {

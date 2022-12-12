@@ -15,15 +15,16 @@ public class TileSelector : MonoBehaviour
     public FoldablePaper foldablePaper;
     public FoldAnimator foldAnimator;
     public FoldObjects foldObjects;
-    private GameObject ghostFold;
-    private GameObject ghostFold2;
+    private GameObject ghostFold90;
+    private GameObject ghostFoldNeg90;
     public GameObject ghostSquare;
     public Vector2 foldcenter90;
     public Vector2 foldcenterneg90;
-    public float udist;
-    public float ddist;
-    public List<Vector3> posList = new List<Vector3>();
-    public List<Vector3> posList2 = new List<Vector3>();
+    public Vector2 mousePos;
+    public float dist90;
+    public float distNeg90;
+    public List<Vector3> posList90 = new List<Vector3>();
+    public List<Vector3> posListNeg90 = new List<Vector3>();
     public LayerMask paperMask;
     public LayerMask jointMask;
 
@@ -69,21 +70,23 @@ public class TileSelector : MonoBehaviour
             hoverSquare = info.transform.gameObject.GetComponent<PaperSquare>();
         } 
         
-        if(ghostFold == null) return;
-        
-        foldcenter90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posList));
-        foldcenterneg90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posList2));
 
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        udist = Vector3.Magnitude(mousePos - foldcenter90);
-        ddist = Vector3.Magnitude(mousePos - foldcenterneg90);
-        if(udist < ddist){
-            ghostFold.SetActive(true);
-            ghostFold2.SetActive(false);
+
+        if(ghostFold90 == null) return;
+        
+        foldcenter90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posList90));
+        foldcenterneg90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posListNeg90));
+
+        mousePos = Mouse.current.position.ReadValue();
+        dist90 = Vector3.Magnitude(mousePos - foldcenter90);
+        distNeg90 = Vector3.Magnitude(mousePos - foldcenterneg90);
+        if(dist90 < distNeg90){
+            ghostFold90.SetActive(true);
+            ghostFoldNeg90.SetActive(false);
         }
         else{
-            ghostFold.SetActive(false);
-            ghostFold2.SetActive(true);
+            ghostFold90.SetActive(false);
+            ghostFoldNeg90.SetActive(true);
         }
     }
 
@@ -96,9 +99,11 @@ public class TileSelector : MonoBehaviour
             CreateGhostFold();
         }
     }
+
+    //TODO: update this POS to use fold checking
     private void CreateGhostFold()
     {
-                    foldObjects = foldablePaper.FindFoldObjects()[1];
+        foldObjects = foldablePaper.FindFoldObjects()[1];
 
         HashSet<int> x = new HashSet<int>();
         HashSet<int> y = new HashSet<int>();
@@ -119,38 +124,40 @@ public class TileSelector : MonoBehaviour
             return;
         }
 
-        ghostFold = new GameObject();
-        ghostFold.transform.position = foldObjects.foldJoints[0].transform.position;
+        ghostFold90 = new GameObject();
+        ghostFold90.transform.position = foldObjects.foldJoints[0].transform.position;
         foreach(GameObject go in foldObjects.foldSquares)
         {
             GameObject newSquare = Instantiate(ghostSquare, go.transform.position, go.transform.rotation);
-            newSquare.transform.parent = ghostFold.transform;
+            newSquare.transform.parent = ghostFold90.transform;
         }
-        ghostFold.transform.RotateAround(foldObjects.foldJoints[0].transform.position, foldObjects.foldJoints[0].transform.rotation * Vector3.right, 90);
-        int children = ghostFold.transform.childCount;
+        ghostFold90.transform.RotateAround(foldObjects.foldJoints[0].transform.position, foldObjects.foldJoints[0].transform.rotation * Vector3.right, 90);
+        int children = ghostFold90.transform.childCount;
+        posList90.Clear();
         for (int i = 0; i < children; i++)
         {
-            posList.Add(ghostFold.transform.GetChild(i).position);
+            posList90.Add(ghostFold90.transform.GetChild(i).position);
         }
-        foldcenter90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posList));
+        foldcenter90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posList90));
         
-        ghostFold2 = new GameObject();
-        ghostFold2.transform.position = foldObjects.foldJoints[0].transform.position;
+
+        ghostFoldNeg90 = new GameObject();
+        ghostFoldNeg90.transform.position = foldObjects.foldJoints[0].transform.position;
         foreach(GameObject go in foldObjects.foldSquares)
-        {
+        {   
             GameObject newSquare = Instantiate(ghostSquare, go.transform.position, go.transform.rotation);
-            newSquare.transform.parent = ghostFold2.transform;
+            newSquare.transform.parent = ghostFoldNeg90.transform;
         }
-        ghostFold2.transform.RotateAround(foldObjects.foldJoints[0].transform.position, foldObjects.foldJoints[0].transform.rotation * Vector3.right, -90);
-        List<Vector3> posList2 = new List<Vector3>();
+        ghostFoldNeg90.transform.RotateAround(foldObjects.foldJoints[0].transform.position, foldObjects.foldJoints[0].transform.rotation * Vector3.right, -90);
+        posListNeg90.Clear();
         for (int i = 0; i < children; i++)
         {
-            posList2.Add(ghostFold2.transform.GetChild(i).position);
+            posListNeg90.Add(ghostFoldNeg90.transform.GetChild(i).position);
         }
-        foldcenterneg90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posList2));
+        foldcenterneg90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posListNeg90));
     
-        ghostFold.SetActive(false);
-        ghostFold2.SetActive(false);
+        ghostFold90.SetActive(false);
+        ghostFoldNeg90.SetActive(false);
     }
 
     //private void Destroy
@@ -164,8 +171,8 @@ public class TileSelector : MonoBehaviour
             if(currJoint == hoverJoint)
                 return;
             currJoint?.Deselect();
-            Destroy(ghostFold);
-            Destroy(ghostFold2);
+            Destroy(ghostFold90);
+            Destroy(ghostFoldNeg90);
             currJoint = hoverJoint;
             currJoint.Select();
             foldablePaper.foldJoint = currJoint;
@@ -174,12 +181,12 @@ public class TileSelector : MonoBehaviour
         else
         {
             //fold base on direction
-            if(udist < ddist)
+            if(dist90 < distNeg90)
                 foldablePaper.TryFold(90);
             else
                 foldablePaper.TryFold(-90);
-            Destroy(ghostFold);
-            Destroy(ghostFold2);
+            Destroy(ghostFold90);
+            Destroy(ghostFoldNeg90);
            /* currJoint?.Deselect();
             currJoint = null;
             foldablePaper.foldJoint = null;*/
@@ -193,9 +200,9 @@ public class TileSelector : MonoBehaviour
         currJoint?.Deselect();
         currJoint = null;
         foldablePaper.foldJoint = null;
-        if(ghostFold != null){
-            Destroy(ghostFold);
-            Destroy(ghostFold2);
+        if(ghostFold90 != null){
+            Destroy(ghostFold90);
+            Destroy(ghostFoldNeg90);
         }
     }
 
