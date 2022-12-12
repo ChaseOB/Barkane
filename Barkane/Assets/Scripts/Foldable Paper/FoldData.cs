@@ -35,4 +35,38 @@ public class FoldData: Action
     {
        GameObject.FindObjectOfType<FoldAnimator>().Fold(this, true, undo);
     }
+
+    public List<List<PaperSquare>> FindOverlappingSquares()
+    {
+        List<List<PaperSquare>> overlapList = new List<List<PaperSquare>>();
+
+        Dictionary<Vector3, List<PaperSquare>> dict = new Dictionary<Vector3, List<PaperSquare>>();
+
+        List<PaperSquare> paperSquares = new List<PaperSquare>();
+        foreach(GameObject go in foldObjects.foldSquares)
+            paperSquares.Add(go.GetComponent<PaperSquare>());
+        foreach(GameObject go in playerFoldObjects.foldSquares)
+            paperSquares.Add(go.GetComponent<PaperSquare>());
+            
+        foreach(PaperSquare ps in paperSquares) {
+            bool didAdd = false;
+            foreach(Vector3 key in dict.Keys){
+                if (Vector3.Magnitude(key - ps.transform.position) < 0.0001f) {
+                    dict[key].Add(ps);
+                    didAdd = true;
+                }
+            }
+            if(!didAdd)
+            {
+                List<PaperSquare> list = new List<PaperSquare>();
+                list.Add(ps);
+                dict.Add(ps.transform.position, list);
+            }
+        }
+
+        foreach (List<PaperSquare> list in dict.Values){
+                overlapList.Add(list);
+        }
+        return overlapList;
+    }
 }

@@ -183,6 +183,7 @@ public class FoldablePaper : MonoBehaviour
     }
 }
 
+
 public class FoldObjects {
     public List<GameObject> foldSquares; //C: every square being folded
     public List<GameObject> foldJoints; //C: the non-line joints being folded
