@@ -143,7 +143,11 @@ public class FoldablePaper : MonoBehaviour
     {
         FindFoldObjects();
         if(!isComplete && foldJoint != null && foldJoint.canFold) {
-            FoldData fd = new FoldData(foldJoint, foldObjects, playerSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+            List<PaperJoint> foldJoints = new List<PaperJoint>();
+            foreach(PaperJoint pj in PaperJoints)
+                if(pj.showLine)
+                    foldJoints.Add(pj);
+            FoldData fd = new FoldData(foldJoint, foldJoints, foldObjects, playerSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
             foldAnimator.TryFold(fd);
         }
     }

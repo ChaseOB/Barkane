@@ -561,8 +561,7 @@ public class FoldAnimator : MonoBehaviour
 
    
 }
-
-//C: we should pass this insead of a bunch of params but i have 90 min to make this game work aaaaa
+/*
 public class FoldData: Action 
 {
     public PaperJoint foldJoint;
@@ -595,6 +594,6 @@ public class FoldData: Action
        GameObject.FindObjectOfType<FoldAnimator>().Fold(this, true, undo);
     }
 }
-
+*/
 
 
