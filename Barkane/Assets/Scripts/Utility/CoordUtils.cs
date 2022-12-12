@@ -40,6 +40,13 @@ public static class CoordUtils
         return(Vector3.Magnitude(a-b) < 0.0001f);
     }
 
+    public static Vector3 CalculateCenterTransform(List<Transform> transforms)
+    {
+        List<Vector3> vector3s = new List<Vector3>();
+        foreach(Transform t in transforms)
+            vector3s.Add(t.position);
+        return CalculateCenter(vector3s);
+    }
 
     public static Vector3 CalculateCenter(List<Vector3> vectors) {
         Vector3 center = Vector3.zero;

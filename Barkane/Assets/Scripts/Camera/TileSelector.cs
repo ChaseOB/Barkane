@@ -23,8 +23,8 @@ public class TileSelector : MonoBehaviour
     public Vector2 mousePos;
     public float dist90;
     public float distNeg90;
-    public List<Vector3> posList90 = new List<Vector3>();
-    public List<Vector3> posListNeg90 = new List<Vector3>();
+    public List<Transform> posList90 = new List<Transform>();
+    public List<Transform> posListNeg90 = new List<Transform>();
     public LayerMask paperMask;
     public LayerMask jointMask;
 
@@ -74,8 +74,8 @@ public class TileSelector : MonoBehaviour
 
         if(ghostFold90 == null) return;
         
-        foldcenter90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posList90));
-        foldcenterneg90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posListNeg90));
+        foldcenter90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(posList90));
+        foldcenterneg90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(posListNeg90));
 
         mousePos = Mouse.current.position.ReadValue();
         dist90 = Vector3.Magnitude(mousePos - foldcenter90);
@@ -136,9 +136,9 @@ public class TileSelector : MonoBehaviour
         posList90.Clear();
         for (int i = 0; i < children; i++)
         {
-            posList90.Add(ghostFold90.transform.GetChild(i).position);
+            posList90.Add(ghostFold90.transform.GetChild(i));
         }
-        foldcenter90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posList90));
+        foldcenter90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(posList90));
         
 
         ghostFoldNeg90 = new GameObject();
@@ -152,9 +152,9 @@ public class TileSelector : MonoBehaviour
         posListNeg90.Clear();
         for (int i = 0; i < children; i++)
         {
-            posListNeg90.Add(ghostFoldNeg90.transform.GetChild(i).position);
+            posListNeg90.Add(ghostFoldNeg90.transform.GetChild(i));
         }
-        foldcenterneg90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenter(posListNeg90));
+        foldcenterneg90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(posListNeg90));
     
         ghostFold90.SetActive(false);
         ghostFoldNeg90.SetActive(false);
