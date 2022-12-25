@@ -10,6 +10,8 @@ public class TileSelector : MonoBehaviour
     private PaperJoint hoverJoint;
     private PaperJoint currJoint;
 
+    public FoldChecker foldChecker;
+
     [SerializeField] private PaperSquare hoverSquare;
 
     public FoldablePaper foldablePaper;
@@ -47,7 +49,12 @@ public class TileSelector : MonoBehaviour
     void Update()
     {
         if(foldablePaper.isComplete) return;
+        UpdateSquareRefs();
+        UpdateGhostPosition();
+    }
 
+    private void UpdateSquareRefs()
+    {
         RaycastHit info;
         Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
         RaycastHit[] hits = Physics.RaycastAll(ray, 100, jointMask);
@@ -69,9 +76,10 @@ public class TileSelector : MonoBehaviour
         {
             hoverSquare = info.transform.gameObject.GetComponent<PaperSquare>();
         } 
-        
+    }
 
-
+    private void UpdateGhostPosition()
+    {
         if(ghostFold90 == null) return;
         
         foldcenter90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(posList90));
@@ -80,6 +88,7 @@ public class TileSelector : MonoBehaviour
         mousePos = Mouse.current.position.ReadValue();
         dist90 = Vector3.Magnitude(mousePos - foldcenter90);
         distNeg90 = Vector3.Magnitude(mousePos - foldcenterneg90);
+
         if(dist90 < distNeg90){
             ghostFold90.SetActive(true);
             ghostFoldNeg90.SetActive(false);
@@ -99,6 +108,52 @@ public class TileSelector : MonoBehaviour
             CreateGhostFold();
         }
     }
+
+    private void OnClick(InputValue value)
+    {
+        if(foldablePaper == null || foldablePaper.isComplete || !value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
+            return;
+        if(hoverJoint != null && hoverJoint.canFold)
+        {
+            if(currJoint == hoverJoint)
+                return;
+            currJoint?.Deselect();
+            Destroy(ghostFold90);
+            Destroy(ghostFoldNeg90);
+            currJoint = hoverJoint;
+            currJoint.Select();
+            foldablePaper.foldJoint = currJoint;
+            CreateGhostFold();
+        }
+        else
+        {
+            //fold base on direction
+            if(dist90 < distNeg90)
+                foldablePaper.TryFold(90);
+            else
+                foldablePaper.TryFold(-90);
+           DeselectJoint();
+        }
+    }
+
+    private void OnRightClick(InputValue value)
+    {
+        if(foldablePaper == null || foldablePaper.isComplete || !value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
+            return;
+        DeselectJoint();
+    }
+
+    private void DeselectJoint()
+    {
+        currJoint?.Deselect();
+        currJoint = null;
+        foldablePaper.foldJoint = null;
+        if(ghostFold90 != null){
+            Destroy(ghostFold90);
+            Destroy(ghostFoldNeg90);
+        }
+    }
+
 
     //TODO: update this POS to use fold checking
     private void CreateGhostFold()
@@ -159,67 +214,12 @@ public class TileSelector : MonoBehaviour
         ghostFold90.SetActive(false);
         ghostFoldNeg90.SetActive(false);
     }
-
-    //private void Destroy
-
-    private void OnClick(InputValue value)
-    {
-        if(foldablePaper == null || foldablePaper.isComplete || !value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
-            return;
-        if(hoverJoint != null && hoverJoint.canFold)
-        {
-            if(currJoint == hoverJoint)
-                return;
-            currJoint?.Deselect();
-            Destroy(ghostFold90);
-            Destroy(ghostFoldNeg90);
-            currJoint = hoverJoint;
-            currJoint.Select();
-            foldablePaper.foldJoint = currJoint;
-            CreateGhostFold();
-        }
-        else
-        {
-            //fold base on direction
-            if(dist90 < distNeg90)
-                foldablePaper.TryFold(90);
-            else
-                foldablePaper.TryFold(-90);
-            Destroy(ghostFold90);
-            Destroy(ghostFoldNeg90);
-           /* currJoint?.Deselect();
-            currJoint = null;
-            foldablePaper.foldJoint = null;*/
-        }
-    }
-
-    private void OnRightClick(InputValue value)
-    {
-        if(foldablePaper == null || foldablePaper.isComplete || !value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
-            return;
-        currJoint?.Deselect();
-        currJoint = null;
-        foldablePaper.foldJoint = null;
-        if(ghostFold90 != null){
-            Destroy(ghostFold90);
-            Destroy(ghostFoldNeg90);
-        }
-    }
-
+    
 
     private void OnFoldUp(InputValue value)
     {
         if(!value.isPressed) return;
         FindObjectOfType<Goal>().EndLevel();
-        //if(!value.isPressed || currJoint == null || !currJoint.isSelected)
-          //  return;
-       // foldablePaper.TryFold(90);
     }
-/*
-    private void OnFoldDown(InputValue value)
-    {
-        if(!value.isPressed || currJoint == null || !currJoint.isSelected)
-            return;
-        foldablePaper.TryFold(-90);
-    }*/
+
 }

@@ -21,8 +21,6 @@ public class FoldAnimator : MonoBehaviour
     public bool raycastCheckReturn = false;
     public bool crDone = false;
 
-//    private FoldChecker foldChecker = new FoldChecker();
-
 
 
     private void Start() 

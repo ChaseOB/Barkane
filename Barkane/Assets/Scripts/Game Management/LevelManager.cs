@@ -71,25 +71,12 @@ public class LevelManager : Singleton<LevelManager>
 
     //Handles scene and theme switching
     public void SwitchLevel(Level level) {
-       /* StartCoroutine(ShowTransition());
-        this.level = level;
-        if (instantiatedLevel != null) {
-            Destroy(instantiatedLevel);
-        }
-        if(currLevelTheme == null || level.theme != currLevelTheme)
-        {
-            AudioManager.Instance.PlayList(level.theme.musicStringName);
-        }
-        SceneManager.LoadScene(levelScenes[(int)level.theme.themeEnum]);*/
-
         this.level = level;
         if(currLevelTheme == null || level.theme != currLevelTheme)
         {
             AudioManager.Instance.PlayList(level.theme.musicStringName);
         }
         StartCoroutine(LoadLevelAsynch(levelScenes[(int)level.theme.themeEnum]));
-        //else
-         //   SpawnLevel(level);
     }
 
 
@@ -120,7 +107,6 @@ public class LevelManager : Singleton<LevelManager>
     //C: used when switching from level back to a non-level scene
     public void UnloadLevel()
     {
-        //StartCoroutine(ShowTransition());
         StartCoroutine(LoadLevelAsynch(0));
         instantiatedLevel = null;
         playerInstance = null;

@@ -82,8 +82,7 @@ public class FoldablePaper : MonoBehaviour
 
 
     //C: Uses a modified DFS to determine which objects should be folded
-    // Returns fold side objects first, player side objects second (we need player side objects for
-    // testing collision)
+    // Returns fold side objects first, player side objects second 
     public FoldObjects[] FindFoldObjects()
     {
         visitedJoints.Clear();
@@ -150,6 +149,20 @@ public class FoldablePaper : MonoBehaviour
             FoldData fd = new FoldData(foldJoint, foldJoints, foldObjects, playerSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
             foldAnimator.TryFold(fd);
         }
+    }
+
+    public FoldData BuildFoldData(float degrees)
+    {
+        FindFoldObjects();
+        if(!isComplete && foldJoint != null && foldJoint.canFold) {
+            List<PaperJoint> foldJoints = new List<PaperJoint>();
+            foreach(PaperJoint pj in PaperJoints)
+                if(pj.showLine)
+                    foldJoints.Add(pj);
+            FoldData fd = new FoldData(foldJoint, foldJoints, foldObjects, playerSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+            return fd;
+        }
+        return null;
     }
 
 
