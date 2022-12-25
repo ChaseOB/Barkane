@@ -43,7 +43,7 @@ public class FoldChecker : MonoBehaviour
 
             KNOWN ISSUES: None
         */
-    private bool CheckKinkedJoint(List<PaperJoint> joints)
+    public static bool CheckKinkedJoint(List<PaperJoint> joints)
     {
        
         HashSet<int> x = new HashSet<int>();

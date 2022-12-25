@@ -150,7 +150,7 @@ public class FoldablePaper : MonoBehaviour
             foldAnimator.TryFold(fd);
         }
     }
-
+    
     public FoldData BuildFoldData(float degrees)
     {
         FindFoldObjects();

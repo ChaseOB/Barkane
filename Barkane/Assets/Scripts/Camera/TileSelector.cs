@@ -14,22 +14,23 @@ public class TileSelector : MonoBehaviour
 
     [SerializeField] private PaperSquare hoverSquare;
 
+    public GameObject indicatorPrefab;
+
     public FoldablePaper foldablePaper;
     public FoldAnimator foldAnimator;
     public FoldObjects foldObjects;
     private GameObject ghostFold90;
     private GameObject ghostFoldNeg90;
-    public GameObject ghostSquare;
-    public Vector2 foldcenter90;
-    public Vector2 foldcenterneg90;
-    public Vector2 mousePos;
-    public float dist90;
-    public float distNeg90;
-    public List<Transform> posList90 = new List<Transform>();
-    public List<Transform> posListNeg90 = new List<Transform>();
+    private FoldIndicator indicator90;
+    private FoldIndicator indicatorNeg90;
+    private float dist90;
+    private float distNeg90;
+
     public LayerMask paperMask;
     public LayerMask jointMask;
 
+
+   
 
 
     // Start is called before the first frame update
@@ -80,12 +81,11 @@ public class TileSelector : MonoBehaviour
 
     private void UpdateGhostPosition()
     {
-        if(ghostFold90 == null) return;
+        if(ghostFold90 == null || indicator90 == null || indicatorNeg90 == null) return;
         
-        foldcenter90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(posList90));
-        foldcenterneg90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(posListNeg90));
-
-        mousePos = Mouse.current.position.ReadValue();
+        Vector2 foldcenter90 = indicator90.foldCenter;
+        Vector2 foldcenterneg90 = indicatorNeg90.foldCenter;
+        Vector2 mousePos = Mouse.current.position.ReadValue();
         dist90 = Vector3.Magnitude(mousePos - foldcenter90);
         distNeg90 = Vector3.Magnitude(mousePos - foldcenterneg90);
 
@@ -154,9 +154,28 @@ public class TileSelector : MonoBehaviour
         }
     }
 
+    private void CreateGhostFold()
+    {
+        FoldData fd1 = foldablePaper.BuildFoldData(90);
+
+        if(!FoldChecker.CheckKinkedJoint(fd1.axisJoints)) return;
+
+        ghostFold90 = Instantiate(indicatorPrefab);
+        indicator90 = ghostFold90.GetComponent<FoldIndicator>();
+        indicator90.BuildIndicator(fd1, camera);
+
+        FoldData fd2 = foldablePaper.BuildFoldData(-90);
+
+        ghostFoldNeg90 = Instantiate(indicatorPrefab);
+        indicatorNeg90 = ghostFold90.GetComponent<FoldIndicator>();
+        indicatorNeg90.BuildIndicator(fd2, camera);        
+        
+        ghostFold90.SetActive(false);
+        ghostFoldNeg90.SetActive(false);
+    }
 
     //TODO: update this POS to use fold checking
-    private void CreateGhostFold()
+  /*  private void CreateGhostFold()
     {
         foldObjects = foldablePaper.FindFoldObjects()[1];
 
@@ -213,7 +232,7 @@ public class TileSelector : MonoBehaviour
     
         ghostFold90.SetActive(false);
         ghostFoldNeg90.SetActive(false);
-    }
+    }*/
     
 
     private void OnFoldUp(InputValue value)
