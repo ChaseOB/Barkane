@@ -217,6 +217,12 @@ public class FoldAnimator : MonoBehaviour
     }
 
     private bool CheckRayCast() {
+        if(foldData == null)
+        {
+            checkRaycast = false;
+            raycastCheckDone = true;
+            return false;
+        }
         return CheckRayCast(foldData.foldObjects); 
         //&& CheckRayCast(foldData.playerFoldObjects, true);
     }
@@ -416,7 +422,7 @@ public class FoldAnimator : MonoBehaviour
 
         UpdateSquareVisibility(objectsToFold);
         
-        FindObjectOfType<TileSelector>().TryMakeNewGhost();
+        //FindObjectOfType<TileSelector>().TryMakeNewGhost();
         if(afterFold != null)
              afterFold();
         if(undo)

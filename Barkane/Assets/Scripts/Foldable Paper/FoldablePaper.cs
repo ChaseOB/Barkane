@@ -140,17 +140,9 @@ public class FoldablePaper : MonoBehaviour
 
     public void TryFold(float degrees)
     {
-        FindFoldObjects();
-        if(!isComplete && foldJoint != null && foldJoint.canFold) {
-            List<PaperJoint> foldJoints = new List<PaperJoint>();
-            foreach(PaperJoint pj in PaperJoints)
-                if(pj.showLine)
-                    foldJoints.Add(pj);
-            FoldData fd = new FoldData(foldJoint, foldJoints, foldObjects, playerSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
-            foldAnimator.TryFold(fd);
-        }
+        foldAnimator.TryFold(BuildFoldData(degrees));
     }
-    
+
     public FoldData BuildFoldData(float degrees)
     {
         FindFoldObjects();
