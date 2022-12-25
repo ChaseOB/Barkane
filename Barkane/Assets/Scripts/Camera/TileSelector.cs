@@ -167,9 +167,9 @@ public class TileSelector : MonoBehaviour
         FoldData fd2 = foldablePaper.BuildFoldData(-90);
 
         ghostFoldNeg90 = Instantiate(indicatorPrefab);
-        indicatorNeg90 = ghostFold90.GetComponent<FoldIndicator>();
+        indicatorNeg90 = ghostFoldNeg90.GetComponent<FoldIndicator>();
         indicatorNeg90.BuildIndicator(fd2, camera);        
-        
+
         ghostFold90.SetActive(false);
         ghostFoldNeg90.SetActive(false);
     }
