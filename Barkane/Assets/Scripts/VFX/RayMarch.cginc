@@ -42,7 +42,7 @@ float densityAt(
 		//);
 
 	return baseDensity 
-		* (1 - dot(weights, worley.Sample(worleyState, pos * scl + offset)) / (weights.x + weights.y + weights.z + weights.x))
+		* (1 - dot(weights, worley.Sample(worleyState, pos * scl + offset)) / (weights.x + weights.y + weights.z + weights.w))
 		// * dot(weights, samples) / (weights.x + weights.y + weights.z + weights.x)
 		* densityDrop(pos, densityDropoff);
 }
@@ -169,7 +169,7 @@ void RaySampler_float(
 
 	const float stepSize = end / steps;
 
-	float lambertianK = saturate(dot(-l, v));
+	float lambertianK = saturate(dot(l, p));
 
 	for (uint i = 0; i < steps; i++) {
 		float t = stepSize * (i + 1);
