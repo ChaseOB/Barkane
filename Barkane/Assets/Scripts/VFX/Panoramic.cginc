@@ -62,11 +62,12 @@ panoramic_float
     tc = (tc + layout3DScaleAndOffset.xy) * layout3DScaleAndOffset.zw;
 
     float4 tex = tex2D(pano, tc);
-    float3 c_ = tex; // DecodeHDR(tex, pano);
+    // float3 c_ = tex; // DecodeHDR(tex, pano);
     // c_ = c_ * _Tint.rgb * unity_ColorSpaceDouble.rgb;
     // c_ *= _Exposure;
 
-    c = float4(c_, 1);
+    // c = float4(c_, 1);
+    c = tex;
 }
 
 #endif

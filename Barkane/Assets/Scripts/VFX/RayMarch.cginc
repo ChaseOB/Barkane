@@ -48,7 +48,7 @@ float twoTermHG(float t, float g1, float g2, float cosa, float gBias) {
 
 // dithering
 float bayer(float2 px, float t) {
-	int2 ipx = floor(px);
+	uint2 ipx = floor(px);
 	return t > bayer_matrix_4x4[ipx.x % 4][ipx.y % 4] ? 1 : 0;
 }
 
@@ -58,13 +58,12 @@ float densityAt(
 	float4 weights,
 	float3 p,
 	float scl,
-	float offset,
 	float baseDensity,
 	float densityDropoff
 ) {
 
-	float3 pWorld = mul(unity_ObjectToWorld, p);
-	pWorld = pWorld * scl + offset;
+	float3 pWorld = mul(unity_ObjectToWorld, float4(p, 1)).xyz;
+	pWorld = pWorld * scl;
 
 	return baseDensity 
 		* (weights.x + weights.y
@@ -80,14 +79,11 @@ float march(
 	UnityTexture3D worley,
 	float4 weights,
 	float scl,
-	float offset,
 	float3 p,
 	float3 l,
 	float sunAbsorption,
 	float baseDensity,
-	float densityDropoff,
-
-	out float exitLambertian
+	float densityDropoff
 ) {
 	// same indicator as below
 	float I = dot(l, p);
@@ -101,8 +97,6 @@ float march(
 	const float stepSize = end / steps;
 	float mass = 0;
 
-	exitLambertian = dot(l, normalize(p + l * end));
-
 	for (uint i = 0; i < steps; i++) {
 		float t = stepSize * (i + 1);
 		float3 samplePt = p + l * t;
@@ -113,7 +107,6 @@ float march(
 			weights,
 			samplePt,
 			scl,
-			offset,
 			baseDensity,
 			densityDropoff
 		);
@@ -140,7 +133,6 @@ void RaySampler_float(
 	UnityTexture2D panoramic,
 
 	float scl,
-	float offset,
 	float4 weights,
 
 	float sunAbsorption,
@@ -183,7 +175,7 @@ void RaySampler_float(
 	// note this is still in object space! this make per-object light absorption *consitent* but not physical
 	const float stepSize = end / steps;
 
-	const float3 pWorld = mul(unity_ObjectToWorld, p);
+	const float3 pWorld = mul(unity_ObjectToWorld, float4(p, 1)).xyz;
 
 	for (uint i = 0; i < steps; i++) {
 		const float t = stepSize * (i + 1); 
@@ -195,30 +187,25 @@ void RaySampler_float(
 			weights,
 			pSample,
 			scl,
-			offset,
 			baseDensity,
 			densityDropoff
 		);
 
 		float mass = density * stepSize;
 
-		float exitLambertian;
 		float lightTransmittance = march(
 			worleyState,
 			worley,
 
-			scl,
-			offset,
 			weights,
+			scl,
 
 			pSample,
 			l,
 
 			sunAbsorption,
 			baseDensity,
-			densityDropoff,
-
-			exitLambertian
+			densityDropoff
 		);
 
 		energy += stepSize * density * transmittance * (lightTransmittance * (1 - ltBias) + ltBias) * phaseVal;
@@ -234,9 +221,9 @@ void RaySampler_float(
 	opacity = 1 - transmittance;
 	
 	float4 backgroundColor;
-	panoramic_float(mul(unity_ObjectToWorld, v), worleyState, panoramic, backgroundColor);
+	panoramic_float(mul(unity_ObjectToWorld, float4(v, 0)).xyz, worleyState, panoramic, backgroundColor);
 
-	cloudColor = backgroundColor * transmittance + energy;
+	cloudColor = backgroundColor.xyz * transmittance + energy;
 }
 
 #endif 
