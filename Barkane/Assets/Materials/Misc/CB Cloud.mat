@@ -24,6 +24,10 @@ Material:
         m_Texture: {fileID: 8900000, guid: d310f013edfabdd4f99a090fd5e64325, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RaySamplerCustomFunction_5cff9ace3da641a7a262dbc7e8cf6f3f_panoramic_31:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_3581520a373a4de18623f21d83f0f649_Texture_1:
         m_Texture: {fileID: 2800000, guid: 9cd89f9f3dcec5d419c39f8b26e3202e, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -67,22 +71,30 @@ Material:
     m_Ints: []
     m_Floats:
     - _Evolve: 0.3
-    - _HG: 0.07
+    - _HG: 0.33
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Steps: 10
-    - _ambient: 3.96
-    - _cutoff: 0.34
+    - _ambient: 2.22
+    - _baseDensity: 1.48
+    - _cloudAbsorption: 7.9
+    - _cutoff: 0.29
+    - _densityDropoff: 3.36
+    - _g1: 0.9
+    - _g2: 0.9
+    - _gBias: 6.41
     - _hardborder: -0.5
-    - _lambertian: 0.86
-    - _offset: 15.32
-    - _scale: 0.68
+    - _lambertian: 0.22
+    - _ltBias: 0.13
+    - _offset: 0
+    - _scale: 0.03
+    - _sunAbsorption: 100
     m_Colors:
-    - _Dark: {r: 0.6037736, g: 0.5859737, b: 0.5325739, a: 0}
+    - _Dark: {r: 0.6226415, g: 0.5600836, b: 0.41411534, a: 0}
     - _Frequencies: {r: 1, g: 1.5, b: 3, a: 1}
     - _Light: {r: 0.9056604, g: 0.9056604, b: 0.9056604, a: 0}
     - _Sky: {r: 0.4666667, g: 0.6509804, b: 0.91372555, a: 0}
-    - _Weights: {r: 2, g: 0.77, b: 0.54, a: 5.06}
+    - _Weights: {r: 2, g: 0.49, b: 0.54, a: 5.06}
     - _lightDir: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &1219249950073881674
