@@ -11,7 +11,6 @@
 #include "./noiseSimplex.cginc"
 
 const static int bayer_n = 4;
-// Upgrade NOTE: excluded shader from DX11, OpenGL ES 2.0 because it uses unsized arrays
 const static float bayer_matrix_4x4[][bayer_n] = {
 	{    -0.5,       0,  -0.375,   0.125 },
 	{    0.25,   -0.25,   0.375, -0.125 },
@@ -19,49 +18,16 @@ const static float bayer_matrix_4x4[][bayer_n] = {
 	{  0.4375, -0.0625,  0.3125, -0.1875 },
 };
 
-const static uint steps = 7;
+const static uint steps = 4;
 const static float r = .5; // unity uses [-1, 1] object space, but unity's default sphere is .5 radius
 
 float densityDrop(
-	float3 pos,
+	float3 p,
 	float dropoff
 ) {
-	float sq = dot(pos, pos);
+	float sq = dot(p, p);
 	float t = sq / r;
-	return max(0, exp(-dropoff * t) - exp(-dropoff)); // the subtraction makes sure it is zeroed at 1
-}
-
-float densityAt(
-	UnitySamplerState worleyState,
-	UnityTexture3D worley,
-	// float4 frequencies,
-	float4 weights,
-	float3 pos,
-	float scl,
-	float offset,
-	float baseDensity,
-	float densityDropoff
-) {
-	// originally the 1 - sample is built into the worley generation shader
-	// it is moved here to make the worley noise texture itself more usable elsewhere
-
-	// the single sample actually looks better lol
-	//float4 samples = float4(
-		//1 - worley.Sample(worleyState, pos * frequencies.x * scl + offset).r,
-		//1 - worley.Sample(worleyState, pos * frequencies.y * scl + offset).g,
-		//1 - worley.Sample(worleyState, pos * frequencies.z * scl + offset).b,
-		//1 - worley.Sample(worleyState, pos * frequencies.w * scl + offset).a
-		//);
-
-	float3 pWorld = mul(unity_ObjectToWorld, float4(pos.x, pos.y, pos.z, 1));
-	pWorld = pWorld * scl + offset;
-
-	return baseDensity 
-		* (weights.x + weights.y
-			- weights.x * worley.Sample(worleyState, pWorld).r
-			- weights.y * worley.Sample(worleyState, pWorld).g)
-		// * dot(weights, samples) / (weights.x + weights.y + weights.z + weights.x)
-		* densityDrop(pos, densityDropoff);
+	return exp(-dropoff * t) - exp(-dropoff); // the subtraction makes sure it is zeroed at 1
 }
 
 // Beer's law
@@ -75,25 +41,47 @@ float hg(float cosa, float g) {
 }
 
 // https://www.oceanopticsbook.info/view/scattering/level-2/the-henyey-greenstein-phase-function
+// here gBias is an ambient factor not mentioned in the original
 float twoTermHG(float t, float g1, float g2, float cosa, float gBias) {
 	return lerp(hg(cosa, g1), hg(cosa, -g2), t) + gBias;
 }
 
+// dithering
 float bayer(float2 px, float t) {
 	int2 ipx = floor(px);
 	return t > bayer_matrix_4x4[ipx.x % 4][ipx.y % 4] ? 1 : 0;
 }
 
+float densityAt(
+	UnitySamplerState worleyState,
+	UnityTexture3D worley,
+	float4 weights,
+	float3 p,
+	float scl,
+	float offset,
+	float baseDensity,
+	float densityDropoff
+) {
+
+	float3 pWorld = mul(unity_ObjectToWorld, p);
+	pWorld = pWorld * scl + offset;
+
+	return baseDensity 
+		* (weights.x + weights.y
+			// originally the negation is built into the worley generation shader
+			// it is moved here to make the worley noise texture itself more usable elsewhere
+			- weights.x * worley.Sample(worleyState, pWorld).r
+			- weights.y * worley.Sample(worleyState, pWorld).g)
+		* densityDrop(p, densityDropoff);
+}
+
 float march(
 	UnitySamplerState worleyState,
 	UnityTexture3D worley,
-	// float4 frequencies,
 	float4 weights,
 	float scl,
 	float offset,
 	float3 p,
-	// constant, must be in sync with Monolight constant!
-	// the shadergraph translates (-0.3213938, -0.7660444, 0.5566705) to object space
 	float3 l,
 	float sunAbsorption,
 	float baseDensity,
@@ -170,10 +158,10 @@ void RaySampler_float(
 	float2 px,
 	float2 px01,
 
-	out float transmittance,
+	float depth,
+
 	out float opacity,
-	out float3 cloudColor,
-	out float4 debug
+	out float3 cloudColor
 ) {
 	v = -v;
 
@@ -187,22 +175,25 @@ void RaySampler_float(
 	// borrows from Sebastian Lague's
 	// https://github.com/SebLague/Clouds/blob/master/Assets/Scripts/Clouds/Shaders/Clouds.shader
 	float3 energy = 0;
-	transmittance = 1;
+	float transmittance = 1;
 
-	float cosa = dot(v, l);
-	float phaseVal = twoTermHG(0.5, g1, g2, cosa, gBias);
+	const float cosa = dot(v, l);
+	const float phaseVal = twoTermHG(0.5, g1, g2, cosa, gBias);
 
+	// note this is still in object space! this make per-object light absorption *consitent* but not physical
 	const float stepSize = end / steps;
 
+	const float3 pWorld = mul(unity_ObjectToWorld, p);
+
 	for (uint i = 0; i < steps; i++) {
-		float t = stepSize * (i + 1);
-		float3 pos = p + t * v;
+		const float t = stepSize * (i + 1); 
+		const float3 pSample = p + t * v;
 
 		float density = densityAt(
 			worleyState,
 			worley,
 			weights,
-			pos,
+			pSample,
 			scl,
 			offset,
 			baseDensity,
@@ -220,7 +211,7 @@ void RaySampler_float(
 			offset,
 			weights,
 
-			pos,
+			pSample,
 			l,
 
 			sunAbsorption,
@@ -232,28 +223,20 @@ void RaySampler_float(
 
 		energy += stepSize * density * transmittance * (lightTransmittance * (1 - ltBias) + ltBias) * phaseVal;
 		transmittance *= beer(mass * cloudAbsorption);
-
-		// if (transmittance < 0.01) break; // early exit
 	}
-
-	debug = 0;
-
-	float3 pWorld = mul(unity_ObjectToWorld, p);
 
 	if (transmittance > cutoff) {
 		int2 ipx = floor(px);
-		transmittance = bayer(px, transmittance - 0.1);
+		transmittance = bayer(px, transmittance - 0.1) + depth * 0.05; // attenuate the dithering to exclude far items, avoids some aliasing artifacts
 	}
-	opacity = 1 - transmittance;
 
-	// energy = max(energy, opacity * 0.01);
+	transmittance = saturate(transmittance);
+	opacity = 1 - transmittance;
 	
 	float4 backgroundColor;
 	panoramic_float(mul(unity_ObjectToWorld, v), worleyState, panoramic, backgroundColor);
 
 	cloudColor = backgroundColor * transmittance + energy;
-
-	// cloudColor = transmittance;
 }
 
 #endif 
