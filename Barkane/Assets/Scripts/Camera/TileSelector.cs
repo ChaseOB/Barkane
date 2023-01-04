@@ -144,6 +144,7 @@ public class TileSelector : Singleton<TileSelector>
 
     private void ChooseFoldDir()
     {
+        if(currJoint == null) return;
         if(dist90 < distNeg90)
             foldablePaper.TryFold(90);
         else
