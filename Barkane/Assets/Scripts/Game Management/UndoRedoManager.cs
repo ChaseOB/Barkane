@@ -87,6 +87,7 @@ public class UndoRedoManager : Singleton<UndoRedoManager>
 
 
 //C: can be a fold or a player movement
+//TODO: Allow for other things to happen during these actions (snowball move, glowstick counts, crystal collection, etc)
 public abstract class Action
 {
     public abstract Action GetInverse();

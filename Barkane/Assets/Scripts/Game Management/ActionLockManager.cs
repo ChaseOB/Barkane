@@ -14,8 +14,8 @@ public class ActionLockManager : Singleton<ActionLockManager>
     }
 
 
-    //If the lock is open, takes the lock with the given object
-    //returns true if the lock is open or the passed object is the same as the lock object
+    // If the lock is open, takes the lock with the given object
+    // Returns true if the lock is open or the passed object is the same as the lock object
     public bool TryTakeLock(Object o)
     {
         if(isLocked && lockObject != o)
@@ -25,7 +25,8 @@ public class ActionLockManager : Singleton<ActionLockManager>
         return true;
     }
 
-    //C: You probably shouldn't ever call this
+    // Used to forcefully take the lock for scene loading
+    // You probably should not call this otherwise
     public void ForceTakeLock(Object o)
     {
         isLocked = true;
@@ -33,8 +34,8 @@ public class ActionLockManager : Singleton<ActionLockManager>
     }
 
 
-    //C: removes lock if the given object is the lock object
-    // returns true if lock removed or there is no lock, false o is not the lock object
+    // Removes lock if the given object is the lock object
+    // Returns true if lock removed or there is no lock, false if o is not the lock object
     public bool TryRemoveLock(Object o)
     {
         if(o != lockObject)
@@ -44,6 +45,7 @@ public class ActionLockManager : Singleton<ActionLockManager>
         return true;
     }
 
+    //Removes the lock
     public void ForceRemoveLock()
     {
         isLocked = false;

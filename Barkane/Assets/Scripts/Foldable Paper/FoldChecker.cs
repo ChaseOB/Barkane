@@ -25,17 +25,26 @@ public class FoldChecker : MonoBehaviour
     */
     public FoldFailureType CheckFold(FoldData foldData) 
     {
-        //Try Action Lock
+        if(!ActionLockManager.Instance.TryTakeLock(this))
+            return FoldFailureType.NOCHECK;
         if(!CheckKinkedJoint(foldData.axisJoints))
+        {
+            ActionLockManager.Instance.TryRemoveLock(this);
             return FoldFailureType.KINKED;
+        }
         if(!CheckPaperClipping(foldData))
+        {
+            ActionLockManager.Instance.TryRemoveLock(this);
             return FoldFailureType.PAPERCLIP;
+        }
         if(!CheckCollision(foldData))
+        {
+            ActionLockManager.Instance.TryRemoveLock(this);
             return FoldFailureType.COLLISION;
+        }
+        ActionLockManager.Instance.TryRemoveLock(this);
         return FoldFailureType.NONE;
     }
-
-
 
      /* FOLD CHECK 1: KINKED JOINTS
             This checks that the selected joint lies within a single plane. If it does, this might be a valid fold. If not, 
