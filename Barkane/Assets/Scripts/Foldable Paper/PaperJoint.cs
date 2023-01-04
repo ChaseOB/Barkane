@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BarkaneJoint;
+using System.Linq;
 
 [ExecuteAlways]
 public class PaperJoint : MonoBehaviour
@@ -13,7 +14,9 @@ public class PaperJoint : MonoBehaviour
     public bool showLine = false; //true when this joint or any adjacent joins are selected. Used for showing visuals and partitioning graph
 
 
-    [SerializeField] private List<PaperJoint> adjList = new List<PaperJoint>();
+    [SerializeField] private List<PaperJoint> adjFoldJointsList = new List<PaperJoint>();
+    private List<PaperJoint> allAdjJoints = new List<PaperJoint>();
+
 
     [SerializeField] private CapsuleCollider capsuleCollider;
     public bool canFold = true; //CO: Set to false to lock the current joint in position, as if the squares were glued together
@@ -63,7 +66,7 @@ public class PaperJoint : MonoBehaviour
     {
         showLine = value;
         jointRenderer?.ShowLine(value);
-        foreach(PaperJoint pj in adjList)
+        foreach(PaperJoint pj in adjFoldJointsList)
             if(pj.showLine != value)
                 pj.ShowLine(value);
     }
@@ -73,13 +76,51 @@ public class PaperJoint : MonoBehaviour
         if(other.gameObject.layer == 7)
         {
             PaperJoint joint = other.GetComponent<PaperJoint>();
-            Vector3 diff = this.transform.position - joint.transform.position;
-            int difX = Mathf.Abs(diff.x) > 0.1 ? 1 : 0;
-            int difY = Mathf.Abs(diff.y) > 0.1 ? 1 : 0;
-            int difZ = Mathf.Abs(diff.z) > 0.1 ? 1 : 0;
-            if(difX + difY + difZ == 1 || (difX + difY + difZ == 2 && DiffNormals(joint))) //C: Either adjacent on same axis or adjacent on a diff axis but not connected to a square on this joint
-                adjList.Add(other.GetComponent<PaperJoint>());
+            allAdjJoints.Add(joint);
+            CheckIfJointAdjacent(joint);
         }
+    }
+
+    private void CheckIfJointAdjacent(PaperJoint joint)
+    {
+        Vector3 diff = this.transform.position - joint.transform.position;
+        int difX = Mathf.Abs(diff.x) > 0.1 ? 1 : 0;
+        int difY = Mathf.Abs(diff.y) > 0.1 ? 1 : 0;
+        int difZ = Mathf.Abs(diff.z) > 0.1 ? 1 : 0;
+        //C: Either adjacent on same axis or adjacent on a diff axis but not connected to a square on this joint
+        if(difX + difY + difZ == 1 || (difX + difY + difZ == 2 && DiffNormals(joint))) 
+        {
+            List<PaperJoint> checkList = new List<PaperJoint>();
+            checkList.AddRange(allAdjJoints);
+            checkList.Remove(joint);
+            if(checkList.Count < 2)
+                return;
+            
+            List<PaperSquare> squares1 = new List<PaperSquare>();
+            squares1.AddRange(paperSquares);
+            squares1.AddRange(joint.PaperSquares);
+
+            foreach(PaperJoint j1 in checkList)
+            {
+                foreach(PaperJoint j2 in checkList)
+                {
+                    if(j1 != j2)
+                    {
+                        List<PaperSquare> squares2 = new List<PaperSquare>();
+                        squares2.AddRange(j1.PaperSquares);
+                        squares2.AddRange(j2.paperSquares);
+
+                        bool same = squares1.All(squares2.Contains) && squares1.Count == squares2.Count;
+                        if(same)
+                        {
+                            adjFoldJointsList.Add(joint);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     private bool DiffNormals(PaperJoint joint)
@@ -87,7 +128,7 @@ public class PaperJoint : MonoBehaviour
         if(!SameOrFlipped(paperSquares[0].transform.up,paperSquares[1].transform.up) ||
         !SameOrFlipped(joint.paperSquares[0].transform.up,joint.paperSquares[1].transform.up))
             return false;
-        return !SameOrFlipped(paperSquares[0].transform.up, paperSquares[0].transform.up);
+        return !SameOrFlipped(paperSquares[0].transform.up, joint.paperSquares[0].transform.up);
     }
 
     private bool SameOrFlipped(Vector3 v1, Vector3 v2)
@@ -97,7 +138,7 @@ public class PaperJoint : MonoBehaviour
 
     private void OnTriggerExit(Collider other) {
         if(other.gameObject.layer == 7)
-            adjList.Remove(other.GetComponent<PaperJoint>());
+            allAdjJoints.Remove(other.GetComponent<PaperJoint>());
     }
 
     private void Remove()
