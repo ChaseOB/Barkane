@@ -48,6 +48,16 @@ public class PaperJoint : MonoBehaviour
         capsuleCollider.enabled = value;
     }
 
+    public void OnHoverEnter()
+    {
+        ShowLine(true);
+    }
+
+    public void OnHoverExit()
+    {
+        ShowLine(false);
+    }
+
     private void ShowLine(bool value)
     {
         showLine = value;

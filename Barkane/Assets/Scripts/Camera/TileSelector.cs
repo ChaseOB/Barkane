@@ -8,6 +8,7 @@ public class TileSelector : Singleton<TileSelector>
     new private Camera camera;
 
     private PaperJoint hoverJoint;
+    private PaperJoint prevHoverJoint;
     private PaperJoint currJoint;
 
     public FoldChecker foldChecker;
@@ -51,6 +52,7 @@ public class TileSelector : Singleton<TileSelector>
     {
         if(foldablePaper.isComplete) return;
         UpdateSquareRefs();
+        UpdateJointHoverIndicator();
         UpdateGhostPosition();
     }
 
@@ -75,6 +77,17 @@ public class TileSelector : Singleton<TileSelector>
 
         if(Physics.Raycast(ray, out info, 100, paperMask))
             hoverSquare = info.transform.gameObject.GetComponent<PaperSquare>(); 
+
+    }
+
+    private void UpdateJointHoverIndicator()
+    {
+        if(prevHoverJoint != hoverJoint)
+        {
+            prevHoverJoint?.OnHoverExit();
+            hoverJoint?.OnHoverEnter();
+        }
+        prevHoverJoint = hoverJoint;
     }
 
     private void UpdateGhostPosition()

@@ -97,8 +97,8 @@ public class FoldablePaper : MonoBehaviour
                 playerSquare = ps;
         DFSHelperSquare(playerSquare, true);
 
-        playerSide.OnFoldHighlight(false);
-        foldObjects.OnFoldHighlight(true);
+        //playerSide.OnFoldHighlight(false);
+        //foldObjects.OnFoldHighlight(true);
         FoldObjects[] returnArr = new FoldObjects[2];
         returnArr[0] = playerSide;
         returnArr[1] = foldObjects;
