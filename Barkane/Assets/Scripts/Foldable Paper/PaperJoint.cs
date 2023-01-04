@@ -53,7 +53,8 @@ public class PaperJoint : MonoBehaviour
 
     public void OnHoverEnter()
     {
-        ShowLine(true);
+        if(canFold)
+            ShowLine(true);
     }
 
     public void OnHoverExit()
