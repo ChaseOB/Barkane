@@ -27,6 +27,11 @@ public class CrystalShard : MonoBehaviour, IThemedItem
     }
     
     private void Update() {
+        AnimatePosition();
+    }
+
+    private void AnimatePosition()
+    {
         Vector3 currentVal = new Vector3(0, displacement * Mathf.Sin(Mathf.PI * hoverSpeed * Time.time));
         model.transform.localPosition += currentVal - prevVal;
         inactiveModel.transform.localPosition += currentVal - prevVal;
@@ -39,7 +44,6 @@ public class CrystalShard : MonoBehaviour, IThemedItem
         model.GetComponentInChildren<MeshRenderer>().material = t.crystalMat;
         var col = particleSystem.colorOverLifetime;
         col.color = themePartColors[(int)t.themeEnum];
-
     }
 
     public void Collect()
@@ -47,7 +51,7 @@ public class CrystalShard : MonoBehaviour, IThemedItem
         if(crystalActive)
         {
             goal.CollectShard();
-            Destroy(this.gameObject);
+            this.gameObject.SetActive(false);
         }
     }
 

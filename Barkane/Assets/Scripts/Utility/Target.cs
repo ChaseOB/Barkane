@@ -9,6 +9,7 @@ public class Target : MonoBehaviour
     [SerializeField] private List<string> compareTags = new List<string>();
 
     public UnityEvent OnEnter;
+    public UnityEvent OnStay;
     public UnityEvent OnExit;
 
 
@@ -16,6 +17,12 @@ public class Target : MonoBehaviour
         foreach (string tag in compareTags) 
             if(other.gameObject.CompareTag(tag))
                 OnEnter?.Invoke();
+    }
+
+    private void OnTriggerStay(Collider other) {
+        foreach (string tag in compareTags) 
+            if(other.gameObject.CompareTag(tag))
+                OnStay?.Invoke();
     }
     
     private void OnTriggerExit(Collider other) {
