@@ -257,38 +257,24 @@ namespace BarkaneJoint
             for (int i = 0; i <= settings.creaseSegmentCount; i++)
             {
                 #region vertex filling
-                var t = settings.ts[i];
-                var pivotBase = t * scaledSquareSize * side1Geometry.tJ;
+                var tStart = settings.tsStart[i];
+                var tMid = settings.tsMid[i];
+                var pivotBaseStart = tStart * scaledSquareSize * side1Geometry.tJ;
+                var pivotBaseMid = tMid * scaledSquareSize * side1Geometry.tJ;
                 var margin = squareRenderSettings.margin + .001f;
 
                 // note that the margin is also affected by the size setting
                 // the margin applies to a 01 (uv) square which is sized to produce the actual square
-                vA1[i] = pivotBase + margin * side1Geometry.nJ2A;// + side1Geometry.nA * 0.0006f;
-                vB1[i] = pivotBase + margin * side1Geometry.nJ2B;// + side1Geometry.nB * 0.0006f;
-                vA2[i] = pivotBase + margin * side1Geometry.nJ2A;// + side2Geometry.nA * 0.0006f;
-                vB2[i] = pivotBase + margin * side1Geometry.nJ2B;// + side2Geometry.nB * 0.0006f;
+                vA1[i] = pivotBaseMid + margin * side1Geometry.nJ2A;// + side1Geometry.nA * 0.0006f;
+                vB1[i] = pivotBaseMid + margin * side1Geometry.nJ2B;// + side1Geometry.nB * 0.0006f;
+                vA2[i] = pivotBaseMid + margin * side1Geometry.nJ2A;// + side2Geometry.nA * 0.0006f;
+                vB2[i] = pivotBaseMid + margin * side1Geometry.nJ2B;// + side2Geometry.nB * 0.0006f;
 
-                //// randomize when angles are significant
-                vA1[i + settings.PivotOffset] = pivotBase;
-                vB1[i + settings.PivotOffset] = pivotBase;
-                vA2[i + settings.PivotOffset] = pivotBase;
-                vB2[i + settings.PivotOffset] = pivotBase;
+                vA1[i + settings.PivotOffset] = pivotBaseStart;
+                vB1[i + settings.PivotOffset] = pivotBaseStart;
+                vA2[i + settings.PivotOffset] = pivotBaseStart;
+                vB2[i + settings.PivotOffset] = pivotBaseStart;
                 #endregion
-
-                //#region normals filling
-                //// note that the margin is also affected by the size setting
-                //// the margin applies to a 01 (uv) square which is sized to produce the actual square
-                //ns[i] = side1Geometry.nA;
-                //ns[i + settings.SubmeshOffset] = side1Geometry.nB;
-                //ns[i + 2 * settings.SubmeshOffset] = side2Geometry.nA;
-                //ns[i + 3 * settings.SubmeshOffset] = side2Geometry.nB;
-
-                //// all pivots point to crease normal
-                //ns[i + settings.PivotOffset] = side1Geometry.nJ;
-                //ns[i + settings.PivotOffset + settings.SubmeshOffset] = side1Geometry.nJ;
-                //ns[i + settings.PivotOffset + 2 * settings.SubmeshOffset] = side2Geometry.nJ;
-                //ns[i + settings.PivotOffset + 3 * settings.SubmeshOffset] = side2Geometry.nJ;
-                //#endregion
             }
 
             // randomize middle vertices at significant fold angles
@@ -315,19 +301,6 @@ namespace BarkaneJoint
                         randoms[i].z * side1Geometry.tJ
                         + randoms[i].y * side1Geometry.nJ
                         + randoms[i].x * side1Geometry.nJ2A;
-
-                    //// note that the margin is also affected by the size setting
-                    //// the margin applies to a 01 (uv) square which is sized to produce the actual square
-                    //ns[i] = side1Geometry.nA;
-                    //ns[i + settings.SubmeshOffset] = side1Geometry.nB;
-                    //ns[i + 2 * settings.SubmeshOffset] = side2Geometry.nA;
-                    //ns[i + 3 * settings.SubmeshOffset] = side2Geometry.nB;
-
-                    //// all pivots point to crease normal
-                    //ns[i + settings.PivotOffset] = side1Geometry.nJ;
-                    //ns[i + settings.PivotOffset + settings.SubmeshOffset] = side1Geometry.nJ;
-                    //ns[i + settings.PivotOffset + 2 * settings.SubmeshOffset] = side2Geometry.nJ;
-                    //ns[i + settings.PivotOffset + 3 * settings.SubmeshOffset] = side2Geometry.nJ;
                 }
             }
 
@@ -385,11 +358,6 @@ namespace BarkaneJoint
                 fB1.sharedMesh.triangles = settings.tB1CCW;
                 fB2.sharedMesh.triangles = settings.tB2CCW;
             }
-
-            //fA1.sharedMesh.RecalculateNormals();
-            //fA2.sharedMesh.RecalculateNormals();
-            //fB1.sharedMesh.RecalculateNormals();
-            //fB2.sharedMesh.RecalculateNormals();
         }
     }
 

@@ -10,8 +10,6 @@ public class CreaseRenderSettings : ScriptableObject, IDynamicMeshRenderSettings
     [Range(0, 40)]
     public int creaseSegmentCount;
     public Vector3 creaseDeviation;
-    [Range(0, 0.1f)]
-    public float overlapCreaseCorrectionFactor;
 
     public int VCount => 2 * (creaseSegmentCount + 1);
 
@@ -107,7 +105,7 @@ public class CreaseRenderSettings : ScriptableObject, IDynamicMeshRenderSettings
         tA1CCW, tA2CCW, tB1CCW, tB2CCW,
         tA1CW, tA2CW, tB1CW, tB2CW;
 
-    [HideInInspector] public float[] ts;
+    [HideInInspector] public float[] tsStart, tsMid;
 }
 
 #if UNITY_EDITOR
@@ -131,14 +129,16 @@ public class CreaseRenderSettingsEditor : Editor
             t.tA2CW = CW.Item3;
             t.tB2CW = CW.Item4;
 
-            t.ts = new float[t.creaseSegmentCount + 1];
+            t.tsStart = new float[t.creaseSegmentCount + 1];
+            t.tsMid = new float[t.creaseSegmentCount + 1];
             for (int i = 0; i < t.creaseSegmentCount + 1; i++)
             {
-                t.ts[i] = (float)i / t.creaseSegmentCount - .5f;
+                t.tsStart[i] = (float)i / t.creaseSegmentCount - .5f;
+                t.tsMid[i] = (i - .5f) / t.creaseSegmentCount - .5f;
             }
-            t.ts[t.creaseSegmentCount] = .5f;
-
-            Debug.Log(string.Join(", ", t.ts));
+            t.tsStart[t.creaseSegmentCount] = .5f;
+            t.tsMid[0] = -.5f; // override initial fill
+            t.tsMid[t.creaseSegmentCount] = .5f;
 
             EditorUtility.SetDirty(target as CreaseRenderSettings);
         }
