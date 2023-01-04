@@ -61,10 +61,7 @@ public class PaperJoint : MonoBehaviour
     private void ShowLine(bool value)
     {
         showLine = value;
-        
         jointRenderer?.ShowLine(value);
-
-
         foreach(PaperJoint pj in adjList)
             if(pj.showLine != value)
                 pj.ShowLine(value);

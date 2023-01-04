@@ -35,6 +35,20 @@ public class FoldablePaper : MonoBehaviour
         IntializeSquarePosList();
     }
 
+    private void OnEnable() {
+        TileSelector.OnFoldSelect += OnFoldSelect; 
+    }
+
+    private void OnDisable() {
+        TileSelector.OnFoldSelect -= OnFoldSelect; 
+    }
+
+    private void OnFoldSelect(object sender, bool value)
+    {
+        FindFoldObjects();
+        foldObjects.OnFoldHighlight(value);
+    }
+
 
     private void UpdateAdjList()
     {

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class FoldEvents
 {
-    public static event System.EventHandler OnFoldHoverEnter;
-    public static event System.EventHandler OnFoldHoverExit;
-    public static event System.EventHandler OnFoldSelect;
-    public static event System.EventHandler OnFoldStart;
-    public static event System.EventHandler OnFoldEnd;
+    //public static event System.EventHandler OnFoldHoverEnter;
+    //public static event System.EventHandler OnFoldHoverExit;
+    //public static event System.EventHandler<bool> OnFoldSelect;
+    //public static event System.EventHandler OnFoldStart;
+    //public static event System.EventHandler OnFoldEnd;
 }

@@ -19,7 +19,6 @@ public class TileSelector : Singleton<TileSelector>
 
     public FoldablePaper foldablePaper;
     public FoldAnimator foldAnimator;
-    public FoldObjects foldObjects;
     private GameObject ghostFold90;
     private GameObject ghostFoldNeg90;
     private FoldIndicator indicator90;
@@ -30,6 +29,7 @@ public class TileSelector : Singleton<TileSelector>
     public LayerMask paperMask;
     public LayerMask jointMask;
 
+    public static event System.EventHandler<bool> OnFoldSelect;
 
     private void Awake()
     {
@@ -125,11 +125,12 @@ public class TileSelector : Singleton<TileSelector>
         if(hoverJoint != null && hoverJoint.canFold)            
             SelectNewJoint();
         else
-          ChooseFoldDir();
+            ChooseFoldDir();
     }
 
     private void SelectNewJoint()
     {
+        OnFoldSelect?.Invoke(this, true);
         if(currJoint == hoverJoint)
             return;
         currJoint?.Deselect();
@@ -159,6 +160,7 @@ public class TileSelector : Singleton<TileSelector>
 
     public void DeselectJoint()
     {
+        OnFoldSelect.Invoke(this, false);
         currJoint?.Deselect();
         currJoint = null;
         foldablePaper.foldJoint = null;
