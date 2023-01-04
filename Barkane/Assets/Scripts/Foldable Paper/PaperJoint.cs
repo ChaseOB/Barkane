@@ -55,7 +55,8 @@ public class PaperJoint : MonoBehaviour
 
     public void OnHoverExit()
     {
-        ShowLine(false);
+        if(!isSelected)
+            ShowLine(false);
     }
 
     private void ShowLine(bool value)
