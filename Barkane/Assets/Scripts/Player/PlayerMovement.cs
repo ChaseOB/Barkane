@@ -36,9 +36,9 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnMove(InputValue value)
     {
-        Vector2 move = value.Get<Vector2>();
         if(isMoving) return;
         if(!ActionLockManager.Instance.TryTakeLock(this)) return;
+        Vector2 move = value.Get<Vector2>();
         if(move.y > 0.5)
             Move();
         else if (Mathf.Abs(move.x) > 0.5)
@@ -75,6 +75,9 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator MoveHelper(bool fromStack, bool undo)
     {
         isMoving = true;
+        
+        TileSelector.Instance.DeselectJoint();
+
         Vector3 curr = transform.position;
         Vector3 goal = targetPos.transform.position;
         if(undo){

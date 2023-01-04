@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class TileSelector : MonoBehaviour
+public class TileSelector : Singleton<TileSelector>
 {
     new private Camera camera;
 
@@ -30,11 +30,12 @@ public class TileSelector : MonoBehaviour
     public LayerMask jointMask;
 
 
-   
+    private void Awake()
+    {
+        InitializeSingleton();
+    }
 
-
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         ReloadReferences();
     }
@@ -46,8 +47,7 @@ public class TileSelector : MonoBehaviour
         foldablePaper = FindObjectOfType<FoldablePaper>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if(foldablePaper.isComplete) return;
         UpdateSquareRefs();
@@ -74,14 +74,12 @@ public class TileSelector : MonoBehaviour
         }
 
         if(Physics.Raycast(ray, out info, 100, paperMask))
-        {
-            hoverSquare = info.transform.gameObject.GetComponent<PaperSquare>();
-        } 
+            hoverSquare = info.transform.gameObject.GetComponent<PaperSquare>(); 
     }
 
     private void UpdateGhostPosition()
     {
-        if(ghostFold90 == null || indicator90 == null || indicatorNeg90 == null) return;
+        if(ghostFold90 == null || ghostFoldNeg90 == null || indicator90 == null || indicatorNeg90 == null) return;
         
         Vector2 foldcenter90 = indicator90.foldCenter;
         Vector2 foldcenterneg90 = indicatorNeg90.foldCenter;
@@ -99,41 +97,44 @@ public class TileSelector : MonoBehaviour
         }
     }
 
-    public void TryMakeNewGhost()
-    {
-        if(currJoint != null && currJoint.canFold)
-        {
-            currJoint.Select();
-            foldablePaper.foldJoint = currJoint;
-            CreateGhostFold();
-        }
-    }
+    
 
     private void OnClick(InputValue value)
     {
-        if(foldablePaper == null || foldablePaper.isComplete || !value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
+        if(!value.isPressed) return;
+        ChooseClickAction();
+    }
+
+    private void ChooseClickAction()
+    {
+        if(foldablePaper == null || foldablePaper.isComplete || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
             return;
-        if(hoverJoint != null && hoverJoint.canFold)
-        {
-            if(currJoint == hoverJoint)
-                return;
-            currJoint?.Deselect();
-            Destroy(ghostFold90);
-            Destroy(ghostFoldNeg90);
-            currJoint = hoverJoint;
-            currJoint.Select();
-            foldablePaper.foldJoint = currJoint;
-            CreateGhostFold();
-        }
+        if(hoverJoint != null && hoverJoint.canFold)            
+            SelectNewJoint();
         else
-        {
-            //fold base on direction
-            if(dist90 < distNeg90)
-                foldablePaper.TryFold(90);
-            else
-                foldablePaper.TryFold(-90);
-           DeselectJoint();
-        }
+          ChooseFoldDir();
+    }
+
+    private void SelectNewJoint()
+    {
+        if(currJoint == hoverJoint)
+            return;
+        currJoint?.Deselect();
+        Destroy(ghostFold90);
+        Destroy(ghostFoldNeg90);
+        currJoint = hoverJoint;
+        currJoint.Select();
+        foldablePaper.foldJoint = currJoint;
+        CreateGhostFold();
+    }
+
+    private void ChooseFoldDir()
+    {
+        if(dist90 < distNeg90)
+            foldablePaper.TryFold(90);
+        else
+            foldablePaper.TryFold(-90);
+        DeselectJoint();
     }
 
     private void OnRightClick(InputValue value)
@@ -143,7 +144,7 @@ public class TileSelector : MonoBehaviour
         DeselectJoint();
     }
 
-    private void DeselectJoint()
+    public void DeselectJoint()
     {
         currJoint?.Deselect();
         currJoint = null;
@@ -151,6 +152,16 @@ public class TileSelector : MonoBehaviour
         if(ghostFold90 != null){
             Destroy(ghostFold90);
             Destroy(ghostFoldNeg90);
+        }
+    }
+
+    public void TryMakeNewGhost()
+    {
+        if(currJoint != null && currJoint.canFold)
+        {
+            currJoint.Select();
+            foldablePaper.foldJoint = currJoint;
+            CreateGhostFold();
         }
     }
 
@@ -174,66 +185,6 @@ public class TileSelector : MonoBehaviour
         ghostFoldNeg90.SetActive(false);
     }
 
-    //TODO: update this POS to use fold checking
-  /*  private void CreateGhostFold()
-    {
-        foldObjects = foldablePaper.FindFoldObjects()[1];
-
-        HashSet<int> x = new HashSet<int>();
-        HashSet<int> y = new HashSet<int>();
-        HashSet<int> z = new HashSet<int>();
-
-        foreach(PaperJoint pj in foldablePaper.PaperJoints)
-        {
-            if(pj.showLine)
-            {
-                x.Add(Vector3Int.RoundToInt(pj.transform.position).x);
-                y.Add(Vector3Int.RoundToInt(pj.transform.position).y);
-                z.Add(Vector3Int.RoundToInt(pj.transform.position).z);
-            }
-        }
-
-        if((x.Count > 1 && y.Count > 1) || (x.Count > 1 && z.Count > 1) || (z.Count > 1 && y.Count > 1)) {
-            Debug.Log($"Cannot make ghost: joint is kinked. {x.Count} {y.Count} {z.Count}");
-            return;
-        }
-
-        ghostFold90 = new GameObject();
-        ghostFold90.transform.position = foldObjects.foldJoints[0].transform.position;
-        foreach(GameObject go in foldObjects.foldSquares)
-        {
-            GameObject newSquare = Instantiate(ghostSquare, go.transform.position, go.transform.rotation);
-            newSquare.transform.parent = ghostFold90.transform;
-        }
-        ghostFold90.transform.RotateAround(foldObjects.foldJoints[0].transform.position, foldObjects.foldJoints[0].transform.rotation * Vector3.right, 90);
-        int children = ghostFold90.transform.childCount;
-        posList90.Clear();
-        for (int i = 0; i < children; i++)
-        {
-            posList90.Add(ghostFold90.transform.GetChild(i));
-        }
-        foldcenter90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(posList90));
-        
-
-        ghostFoldNeg90 = new GameObject();
-        ghostFoldNeg90.transform.position = foldObjects.foldJoints[0].transform.position;
-        foreach(GameObject go in foldObjects.foldSquares)
-        {   
-            GameObject newSquare = Instantiate(ghostSquare, go.transform.position, go.transform.rotation);
-            newSquare.transform.parent = ghostFoldNeg90.transform;
-        }
-        ghostFoldNeg90.transform.RotateAround(foldObjects.foldJoints[0].transform.position, foldObjects.foldJoints[0].transform.rotation * Vector3.right, -90);
-        posListNeg90.Clear();
-        for (int i = 0; i < children; i++)
-        {
-            posListNeg90.Add(ghostFoldNeg90.transform.GetChild(i));
-        }
-        foldcenterneg90 = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(posListNeg90));
-    
-        ghostFold90.SetActive(false);
-        ghostFoldNeg90.SetActive(false);
-    }*/
-    
 
     private void OnFoldUp(InputValue value)
     {
