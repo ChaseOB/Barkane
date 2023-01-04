@@ -1,3 +1,4 @@
+using BarkaneEditor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +26,11 @@ public class FoldIndicator : MonoBehaviour
         foreach(GameObject go in fd.foldObjects.foldSquares)
         {
             GameObject newSquare = Instantiate(ghostSquarePrefab, go.transform.position, go.transform.rotation);
+            var ghostSquareRenderer = newSquare.GetComponent<MeshRenderer>();
+            if (ghostSquareRenderer)
+            {
+                ghostSquareRenderer.sharedMaterial.SetColor("_Color", VFXManager.Theme.Silhouette);
+            }
             newSquare.transform.parent = gameObject.transform;
         }
         transform.RotateAround(center.position, center.rotation * Vector3.right, fd.degrees);
