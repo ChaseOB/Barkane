@@ -77,7 +77,8 @@ public class PaperJoint : MonoBehaviour
         {
             PaperJoint joint = other.GetComponent<PaperJoint>();
             allAdjJoints.Add(joint);
-            CheckIfJointAdjacent(joint);
+            foreach(PaperJoint j in allAdjJoints)
+                CheckIfJointAdjacent(j);
         }
     }
 
