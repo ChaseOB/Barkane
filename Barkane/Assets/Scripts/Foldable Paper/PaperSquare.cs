@@ -50,7 +50,7 @@ public class PaperSquare : MonoBehaviour
         storedPos = transform.position;
         topSide = TopHalf.GetComponent<SquareSide>();
         bottomSide = BottomHalf.GetComponent<SquareSide>();
-        foldablePaper = FindObjectOfType<FoldablePaper>();
+        foldablePaper = GetComponentInParent<FoldablePaper>();
     }
 
     private void OnDestroy()
