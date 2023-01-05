@@ -114,10 +114,8 @@ public class TileSelector : Singleton<TileSelector>
                 break;
             case 2:
                 ghostFold90.SetActive(true);
-                ghostFoldNeg90.SetActive(false);
                 break;
             case 1:
-                ghostFold90.SetActive(false);
                 ghostFoldNeg90.SetActive(true);
                 break;
             case 0:
@@ -164,15 +162,15 @@ public class TileSelector : Singleton<TileSelector>
         {
             case 3:
                 if(dist90 < distNeg90)
-                    foldAnimator.Fold(foldData90);
+                    foldAnimator.Fold(foldablePaper.BuildFoldData(90));
                 else
-                    foldAnimator.Fold(foldDataNeg90);
+                    foldAnimator.Fold(foldablePaper.BuildFoldData(-90));
                 break;
             case 2:
-                foldAnimator.Fold(foldData90);
+                foldAnimator.Fold(foldablePaper.BuildFoldData(90));
                 break;
             case 1:
-                foldAnimator.Fold(foldDataNeg90);
+                foldAnimator.Fold(foldablePaper.BuildFoldData(-90));
                 break;
             case 0:
                 break;

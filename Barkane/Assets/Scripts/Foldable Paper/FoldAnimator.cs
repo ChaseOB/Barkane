@@ -355,7 +355,7 @@ public class FoldAnimator : MonoBehaviour
     {
         if(!isFolding) 
         {
-            var foldJointRenderer = fd.foldJoint.JointRenderer;
+            var foldJointRenderer = fd.axisJoints[0].JointRenderer;
             if(foldJointRenderer != null)
                 StartCoroutine(FoldHelper(fd, fromStack, undo, fd.foldObjects.DisableJointMeshes, fd.foldObjects.EnableJointMeshes));
             else

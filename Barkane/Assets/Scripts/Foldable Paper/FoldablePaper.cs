@@ -164,7 +164,7 @@ public class FoldablePaper : MonoBehaviour
             foreach(PaperJoint pj in PaperJoints)
                 if(pj.showLine)
                     foldJoints.Add(pj);
-            FoldData fd = new FoldData(foldJoint, foldJoints, foldObjects, playerSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+            FoldData fd = new FoldData(foldJoints, foldObjects, playerSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
             return fd;
         }
         return null;

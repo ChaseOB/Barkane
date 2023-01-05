@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FoldData: Action 
 {
-    public PaperJoint foldJoint; //Specific Joint being folded
+   // public PaperJoint foldJoint; //Specific Joint being folded
     public List<PaperJoint> axisJoints; //all joints along axis
     public FoldObjects foldObjects;
     public FoldObjects playerFoldObjects;
@@ -14,8 +14,8 @@ public class FoldData: Action
 
     public FoldData() {}
 
-    public FoldData(PaperJoint fj, List<PaperJoint> aj, FoldObjects fo, FoldObjects pfo, Vector3 c, Vector3 a, float deg) {
-        foldJoint = fj;
+    public FoldData(List<PaperJoint> aj, FoldObjects fo, FoldObjects pfo, Vector3 c, Vector3 a, float deg) {
+        //foldJoint = fj;
         axisJoints = aj;
         foldObjects = fo;
         playerFoldObjects = fo;

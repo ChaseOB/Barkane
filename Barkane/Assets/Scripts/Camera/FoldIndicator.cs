@@ -33,7 +33,7 @@ public class FoldIndicator : MonoBehaviour
                 //if(fail == FoldFailureType.NONE)
                     ghostSquareRenderer.sharedMaterial.SetColor("_Color", VFXManager.Theme.Silhouette);
                // else
-                    ghostSquareRenderer.sharedMaterial.SetColor("_Color", Color.gray);
+                   // ghostSquareRenderer.sharedMaterial.SetColor("_Color", Color.gray);
             }
             newSquare.transform.parent = gameObject.transform;
         }
