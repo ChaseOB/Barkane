@@ -109,9 +109,6 @@ public class FoldablePaper : MonoBehaviour
             if(ps.PlayerOccupied)
                 playerSquare = ps;
         DFSHelperSquare(playerSquare, true);
-
-        //playerSide.OnFoldHighlight(false);
-        //foldObjects.OnFoldHighlight(true);
         FoldObjects[] returnArr = new FoldObjects[2];
         returnArr[0] = playerSide;
         returnArr[1] = foldObjects;
@@ -151,10 +148,6 @@ public class FoldablePaper : MonoBehaviour
         }
     }
 
-    public void TryFold(float degrees)
-    {
-        foldAnimator.TryFold(BuildFoldData(degrees));
-    }
 
     public FoldData BuildFoldData(float degrees)
     {
@@ -190,13 +183,11 @@ public class FoldablePaper : MonoBehaviour
                 List<PaperSquare> list = new List<PaperSquare>();
                 list.Add(ps);
                 dict.Add(ps.transform.position, list);
-//                Debug.Log(ps.transform.position);
             }
         }
 
-        foreach (List<PaperSquare> list in dict.Values){
-                overlapList.Add(list);
-        }
+        foreach (List<PaperSquare> list in dict.Values)
+            overlapList.Add(list);
         return overlapList;
     }
 }
