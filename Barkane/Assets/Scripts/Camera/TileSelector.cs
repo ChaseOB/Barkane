@@ -11,8 +11,6 @@ public class TileSelector : Singleton<TileSelector>
     private PaperJoint prevHoverJoint;
     private PaperJoint currJoint;
 
-    public FoldChecker foldChecker;
-
     [SerializeField] private PaperSquare hoverSquare;
 
     public GameObject indicatorPrefab;
@@ -25,6 +23,9 @@ public class TileSelector : Singleton<TileSelector>
     private FoldIndicator indicatorNeg90;
     private float dist90;
     private float distNeg90;
+    private FoldData foldData90;
+    private FoldData foldDataNeg90;
+    private bool[] validFolds = new bool[2];
 
     public LayerMask paperMask;
     public LayerMask jointMask;
@@ -92,22 +93,36 @@ public class TileSelector : Singleton<TileSelector>
 
     private void UpdateGhostPosition()
     {
-        if(ghostFold90 == null || ghostFoldNeg90 == null || indicator90 == null || indicatorNeg90 == null) return;
-        
-        Vector2 foldcenter90 = indicator90.foldCenter;
-        Vector2 foldcenterneg90 = indicatorNeg90.foldCenter;
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        dist90 = Vector3.Magnitude(mousePos - foldcenter90);
-        distNeg90 = Vector3.Magnitude(mousePos - foldcenterneg90);
+        int caseNum = (validFolds[0]? 2: 0) + (validFolds[1]? 1: 0);
+        switch (caseNum)
+        {
+            case 3:
+                Vector2 foldcenter90 = indicator90.foldCenter;
+                Vector2 foldcenterneg90 = indicatorNeg90.foldCenter;
+                Vector2 mousePos = Mouse.current.position.ReadValue();
+                dist90 = Vector3.Magnitude(mousePos - foldcenter90);
+                distNeg90 = Vector3.Magnitude(mousePos - foldcenterneg90);
 
-        if(dist90 < distNeg90){
-            ghostFold90.SetActive(true);
-            ghostFoldNeg90.SetActive(false);
-        }
-        else{
-            ghostFold90.SetActive(false);
-            ghostFoldNeg90.SetActive(true);
-        }
+                if(dist90 < distNeg90){
+                    ghostFold90.SetActive(true);
+                    ghostFoldNeg90.SetActive(false);
+                }
+                else{
+                    ghostFold90.SetActive(false);
+                    ghostFoldNeg90.SetActive(true);
+                }
+                break;
+            case 2:
+                ghostFold90.SetActive(true);
+                ghostFoldNeg90.SetActive(false);
+                break;
+            case 1:
+                ghostFold90.SetActive(false);
+                ghostFoldNeg90.SetActive(true);
+                break;
+            case 0:
+                break;
+        }        
     }
 
     
@@ -130,12 +145,11 @@ public class TileSelector : Singleton<TileSelector>
 
     private void SelectNewJoint()
     {
-        OnFoldSelect?.Invoke(this, true);
         if(currJoint == hoverJoint)
             return;
-        currJoint?.Deselect();
-        Destroy(ghostFold90);
-        Destroy(ghostFoldNeg90);
+        OnFoldSelect?.Invoke(this, true);
+        
+        DeselectJoint();
         currJoint = hoverJoint;
         currJoint.Select();
         foldablePaper.foldJoint = currJoint;
@@ -145,10 +159,25 @@ public class TileSelector : Singleton<TileSelector>
     private void ChooseFoldDir()
     {
         if(currJoint == null) return;
-        if(dist90 < distNeg90)
-            foldablePaper.TryFold(90);
-        else
-            foldablePaper.TryFold(-90);
+        int caseNum = (validFolds[0]? 2: 0) + (validFolds[1]? 1: 0);
+        switch (caseNum)
+        {
+            case 3:
+                if(dist90 < distNeg90)
+                    foldAnimator.Fold(foldData90);
+                else
+                    foldAnimator.Fold(foldDataNeg90);
+                break;
+            case 2:
+                foldAnimator.Fold(foldData90);
+                break;
+            case 1:
+                foldAnimator.Fold(foldDataNeg90);
+                break;
+            case 0:
+                break;
+        }
+
         DeselectJoint();
     }
 
@@ -167,8 +196,12 @@ public class TileSelector : Singleton<TileSelector>
         foldablePaper.foldJoint = null;
         if(ghostFold90 != null){
             Destroy(ghostFold90);
+        }
+        if(ghostFoldNeg90 != null){
             Destroy(ghostFoldNeg90);
         }
+
+        validFolds = new bool[] {false, false};
     }
 
     public void TryMakeNewGhost()
@@ -183,22 +216,34 @@ public class TileSelector : Singleton<TileSelector>
 
     private void CreateGhostFold()
     {
+        if(FoldChecker.Instance == null) return;
         FoldData fd1 = foldablePaper.BuildFoldData(90);
-
-        if(!FoldChecker.CheckKinkedJoint(fd1.axisJoints)) return;
-
-        ghostFold90 = Instantiate(indicatorPrefab);
-        indicator90 = ghostFold90.GetComponent<FoldIndicator>();
-        indicator90.BuildIndicator(fd1, camera);
+        FoldFailureType failureType1 = FoldChecker.Instance.CheckFold(fd1);
+        if(failureType1 == FoldFailureType.KINKED ||
+            failureType1 == FoldFailureType.NOCHECK)
+            return;
+        if(failureType1 == FoldFailureType.NONE)
+        {
+            ghostFold90 = Instantiate(indicatorPrefab);
+            indicator90 = ghostFold90.GetComponent<FoldIndicator>();
+            indicator90.BuildIndicator(fd1, camera);
+            ghostFold90.SetActive(false);
+            validFolds[0] = true;
+        }
 
         FoldData fd2 = foldablePaper.BuildFoldData(-90);
-
-        ghostFoldNeg90 = Instantiate(indicatorPrefab);
-        indicatorNeg90 = ghostFoldNeg90.GetComponent<FoldIndicator>();
-        indicatorNeg90.BuildIndicator(fd2, camera);        
-
-        ghostFold90.SetActive(false);
-        ghostFoldNeg90.SetActive(false);
+        FoldFailureType failureType2 = FoldChecker.Instance.CheckFold(fd2);
+        if(failureType2 == FoldFailureType.KINKED ||
+            failureType2 == FoldFailureType.NOCHECK)
+            return;
+        if(failureType2 == FoldFailureType.NONE)
+        {
+            ghostFoldNeg90 = Instantiate(indicatorPrefab);
+            indicatorNeg90 = ghostFoldNeg90.GetComponent<FoldIndicator>();
+            indicatorNeg90.BuildIndicator(fd2, camera);
+            ghostFoldNeg90.SetActive(false);
+            validFolds[1] = true;        
+        }
     }
 
 

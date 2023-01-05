@@ -83,6 +83,21 @@ public class PaperJoint : MonoBehaviour
         }
     }
 
+    /*private void FindAdjJoints()
+    {
+        Collider[] hits = Physics.OverlapCapsule(capsuleCollider.center - transform.forward * capsuleCollider.height/2,
+                                capsuleCollider.center - transform.forward * capsuleCollider.height/2,
+                                capsuleCollider.radius, 7);
+        foreach (Collider c in hits)
+        {
+            PaperJoint joint = c.GetComponent<PaperJoint>();
+            if(c.gameObject.activeInHierarchy)
+                allAdjJoints.Add(joint);
+        }
+        foreach(PaperJoint j in allAdjJoints)
+            CheckIfJointAdjacent(j);
+    }*/
+
     private void CheckIfJointAdjacent(PaperJoint joint)
     {
         Vector3 diff = this.transform.position - joint.transform.position;
@@ -113,7 +128,7 @@ public class PaperJoint : MonoBehaviour
                         squares2.AddRange(j2.paperSquares);
 
                         bool same = squares1.All(squares2.Contains) && squares1.Count == squares2.Count;
-                        if(same)
+                        if(same && ! adjFoldJointsList.Contains(joint))
                         {
                             adjFoldJointsList.Add(joint);
                             return;

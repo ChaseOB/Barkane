@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Tape Render Settings
   m_EditorClassIdentifier: 
   elevation: 0.0146
-  width: 0.75
+  width: 0.8
   thickness: 0.0081
   halfLength: 0.193
   randomizeX: 0

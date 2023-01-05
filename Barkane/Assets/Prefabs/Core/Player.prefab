@@ -174,7 +174,11 @@ MonoBehaviour:
   bounceHeight: 0.2
   playerCollidingMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 1088
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  target: {fileID: 8814069562315018360}
 --- !u!114 &8814069561603125228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,7 +267,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8814069562315018363}
-  - component: {fileID: 8814069562315018362}
   - component: {fileID: 8814069562315018360}
   - component: {fileID: 8814069562315018361}
   m_Layer: 0
@@ -288,50 +291,6 @@ Transform:
   m_Father: {fileID: 8814069561603125226}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8814069562315018362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8814069562315018364}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fd14a1dba89b0c48ac5beff2474d704, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  compareTags:
-  - PlayerLoc
-  OnEnter:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8814069561603125227}
-        m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: SetValidMoveLoc
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  OnExit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8814069561603125227}
-        m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: SetValidMoveLoc
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!65 &8814069562315018360
 BoxCollider:
   m_ObjectHideFlags: 0

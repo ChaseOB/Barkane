@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8657335012254149831}
   - component: {fileID: 9015388584628072935}
   - component: {fileID: 2479751112894159649}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: PlayerLocBottom
   m_TagString: PlayerLoc
   m_Icon: {fileID: 0}
@@ -87,6 +87,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  OnStay:
+    m_PersistentCalls:
+      m_Calls: []
   OnExit:
     m_PersistentCalls:
       m_Calls:
@@ -763,7 +766,7 @@ GameObject:
   - component: {fileID: 6208710809326013471}
   - component: {fileID: 6208710809326013457}
   - component: {fileID: 6208710809326013456}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: PlayerLocTop
   m_TagString: PlayerLoc
   m_Icon: {fileID: 0}
@@ -839,6 +842,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  OnStay:
+    m_PersistentCalls:
+      m_Calls: []
   OnExit:
     m_PersistentCalls:
       m_Calls:

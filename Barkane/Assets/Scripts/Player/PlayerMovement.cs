@@ -14,7 +14,6 @@ public class PlayerMovement : MonoBehaviour
     public Transform cameraTrackingTransform;
 
     private bool isMoving = false;
-    private bool validMoveLoc = false; //true if the tile in front of the player is a valid move location
     private Vector2 move;
  
     public AnimationCurve moveVertCurve;
@@ -22,6 +21,9 @@ public class PlayerMovement : MonoBehaviour
     private float marmaladeY;
 
     public LayerMask playerCollidingMask;
+    public LayerMask targetMask;
+    public BoxCollider target;
+
 
     private void Start() 
     {
@@ -52,24 +54,21 @@ public class PlayerMovement : MonoBehaviour
 
     #region movement
 
-    public void SetValidMoveLoc(bool value)
-    {
-        validMoveLoc = value; 
-    }
-
-    public bool CheckValidMove()
-    {
-        return validMoveLoc && 
-                !Physics.Raycast(raycastStart.position, 
-                                (targetPos.transform.position + new Vector3(0, 0.05f ,0) - raycastStart.position), 
-                                3.0f, playerCollidingMask); 
-        //C:If the raycast is true, then there is something in between the player and the movable location
-    }
 
     public void Move(bool fromStack = false, bool undo = false)
     {
         if(undo || CheckValidMove())
             StartCoroutine(MoveHelper(fromStack, undo));
+    }
+
+    private bool CheckValidMove()
+    {
+        Collider[] colliders = Physics.OverlapBox(target.transform.position + target.center, target.size/2, Quaternion.identity, targetMask, QueryTriggerInteraction.Collide);
+        bool validLoc = colliders.Length > 0;
+        bool hit = Physics.Raycast(raycastStart.position, 
+                                (targetPos.transform.position + new Vector3(0, 0.05f ,0) - raycastStart.position), 
+                                3.0f, playerCollidingMask); 
+        return validLoc && !hit;
     }
 
     private IEnumerator MoveHelper(bool fromStack, bool undo)
@@ -94,6 +93,9 @@ public class PlayerMovement : MonoBehaviour
             yield return null;
         }
         transform.position = goal;
+        marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
+                                            marmaladeY,  
+                                            marmalade.transform.position.z);
         isMoving = false;
         if(!fromStack && !undo) {
             PlayerMove pm = new PlayerMove();
@@ -131,7 +133,6 @@ public class PlayerMovement : MonoBehaviour
     }
 
     #endregion
-    
 }
 
 public class PlayerMove: Action 

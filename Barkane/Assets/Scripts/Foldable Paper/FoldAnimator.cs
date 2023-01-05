@@ -367,7 +367,8 @@ public class FoldAnimator : MonoBehaviour
     
     private IEnumerator FoldHelper(FoldData fd, bool fromStack = false, bool undo = false, System.Action beforeFold = null, System.Action afterFold = null)
     {
-        OnFold.Invoke(this, new FoldArgs{fd = fd});
+        OnFold?.Invoke(this, new FoldArgs{fd = fd});
+
         FoldObjects objectsToFold = fd.foldObjects;
         Vector3 center = fd.center;
 

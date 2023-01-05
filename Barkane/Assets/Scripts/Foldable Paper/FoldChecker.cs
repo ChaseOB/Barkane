@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FoldChecker : MonoBehaviour
+public class FoldChecker : Singleton<FoldChecker>
 {
     public GameObject SquareCollider;
     public LayerMask squareCollidingMask;
 
+    private void Awake() {
+        InitializeSingleton();
+    }
+    
     //Checks if the given fold data is a valid fold. If so, returns true. If not, returns false
     public bool CheckFoldBool(FoldData foldData)
     {
