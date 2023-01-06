@@ -10,15 +10,7 @@
 #include "./Panoramic.cginc"
 #include "./noiseSimplex.cginc"
 
-const static int bayer_n = 4;
-const static float bayer_matrix_4x4[][bayer_n] = {
-	{    -0.5,       0,  -0.375,   0.125 },
-	{    0.25,   -0.25,   0.375, -0.125 },
-	{ -0.3125,  0.1875, -0.4375,  0.0625 },
-	{  0.4375, -0.0625,  0.3125, -0.1875 },
-};
-
-const static uint steps = 4;
+const static uint steps = 10;
 const static float r = .5; // unity uses [-1, 1] object space, but unity's default sphere is .5 radius
 
 float densityDrop(
@@ -46,12 +38,6 @@ float twoTermHG(float t, float g1, float g2, float cosa, float gBias) {
 	return lerp(hg(cosa, g1), hg(cosa, -g2), t) + gBias;
 }
 
-// dithering
-float bayer(float2 px, float t) {
-	uint2 ipx = floor(px);
-	return t > bayer_matrix_4x4[ipx.x % 4][ipx.y % 4] ? 1 : 0;
-}
-
 float densityAt(
 	UnitySamplerState worleyState,
 	UnityTexture3D worley,
@@ -65,7 +51,7 @@ float densityAt(
 	float3 pWorld = mul(unity_ObjectToWorld, float4(p, 1)).xyz;
 	pWorld = pWorld * scl;
 
-	return baseDensity 
+	return baseDensity
 		* (weights.x + weights.y
 			// originally the negation is built into the worley generation shader
 			// it is moved here to make the worley noise texture itself more usable elsewhere
@@ -133,24 +119,18 @@ void RaySampler_float(
 	UnityTexture2D panoramic,
 
 	float scl,
-	float4 weights,
+	float4 weights,	
 
 	float sunAbsorption,
 	float cloudAbsorption,
 	float g1,
 	float g2,
 	float gBias,
-	float ltBias,
 
 	float baseDensity,
 	float densityDropoff,
 
 	float cutoff,
-
-	float2 px,
-	float2 px01,
-
-	float depth,
 
 	out float opacity,
 	out float3 cloudColor
@@ -208,13 +188,12 @@ void RaySampler_float(
 			densityDropoff
 		);
 
-		energy += stepSize * density * transmittance * (lightTransmittance * (1 - ltBias) + ltBias) * phaseVal;
+		energy += stepSize * density * transmittance * lightTransmittance * phaseVal;
 		transmittance *= beer(mass * cloudAbsorption);
 	}
 
 	if (transmittance > cutoff) {
-		int2 ipx = floor(px);
-		transmittance = bayer(px, transmittance - 0.1) + depth * 0.05; // attenuate the dithering to exclude far items, avoids some aliasing artifacts
+		transmittance = 1;
 	}
 
 	transmittance = saturate(transmittance);
