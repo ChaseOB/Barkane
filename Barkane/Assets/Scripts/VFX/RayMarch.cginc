@@ -60,7 +60,7 @@ float densityAt(
 		* densityDrop(p, densityDropoff);
 }
 
-float march(
+float SunMarch(
 	UnitySamplerState worleyState,
 	UnityTexture3D worley,
 	float4 weights,
@@ -146,7 +146,7 @@ void RaySampler_float(
 
 	// borrows from Sebastian Lague's
 	// https://github.com/SebLague/Clouds/blob/master/Assets/Scripts/Clouds/Shaders/Clouds.shader
-	float3 energy = 0;
+	float energy = 0;
 	float transmittance = 1;
 
 	const float cosa = dot(v, l);
@@ -173,7 +173,7 @@ void RaySampler_float(
 
 		float mass = density * stepSize;
 
-		float lightTransmittance = march(
+		float lightTransmittance = SunMarch(
 			worleyState,
 			worley,
 
@@ -203,6 +203,117 @@ void RaySampler_float(
 	panoramic_float(mul(unity_ObjectToWorld, float4(v, 0)).xyz, worleyState, panoramic, backgroundColor);
 
 	cloudColor = backgroundColor.xyz * transmittance + energy;
+}
+
+float ConcreteSunMarch(
+	UnitySamplerState worleyState,
+	UnityTexture3D worley,
+	float4 weights,
+	float scl,
+	float3 p,
+	float3 l,
+	float baseDensity,
+	float densityDropoff,
+	float sunAbsorption
+) {
+	// same indicator as below
+	float I = dot(l, p);
+	float end = -I;
+
+	I = I * I - dot(p, p) + r * r;
+	if (I < 0) return 1;
+
+	// length between base point and exit point of the light ray in the sphere
+	end += sqrt(I);
+	const float stepSize = end / steps;
+	float mass = 0;
+
+	for (uint i = 0; i < steps; i++) {
+		float t = stepSize * (i + 1);
+		float3 samplePt = p + l * t;
+
+		mass += stepSize * densityAt(
+			worleyState,
+			worley,
+			weights,
+			samplePt,
+			scl,
+			baseDensity,
+			densityDropoff
+		);
+	}
+
+	return beer(mass * sunAbsorption);
+}
+
+void ConcreteRaySampler_float(
+	float3 p,
+	float3 v,
+	float3 l,
+
+	UnitySamplerState worleyState,
+	UnityTexture3D worley,
+
+	float scl,
+	float4 weights,
+
+	float baseDensity,
+	float densityDropoff,
+
+	float cloudAbsorption,
+	float sunAbsorption,
+
+	out float opacity,
+	out float energy
+) {
+	v = -v;
+
+	float I = dot(v, p);
+	float end = -I;
+
+	I = I * I - dot(p, p) + r * r;
+	if (I < 0) discard;
+	end += sqrt(I);
+
+	// borrows from Sebastian Lague's
+	// https://github.com/SebLague/Clouds/blob/master/Assets/Scripts/Clouds/Shaders/Clouds.shader
+	energy = 0;
+	float transmittance = 1;
+
+	// note this is still in object space! this make per-object light absorption *consitent* but not physical
+	const float stepSize = end / steps;
+
+	const float3 pWorld = mul(unity_ObjectToWorld, float4(p, 1)).xyz;
+
+	for (uint i = 0; i < steps; i++) {
+		const float t = stepSize * (i + 1);
+		const float3 pSample = p + t * v;
+
+		float density = densityAt(
+			worleyState,
+			worley,
+			weights,
+			pSample,
+			scl,
+			baseDensity,
+			densityDropoff
+		);
+
+		float mass = density * stepSize;
+
+		float lightTransmittance = ConcreteSunMarch(
+			worleyState, worley,
+			weights, scl,
+			pSample, l,
+			baseDensity, densityDropoff,
+			sunAbsorption
+		);
+
+		energy += stepSize * density * transmittance * lightTransmittance;
+		transmittance *= beer(mass * cloudAbsorption);
+	}
+
+	opacity = saturate(1 - transmittance);
 }
 
 #endif 
