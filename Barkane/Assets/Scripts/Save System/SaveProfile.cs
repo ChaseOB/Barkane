@@ -11,6 +11,8 @@ public class SaveProfile
     private float playTimeInSeconds;
     private System.DateTime lastSaved;
 
+    private int lastLevel;
+
     //Level name -> number of folds. -1 if not completed
     private Dictionary<string, int> numFolds = new Dictionary<string, int>();
     private Dictionary<string, bool> cosmeticUnlocks = new Dictionary<string, bool>();
@@ -104,4 +106,5 @@ public class SaveProfile
         numFolds[levelName] = value;
     }
     #endregion
+
 }
