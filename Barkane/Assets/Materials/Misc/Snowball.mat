@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Snowball
-  m_Shader: {fileID: -6465566751694194690, guid: 8611bbc3de7943d4697209e65577d438, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 7892820754b2bc641965ecfc3dbf9001, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 2
@@ -20,6 +20,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _ConcreteRaySamplerCustomFunction_c74e9cea4a714b919875082e42465a22_worley_6:
+        m_Texture: {fileID: 11700000, guid: 73d267bb8fdd5114e80fcc9ce79eddd3, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _CubemapAsset_c5359718caa34b8a92f4dbb49d266a8f_Out_0:
         m_Texture: {fileID: 8900000, guid: d310f013edfabdd4f99a090fd5e64325, type: 2}
         m_Scale: {x: 1, y: 1}
@@ -72,11 +76,20 @@ Material:
     - _QueueOffset: 0
     - _Steps: 10
     - _ambient: 3.96
-    - _cutoff: 0.34
+    - _backScattering: 0
+    - _baseDensity: 3.65
+    - _cloudAbsorption: 0.91
+    - _cutoff: -1.15
+    - _densityDropoff: 1
+    - _forwardScattering: 0
+    - _gBias: 1.37
     - _hardborder: -0.5
     - _lambertian: 0.86
+    - _ltBias: 0
     - _offset: 15.32
-    - _scale: 0.68
+    - _scale: 0.2
+    - _sunAbsorption: 0.32
+    - _useTransparency: 0
     m_Colors:
     - _Dark: {r: 0.6037736, g: 0.5859737, b: 0.5325739, a: 0}
     - _Frequencies: {r: 1, g: 1.5, b: 3, a: 1}
@@ -84,6 +97,7 @@ Material:
     - _Sky: {r: 0.4666667, g: 0.6509804, b: 0.91372555, a: 0}
     - _Weights: {r: 2, g: 0.77, b: 0.54, a: 5.06}
     - _lightDir: {r: 0, g: 0, b: 0, a: 0}
+    - _weights: {r: 2, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &1219249950073881674
 MonoBehaviour:
