@@ -78,7 +78,7 @@ Material:
     - _ambient: 2.22
     - _backScattering: 0.932
     - _baseDensity: 7.53
-    - _cloudAbsorption: 0.64
+    - _cloudAbsorption: 0.71
     - _cutoff: 0.57
     - _densityDropoff: 2.89
     - _forwardScattering: 0.935
@@ -90,7 +90,7 @@ Material:
     - _ltBias: 0.13
     - _offset: 0
     - _scale: 0.07
-    - _sunAbsorption: 1
+    - _sunAbsorption: 0.45
     - _useTransparency: 0
     m_Colors:
     - _Dark: {r: 0.6226415, g: 0.5600836, b: 0.41411534, a: 0}
