@@ -4,6 +4,7 @@ using UnityEngine;
 using BarkaneJoint;
 using BarkaneEditor;
 using System.Drawing.Printing;
+using UnityEditor;
 
 [ExecuteAlways]
 public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
@@ -13,8 +14,14 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
     [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private MeshFilter meshFilter;
 
-    Vector3[] vs, ns;
+    Vector3[] vs;
     Vector2[] ringShifts; // randomize corners to look less tidy
+
+    private void Update()
+    {
+        // lock to world space orientation
+        transform.rotation = Quaternion.identity;
+    }
 
     private void LateUpdate()
     {
@@ -33,6 +40,7 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
         {
             m = new Mesh();
             meshFilter.sharedMesh = m;
+            m.MarkDynamic();
         }
         else
         {
@@ -40,81 +48,75 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
         }
 
         // head A
-        vs[0] = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2A * (settings.halfLength + margin) + g.nA * settings.elevation);
-        ns[0] = transform.worldToLocalMatrix.MultiplyVector(g.nJ2A);
-        Ring(
-            ref vs, ref ns,
+        vs[0] = g.nJ2A * (settings.halfLength + margin) + g.nA * settings.elevation;
+        Ring(ref vs,
             vs[0],
-            transform.worldToLocalMatrix.MultiplyVector(g.nA),
-            transform.worldToLocalMatrix.MultiplyVector(g.tJ),
-            transform.worldToLocalMatrix.MultiplyVector(g.nJ2A),
-            1,
-            ringShifts[0], ringShifts[1]);
+            g.nA,
+            g.tJ,
+            1);
         if (g.a2b > 20f && g.a2b < 160f) // bending inwards
         {
             // 3 inner joints collapse together
             var shrinkCorrection = 1f / Mathf.Sin(Mathf.Deg2Rad * g.a2b / 2);
-            var j = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ * (settings.elevation * shrinkCorrection));
+            var j = g.nJ * (settings.elevation * shrinkCorrection);
             Ring(
-                ref vs, ref ns,
+                ref vs,
                 j,
-                transform.worldToLocalMatrix.MultiplyVector(g.nJ),
-                transform.worldToLocalMatrix.MultiplyVector(g.tJ),
+                g.nJ,
+                g.tJ,
                 1 + 4);
             Ring(
-                ref vs, ref ns,
+                ref vs,
                 j,
-                transform.worldToLocalMatrix.MultiplyVector(g.nJ),
-                transform.worldToLocalMatrix.MultiplyVector(g.tJ),
+                g.nJ,
+                g.tJ,
                 1 + 2 * 4);
             Ring(
-                ref vs, ref ns,
+                ref vs,
                 j,
-                transform.worldToLocalMatrix.MultiplyVector(g.nJ),
-                transform.worldToLocalMatrix.MultiplyVector(g.tJ),
+                g.nJ,
+                g.tJ,
                 1 + 3 * 4);
         }
         else // bending outwards
         {
             // near joint on side A
-            var jA = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2A * margin + g.nA * settings.elevation);
+            var jA = g.nJ2A * margin + g.nA * settings.elevation;
             Ring(
-                ref vs, ref ns,
+                ref vs,
                 jA,
-                transform.worldToLocalMatrix.MultiplyVector(g.nA),
-                transform.worldToLocalMatrix.MultiplyVector(g.tJ),
+                g.nA,
+                g.tJ,
                 1 + 4);
             // joint
-            var j = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ * settings.elevation);
+            var j = g.nJ * settings.elevation;
             Ring(
-                ref vs, ref ns,
-                j,
-                transform.worldToLocalMatrix.MultiplyVector(g.nJ),
-                transform.worldToLocalMatrix.MultiplyVector(g.tJ),
+                ref vs,
+                j,  
+                g.nJ,
+                g.tJ,
                 1 + 2 * 4);
             // near joint on side B
-            var jB = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2B * margin + g.nB * settings.elevation);
+            var jB = g.nJ2B * margin + g.nB * settings.elevation;
             Ring(
-                ref vs, ref ns,
+                ref vs,
                 jB,
-                transform.worldToLocalMatrix.MultiplyVector(g.nB),
-                transform.worldToLocalMatrix.MultiplyVector(g.tJ),
+                g.nB,
+                g.tJ,
                 1 + 3 * 4);
         }
         // head B
-        vs[^1] = transform.worldToLocalMatrix.MultiplyPoint(g.pJ + g.nJ2B * (settings.halfLength + margin) + g.nB * settings.elevation);
-        ns[^1] = transform.worldToLocalMatrix.MultiplyVector(g.nJ2B);
+        vs[^1] = g.nJ2B * (settings.halfLength + margin) + g.nB * settings.elevation;
         Ring(
-            ref vs, ref ns,
+            ref vs,
             vs[vs.Length - 1],
-            transform.worldToLocalMatrix.MultiplyVector(g.nB),
-            transform.worldToLocalMatrix.MultiplyVector(g.tJ),
-            transform.worldToLocalMatrix.MultiplyVector(g.nJ2B),
-            1 + 4 * 4,
-            ringShifts[2], ringShifts[3]);
+            g.nB,
+            g.tJ,
+            1 + 4 * 4);
 
         m.vertices = vs;
-        m.normals = ns;
+        m.RecalculateNormals();
+        m.RecalculateBounds();
 
         if (firstSet)
         {
@@ -122,24 +124,15 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
         }
     }
 
-    private void Ring(ref Vector3[] vs, ref Vector3[] ns, Vector3 c, Vector3 n, Vector3 t, int iStart)
+    private void Ring(ref Vector3[] vs, Vector3 c, Vector3 n, Vector3 t, int iStart)
     {
         var w = settings.width * t;
         var h = settings.thickness * n;
+
         vs[iStart] = c - w - h;
         vs[iStart + 1] = c - w + h;
         vs[iStart + 2] = c + w + h;
         vs[iStart + 3] = c + w - h;
-    }
-
-    private void Ring(ref Vector3[] vs, ref Vector3[] ns, Vector3 c, Vector3 n, Vector3 t, Vector3 z, int iStart, Vector2 randomL, Vector2 randomR)
-    {
-        var w = settings.width * t;
-        var h = settings.thickness * n;
-        vs[iStart] = c - w - h + randomL.x * t + randomL.y * z;
-        vs[iStart + 1] = c - w + h + randomL.x * t + randomL.y * z;
-        vs[iStart + 2] = c + w + h + randomR.x * t + randomR.y * z;
-        vs[iStart + 3] = c + w - h + randomR.x * t + randomR.y * z;
     }
 
     public void ClearAndInitBuffers(TapeRenderSettings settings)
@@ -147,13 +140,5 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
         meshFilter.sharedMesh = null;
 
         vs = new Vector3[settings.VCount];
-        ns = new Vector3[settings.VCount];
-
-        ringShifts = new Vector2[] {
-            new Vector2(Random.value * settings.randomizeX, Random.value * settings.randomizeY),
-            new Vector2(Random.value * settings.randomizeX, Random.value * settings.randomizeY),
-            new Vector2(Random.value * settings.randomizeX, Random.value * settings.randomizeY),
-            new Vector2(Random.value * settings.randomizeX, Random.value * settings.randomizeY)
-        };
     }
 }

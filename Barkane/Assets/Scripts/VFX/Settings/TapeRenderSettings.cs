@@ -15,8 +15,6 @@ namespace BarkaneJoint
         public float thickness;
         [Range(0f, 1f)]
         public float halfLength;
-        [Range(0f, 0.25f)]
-        public float randomizeX, randomizeY;
 
         // a tape is just a 4 sided column
         [HideInInspector] public int[] ids = ColumnMeshIndex.Create(4);
