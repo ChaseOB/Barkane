@@ -30,7 +30,7 @@ public class FoldObjects {
             PaperJoint pj = go.GetComponent<PaperJoint>();
             JointRenderer jr = pj?.JointRenderer;
             jr?.EnableMeshAction();
-            jr?.ShowLine(false, true);
+            jr?.ShowLine(false, false);
         }
     }
 

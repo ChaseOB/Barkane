@@ -122,6 +122,7 @@ public class FoldAnimator : MonoBehaviour
         if(!fromStack && !undo) {
             UndoRedoManager.Instance?.AddAction(fd);
         }
+        TileSelector.Instance.state = SelectState.NONE;
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 

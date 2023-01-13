@@ -32,6 +32,8 @@ public class TileSelector : Singleton<TileSelector>
 
     public static event System.EventHandler<bool> OnFoldSelect;
 
+    public SelectState state;
+
     private void Awake()
     {
         InitializeSingleton();
@@ -47,6 +49,7 @@ public class TileSelector : Singleton<TileSelector>
         camera = this.GetComponent<Camera>();
         foldAnimator = FindObjectOfType<FoldAnimator>();
         foldablePaper = FindObjectOfType<FoldablePaper>();
+        state = SelectState.NONE;
     }
 
     private void Update()
@@ -83,7 +86,7 @@ public class TileSelector : Singleton<TileSelector>
 
     private void UpdateJointHoverIndicator()
     {
-        if(prevHoverJoint != hoverJoint)
+        if(prevHoverJoint != hoverJoint && state == SelectState.NONE)
         {
             prevHoverJoint?.OnHoverExit();
             hoverJoint?.OnHoverEnter();
@@ -143,7 +146,7 @@ public class TileSelector : Singleton<TileSelector>
 
     private void SelectNewJoint()
     {
-        if(currJoint == hoverJoint)
+        if(currJoint == hoverJoint || state != SelectState.NONE)
             return;
         OnFoldSelect?.Invoke(this, true);
         
@@ -152,6 +155,7 @@ public class TileSelector : Singleton<TileSelector>
         currJoint.Select();
         foldablePaper.foldJoint = currJoint;
         CreateGhostFold();
+        state = SelectState.SELECTED;
     }
 
     private void ChooseFoldDir()
@@ -175,6 +179,8 @@ public class TileSelector : Singleton<TileSelector>
             case 0:
                 break;
         }
+        if(caseNum != 0)
+            state = SelectState.FOLDING;
 
         DeselectJoint();
     }
@@ -183,6 +189,7 @@ public class TileSelector : Singleton<TileSelector>
     {
         if(foldablePaper == null || foldablePaper.isComplete || !value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
             return;
+        state = SelectState.NONE;
         DeselectJoint();
     }
 
@@ -251,4 +258,10 @@ public class TileSelector : Singleton<TileSelector>
         FindObjectOfType<Goal>().EndLevel();
     }
 
+}
+
+public enum SelectState {
+    NONE, 
+    SELECTED,
+    FOLDING
 }
