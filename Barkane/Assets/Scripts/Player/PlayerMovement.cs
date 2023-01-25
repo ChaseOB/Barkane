@@ -44,16 +44,15 @@ public class PlayerMovement : MonoBehaviour
         if(move.y > 0.5)
             Move();
         else if (Mathf.Abs(move.x) > 0.5)
-            Rotate(move.x > 0 ? 90.0f : -90.0f);
+            Rotate(move.x > 0 ? 90 : -90);
         else
             ActionLockManager.Instance.TryRemoveLock(this);
-
     }
 
     #endregion
 
-    #region movement
 
+    #region movement
 
     public void Move(bool fromStack = false, bool undo = false)
     {

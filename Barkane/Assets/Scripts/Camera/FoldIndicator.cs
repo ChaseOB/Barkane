@@ -13,7 +13,7 @@ public class FoldIndicator : MonoBehaviour
     new private Camera camera;
     public FoldFailureType foldFailureType;
 
-
+    private List<Vector3Int> locs = new List<Vector3Int>();
     private void Update() 
     {
         if(camera == null) return;
@@ -24,8 +24,12 @@ public class FoldIndicator : MonoBehaviour
     {
         Transform center = fd.foldObjects.foldJoints[0].transform;
         transform.position = center.position;
+        locs = new List<Vector3Int>();
         foreach(GameObject go in fd.foldObjects.foldSquares)
         {
+            Vector3Int pos = Vector3Int.RoundToInt(go.transform.position);
+            if(!locs.Contains(pos)){
+            locs.Add(pos);
             GameObject newSquare = Instantiate(ghostSquarePrefab, go.transform.position, go.transform.rotation);
             var ghostSquareRenderer = newSquare.GetComponent<MeshRenderer>();
             if (ghostSquareRenderer)
@@ -36,6 +40,7 @@ public class FoldIndicator : MonoBehaviour
                    // ghostSquareRenderer.sharedMaterial.SetColor("_Color", Color.gray);
             }
             newSquare.transform.parent = gameObject.transform;
+            }
         }
         transform.RotateAround(center.position, center.rotation * Vector3.right, fd.degrees);
         int children = transform.childCount;
