@@ -11,9 +11,8 @@ public class FoldIndicator : MonoBehaviour
     public Vector2 foldCenter; //fold center in screen space
     private List<Transform> transforms = new List<Transform>();
     new private Camera camera;
-    public FoldFailureType foldFailureType;
-
     private List<Vector3Int> locs = new List<Vector3Int>();
+    
     private void Update() 
     {
         if(camera == null) return;
@@ -33,12 +32,7 @@ public class FoldIndicator : MonoBehaviour
             GameObject newSquare = Instantiate(ghostSquarePrefab, go.transform.position, go.transform.rotation);
             var ghostSquareRenderer = newSquare.GetComponent<MeshRenderer>();
             if (ghostSquareRenderer)
-            {
-                //if(fail == FoldFailureType.NONE)
-                    ghostSquareRenderer.sharedMaterial.SetColor("_Color", VFXManager.Theme.Silhouette);
-               // else
-                   // ghostSquareRenderer.sharedMaterial.SetColor("_Color", Color.gray);
-            }
+                ghostSquareRenderer.sharedMaterial.SetColor("_Color", VFXManager.Theme.Silhouette);
             newSquare.transform.parent = gameObject.transform;
             }
         }
@@ -49,7 +43,6 @@ public class FoldIndicator : MonoBehaviour
             transforms.Add(transform.GetChild(i));
         
         camera = c;
-        //foldFailureType = fail;
         foldCenter = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(transforms));
     }
 
