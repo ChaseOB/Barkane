@@ -133,6 +133,7 @@ public class TileSelector : Singleton<TileSelector>
     {
         if(PauseManager.IsPaused) return;
         if(!value.isPressed) return;
+        if(ActionLockManager.Instance.IsLocked) return;
         ChooseClickAction();
     }
 
@@ -184,19 +185,20 @@ public class TileSelector : Singleton<TileSelector>
         if(caseNum != 0)
             state = SelectState.FOLDING;
 
-        DeselectJoint();
+        DeselectJoint(false);
     }
 
     private void OnRightClick(InputValue value)
     {
         if(foldablePaper == null || foldablePaper.isComplete || !value.isPressed || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
             return;
-        state = SelectState.NONE;
         DeselectJoint();
     }
 
-    public void DeselectJoint()
+    public void DeselectJoint(bool updateState = true)
     {
+        if(updateState)
+            state = SelectState.NONE;
         OnFoldSelect.Invoke(this, false);
         currJoint?.Deselect();
         currJoint = null;

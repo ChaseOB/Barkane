@@ -396,6 +396,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Camera Rig
       objectReference: {fileID: 0}
+    - target: {fileID: 5353261048891426296, guid: f567fac07c323af479daf9cf119a7bbe, type: 3}
+      propertyPath: m_TargetTexture
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5353261048891426300, guid: f567fac07c323af479daf9cf119a7bbe, type: 3}
       propertyPath: minCameraDistance
       value: 1

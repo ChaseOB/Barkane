@@ -38,6 +38,10 @@ public class FoldAnimator : MonoBehaviour
         if(!isFolding) 
         {
             var foldJointRenderer = fd.axisJoints[0].JointRenderer;
+            if(!ActionLockManager.Instance.TryTakeLock(this)){
+                print("Action Lock taken, can't fold (this is bad)");
+                return;
+            }
             if(foldJointRenderer != null)
                 StartCoroutine(FoldHelper(fd, fromStack, undo, fd.foldObjects.DisableJointMeshes, fd.foldObjects.EnableJointMeshes));
             else

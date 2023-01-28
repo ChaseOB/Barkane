@@ -6,7 +6,7 @@ public class ActionLockManager : Singleton<ActionLockManager>
 {
     private bool isLocked = false;
     public bool IsLocked => isLocked;
-    private Object lockObject;
+    public Object lockObject;
     public Object LockObject => lockObject;
 
     private void Awake() {
