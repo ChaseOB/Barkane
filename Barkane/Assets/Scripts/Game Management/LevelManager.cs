@@ -119,8 +119,10 @@ public class LevelManager : Singleton<LevelManager>
         ActionLockManager.Instance.ForceTakeLock(this);
         levelSwitchScreen.SetActive(true);
         if(UIManager.Instance != null)
-            UIManager.Instance.ToggleGroup(false);
-        
+        {
+            UIManager.Instance.ToggleLevelGroup(false);
+            UIManager.Instance.ToggleEndLevelGroup(false);
+        }
         imageAnimator.Play();
 
         if (instantiatedLevel != null) {
@@ -147,7 +149,7 @@ public class LevelManager : Singleton<LevelManager>
         levelSwitchScreen.SetActive(false);
         imageAnimator.Stop();
         if(UIManager.Instance != null)
-            UIManager.Instance.ToggleGroup(true);
+            UIManager.Instance.ToggleLevelGroup(true);
         ActionLockManager.Instance.ForceRemoveLock();
     }
 
