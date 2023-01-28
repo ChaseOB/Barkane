@@ -63,6 +63,7 @@ public class TileSelector : Singleton<TileSelector>
 
     private void UpdateSquareRefs()
     {
+        if(!CameraOrbit.Instance.CameraDisabled) return;
         RaycastHit info;
         Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
         RaycastHit[] hits = Physics.RaycastAll(ray, 100, jointMask);
@@ -141,15 +142,25 @@ public class TileSelector : Singleton<TileSelector>
     {
         if(foldablePaper == null || foldablePaper.isComplete || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
             return;
-        if(hoverJoint != null && hoverJoint.canFold)            
-            SelectNewJoint();
-        else
-            ChooseFoldDir();
+
+        switch(state)
+        {
+            case SelectState.NONE:
+                if(hoverJoint != null && hoverJoint.canFold)            
+                    SelectNewJoint();
+                break;
+            case SelectState.SELECTED:
+                    ChooseFoldDir();
+                break;
+            case SelectState.FOLDING:
+                break;
+        }
+        
     }
 
     private void SelectNewJoint()
     {
-        if(currJoint == hoverJoint || state != SelectState.NONE)
+        if(currJoint == hoverJoint)
             return;
         OnFoldSelect?.Invoke(this, true);
         
