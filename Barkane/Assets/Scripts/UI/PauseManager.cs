@@ -7,7 +7,12 @@ using UnityEngine.EventSystems;
 public class PauseManager : Singleton<PauseManager>
 {
     [SerializeField] private GameObject PauseMenu;
-    bool isPaused = false;
+    private bool isPaused = false;
+    public static bool IsPaused => Instance.isPaused;
+
+    private void Awake() {
+        InitializeSingleton();
+    }
 
     public void TogglePause()
     {

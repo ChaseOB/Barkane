@@ -54,6 +54,7 @@ public class TileSelector : Singleton<TileSelector>
 
     private void Update()
     {
+        if(PauseManager.IsPaused) return;
         if(foldablePaper.isComplete) return;
         UpdateSquareRefs();
         UpdateJointHoverIndicator();
@@ -130,6 +131,7 @@ public class TileSelector : Singleton<TileSelector>
 
     private void OnClick(InputValue value)
     {
+        if(PauseManager.IsPaused) return;
         if(!value.isPressed) return;
         ChooseClickAction();
     }

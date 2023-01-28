@@ -38,8 +38,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnMove(InputValue value)
     {
+        if(PauseManager.IsPaused) return;
         if(isMoving) return;
         if(!ActionLockManager.Instance.TryTakeLock(this)) return;
+        
         Vector2 move = value.Get<Vector2>();
         if(move.y > 0.5)
             Move();

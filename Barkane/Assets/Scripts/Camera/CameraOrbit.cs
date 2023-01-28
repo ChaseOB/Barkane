@@ -62,6 +62,7 @@ public class CameraOrbit : Singleton<CameraOrbit>
 
     private void OnClick(InputValue value)
     {
+        if(PauseManager.IsPaused) return;
         clicking = value.isPressed;
     }
 
