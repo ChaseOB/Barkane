@@ -65,8 +65,9 @@ public class PlayerMovement : MonoBehaviour
         Collider[] colliders = Physics.OverlapBox(target.transform.position + target.center, target.size/2, Quaternion.identity, targetMask, QueryTriggerInteraction.Collide);
         bool validLoc = colliders.Length > 0;
         bool hit = Physics.Raycast(raycastStart.position, 
-                                (targetPos.transform.position + new Vector3(0, 0.05f ,0) - raycastStart.position), 
-                                3.0f, playerCollidingMask); 
+                                (target.transform.position + target.center - raycastStart.position), 
+                                Vector3.Magnitude(target.transform.position + target.center - raycastStart.position), playerCollidingMask); 
+        Debug.DrawRay(raycastStart.position, target.transform.position + target.center - raycastStart.position, Color.cyan, 15);
         return validLoc && !hit;
     }
 

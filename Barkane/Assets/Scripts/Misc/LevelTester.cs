@@ -11,7 +11,7 @@ public class LevelTester : MonoBehaviour
     public GameObject playerPrefab;
 
     private void Start() {
-        Invoke("SpawnLevel", 0.1f);
+        Invoke("SpawnLevel", 0.02f);
     }
 
     public void SpawnLevel()

@@ -67,8 +67,8 @@ public class CameraOrbit : Singleton<CameraOrbit>
 
     private void OnMiddleClick(InputValue value)
     {
-        clicking = value.isPressed;
-        ToggleCamera(value.isPressed);
+       // clicking = value.isPressed;
+        //ToggleCamera(value.isPressed);
     }
 
     private void OnToggleCamera(InputValue value)
