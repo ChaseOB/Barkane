@@ -5,16 +5,16 @@ using System.Linq;
 public class SaveProfile
 {
     //C: Mostly stolen from Slider lol 
-    // profile-specific metadata
+
     private string profileName;
     private bool completionStatus;
     private float playTimeInSeconds;
     private System.DateTime lastSaved;
-
-    private int lastLevel;
+    private string lastLevel;
 
     //Level name -> number of folds. -1 if not completed
     private Dictionary<string, int> numFolds = new Dictionary<string, int>();
+    //Cosmetic name -> unlocked?
     private Dictionary<string, bool> cosmeticUnlocks = new Dictionary<string, bool>();
 
 
@@ -62,6 +62,16 @@ public class SaveProfile
     public void SetLastSaved(System.DateTime value)
     {
         lastSaved = value;
+    }
+
+    public string GetLastLevel()
+    {
+        return lastLevel;
+    }
+
+    public void SetLastLevel(string level)
+    {
+        lastLevel = level;
     }
 
     public Dictionary<string, bool> GetCosmeticsDictionary()

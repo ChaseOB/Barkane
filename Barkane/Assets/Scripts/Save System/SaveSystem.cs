@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 // There's probably a better way of doing this: https://gamedev.stackexchange.com/questions/110958/what-is-the-proper-way-to-handle-data-between-scenes
 // See Inversion of Control / Dependency Injection frameworks
 // HOWEVER -- maybe that's overkill for this project
-//C: Stolen from slider 
+//C: Stolen from slider, modified as needed 
 
 public class SaveSystem 
 {
@@ -30,13 +30,16 @@ public class SaveSystem
     private static SaveProfile current;
     private static int currentIndex = -1; // if -1, then it's a temporary profile
 
-    private static SaveProfile[] saveProfiles = new SaveProfile[3];
+    /*
+        C: What's the deal with unlimted save profiles?
+        This mostly exists for wreckcon
+    */
+    private static List<SaveProfile> saveProfiles = new List<SaveProfile>();
 
     public SaveSystem()
     {
-        SetProfile(0, GetSerializableSaveProfile(0)?.ToSaveProfile());
-        SetProfile(1, GetSerializableSaveProfile(1)?.ToSaveProfile());
-        SetProfile(2, GetSerializableSaveProfile(2)?.ToSaveProfile());
+        for(int i = 0; i < saveProfiles.Count; i++)
+            SetProfile(i, GetSerializableSaveProfile(i)?.ToSaveProfile());
     }
 
     public static SaveProfile GetProfile(int index)
@@ -50,7 +53,7 @@ public class SaveSystem
     {
         int ret = -1;
         System.DateTime mostRecent = System.DateTime.MinValue;
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < saveProfiles.Count; i++)
         {
             if (saveProfiles[i] != null && saveProfiles[i].GetLastSaved() > mostRecent)
             {
@@ -79,7 +82,7 @@ public class SaveSystem
 
 
     /// <summary>
-    /// Saves the game to the current loaded profile index (either 0, 1, or 2). If the profile index is -1, then no data will be saved.
+    /// Saves the game to the current loaded profile index. If the profile index is -1, then no data will be saved.
     /// </summary>
     public static void SaveGame()
     {
