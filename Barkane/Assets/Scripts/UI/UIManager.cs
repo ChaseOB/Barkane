@@ -66,12 +66,12 @@ public class UIManager : Singleton<UIManager>
     {
         foldCountText.text = numFolds.ToString();
         yourFoldCountText.text = numFolds.ToString();
-        //C: This is a horrible way to do this. I don't care
-        bestFoldCountText.text = SaveSystem.Current.GetFolds(LevelManager.Instance.GetCurrentLevel().levelName).ToString();
     }
 
     public void EndLevel()
     {
+        //C: This is a horrible way to do this. I don't care
+        bestFoldCountText.text = SaveSystem.Current.GetFolds(LevelManager.Instance.GetCurrentLevel().levelName).ToString();
         Time.timeScale = 0;
         endLevelGroup.SetActive(true);
     }

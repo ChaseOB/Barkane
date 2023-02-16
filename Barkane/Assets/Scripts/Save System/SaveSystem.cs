@@ -85,13 +85,28 @@ public class SaveSystem
         Current = GetProfile(index);
     }
 
+    public static int CreateNewProfile(string name)
+    {
+        SaveProfile newprofile = new SaveProfile(name);
+        saveProfiles.Add(newprofile);
+        currentIndex = saveProfiles.IndexOf(newprofile);
+        return currentIndex;
+    }
+
+    public static void SetMostRecentProfile()
+    {
+        SetCurrentProfile(GetRecentlyPlayedIndex());
+    }
+
     /// <summary>
     /// Saves the game to the current loaded profile index. If the profile index is -1, then no data will be saved.
     /// </summary>
-    public static void SaveGame()
+    public static void SaveGame(string reason="")
     {
         if (currentIndex == -1)
             return;
+        
+        if (reason != "") Debug.Log($"[Saves] Saving game: {reason}");
 
         current.SetLastSaved(System.DateTime.Now);
 

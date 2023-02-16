@@ -23,6 +23,7 @@ public class SaveProfile
     public SaveProfile(string profileName)
     {
         this.profileName = profileName;
+        lastSaved = System.DateTime.Now;
     }
 
     #region Getters / Setters
@@ -130,7 +131,13 @@ public class SaveProfile
 
     public bool SetNumFoldsIfLower(string levelName, int value)
     {
-        if(value < numFolds.GetValueOrDefault(levelName, -1))
+        if(!numFolds.ContainsKey(levelName))
+        {
+            numFolds[levelName] = value;
+            Debug.Log(levelName + " " + value);
+            return true;
+        }
+        if(value < numFolds[levelName])
         {
             numFolds[levelName] = value;
             return true;

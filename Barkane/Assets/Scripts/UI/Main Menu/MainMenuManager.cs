@@ -13,6 +13,7 @@ public class MainMenuManager : MonoBehaviour
     public GameObject cosmetics;
 
     public void StartGame() {
+        //Load cutscene
         LevelManager.Instance.LoadLevel(0);
     }
 

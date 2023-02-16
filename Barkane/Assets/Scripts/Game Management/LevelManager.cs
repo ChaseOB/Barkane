@@ -49,6 +49,7 @@ public class LevelManager : Singleton<LevelManager>
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        Goal.OnReachGoal -= OnEndLevel;
     }
 
     public Level GetCurrentLevel()
@@ -59,7 +60,8 @@ public class LevelManager : Singleton<LevelManager>
     //Handles index setting, special case of last level
     public void LoadLevel(int index)
     {
-        
+        if(index == 0)
+            SaveSystem.Current.SetLevelUnlock(levelList[0].levelName, true);
         currLevelIndex = index;
         if (index >= levelList.Count) 
             OnCompleteLastLevel();
@@ -196,6 +198,8 @@ public class LevelManager : Singleton<LevelManager>
             string nextLevel = levelList[currLevelIndex + 1].levelName;
             SaveSystem.Current.SetLevelUnlock(nextLevel, true);
         }
+
+        SaveSystem.SaveGame();
     }
 
 }

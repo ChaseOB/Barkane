@@ -33,7 +33,7 @@ public class Goal : MonoBehaviour, IThemedItem
     
     public void EndLevel() {
         OnReachGoal?.Invoke(this, new System.EventArgs());
-        LevelManager.Instance.EndLevel();
+       // LevelManager.Instance.EndLevel();
         UIManager.Instance.EndLevel();
     }
 
