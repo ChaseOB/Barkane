@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Goal : MonoBehaviour, IThemedItem
 {
+
+    public static event System.EventHandler OnEndLevel;
+
     public int numShards;
     private int numShardsCollected;
     private bool goalActive = false;

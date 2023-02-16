@@ -14,6 +14,8 @@ public class SaveProfile
 
     //Level name -> number of folds. -1 if not completed
     private Dictionary<string, int> numFolds = new Dictionary<string, int>();
+    //Level name -> unlocked?
+    private Dictionary<string, bool> levelUnlocks = new Dictionary<string, bool>();
     //Cosmetic name -> unlocked?
     private Dictionary<string, bool> cosmeticUnlocks = new Dictionary<string, bool>();
 
@@ -93,6 +95,16 @@ public class SaveProfile
     {
         numFolds = value;
     }
+
+    public Dictionary<string, bool> GetLevelUnlocksDictionary()
+    {
+        return levelUnlocks;
+    }
+
+    public void SetLevelUnlocksDictionary(Dictionary<string, bool> value)
+    {
+        levelUnlocks = value;
+    }
     #endregion
 
     #region Dictionaries
@@ -115,6 +127,27 @@ public class SaveProfile
     {
         numFolds[levelName] = value;
     }
+
+    public bool SetNumFoldsIfLower(string levelName, int value)
+    {
+        if(value < numFolds.GetValueOrDefault(levelName, -1))
+        {
+            numFolds[levelName] = value;
+            return true;
+        }
+        return false;
+    }
+
+    public bool GetLevelUnlock(string levelName)
+    {
+        return levelUnlocks.GetValueOrDefault(levelName, false);
+    }
+
+    public void SetLevelUnlock(string levelName, bool value)
+    {
+        levelUnlocks[levelName] = value;
+    }
+
     #endregion
 
 }

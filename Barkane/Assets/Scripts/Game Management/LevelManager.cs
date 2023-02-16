@@ -7,6 +7,9 @@ using BarkaneEditor;
 
 public class LevelManager : Singleton<LevelManager>
 {
+    //If true, completeing a level automatically unlocks the next level in the sequence
+    public bool sequentialUnlock = true;
+
     private Level level;
     private GameObject instantiatedLevel;
 

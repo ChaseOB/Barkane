@@ -49,6 +49,11 @@ public class SaveSystem
         return saveProfiles[index];
     }
 
+    public static List<SaveProfile> GetProfiles()
+    {
+        return saveProfiles;
+    }
+
     public static int GetRecentlyPlayedIndex()
     {
         int ret = -1;
@@ -79,7 +84,6 @@ public class SaveSystem
         currentIndex = index;
         Current = GetProfile(index);
     }
-
 
     /// <summary>
     /// Saves the game to the current loaded profile index. If the profile index is -1, then no data will be saved.
