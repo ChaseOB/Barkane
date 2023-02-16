@@ -123,6 +123,7 @@ public class FoldAnimator : MonoBehaviour
         else
             foldCount++;
         UIManager.UpdateFoldCount(foldCount);
+        LevelManager.Instance.SetFoldCount(foldCount);
         if(!fromStack && !undo) {
             UndoRedoManager.Instance?.AddAction(fd);
         }

@@ -26,6 +26,8 @@ public class LevelManager : Singleton<LevelManager>
 
     public ImageAnimator imageAnimator;
 
+    private int currLevelFoldCount = 0;
+
     private void Awake() 
     {
         InitializeSingleton(this.gameObject);
@@ -35,6 +37,7 @@ public class LevelManager : Singleton<LevelManager>
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+        Goal.OnReachGoal += OnEndLevel;
     }
     
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -46,6 +49,11 @@ public class LevelManager : Singleton<LevelManager>
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    public Level GetCurrentLevel()
+    {
+        return level;
     }
 
     //Handles index setting, special case of last level
@@ -160,14 +168,33 @@ public class LevelManager : Singleton<LevelManager>
         UnloadLevel();
     }
 
-    public void EndLevel()
+    public void SetFoldCount(int val)
     {
-        
+        currLevelFoldCount = val;
+    }
+
+    private void OnEndLevel(object sender, System.EventArgs e) {
+        EndLevel();
+    }
+
+    public void EndLevel()
+    { 
         instantiatedLevel.GetComponent<FoldablePaper>().isComplete = true;
+
+        //set folds for current level
+        SaveSystem.Current.SetNumFoldsIfLower(level.levelName, currLevelFoldCount);
         
         //Unlock Cosmetics if there are any
         if(level.cosmeticUnlock != string.Empty){
-            PlayerPrefs.SetInt($"CosmeticUnlock{level.cosmeticUnlock}", 1);
+            //PlayerPrefs.SetInt($"CosmeticUnlock{level.cosmeticUnlock}", 1);
+            SaveSystem.Current.SetCosmeticUnlock(level.cosmeticUnlock, true);
+        }
+
+        //unlock next level
+        if(sequentialUnlock && currLevelIndex + 1 != levelList.Count)
+        {
+            string nextLevel = levelList[currLevelIndex + 1].levelName;
+            SaveSystem.Current.SetLevelUnlock(nextLevel, true);
         }
     }
 

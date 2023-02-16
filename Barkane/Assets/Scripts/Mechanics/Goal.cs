@@ -5,7 +5,7 @@ using UnityEngine;
 public class Goal : MonoBehaviour, IThemedItem
 {
 
-    public static event System.EventHandler OnEndLevel;
+    public static event System.EventHandler OnReachGoal;
 
     public int numShards;
     private int numShardsCollected;
@@ -32,6 +32,7 @@ public class Goal : MonoBehaviour, IThemedItem
     }
     
     public void EndLevel() {
+        OnReachGoal?.Invoke(this, new System.EventArgs());
         LevelManager.Instance.EndLevel();
         UIManager.Instance.EndLevel();
     }
