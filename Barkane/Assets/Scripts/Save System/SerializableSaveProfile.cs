@@ -11,6 +11,7 @@ public class SerializableSaveProfile
     public float playTimeInSeconds;
     public System.DateTime lastSaved;
     public string lastLevel;
+    public string cosmetic;
 
     public string[] cosmetics_Keys;
     public bool[]   cosmetics_Values;
@@ -29,6 +30,7 @@ public class SerializableSaveProfile
         ssp.playTimeInSeconds = saveProfile.GetPlayTimeInSeconds();
         ssp.lastSaved = saveProfile.GetLastSaved();
         ssp.lastLevel = saveProfile.GetLastLevel();
+        ssp.cosmetic = saveProfile.GetCosmetic();
 
         ssp.cosmetics_Keys = saveProfile.GetCosmeticsDictionary().Keys.ToArray();
         ssp.levelFolds_Keys = saveProfile.GetFoldsDictionary().Keys.ToArray();
@@ -47,6 +49,7 @@ public class SerializableSaveProfile
         sp.SetPlayTimeInSeconds(playTimeInSeconds);
         sp.SetLastSaved(lastSaved);
         sp.SetLastLevel(lastLevel);
+        sp.SetCosmetic(cosmetic);
 
 
         Dictionary<string, bool> bools = new Dictionary<string, bool>(cosmetics_Keys.Length);

@@ -11,6 +11,7 @@ public class SaveProfile
     private float playTimeInSeconds;
     private System.DateTime lastSaved;
     private string lastLevel;
+    private string cosmetic;
 
     //Level name -> number of folds. -1 if not completed
     private Dictionary<string, int> numFolds = new Dictionary<string, int>();
@@ -75,6 +76,16 @@ public class SaveProfile
     public void SetLastLevel(string level)
     {
         lastLevel = level;
+    }
+
+    public string GetCosmetic()
+    {
+        return cosmetic;
+    }
+
+    public void SetCosmetic(string newCosmetic)
+    {
+        cosmetic = newCosmetic;
     }
 
     public Dictionary<string, bool> GetCosmeticsDictionary()
