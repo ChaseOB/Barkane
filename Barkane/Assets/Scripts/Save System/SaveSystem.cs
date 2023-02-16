@@ -30,15 +30,17 @@ public class SaveSystem
     private static SaveProfile current;
     private static int currentIndex = -1; // if -1, then it's a temporary profile
 
+    private static int maxSaves = 3;
+
     /*
         C: What's the deal with unlimted save profiles?
         This mostly exists for wreckcon
     */
-    private static List<SaveProfile> saveProfiles = new List<SaveProfile>();
+    private static SaveProfile[] saveProfiles = new SaveProfile[maxSaves];
 
     public SaveSystem()
     {
-        for(int i = 0; i < saveProfiles.Count; i++)
+        for(int i = 0; i < maxSaves; i++)
             SetProfile(i, GetSerializableSaveProfile(i)?.ToSaveProfile());
     }
 
@@ -49,7 +51,7 @@ public class SaveSystem
         return saveProfiles[index];
     }
 
-    public static List<SaveProfile> GetProfiles()
+    public static SaveProfile[] GetProfiles()
     {
         return saveProfiles;
     }
@@ -58,7 +60,7 @@ public class SaveSystem
     {
         int ret = -1;
         System.DateTime mostRecent = System.DateTime.MinValue;
-        for (int i = 0; i < saveProfiles.Count; i++)
+        for (int i = 0; i < maxSaves; i++)
         {
             if (saveProfiles[i] != null && saveProfiles[i].GetLastSaved() > mostRecent)
             {
@@ -87,10 +89,21 @@ public class SaveSystem
 
     public static int CreateNewProfile(string name)
     {
+        int index = -1;
+        for (int i = 0; i < maxSaves; i++)
+        {
+            if (saveProfiles[i] == null)
+            {
+                index = i;
+                break;
+            }
+        }
+        if(index == -1)
+            Debug.Log("Reached Maximum Save Profiles");
+        
         SaveProfile newprofile = new SaveProfile(name);
-        saveProfiles.Add(newprofile);
-        currentIndex = saveProfiles.IndexOf(newprofile);
-        return currentIndex;
+        saveProfiles[index] = newprofile;
+        return index;
     }
 
     public static void SetMostRecentProfile()
