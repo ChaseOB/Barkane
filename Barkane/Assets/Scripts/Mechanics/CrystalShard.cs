@@ -20,6 +20,14 @@ public class CrystalShard : MonoBehaviour, IThemedItem
     [SerializeField] private new ParticleSystem particleSystem;
     public List<Gradient> themePartColors = new List<Gradient>();
 
+    private void OnEnable() {
+        GlowStickLogic.OnGlowstickChange += OnGlowstickChange;
+    }
+
+    private void OnDisable() {
+        GlowStickLogic.OnGlowstickChange -= OnGlowstickChange;
+    }
+
     private void Start() {
         goal = FindObjectOfType<Goal>();
         ActivateParticles(particlesActive);
@@ -78,5 +86,12 @@ public class CrystalShard : MonoBehaviour, IThemedItem
             model.SetActive(false);
             inactiveModel.SetActive(true);
         }
+    }
+
+    private void OnGlowstickChange(object sender, GlowStickLogic.GlowStickArgs e) {
+        if(e.state == GlowstickState.OFF)
+            ActivateParticles(false);
+        if(e.state == GlowstickState.CRACKED)
+            ActivateParticles(true);
     }
 }

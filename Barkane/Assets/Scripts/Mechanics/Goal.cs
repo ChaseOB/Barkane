@@ -9,15 +9,31 @@ public class Goal : MonoBehaviour, IThemedItem
 
     public int numShards;
     private int numShardsCollected;
+
     private bool goalActive = false;
+    public bool inGlowstickRange = true; //C: True except when in caves and no glowstick in area
+    public bool particlesActive = true; //C: True except when in caves and no glowstick active
+
     [SerializeField] private GameObject inactiveGoal;
     [SerializeField] private GameObject activeGoal;
     [SerializeField] private GameObject goalPlane;
 
     [SerializeField] private List<Material> swirlMaterials;
 
+    [SerializeField] private new ParticleSystem particleSystem;
+    public List<Gradient> themePartColors = new List<Gradient>();
+
+    private void OnEnable() {
+        GlowStickLogic.OnGlowstickChange += OnGlowstickChange;
+    }
+
+    private void OnDisable() {
+        GlowStickLogic.OnGlowstickChange -= OnGlowstickChange;
+    }
+
     private void Start() {
-        ActivateGoal(numShardsCollected >= numShards);
+        ActivateGoal(CheckIfGoalActive());
+        ActivateParticles(particlesActive);
     }
 
     private void OnTriggerEnter(Collider other) {
@@ -47,7 +63,7 @@ public class Goal : MonoBehaviour, IThemedItem
         numShardsCollected++;
         //update shard display
         UIManager.UpdateShardCount(numShardsCollected, numShards);
-        if(numShardsCollected >= numShards)
+        if(CheckIfGoalActive())
             ActivateGoal();
     }
 
@@ -57,5 +73,34 @@ public class Goal : MonoBehaviour, IThemedItem
         inactiveGoal.SetActive(!val);
         activeGoal.SetActive(val);
         goalPlane.SetActive(val);
+    }
+
+    public void SetInGlowstickRange (bool val = true)
+    {
+        inGlowstickRange = val;
+        ActivateGoal(CheckIfGoalActive());
+    }
+
+    private bool CheckIfGoalActive()
+    {
+        return (numShardsCollected >= numShards && inGlowstickRange);
+    }
+
+    public void ActivateParticles(bool val)
+    {
+        particlesActive = val;
+        if(particlesActive){
+            particleSystem.Play();
+        }
+        else {
+            particleSystem.Stop();
+        }
+    }
+
+    private void OnGlowstickChange(object sender, GlowStickLogic.GlowStickArgs e) {
+        if(e.state == GlowstickState.OFF)
+            ActivateParticles(false);
+        if(e.state == GlowstickState.CRACKED)
+            ActivateParticles(true);
     }
 }

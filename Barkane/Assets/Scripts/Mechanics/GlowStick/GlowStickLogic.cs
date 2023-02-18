@@ -13,6 +13,20 @@ public class GlowStickLogic : MonoBehaviour
     private CrystalShard[] shards;
     private PaperJoint paperJoint;
 
+    public class GlowStickArgs
+    {
+        public int lifetime;
+        public GlowstickState state;
+
+        public GlowStickArgs(int l, GlowstickState s)
+        {
+            lifetime = l;
+            state = s;
+        }
+    }
+
+    public static event System.EventHandler<GlowStickArgs> OnGlowstickChange;
+
     private void OnEnable() {
         FoldAnimator.OnFold += OnFold;
     }
@@ -38,8 +52,9 @@ public class GlowStickLogic : MonoBehaviour
                 state = GlowstickState.OFF;
                 ToggleGSBoxes(false);
                 innerRenderer.material = materials[2];
-                foreach (CrystalShard shard in shards)
-                    shard.ActivateParticles(false);
+                OnGlowstickChange.Invoke(this, new GlowStickArgs(lifetime, state));
+                //foreach (CrystalShard shard in shards)
+                   // shard.ActivateParticles(false);
             }
         }
         if(state == GlowstickState.PRIMED && args.fd.axisJoints.Contains(paperJoint))
@@ -47,8 +62,9 @@ public class GlowStickLogic : MonoBehaviour
             state = GlowstickState.CRACKED;
             ToggleGSBoxes(true);
             innerRenderer.material = materials[1];
-            foreach (CrystalShard shard in shards)
-                shard.ActivateParticles(true);
+            OnGlowstickChange?.Invoke(this, new GlowStickArgs(lifetime, state));
+            //foreach (CrystalShard shard in shards)
+              //  shard.ActivateParticles(true);
         }
     }
 
