@@ -143,8 +143,6 @@ public class SaveProfile
 
     public bool SetNumFoldsIfLower(string levelName, int value)
     {
-        Debug.Log(levelName);
-        Debug.Log(value);
         if(!numFolds.ContainsKey(levelName))
         {
             numFolds[levelName] = value;

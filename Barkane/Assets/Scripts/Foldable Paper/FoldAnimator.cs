@@ -39,7 +39,7 @@ public class FoldAnimator : MonoBehaviour
         {
             var foldJointRenderer = fd.axisJoints[0].JointRenderer;
             if(!ActionLockManager.Instance.TryTakeLock(this)){
-                print("Action Lock taken, can't fold (this is bad)");
+                Debug.LogError("Action Lock taken, can't fold (this is bad)");
                 return;
             }
             if(foldJointRenderer != null)
@@ -158,7 +158,6 @@ public class FoldAnimator : MonoBehaviour
             
             else
             {
-                Debug.Log($"{list.Count} squares at location {list[0].transform.position}");
                     //We arbitrarily pick one side of the first square to be the "top", which is then used as a comparison for other square's top/bottoms
                 Vector3 topHalfNorm = list[0].TopHalf.transform.up;
                     
@@ -182,9 +181,6 @@ public class FoldAnimator : MonoBehaviour
                         prevPos = ps.storedPos;
                     }
                 }
-                    
-                Debug.Log("fold side " + activeFoldSides.Count);
-                Debug.Log("total " + activeSides.Count);
                 foreach(GameObject go in activeSides)
                 {
                     if(activeFoldSides.Contains(go))
@@ -215,7 +211,7 @@ public class FoldAnimator : MonoBehaviour
                         }
                     }
                 }
-                if(foldTop == null)
+               /* if(foldTop == null)
                     Debug.Log("fold top is null");
                 if(foldBot == null)
                     Debug.Log("fold bot is null");
@@ -223,7 +219,7 @@ public class FoldAnimator : MonoBehaviour
                     Debug.Log("stat top is null");
                 if(stationaryBot == null)
                     Debug.Log("stat bot is null");
-
+*/
                 if(foldTop != null && foldBot != null && stationaryTop != null && stationaryBot != null)
                 {
                     float topDist = Vector3.Magnitude(prevPos - stationaryTop.transform.position);
