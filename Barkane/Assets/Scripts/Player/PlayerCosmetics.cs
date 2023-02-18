@@ -20,7 +20,7 @@ public class PlayerCosmetics : Singleton<PlayerCosmetics>
         for(int i = 0; i < CosmeticNames.Count; i++) 
             cosmeticDict.Add(CosmeticNames[i], CosmeticGOs[i]);
         
-        EnableCosmetic(PlayerPrefs.GetString("CurrentCosmetic", "None"));
+        EnableCosmetic(SaveSystem.Current.GetCosmetic());
     }
 
     public void EnableCosmetic(string name)

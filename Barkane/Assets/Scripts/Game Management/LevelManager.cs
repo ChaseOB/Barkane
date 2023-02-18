@@ -188,7 +188,6 @@ public class LevelManager : Singleton<LevelManager>
         
         //Unlock Cosmetics if there are any
         if(level.cosmeticUnlock != string.Empty){
-            //PlayerPrefs.SetInt($"CosmeticUnlock{level.cosmeticUnlock}", 1);
             SaveSystem.Current.SetCosmeticUnlock(level.cosmeticUnlock, true);
         }
 

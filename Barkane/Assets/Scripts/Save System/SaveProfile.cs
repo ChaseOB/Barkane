@@ -25,6 +25,7 @@ public class SaveProfile
     {
         this.profileName = profileName;
         lastSaved = System.DateTime.Now;
+        cosmeticUnlocks.Add("None", true);
     }
 
     #region Getters / Setters

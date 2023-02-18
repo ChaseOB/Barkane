@@ -9,12 +9,11 @@ public class CosmeticManager : Singleton<CosmeticManager>
     public string cosmeticString;
 
     private void Awake() {
-        cosmeticString = PlayerPrefs.GetString("CurrentCosmetic", "None");
-        foreach(CosmeticButton button in buttons) {
-            int unlock = PlayerPrefs.GetInt($"CosmeticUnlock{button.cosmeticName}");
-            if(unlock == 1 || button.cosmeticName == "None")
+        cosmeticString = SaveSystem.Current.GetCosmetic(); 
+        Dictionary<string, bool> cosmeticDict = SaveSystem.Current.GetCosmeticsDictionary();
+        foreach(CosmeticButton button in buttons) 
+            if(cosmeticDict.GetValueOrDefault(button.cosmeticName))
                 button.UnlockCosmetic();
-        }
     }
 
     public void SelectCosmetic(string cosmeticName)
@@ -25,6 +24,6 @@ public class CosmeticManager : Singleton<CosmeticManager>
 
         cosmeticString = cosmeticName;
 
-        PlayerPrefs.SetString("CurrentCosmetic", cosmeticName);
+        SaveSystem.Current.SetCosmetic(cosmeticName);
     }
 }
