@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e7cf2c46ece0374682d71ab95d0203c, type: 3}
   m_Name: GC 2
   m_EditorClassIdentifier: 
-  levelName: GC 1
+  levelName: GC 2
   levelObject: {fileID: 536032829354533646, guid: 6d044a1f6f49f1940b4dc809a8bd85b4, type: 3}
   theme: {fileID: 11400000, guid: 696d7d1b257994f499495bd456579486, type: 2}
-  cosmeticUnlock: Swag Glasses
+  cosmeticUnlock: SwagGlasses

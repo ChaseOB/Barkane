@@ -25,7 +25,7 @@ public class PlayerCosmetics : Singleton<PlayerCosmetics>
 
     public void EnableCosmetic(string name)
     {
-        if(name == "None") return;
+        if(name == null || name == "None") return;
         
         enabledCosmetic?.SetActive(false);
         GameObject go = cosmeticDict[name];
