@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 2654907975218644542}
   - component: {fileID: 2654907975218644543}
   - component: {fileID: 2654907975218644540}
+  - component: {fileID: 380995448640351331}
   m_Layer: 0
   m_Name: Goal
   m_TagString: Untagged
@@ -66,6 +67,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6044337566113838245}
+  - {fileID: 5722666678158662117}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -95,6 +97,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numShards: 1
+  inGlowstickRange: 1
+  particlesActive: 1
   inactiveGoal: {fileID: 2654907975775782997}
   activeGoal: {fileID: 2654907975575420462}
   goalPlane: {fileID: 2797200993066839656}
@@ -102,6 +106,92 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 9b7eef24d95cadb4eb1f3783badd428d, type: 2}
   - {fileID: 2100000, guid: d94406731e9f77f42b36f88bf266e32c, type: 2}
   - {fileID: 2100000, guid: 1762792845e845f419bae92f6a3d45cc, type: 2}
+  particleSystem: {fileID: 5722666678502495773}
+  themePartColors:
+  - serializedVersion: 2
+    key0: {r: 0.7587352, g: 0, b: 1, a: 0}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 1}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 35659
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 21203
+    atime2: 53006
+    atime3: 65535
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 4
+  - serializedVersion: 2
+    key0: {r: 1, g: 0, b: 0.01999569, a: 0}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 1}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 35659
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 21203
+    atime2: 53006
+    atime3: 65535
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 4
+  - serializedVersion: 2
+    key0: {r: 0, g: 1, b: 0.065570354, a: 0}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 1}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 35659
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 21203
+    atime2: 53006
+    atime3: 65535
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 4
 --- !u!54 &2654907975218644540
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -118,6 +208,53 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &380995448640351331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2654907975218644480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fd14a1dba89b0c48ac5beff2474d704, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  compareTags:
+  - GlowstickBox
+  OnEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2654907975218644543}
+        m_TargetAssemblyTypeName: Goal, Assembly-CSharp
+        m_MethodName: SetInGlowstickRange
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  OnStay:
+    m_PersistentCalls:
+      m_Calls: []
+  OnExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2654907975218644543}
+        m_TargetAssemblyTypeName: Goal, Assembly-CSharp
+        m_MethodName: SetInGlowstickRange
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2654907975575420462
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,3 +519,110 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &4726016191942369552
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 2654907975218644481}
+    m_Modifications:
+    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: ShapeModule.arc.mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.atime4
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.atime5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.ctime2
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.r
+      value: 0.7587352
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key2.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key2.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key2.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384884, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_Name
+      value: CrystalSparkleParticle
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.106
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+--- !u!4 &5722666678158662117 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1079968538550384885, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+  m_PrefabInstance: {fileID: 4726016191942369552}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &5722666678502495773 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+  m_PrefabInstance: {fileID: 4726016191942369552}
+  m_PrefabAsset: {fileID: 0}
