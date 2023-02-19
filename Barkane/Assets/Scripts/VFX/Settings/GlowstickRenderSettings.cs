@@ -17,10 +17,14 @@ namespace BarkaneJoint
         public float elevation;
         [Range(0, 32)]
         public int resolution;
+        [Range(0, 1)]
+        public float marginCorrection;
         [HideInInspector] public int[] indices;
         [HideInInspector] public Vector2[] angles;
 
-        public int VCount => 5 * resolution + 2;
+        public static int chunk = 7;
+
+        public int VCount => chunk * resolution + 2;
     }
 
 #if UNITY_EDITOR
@@ -44,7 +48,7 @@ namespace BarkaneJoint
                     (target as GlowstickRenderSettings).angles = angs;
                     Debug.Log(string.Join(", ", angs));
 
-                    var ids = ColumnMeshIndex.Create(resolution);
+                    var ids = ColumnMeshIndex.Create(resolution, GlowstickRenderSettings.chunk);
 
                     (target as GlowstickRenderSettings).indices = ids;
                     Debug.Log(string.Join(", ", ids));

@@ -89,7 +89,7 @@ Material:
     - _lambertian: 0.22
     - _ltBias: 0.13
     - _offset: 0
-    - _scale: 0.07
+    - _scale: 0.1325
     - _sunAbsorption: 0.45
     - _useTransparency: 0
     m_Colors:
