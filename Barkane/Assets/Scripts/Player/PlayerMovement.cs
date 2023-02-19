@@ -61,29 +61,40 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(bool fromStack = false, bool undo = false)
     {
-        if(undo || CheckValidMove())
+        if(undo || CheckValidMove()) {
+            print ("1");
             if(CheckValidSnowball())
                 StartCoroutine(MoveHelper(fromStack, undo));
+        }
     }
 
     private bool CheckValidMove()
     {
+        print("checking move");
         Collider[] colliders = Physics.OverlapBox(target.transform.position + target.center, target.size/2, Quaternion.identity, targetMask, QueryTriggerInteraction.Collide);
         bool validLoc = colliders.Length > 0;
         bool hit = Physics.Raycast(raycastStart.position, 
                                 (target.transform.position + target.center - raycastStart.position), 
                                 Vector3.Magnitude(target.transform.position + target.center - raycastStart.position), playerCollidingMask); 
         Debug.DrawRay(raycastStart.position, target.transform.position + target.center - raycastStart.position, Color.cyan, 15);
+        if(!validLoc)
+            print("no move loc found");
+        if(hit)
+            print("Hit invalid object");
         return validLoc && !hit;
     }
 
     private bool CheckValidSnowball()
     {
-        Collider[] colliders = Physics.OverlapBox(target.transform.position + target.center, target.size/2, Quaternion.identity, targetMask, QueryTriggerInteraction.Collide);
+        Collider[] colliders = Physics.OverlapBox(target.transform.position + target.center, target.size/2, Quaternion.identity, snowballMask, QueryTriggerInteraction.Collide);
         bool sbExists = colliders.Length > 0;
-        if(!sbExists)
+        if(!sbExists) {
+            print("no snowball found");
             return true;
+        }
+        print("found snowball");
         snowball = colliders[0].gameObject.GetComponent<Snowball>();
+        print(transform.forward);
         return snowball.CheckIfCanPushSnowball(transform.forward);
     }
 
@@ -100,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if(snowball != null) {
-            snowball.MoveSnowball(transform.forward);
+            snowball.MoveSnowball();
             snowball = null;
         }
         float t = 0;

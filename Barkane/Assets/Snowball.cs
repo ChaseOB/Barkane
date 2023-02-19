@@ -10,6 +10,7 @@ public class Snowball : MonoBehaviour
     public LayerMask snowballCollidingMask;
     public LayerMask validLocMask;
     public float moveDuration = 0.25f;
+    private Vector3 target;
 
 
 
@@ -25,7 +26,7 @@ public class Snowball : MonoBehaviour
 
     private void FindClosestFace()
     {
-        RaycastHit[] hits = Physics.RaycastAll(center.position, transform.up * -1, 2, validLocMask, QueryTriggerInteraction.Collide);
+        RaycastHit[] hits = Physics.RaycastAll(center.position, transform.up * -1, 1.1f, validLocMask, QueryTriggerInteraction.Collide);
         foreach(RaycastHit hit in hits) {
             if(hit.rigidbody.GetComponent<PaperSquare>() != null) {
                 PaperSquare ps = hit.rigidbody.GetComponent<PaperSquare>();
@@ -41,42 +42,54 @@ public class Snowball : MonoBehaviour
                     parentSide = bottom;
                 
                 this.transform.parent = parentSide.transform;
+                return;
             }
         }
-
-
         Debug.LogError("No face found for snowball");
     }
 
 
     //returns true if you can push the snowball in the given (world space) direction
     public bool CheckIfCanPushSnowball(Vector3 direction)
-    {
+    {   
+
         Vector3 convertedDir = direction.normalized * 2;
+        
+        print(center.position);
+        print(convertedDir);
+
 
         //1. Raycast in direction to make sure square is not blocked
         bool hit = Physics.Raycast(center.position, direction, 2, snowballCollidingMask); 
-        if(hit)
+        if(hit) {
+            print("snowball blocked");
             return false;
-
+        }
         //2. Check that there is a valid square to move to
         Collider[] colliders = Physics.OverlapBox(transform.position + convertedDir, new Vector3(0.1f, 0.1f, 0.1f), Quaternion.identity, validLocMask, QueryTriggerInteraction.Collide);
-        if (colliders.Length > 0)
+        if (colliders.Length > 0) {
+            print("Found Valid Loc");
+            target = transform.position + convertedDir;
+            print("target:" + target);
+            Debug.DrawRay(transform.position, convertedDir, Color.magenta, 30);
             return true;
+        }
+        print("no valid loc found");
+                print(convertedDir);
 
+        Debug.DrawRay(transform.position, convertedDir, Color.red, 30);
         return false;
     }
 
 
 
-    public void MoveSnowball(Vector3 direction) {
-        Vector3 convertedDir = direction.normalized * 2;
-        StartCoroutine(AnimateSnowball(convertedDir));
+    public void MoveSnowball() {
+        StartCoroutine(AnimateSnowball());
     }
 
 
 
-    private IEnumerator AnimateSnowball(Vector3 target) {
+    private IEnumerator AnimateSnowball() {
         Vector3 current = transform.position;
         float start = Time.time;
         yield return new WaitUntil(() => playerContact);
@@ -85,7 +98,7 @@ public class Snowball : MonoBehaviour
         //animate 
 
         float t = 0;
-        while (t < moveDuration)
+        while (t < remaining)
         {
             t += Time.deltaTime;
             transform.position = Vector3.Lerp(current, target, t/remaining);

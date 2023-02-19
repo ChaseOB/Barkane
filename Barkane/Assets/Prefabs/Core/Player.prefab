@@ -178,6 +178,9 @@ MonoBehaviour:
   targetMask:
     serializedVersion: 2
     m_Bits: 4096
+  snowballMask:
+    serializedVersion: 2
+    m_Bits: 16384
   target: {fileID: 8814069562315018360}
 --- !u!114 &8814069561603125228
 MonoBehaviour:
