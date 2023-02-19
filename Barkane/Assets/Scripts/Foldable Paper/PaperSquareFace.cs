@@ -15,6 +15,7 @@ public enum FaceObjectType
     SHARD,
     GOAL,
     CONETREE,
+    SNOWBALL,
     GLOWSTICKBOX,
 }
 
@@ -28,6 +29,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
     [SerializeField] private bool shard;
     [SerializeField] private bool goal;
     [SerializeField] private bool coneTree;
+    [SerializeField] private bool snowball;
     [SerializeField] private bool glowstickBox;
 
     [Header("References")]
@@ -36,6 +38,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
     [SerializeField] private GameObject shardPrefab;
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private GameObject coneTreePrefab;
+    [SerializeField] private GameObject snowballPrefab;
     [SerializeField] private GameObject glowstickBoxPrefab;
 
     [SerializeField, HideInInspector] Theme theme;
@@ -75,6 +78,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
             {FaceObjectType.SHARD, shardPrefab },
             {FaceObjectType.GOAL, goalPrefab },
             {FaceObjectType.CONETREE, coneTreePrefab},
+            {FaceObjectType.SNOWBALL, snowballPrefab},
             {FaceObjectType.GLOWSTICKBOX, glowstickBoxPrefab}
         };
     }
@@ -155,6 +159,7 @@ public class PaperSquareFaceEditor : Editor
             { "shard", (prop, face) => face.SetFaceObject(FaceObjectType.SHARD, prop.boolValue) },
             { "goal", (prop, face) => face.SetFaceObject(FaceObjectType.GOAL, prop.boolValue) },
             { "coneTree", (prop, face) => face.SetFaceObject(FaceObjectType.CONETREE, prop.boolValue) },
+            { "snowball", (prop, face) => face.SetFaceObject(FaceObjectType.SNOWBALL, prop.boolValue) },
             { "glowstickBox", (prop, face) => face.SetFaceObject(FaceObjectType.GLOWSTICKBOX, prop.boolValue) },
         };
     }
