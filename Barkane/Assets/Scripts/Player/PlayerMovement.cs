@@ -22,7 +22,10 @@ public class PlayerMovement : MonoBehaviour
 
     public LayerMask playerCollidingMask;
     public LayerMask targetMask;
+    public LayerMask snowballMask;
     public BoxCollider target;
+
+    private Snowball snowball;
 
 
     private void Start() 
@@ -59,7 +62,8 @@ public class PlayerMovement : MonoBehaviour
     public void Move(bool fromStack = false, bool undo = false)
     {
         if(undo || CheckValidMove())
-            StartCoroutine(MoveHelper(fromStack, undo));
+            if(CheckValidSnowball())
+                StartCoroutine(MoveHelper(fromStack, undo));
     }
 
     private bool CheckValidMove()
@@ -73,6 +77,16 @@ public class PlayerMovement : MonoBehaviour
         return validLoc && !hit;
     }
 
+    private bool CheckValidSnowball()
+    {
+        Collider[] colliders = Physics.OverlapBox(target.transform.position + target.center, target.size/2, Quaternion.identity, targetMask, QueryTriggerInteraction.Collide);
+        bool sbExists = colliders.Length > 0;
+        if(!sbExists)
+            return true;
+        snowball = colliders[0].gameObject.GetComponent<Snowball>();
+        return snowball.CheckIfCanPushSnowball(transform.forward);
+    }
+
     private IEnumerator MoveHelper(bool fromStack, bool undo)
     {
         isMoving = true;
@@ -83,6 +97,11 @@ public class PlayerMovement : MonoBehaviour
         Vector3 goal = targetPos.transform.position;
         if(undo){
             goal += 2 * (curr - goal);
+        }
+
+        if(snowball != null) {
+            snowball.MoveSnowball(transform.forward);
+            snowball = null;
         }
         float t = 0;
         while (t < moveDuration)

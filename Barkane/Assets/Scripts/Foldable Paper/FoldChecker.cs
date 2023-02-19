@@ -142,7 +142,6 @@ public class FoldChecker : Singleton<FoldChecker>
                     float d2 = Vector3.Distance(t3, t4);
                     Debug.DrawLine(t3, t4, Color.yellow, 30);
 
-                    print($"{d1}, {d2}");
                
                     if(d1 < d2) {
                         Debug.Log($"Cannot fold: would clip through adj paper {activeSides[0].transform.up} {activeSides[1].transform.up}");
@@ -233,7 +232,6 @@ public class FoldChecker : Singleton<FoldChecker>
                     //1: we hit the player. Then ps is null, and there is a collision
                     //2: we hit an object/paper square. Then we need to check to see if it is in the fold side objects
                     // if so, this collision doesn't matter. if not, then we can't fold
-                    //print(invertFold);
                     if(ps == null || !fd.foldObjects.foldSquares.Contains(ps.gameObject)) 
                     {
                         Debug.Log($"Collision with {hit.transform.gameObject.name} on ray {i},{j}.");
