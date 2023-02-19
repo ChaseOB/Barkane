@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class ColumnMeshIndex
 {
-    public static int[] Create(int resolution)
+    public static int[] Create(int resolution, int chunk)
     {
-        // main body: 5 segments, each is a ring of resolution quads, each quad 2 triangles, each triangle 3 vertices
+        // main body: 7 segments, each is a ring of resolution quads, each quad 2 triangles, each triangle 3 vertices
         // 2 end caps: resolution triangles, each triangle 3 vertices
-        var ids = new int[(5 - 1) * resolution * 2 * 3 + 2 * resolution * 3];
+        var ids = new int[(chunk - 1) * resolution * 2 * 3 + 2 * resolution * 3];
         var t = 0;
 
         // beginning cap
@@ -23,7 +23,7 @@ public class ColumnMeshIndex
         ids[t++] = resolution;
 
         // main cylinder
-        for (int i = 0; i < (5 - 1); i++)
+        for (int i = 0; i < (chunk - 1); i++)
         {
             // first resolution - 1 quads
             var j = 0;
@@ -48,13 +48,13 @@ public class ColumnMeshIndex
         // ending cap, order is reversed
         for (int i = 0; i < resolution - 1; i++)
         {
-            ids[t++] = 5 * resolution + 1;
-            ids[t++] = 1 + i + 4 * resolution;
-            ids[t++] = 1 + i + 4 * resolution + 1;
+            ids[t++] = chunk * resolution + 1;
+            ids[t++] = 1 + i + (chunk - 1) * resolution;
+            ids[t++] = 1 + i + (chunk - 1) * resolution + 1;
         }
-        ids[t++] = 5 * resolution + 1;
-        ids[t++] = resolution + 4 * resolution;
-        ids[t++] = 4 * resolution + 1;
+        ids[t++] = chunk * resolution + 1;
+        ids[t++] = resolution + (chunk - 1) * resolution;
+        ids[t++] = (chunk - 1) * resolution + 1;
 
         return ids;
     }
