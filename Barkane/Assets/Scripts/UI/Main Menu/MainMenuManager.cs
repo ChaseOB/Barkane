@@ -12,11 +12,18 @@ public class MainMenuManager : MonoBehaviour
     public GameObject levelSelect;
     public GameObject credits;
     public GameObject cosmetics;
+    public GameObject profileSelect;
 
 
     public static void StartGame() {
         SceneManager.LoadScene(gameStartScene);
     }
+
+    public void ToggleProfileSelectMenu(bool toggle) {
+        profileSelect.SetActive(toggle);
+        mainMenu.SetActive(!toggle);
+    }
+
 
     public void LoadLevel(int level)
     {

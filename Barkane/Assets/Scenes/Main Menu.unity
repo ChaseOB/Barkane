@@ -571,7 +571,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &78831099
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2716,6 +2716,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d27a7bd76a8ede488c58f9abf51887d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  profileButtons: []
+  newProfileButton: {fileID: 0}
+  saveProfileButton: {fileID: 0}
+  firstVisIndex: 0
+  visibleProfiles: 3
+  moveAmount: 1
+  profilePosTransforms: []
+  cycleRightArrow: {fileID: 0}
+  cycleLeftArrow: {fileID: 0}
 --- !u!4 &602672603
 Transform:
   m_ObjectHideFlags: 0
@@ -5271,7 +5280,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1062117344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5351,7 +5360,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1097255891
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6430,12 +6439,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bd8f3bb1c67e6e4eb2563735cf880ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameStartScene: 1
   playMenu: {fileID: 1855018208}
   mainMenu: {fileID: 1679801668}
   levelSelect: {fileID: 1737990966}
   credits: {fileID: 1924345292}
   cosmetics: {fileID: 264950798}
+  profileSelect: {fileID: 0}
 --- !u!4 &1330438225
 Transform:
   m_ObjectHideFlags: 0
@@ -7516,7 +7525,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1461087984
 RectTransform:
   m_ObjectHideFlags: 0

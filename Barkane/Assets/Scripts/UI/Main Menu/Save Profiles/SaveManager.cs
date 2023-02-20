@@ -21,19 +21,32 @@ public class SaveManager : MonoBehaviour
         SaveSystem s = new SaveSystem(); //load save systme on game startup
     }
 
-    public void LoadSavesFromFile() {
-        SaveSystem s = new SaveSystem();
+    private void Start() {
+        CreateProfileButtons();
+        ShowProfileButtons();
     }
+
+    //public void LoadSavesFromFile() {
+   //     SaveSystem s = new SaveSystem();
+   // }
 
     public void CreateProfileButtons() {
         SaveProfile[] profiles = SortSaveProfilesByTime();
-        if(profiles[SaveSystem.maxSaves] == null)
+        if(profiles[SaveSystem.maxSaves - 1] == null)
         {
             //if we have fewer than the max save profiles, add the "make new save profile" button
+            GameObject button = Instantiate(newProfileButton, Vector3.zero, Quaternion.identity);
+            button.SetActive(false);
+            profileButtons.Add(button);
         }
-        else
+        foreach(SaveProfile profile in profiles)
         {
-            //else make all the save profile buttons
+            if(profile != null) {
+                GameObject button = Instantiate(saveProfileButton, Vector3.zero, Quaternion.identity);
+                button.GetComponent<SaveProfileButton>().SetProfile(profile);
+                button.SetActive(false);
+                profileButtons.Add(button);
+            }
         }
     }
 

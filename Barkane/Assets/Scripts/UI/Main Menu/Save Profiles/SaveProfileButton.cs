@@ -6,8 +6,6 @@ using TMPro;
 
 public class SaveProfileButton : ProfileButton
 {
-    [SerializeField] private int profileIndex = -1;
-
     public TextMeshProUGUI profileNameText;
     public TextMeshProUGUI currentLevelText;
     public TextMeshProUGUI timeText;
