@@ -4,51 +4,36 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class SaveProfileButton : MonoBehaviour
+public class SaveProfileButton : ProfileButton
 {
     [SerializeField] private int profileIndex = -1;
 
     public TextMeshProUGUI profileNameText;
     public TextMeshProUGUI currentLevelText;
     public TextMeshProUGUI timeText;
-
     private SaveProfile profile;
 
-
-    ///public MainMenuManager mainMenuManager;
-
-    private void OnEnable() 
+   /* private void OnEnable() 
     {
-        ReadProfileFromSave();
+       // ReadProfileFromSave();
+        UpdateButton();
+    }*/
+
+    public void SetProfile(SaveProfile profile)
+    {
+        this.profile = profile;
         UpdateButton();
     }
-
-    public void UpdateButton()
+    private void UpdateButton() 
     {
-
-        if (profile != null)
-        {
-           // completionText.gameObject.SetActive(true);
-           // timeText.gameObject.SetActive(true);
-
-            profileNameText.text = profile.GetProfileName();
-
-           // completionText.text = string.Format("{0}/9", GetNumAreasCompleted(profile));
-            float seconds = profile.GetPlayTimeInSeconds();
-            int minutes = (int)seconds / 60;
-            timeText.text = string.Format("{0}h{1:D2}", minutes / 60, minutes % 60);
-            //catSticker.enabled = profile.GetCompletionStatus();
-        }
-        else
-        {
-            profileNameText.text = "[ Empty ]";
-            //completionText.gameObject.SetActive(false);
-            timeText.gameObject.SetActive(false);
-            //catSticker.enabled = false;
-        }
+        profileNameText.text = profile.GetProfileName();
+        currentLevelText.text = profile.GetLastLevel();
+        float seconds = profile.GetPlayTimeInSeconds();
+        int minutes = (int)seconds / 60;
+        timeText.text = string.Format("{0}h{1:D2}", minutes / 60, minutes % 60);
     }
     
-    public void ReadProfileFromSave()
+   /* public void ReadProfileFromSave()
     {
         SerializableSaveProfile ssp = SaveSystem.GetSerializableSaveProfile(profileIndex);
         if (ssp != null)
@@ -86,5 +71,5 @@ public class SaveProfileButton : MonoBehaviour
             SaveSystem.SetProfile(profileIndex, profile);
             UpdateButton();
         }
-    }
+    }*/
 }
