@@ -6,11 +6,13 @@ using UnityEngine.SceneManagement;
 public class MainMenuManager : MonoBehaviour
 {
     public int gameStartScene;
+
     public GameObject playMenu;
     public GameObject mainMenu;
     public GameObject levelSelect;
     public GameObject credits;
     public GameObject cosmetics;
+
 
     public void StartGame() {
         //Load cutscene

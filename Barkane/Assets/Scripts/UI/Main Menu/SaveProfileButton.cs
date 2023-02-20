@@ -6,17 +6,16 @@ using TMPro;
 
 public class SaveProfileButton : MonoBehaviour
 {
-    public TextMeshProUGUI profileNameText;
-    //public TextMeshProUGUI completionText;
-    public TextMeshProUGUI timeText;
-    //public Image catSticker;
-
     [SerializeField] private int profileIndex = -1;
+
+    public TextMeshProUGUI profileNameText;
+    public TextMeshProUGUI currentLevelText;
+    public TextMeshProUGUI timeText;
+
     private SaveProfile profile;
 
-    public static bool deleteMode;
 
-    public MainMenuManager mainMenuManager;
+    ///public MainMenuManager mainMenuManager;
 
     private void OnEnable() 
     {
@@ -30,13 +29,10 @@ public class SaveProfileButton : MonoBehaviour
         if (profile != null)
         {
            // completionText.gameObject.SetActive(true);
-            timeText.gameObject.SetActive(true);
+           // timeText.gameObject.SetActive(true);
 
-            // name based on delete mode
-            if (!deleteMode)
-                profileNameText.text = profile.GetProfileName();
-            else
-                profileNameText.text = "Delete?";
+            profileNameText.text = profile.GetProfileName();
+
            // completionText.text = string.Format("{0}/9", GetNumAreasCompleted(profile));
             float seconds = profile.GetPlayTimeInSeconds();
             int minutes = (int)seconds / 60;
@@ -70,15 +66,8 @@ public class SaveProfileButton : MonoBehaviour
         }
         else
         {
-            if (deleteMode)
-            {
-                DeleteThisProfile();
-            }
-            else
-            {
-                // load my profile
                 LoadThisProfile();
-            }
+            
         }
     }
 
