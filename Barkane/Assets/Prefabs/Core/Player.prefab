@@ -115,7 +115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8902a54ff0abe7b4fb236cbd6c80135d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDuration: 0.4
+  moveDuration: 0.5
   turnDuration: 0.15
   targetPos: {fileID: 8814069562315018364}
   raycastStart: {fileID: 8814069560652256591}

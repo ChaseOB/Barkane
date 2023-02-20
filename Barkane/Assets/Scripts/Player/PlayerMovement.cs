@@ -96,8 +96,8 @@ public class PlayerMovement : MonoBehaviour
         animator.Play("MoveFail");
     }
 
-    private void OnEndInvalidMoveAnimation() {
-        animator.Play("Nothing");
+    private void OnEndMoveAnimation() {
+        animator.Play("Idle");
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 
@@ -117,26 +117,28 @@ public class PlayerMovement : MonoBehaviour
             snowball.MoveSnowball();
             snowball = null;
         }
+        animator.Play("Move");
         float t = 0;
         while (t < moveDuration)
         {
             t += Time.deltaTime;
             transform.position = Vector3.Lerp(curr, goal, t/moveDuration);
-            marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
-                                            marmaladeY + moveVertCurve.Evaluate(t/moveDuration) * bounceHeight,  
-                                            marmalade.transform.position.z);
+            //marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
+           //                                 marmaladeY + moveVertCurve.Evaluate(t/moveDuration) * bounceHeight,  
+           //                                 marmalade.transform.position.z);
             yield return null;
         }
         transform.position = goal;
-        marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
-                                            marmaladeY,  
-                                            marmalade.transform.position.z);
+        //marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
+        //                                    marmaladeY,  
+           //                                 marmalade.transform.position.z);
         isMoving = false;
         if(!fromStack && !undo) {
             PlayerMove pm = new PlayerMove();
             pm.movetype = 1;
             UndoRedoManager.Instance?.AddAction(pm);
         }
+        animator.Play("Idle");
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 
