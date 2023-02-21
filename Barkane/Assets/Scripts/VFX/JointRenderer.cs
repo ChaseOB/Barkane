@@ -396,11 +396,11 @@ namespace BarkaneJoint
             // it is possible to do this thresholding without the angle, but the angle is also used elsewhere so might as well
             g1.nJ = (g1.a2b < 20f && g1.a2b > -20f ? -g.nJ2A - g.nJ2B : g1.nA + g1.nB).normalized;
 
-            // TODO: simply below, remove trigs
+            // TODO: simply below, remove as many trigs as possible
 
-            g2.nA = -a.transform.up;
-            g2.nB = -b.transform.up;
-            g2.tJ = Vector3.Cross(g2.nA, g.nJ2A);
+            g2.nA = -g1.nA;
+            g2.nB = -g1.nB;
+            g2.tJ = -g1.tJ;
             g2.a2b = Vector3.SignedAngle(g.nJ2A, g.nJ2B, g2.tJ);
 
             // for large angles pA and pB are easy to cancel each other out (pA + pB approximates pJ) which is bad bc the first method will have a 0
