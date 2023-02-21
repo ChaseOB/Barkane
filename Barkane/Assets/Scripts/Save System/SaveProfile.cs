@@ -18,6 +18,7 @@ public class SaveProfile
     //ADD THESE
     private int lastLevelWorldNum;
     private int lastLevelNum;
+    private int numLevelsCompleted;
 
     //Level name -> number of folds. -1 if not completed
     private Dictionary<string, int> numFolds = new Dictionary<string, int>();
