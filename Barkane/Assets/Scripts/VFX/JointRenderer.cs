@@ -14,7 +14,7 @@ namespace BarkaneJoint
         /**
          * FOR THE CONTEXT OF JOINT VFX...
          * A and B always represent the identity of the square, A always across the joint from B, and vice versa
-         * 1 and 2 always represent the side o fthe square, A1 and A2 are always on the same side of the joint (but different facing direction), same for B
+         * 1 and 2 always represent the side of the square, A1 and A2 are always on the same side of the joint (but different facing direction), same for B
          * Pair1 contains both A and B for side 1, Pair2 contains both A and B for side 2
          */
 
@@ -33,7 +33,10 @@ namespace BarkaneJoint
         [SerializeField] private GameObject indicator;
         [SerializeField] private MaskFoldParticles maskFoldParticles;
 
-        internal JointGeometryData side1Geometry, side2Geometry;
+        internal JointGeometryData jointGeometry = new JointGeometryData();
+        internal JointGeometryData.JointSideGeometryData
+            jointGeometry1 = new JointGeometryData.JointSideGeometryData(),
+            jointGeometry2 = new JointGeometryData.JointSideGeometryData();
 
         [SerializeField] private Material materialPrototype;
 
@@ -113,7 +116,7 @@ namespace BarkaneJoint
             if (a1 == null || a2 == null || b1 == null || b2 == null) return;
             // clamping done internally, no need to pass in both sides separately
             // here side1 chosen
-            (side1Geometry, side2Geometry) = JointGeometryData.GetPairs(a1, b1, this);
+            JointGeometryData.Update(a1, b1, this, ref jointGeometry, ref jointGeometry1, ref jointGeometry2);
             // lock to world space orientation
             transform.rotation = Quaternion.identity;
         }
@@ -259,16 +262,16 @@ namespace BarkaneJoint
                 #region vertex filling
                 var tStart = settings.tsStart[i];
                 var tMid = settings.tsMid[i];
-                var pivotBaseStart = tStart * scaledSquareSize * side1Geometry.tJ;
-                var pivotBaseMid = tMid * scaledSquareSize * side1Geometry.tJ;
+                var pivotBaseStart = tStart * scaledSquareSize * jointGeometry1.tJ;
+                var pivotBaseMid = tMid * scaledSquareSize * jointGeometry1.tJ;
                 var margin = squareRenderSettings.margin + .001f;
 
                 // note that the margin is also affected by the size setting
                 // the margin applies to a 01 (uv) square which is sized to produce the actual square
-                vA1[i] = pivotBaseMid + margin * side1Geometry.nJ2A;// + side1Geometry.nA * 0.0006f;
-                vB1[i] = pivotBaseMid + margin * side1Geometry.nJ2B;// + side1Geometry.nB * 0.0006f;
-                vA2[i] = pivotBaseMid + margin * side1Geometry.nJ2A;// + side2Geometry.nA * 0.0006f;
-                vB2[i] = pivotBaseMid + margin * side1Geometry.nJ2B;// + side2Geometry.nB * 0.0006f;
+                vA1[i] = pivotBaseMid + margin * jointGeometry.nJ2A;// + side1Geometry.nA * 0.0006f;
+                vB1[i] = pivotBaseMid + margin * jointGeometry.nJ2B;// + side1Geometry.nB * 0.0006f;
+                vA2[i] = pivotBaseMid + margin * jointGeometry.nJ2A;// + side2Geometry.nA * 0.0006f;
+                vB2[i] = pivotBaseMid + margin * jointGeometry.nJ2B;// + side2Geometry.nB * 0.0006f;
 
                 vA1[i + settings.PivotOffset] = pivotBaseStart;
                 vB1[i + settings.PivotOffset] = pivotBaseStart;
@@ -278,36 +281,36 @@ namespace BarkaneJoint
             }
 
             // randomize middle vertices at significant fold angles
-            if (Mathf.Abs(side1Geometry.a2b) > 10f)
+            if (Mathf.Abs(jointGeometry1.a2b) > 10f)
             {
                 for (int i = 1; i < settings.creaseSegmentCount - 1; i++)
                 {
                     vA1[i + settings.PivotOffset] +=
-                        randoms[i].z * side1Geometry.tJ
-                        + randoms[i].y * side1Geometry.nJ
-                        + randoms[i].x * side1Geometry.nJ2A;
+                        randoms[i].z * jointGeometry1.tJ
+                        + randoms[i].y * jointGeometry1.nJ
+                        + randoms[i].x * jointGeometry.nJ2A;
 
                     vB1[i + settings.PivotOffset] +=
-                        randoms[i].z * side1Geometry.tJ
-                        + randoms[i].y * side1Geometry.nJ
-                        + randoms[i].x * side1Geometry.nJ2A;
+                        randoms[i].z * jointGeometry1.tJ
+                        + randoms[i].y * jointGeometry1.nJ
+                        + randoms[i].x * jointGeometry.nJ2A;
 
                     vA2[i + settings.PivotOffset] +=
-                        randoms[i].z * side1Geometry.tJ
-                        + randoms[i].y * side1Geometry.nJ
-                        + randoms[i].x * side1Geometry.nJ2A;
+                        randoms[i].z * jointGeometry1.tJ
+                        + randoms[i].y * jointGeometry1.nJ
+                        + randoms[i].x * jointGeometry.nJ2A;
 
                     vB2[i + settings.PivotOffset] +=
-                        randoms[i].z * side1Geometry.tJ
-                        + randoms[i].y * side1Geometry.nJ
-                        + randoms[i].x * side1Geometry.nJ2A;
+                        randoms[i].z * jointGeometry1.tJ
+                        + randoms[i].y * jointGeometry1.nJ
+                        + randoms[i].x * jointGeometry.nJ2A;
                 }
             }
 
-            fA1.sharedMesh.vertices = vA1;
-            fA2.sharedMesh.vertices = vA2;
-            fB1.sharedMesh.vertices = vB1;
-            fB2.sharedMesh.vertices = vB2;
+            fA1.sharedMesh.SetVertices(vA1, 0, vA1.Length, flags: SidedJointAddon.fConsiderBounds);
+            fA2.sharedMesh.SetVertices(vA2, 0, vA1.Length, flags: SidedJointAddon.fConsiderBounds);
+            fB1.sharedMesh.SetVertices(vB1, 0, vA1.Length, flags: SidedJointAddon.fConsiderBounds);
+            fB2.sharedMesh.SetVertices(vB2, 0, vA1.Length, flags: SidedJointAddon.fConsiderBounds);
         }
 
         private Material BindColor(Material mat, SquareSide src, string name)
@@ -353,21 +356,28 @@ namespace BarkaneJoint
 
             if (init)
             {
-                fA1.sharedMesh.triangles = settings.tA1CCW;
-                fA2.sharedMesh.triangles = settings.tA2CCW;
-                fB1.sharedMesh.triangles = settings.tB1CCW;
-                fB2.sharedMesh.triangles = settings.tB2CCW;
+                fA1.sharedMesh.SetTriangles(settings.tA1CCW, 0, false);
+                fA2.sharedMesh.SetTriangles(settings.tA2CCW, 0, false);
+                fB1.sharedMesh.SetTriangles(settings.tB1CCW, 0, false);
+                fB2.sharedMesh.SetTriangles(settings.tB2CCW, 0, false);
             }
         }
     }
 
     internal class JointGeometryData
     {
-        public Vector3 pA, pB, pJ;
-        public Vector3 nA, nB, nJ, nJ2A, nJ2B, tJ;
-        public float a2b;
+        internal class JointSideGeometryData
+        {
+            public Vector3 nA, nB, nJ, tJ;
+            public float a2b;
+        }
 
-        internal static (JointGeometryData, JointGeometryData) GetPairs(SquareSide a, SquareSide b, JointRenderer j)
+        public Vector3 pA, pB, pJ;
+        public Vector3 nJ2A, nJ2B;
+
+        internal static void Update(SquareSide a, SquareSide b, JointRenderer j, 
+            ref JointGeometryData g,
+            ref JointSideGeometryData g1, ref JointSideGeometryData g2)
         {
             var pA = a.transform.position;
             var pB = b.transform.position;
@@ -386,39 +396,26 @@ namespace BarkaneJoint
             // for small angles nA and nB are easy to cancel each other out which is bad bc the second method will have a 0
             // overall, we favor using the second method bc it's shorter, so the threshold is set to 5 degrees and not something larger
             // it is possible to do this thresholding without the angle, but the angle is also used elsewhere so might as well
-            // var nJ = (a2b < 5f && a2b > -5f ? pJ - (pA + pB) / 2 : nA + nB).normalized;
+            
+            var nJ = (a2b < 5f && a2b > -5f ? nJ2A + nJ2B : nA + nB).normalized;
 
-            var nJ = Quaternion.AngleAxis(a2b / 2, tJ) * nJ2A;
+            g.pA = pA;
+            g.pB = pB;
+            g.pJ = pJ;
+            g.nJ2A = nJ2A;
+            g.nJ2B = nJ2B;
 
-            JointGeometryData side1 = new JointGeometryData()
-            {
-                pA = pA,
-                pB = pB,
-                pJ = pJ,
-                nA = nA,
-                nB = nB,
-                nJ2A = nJ2A,
-                nJ2B = nJ2B,
-                tJ = tJ,
-                a2b = - a2b,
-                nJ = nJ
-            };
+            g1.nA = nA;
+            g1.nB = nB;
+            g1.nJ = nJ;
+            g1.tJ = tJ;
+            g1.a2b = a2b;
 
-            JointGeometryData side2 = new JointGeometryData()
-            {
-                pA = pA,
-                pB = pB,
-                pJ = pJ,
-                nA = -nA,
-                nB = -nB,
-                nJ2A = nJ2A,
-                nJ2B = nJ2B,
-                tJ = -tJ,
-                a2b = a2b,
-                nJ = -nJ
-            };
-
-            return (side1, side2);
+            g2.nA = -nA;
+            g2.nB = -nB;
+            g2.nJ = -nJ;
+            g2.tJ = -tJ;
+            g2.a2b = -a2b;
         }
     }
 }
