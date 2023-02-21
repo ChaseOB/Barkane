@@ -54,7 +54,7 @@ MonoBehaviour:
   playerContact: 0
   snowballCollidingMask:
     serializedVersion: 2
-    m_Bits: 1344
+    m_Bits: 9280
   validLocMask:
     serializedVersion: 2
     m_Bits: 64

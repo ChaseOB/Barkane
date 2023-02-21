@@ -14,6 +14,7 @@ public enum FaceObjectType
 {
     SHARD,
     GOAL,
+    FENCE,
     CONETREE,
     SNOWBALL,
     GLOWSTICKBOX,
@@ -28,6 +29,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
     [Header("Objects")]
     [SerializeField] private bool shard;
     [SerializeField] private bool goal;
+    [SerializeField] private bool fence;
     [SerializeField] private bool coneTree;
     [SerializeField] private bool snowball;
     [SerializeField] private bool glowstickBox;
@@ -37,6 +39,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
     [SerializeField] private SquareSide squareSide;
     [SerializeField] private GameObject shardPrefab;
     [SerializeField] private GameObject goalPrefab;
+    [SerializeField] private GameObject fencePrefab;
     [SerializeField] private GameObject coneTreePrefab;
     [SerializeField] private GameObject snowballPrefab;
     [SerializeField] private GameObject glowstickBoxPrefab;
@@ -77,6 +80,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
         {
             {FaceObjectType.SHARD, shardPrefab },
             {FaceObjectType.GOAL, goalPrefab },
+            {FaceObjectType.FENCE, fencePrefab},
             {FaceObjectType.CONETREE, coneTreePrefab},
             {FaceObjectType.SNOWBALL, snowballPrefab},
             {FaceObjectType.GLOWSTICKBOX, glowstickBoxPrefab}
@@ -158,6 +162,7 @@ public class PaperSquareFaceEditor : Editor
             { "faceType", (prop, face) => face.ChangeFaceType() },
             { "shard", (prop, face) => face.SetFaceObject(FaceObjectType.SHARD, prop.boolValue) },
             { "goal", (prop, face) => face.SetFaceObject(FaceObjectType.GOAL, prop.boolValue) },
+            { "fence", (prop, face) => face.SetFaceObject(FaceObjectType.FENCE, prop.boolValue) },
             { "coneTree", (prop, face) => face.SetFaceObject(FaceObjectType.CONETREE, prop.boolValue) },
             { "snowball", (prop, face) => face.SetFaceObject(FaceObjectType.SNOWBALL, prop.boolValue) },
             { "glowstickBox", (prop, face) => face.SetFaceObject(FaceObjectType.GLOWSTICKBOX, prop.boolValue) },
