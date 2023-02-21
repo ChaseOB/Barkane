@@ -16,6 +16,7 @@ public class SaveManager : MonoBehaviour
     public List<Transform> profilePosTransforms;
     public GameObject cycleRightArrow;
     public GameObject cycleLeftArrow;
+    private Dictionary<SaveProfile, int> profileToIndex = new Dictionary<SaveProfile, int>();
 
     //responsible for dealing with creating and loading saves
     private void Awake() {
@@ -26,10 +27,6 @@ public class SaveManager : MonoBehaviour
         CreateProfileButtons();
         ShowProfileButtons();
     }
-
-    //public void LoadSavesFromFile() {
-   //     SaveSystem s = new SaveSystem();
-   // }
 
     public void CreateProfileButtons() {
         SaveProfile[] profiles = SortSaveProfilesByTime();
@@ -45,7 +42,7 @@ public class SaveManager : MonoBehaviour
             if(profile != null) {
                 GameObject button = Instantiate(saveProfileButton, Vector3.zero, Quaternion.identity);
                 button.transform.parent = buttonParent;
-                button.GetComponent<SaveProfileButton>().SetProfile(profile);
+                button.GetComponent<SaveProfileButton>().SetProfile(profile, profileToIndex[profile]);
                 button.SetActive(false);
                 profileButtons.Add(button);
             }
@@ -55,9 +52,15 @@ public class SaveManager : MonoBehaviour
 
     public SaveProfile[] SortSaveProfilesByTime() {
         SaveProfile[] profiles = new SaveProfile[SaveSystem.maxSaves];
+        profileToIndex = new Dictionary<SaveProfile, int>();
         Array.Copy(SaveSystem.GetProfiles(), profiles, SaveSystem.maxSaves);
+        for(int i = 0; i < profiles.Length; i++)
+        {
+            SaveProfile p = profiles[i];
+            if(p != null)
+                profileToIndex[p] = i;
+        }
         Array.Sort(profiles, SaveProfile.SortMostRecent());
-
         return profiles;
     }
 

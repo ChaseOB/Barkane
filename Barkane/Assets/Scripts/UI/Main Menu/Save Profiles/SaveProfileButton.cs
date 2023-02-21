@@ -14,10 +14,12 @@ public class SaveProfileButton : ProfileButton
     public Image worldIcon;
 
     private SaveProfile profile;
+    private int index;
 
-    public void SetProfile(SaveProfile profile)
+    public void SetProfile(SaveProfile profile, int ind)
     {
         this.profile = profile;
+        index = ind;
         UpdateButton();
     }
     private void UpdateButton() 
@@ -25,12 +27,27 @@ public class SaveProfileButton : ProfileButton
         profileNameText.text = profile.GetProfileName();
         currentLevelText.text = profile.GetLastLevel();
         float seconds = profile.GetPlayTimeInSeconds();
+        timeText.text = GetTimeText(seconds);
+    }
+
+    private string GetTimeText(float seconds)
+    {
+        string ret;
         int minutes = (int)seconds / 60;
-        timeText.text = string.Format("{0}h{1:D2}", minutes / 60, minutes % 60);
+        if(minutes > 60)
+            ret = string.Format("{0} Hours\n{1:D2} Minutes", minutes / 60, minutes % 60);
+        else
+            ret = string.Format("{0:D2} Minutes", minutes % 60);
+        return ret;
     }
 
     private void UpdateIcon(int worldnum) {
         worldIcon.sprite = worldIconSprites[worldnum];
+    }
+
+
+    public void LoadProfile() {
+       SaveSystem.SetCurrentProfile(index);
     }
 
 }
