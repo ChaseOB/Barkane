@@ -76,6 +76,7 @@ GameObject:
   - component: {fileID: 8814069561603125225}
   - component: {fileID: 8814069561603125224}
   - component: {fileID: 5838271212797152584}
+  - component: {fileID: 3917478183291824384}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -114,7 +115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8902a54ff0abe7b4fb236cbd6c80135d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDuration: 0.4
+  moveDuration: 0.5
   turnDuration: 0.15
   targetPos: {fileID: 8814069562315018364}
   raycastStart: {fileID: 8814069560652256591}
@@ -178,6 +179,9 @@ MonoBehaviour:
   targetMask:
     serializedVersion: 2
     m_Bits: 4096
+  snowballMask:
+    serializedVersion: 2
+    m_Bits: 16384
   target: {fileID: 8814069562315018360}
 --- !u!114 &8814069561603125228
 MonoBehaviour:
@@ -258,6 +262,26 @@ MonoBehaviour:
   - Blossom
   - Antlers
   - SwagGlasses
+--- !u!95 &3917478183291824384
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8814069561603125229}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 00bff87fe5c7f1749804ca30873e4f31, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &8814069562315018364
 GameObject:
   m_ObjectHideFlags: 0
@@ -501,6 +525,19 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e8372806fc3e8c3498f5bb17298e28fa, type: 3}
   m_PrefabInstance: {fileID: 3901848011443211102}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &1854529605069309707
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4244448886005839375}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.011628675, y: 0.023455078, z: 0.016956124}
+  m_Center: {x: 0.0000010912771, y: -0.0002831361, z: 0.00065447454}
 --- !u!1001 &5069654513494638465
 PrefabInstance:
   m_ObjectHideFlags: 0

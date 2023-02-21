@@ -5,17 +5,25 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    public int gameStartScene;
+    public static int gameStartScene = 1;
+
     public GameObject playMenu;
     public GameObject mainMenu;
     public GameObject levelSelect;
     public GameObject credits;
     public GameObject cosmetics;
+    public GameObject profileSelect;
 
-    public void StartGame() {
-        //Load cutscene
-        LevelManager.Instance.LoadLevel(0);
+
+    public static void StartGame() {
+        SceneManager.LoadScene(gameStartScene);
     }
+
+    public void ToggleProfileSelectMenu(bool toggle) {
+        profileSelect.SetActive(toggle);
+        mainMenu.SetActive(!toggle);
+    }
+
 
     public void LoadLevel(int level)
     {

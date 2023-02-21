@@ -8,7 +8,6 @@ public class GlowStickLogic : MonoBehaviour
     public GlowstickState state = GlowstickState.PRIMED;
     public GlowstickBox box1;
     public GlowstickBox box2;
-    public MeshRenderer innerRenderer;
     public List<Material> materials = new List<Material>();
     private CrystalShard[] shards;
     private PaperJoint paperJoint;
@@ -51,7 +50,7 @@ public class GlowStickLogic : MonoBehaviour
             {
                 state = GlowstickState.OFF;
                 ToggleGSBoxes(false);
-                innerRenderer.material = materials[2];
+                GetComponent<GlowStick>().innerRenderer.material = materials[2];
                 OnGlowstickChange.Invoke(this, new GlowStickArgs(lifetime, state));
                 //foreach (CrystalShard shard in shards)
                    // shard.ActivateParticles(false);
@@ -61,7 +60,7 @@ public class GlowStickLogic : MonoBehaviour
         {
             state = GlowstickState.CRACKED;
             ToggleGSBoxes(true);
-            innerRenderer.material = materials[1];
+                GetComponent<GlowStick>().innerRenderer.material = materials[1];
             OnGlowstickChange?.Invoke(this, new GlowStickArgs(lifetime, state));
             //foreach (CrystalShard shard in shards)
               //  shard.ActivateParticles(true);

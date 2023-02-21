@@ -30,7 +30,7 @@ public class SaveSystem
     private static SaveProfile current;
     private static int currentIndex = -1; // if -1, then it's a temporary profile
 
-    private static int maxSaves = 3;
+    public static int maxSaves = 4;
 
     /*
         C: What's the deal with unlimted save profiles?

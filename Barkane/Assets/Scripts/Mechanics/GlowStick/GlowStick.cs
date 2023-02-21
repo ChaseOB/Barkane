@@ -10,7 +10,7 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
     [SerializeField] private GlowstickRenderSettings settingsInner, settingsOuter;
     [SerializeField] private SquareRenderSettings squareRenderSettings;
 
-    [SerializeField] MeshRenderer innerRenderer, outerRenderer;
+    [SerializeField] public MeshRenderer innerRenderer, outerRenderer;
     [SerializeField] MeshFilter innerFilter, outerFilter;
 
     private Vector3[] vsInner, nsInner, vsOuter, nsOuter;

@@ -328,13 +328,17 @@ MonoBehaviour:
   faceType: 0
   shard: 0
   goal: 0
+  fence: 0
   coneTree: 0
+  snowball: 0
   glowstickBox: 0
   playerWalk: {fileID: 9015388584628072935}
   squareSide: {fileID: 3000609133104664072}
   shardPrefab: {fileID: 3264400687938683259, guid: 0cf13e189a463a74d9ae924d1d63531b, type: 3}
   goalPrefab: {fileID: 2654907975218644480, guid: bb928c25978c7cc4b9bc20dccbd1a1d5, type: 3}
+  fencePrefab: {fileID: 6532203753740832574, guid: f510d34fcb180b646884063a90ca5f18, type: 3}
   coneTreePrefab: {fileID: 3438411482687958297, guid: 59bbc2e0221d39544a33a2849dc48eea, type: 3}
+  snowballPrefab: {fileID: 3008161187667592259, guid: 9bb1b099e92a43f48909955746ac6dc0, type: 3}
   glowstickBoxPrefab: {fileID: 3438411482687958297, guid: 57727001f39db5b429dd7372f86ac628, type: 3}
   theme: {fileID: 0}
 --- !u!1 &2369556897618979814
@@ -548,13 +552,17 @@ MonoBehaviour:
   faceType: 0
   shard: 0
   goal: 0
+  fence: 0
   coneTree: 0
+  snowball: 0
   glowstickBox: 0
   playerWalk: {fileID: 6208710809326013457}
   squareSide: {fileID: 8869331940603878471}
   shardPrefab: {fileID: 3264400687938683259, guid: 0cf13e189a463a74d9ae924d1d63531b, type: 3}
   goalPrefab: {fileID: 2654907975218644480, guid: bb928c25978c7cc4b9bc20dccbd1a1d5, type: 3}
+  fencePrefab: {fileID: 6532203753740832574, guid: f510d34fcb180b646884063a90ca5f18, type: 3}
   coneTreePrefab: {fileID: 3438411482687958297, guid: 59bbc2e0221d39544a33a2849dc48eea, type: 3}
+  snowballPrefab: {fileID: 3008161187667592259, guid: 9bb1b099e92a43f48909955746ac6dc0, type: 3}
   glowstickBoxPrefab: {fileID: 3438411482687958297, guid: 57727001f39db5b429dd7372f86ac628, type: 3}
   theme: {fileID: 0}
 --- !u!1 &4440904289389382621

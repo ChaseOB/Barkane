@@ -22,12 +22,17 @@ public class PlayerMovement : MonoBehaviour
 
     public LayerMask playerCollidingMask;
     public LayerMask targetMask;
+    public LayerMask snowballMask;
     public BoxCollider target;
+
+    private Snowball snowball;
+    private Animator animator;
 
 
     private void Start() 
     {
         marmaladeY = marmalade.transform.position.y;
+        animator = GetComponent<Animator>();
     }
 
     private void Update() {
@@ -58,8 +63,11 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(bool fromStack = false, bool undo = false)
     {
-        if(undo || CheckValidMove())
+        if(undo || (CheckValidMove() && CheckValidSnowball())) {
             StartCoroutine(MoveHelper(fromStack, undo));
+            return;
+        }
+        PlayInvalidMoveAnimation();
     }
 
     private bool CheckValidMove()
@@ -73,6 +81,26 @@ public class PlayerMovement : MonoBehaviour
         return validLoc && !hit;
     }
 
+    private bool CheckValidSnowball()
+    {
+        Collider[] colliders = Physics.OverlapBox(target.transform.position + target.center, target.size/2, Quaternion.identity, snowballMask, QueryTriggerInteraction.Collide);
+        bool sbExists = colliders.Length > 0;
+        if(!sbExists) {
+            return true;
+        }
+        snowball = colliders[0].gameObject.GetComponent<Snowball>();
+        return snowball.CheckIfCanPushSnowball(transform.forward);
+    }
+
+    private void PlayInvalidMoveAnimation() {
+        animator.Play("MoveFail");
+    }
+
+    private void OnEndMoveAnimation() {
+        animator.Play("Idle");
+        ActionLockManager.Instance.TryRemoveLock(this);
+    }
+
     private IEnumerator MoveHelper(bool fromStack, bool undo)
     {
         isMoving = true;
@@ -84,26 +112,33 @@ public class PlayerMovement : MonoBehaviour
         if(undo){
             goal += 2 * (curr - goal);
         }
+
+        if(snowball != null) {
+            snowball.MoveSnowball();
+            snowball = null;
+        }
+        animator.Play("Move");
         float t = 0;
         while (t < moveDuration)
         {
             t += Time.deltaTime;
             transform.position = Vector3.Lerp(curr, goal, t/moveDuration);
-            marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
-                                            marmaladeY + moveVertCurve.Evaluate(t/moveDuration) * bounceHeight,  
-                                            marmalade.transform.position.z);
+            //marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
+           //                                 marmaladeY + moveVertCurve.Evaluate(t/moveDuration) * bounceHeight,  
+           //                                 marmalade.transform.position.z);
             yield return null;
         }
         transform.position = goal;
-        marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
-                                            marmaladeY,  
-                                            marmalade.transform.position.z);
+        //marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
+        //                                    marmaladeY,  
+           //                                 marmalade.transform.position.z);
         isMoving = false;
         if(!fromStack && !undo) {
             PlayerMove pm = new PlayerMove();
             pm.movetype = 1;
             UndoRedoManager.Instance?.AddAction(pm);
         }
+        animator.Play("Idle");
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 

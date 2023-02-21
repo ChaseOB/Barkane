@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Collections; 
+using System;
 
 public class SaveProfile
 {
@@ -166,6 +168,33 @@ public class SaveProfile
         levelUnlocks[levelName] = value;
     }
 
+    #endregion
+
+    #region sorting
+
+    public static IComparer SortMostRecent()
+    {
+        return (IComparer) new SortProfilesByMostRecentHelper();
+    }
+
+      
+    
+
+    private class SortProfilesByMostRecentHelper : IComparer
+    {
+        public int Compare(object a, object b)
+        {
+            SaveProfile s1 = (SaveProfile) a;
+            SaveProfile s2 = (SaveProfile) b;
+            if(s1 == null && s2 == null)
+                return 0;
+            if (s1 == null)
+                return 1;
+            if(s2 == null)
+                return -1;
+            return DateTime.Compare(s2.lastSaved, s1.lastSaved);
+        }
+    }
     #endregion
 
 }
