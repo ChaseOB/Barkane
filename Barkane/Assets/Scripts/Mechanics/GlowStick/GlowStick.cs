@@ -33,12 +33,12 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
     private void LateUpdate()
     {
         UpdateMesh(
-            innerFilter, settingsInner, squareRenderSettings.margin * settingsInner.marginCorrection, 
+            innerFilter, settingsInner, squareRenderSettings.margin, 
             ref vsInner
             // ref nsInner
             );
         UpdateMesh(
-            outerFilter, settingsOuter, squareRenderSettings.margin * settingsOuter.marginCorrection, 
+            outerFilter, settingsOuter, squareRenderSettings.margin, 
             ref vsOuter
             // ref nsOuter
             );
@@ -75,7 +75,12 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
 
         ga2b = gSide.a2b;
 
-        var correction = Mathf.Max(-Vector3.Dot(gSide.nJ, g.nJ2A), 0) * gSide.nJ * margin;
+        // Ideally correctionT should be minimal at small outward angles and suddenly jump to 1 at folding over
+        // Here we approximate by taking it to some power > 1 so smaller fractions are compressed
+        var correctionT = Mathf.Max(-Vector3.Dot(gSide.nJ, g.nJ2A), 0);
+        correctionT *= correctionT;
+        correctionT *= correctionT;
+        var correction = correctionT * gSide.nJ * margin * settings.marginCorrection;
         var anchor = gSide.nJ * settings.elevation * (Mathf.Abs(Vector3.Dot(gSide.nJ, g.nJ2A)) + 1);
         var dA2 = g.nJ2A * margin + gSide.nA * settings.elevation;
         var dB2 = g.nJ2B * margin + gSide.nB * settings.elevation;
