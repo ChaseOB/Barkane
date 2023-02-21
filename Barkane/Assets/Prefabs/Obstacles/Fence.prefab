@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6532203752097600743}
   - component: {fileID: 6532203752097600742}
+  - component: {fileID: 1092601771395621535}
   m_Layer: 13
   m_Name: Fence 4
   m_TagString: Untagged
@@ -46,6 +47,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.08735986, y: 0.78, z: 0.99999976}
   m_Center: {x: -0.4563184, y: 0.4, z: 0}
+--- !u!54 &1092601771395621535
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6532203752097600744}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6532203752939634623
 GameObject:
   m_ObjectHideFlags: 0
@@ -56,6 +73,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6532203752939634622}
   - component: {fileID: 6532203752939634621}
+  - component: {fileID: 1399793973099207831}
   m_Layer: 13
   m_Name: Fence 3
   m_TagString: Untagged
@@ -92,6 +110,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.08735986, y: 0.78, z: 0.99999976}
   m_Center: {x: -0.4563184, y: 0.4, z: 0}
+--- !u!54 &1399793973099207831
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6532203752939634623}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6532203753332477586
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,6 +136,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6532203753332477585}
   - component: {fileID: 6532203753332477584}
+  - component: {fileID: 7608731522078542130}
   m_Layer: 13
   m_Name: Fence 1
   m_TagString: Untagged
@@ -138,6 +173,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.08735986, y: 0.78, z: 0.99999976}
   m_Center: {x: -0.4563184, y: 0.4, z: 0}
+--- !u!54 &7608731522078542130
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6532203753332477586}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6532203753709900387
 GameObject:
   m_ObjectHideFlags: 0
@@ -148,6 +199,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6532203753709900386}
   - component: {fileID: 6532203753709900385}
+  - component: {fileID: 33306782392994182}
   m_Layer: 13
   m_Name: Fence 2
   m_TagString: Untagged
@@ -184,6 +236,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.08735986, y: 0.78, z: 0.99999976}
   m_Center: {x: -0.4563184, y: 0.4, z: 0}
+--- !u!54 &33306782392994182
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6532203753709900387}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6532203753740832574
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,6 +263,7 @@ GameObject:
   - component: {fileID: 6532203753740832573}
   - component: {fileID: 6532203753740832571}
   - component: {fileID: 6532203753740832572}
+  - component: {fileID: 6430057797765830792}
   m_Layer: 8
   m_Name: Fence
   m_TagString: Untagged
@@ -246,6 +315,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f0f92fa42c5900499c2e710cd27f2ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &6430057797765830792
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6532203753740832574}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &6532203751916234262
 PrefabInstance:
   m_ObjectHideFlags: 0

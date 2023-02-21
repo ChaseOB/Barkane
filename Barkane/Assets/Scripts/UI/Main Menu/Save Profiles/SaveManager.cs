@@ -12,6 +12,7 @@ public class SaveManager : MonoBehaviour
     public int firstVisIndex = 0;
     public int visibleProfiles = 3;
     public int moveAmount = 1;
+    public Transform buttonParent;
     public List<Transform> profilePosTransforms;
     public GameObject cycleRightArrow;
     public GameObject cycleLeftArrow;
@@ -43,6 +44,7 @@ public class SaveManager : MonoBehaviour
         {
             if(profile != null) {
                 GameObject button = Instantiate(saveProfileButton, Vector3.zero, Quaternion.identity);
+                button.transform.parent = buttonParent;
                 button.GetComponent<SaveProfileButton>().SetProfile(profile);
                 button.SetActive(false);
                 profileButtons.Add(button);

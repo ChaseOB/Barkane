@@ -9,13 +9,11 @@ public class SaveProfileButton : ProfileButton
     public TextMeshProUGUI profileNameText;
     public TextMeshProUGUI currentLevelText;
     public TextMeshProUGUI timeText;
-    private SaveProfile profile;
 
-   /* private void OnEnable() 
-    {
-       // ReadProfileFromSave();
-        UpdateButton();
-    }*/
+    public List<Sprite> worldIconSprites;
+    public Image worldIcon;
+
+    private SaveProfile profile;
 
     public void SetProfile(SaveProfile profile)
     {
@@ -30,44 +28,9 @@ public class SaveProfileButton : ProfileButton
         int minutes = (int)seconds / 60;
         timeText.text = string.Format("{0}h{1:D2}", minutes / 60, minutes % 60);
     }
-    
-   /* public void ReadProfileFromSave()
-    {
-        SerializableSaveProfile ssp = SaveSystem.GetSerializableSaveProfile(profileIndex);
-        if (ssp != null)
-            profile = ssp.ToSaveProfile();
-        else
-            profile = null;
-        SaveSystem.SetProfile(profileIndex, profile);
+
+    private void UpdateIcon(int worldnum) {
+        worldIcon.sprite = worldIconSprites[worldnum];
     }
 
-    public void OnClick()
-    {
-        if (profile == null)
-        {
-            SaveSystem.SetProfile(profileIndex, new SaveProfile("Test Profile"));
-        }
-        else
-        {
-                LoadThisProfile();
-            
-        }
-    }
-
-    private void LoadThisProfile()
-    {
-        SaveSystem.LoadSaveProfile(profileIndex);
-    }
-
-    public void DeleteThisProfile()
-    {
-        if (profile != null)
-        {
-            // TODO: seek confirmation
-            SaveSystem.DeleteSaveProfile(profileIndex);
-            profile = null;
-            SaveSystem.SetProfile(profileIndex, profile);
-            UpdateButton();
-        }
-    }*/
 }
