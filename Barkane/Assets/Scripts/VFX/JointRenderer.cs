@@ -380,13 +380,15 @@ namespace BarkaneJoint
             var nJ2B = (pB - pJ).normalized;
 
             var tJ = Vector3.Cross(nA, nJ2A); // tangent along joint
-            var a2b = -Vector3.SignedAngle(nJ2A, nJ2B, tJ);
+            var a2b = Vector3.SignedAngle(nJ2A, nJ2B, tJ);
 
             // for large angles pA and pB are easy to cancel each other out (pA + pB approximates pJ) which is bad bc the first method will have a 0
             // for small angles nA and nB are easy to cancel each other out which is bad bc the second method will have a 0
             // overall, we favor using the second method bc it's shorter, so the threshold is set to 5 degrees and not something larger
             // it is possible to do this thresholding without the angle, but the angle is also used elsewhere so might as well
-            var nJ = (a2b < 5f && a2b > -5f ? pJ - (pA + pB) / 2 : nA + nB).normalized;
+            // var nJ = (a2b < 5f && a2b > -5f ? pJ - (pA + pB) / 2 : nA + nB).normalized;
+
+            var nJ = Quaternion.AngleAxis(a2b / 2, tJ) * nJ2A;
 
             JointGeometryData side1 = new JointGeometryData()
             {
@@ -398,7 +400,7 @@ namespace BarkaneJoint
                 nJ2A = nJ2A,
                 nJ2B = nJ2B,
                 tJ = tJ,
-                a2b = a2b,
+                a2b = - a2b,
                 nJ = nJ
             };
 
@@ -412,7 +414,7 @@ namespace BarkaneJoint
                 nJ2A = nJ2A,
                 nJ2B = nJ2B,
                 tJ = -tJ,
-                a2b = -a2b,
+                a2b = a2b,
                 nJ = -nJ
             };
 

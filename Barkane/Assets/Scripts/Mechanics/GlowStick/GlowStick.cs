@@ -17,6 +17,8 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
 
     private Transform visualRoot;
 
+    public float ga2b;
+
     private void Awake()
     {
         visualRoot = transform.GetChild(0);
@@ -58,7 +60,18 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         ns[0] = g.nJ2A;
         Ring(ref vs, ref ns, vs[0], g.nA, g.tJ, 1, settings);
 
-        if (g.a2b > 20f && g.a2b < 160f) // bending inwards
+        ga2b = g.a2b;
+
+        float a2b = g.a2b < 0 ? g.a2b + 360 : g.a2b;
+
+        Debug.DrawRay(g.pJ, g.tJ, Color.black);
+        Debug.DrawRay(g.pJ + g.nJ2A, g.nA, Color.red);
+        // Debug.DrawRay(g.pJ, (g.nA + g.nJ).normalized, Color.blue);
+        Debug.DrawRay(g.pJ, g.nJ, Color.green);
+        // Debug.DrawRay(g.pJ, (g.nB + g.nJ).normalized, Color.cyan);
+        Debug.DrawRay(g.pJ + g.nJ2B, g.nB, Color.yellow);
+
+        if (a2b > 20f && a2b < 160f) // bending inwards
         {
             // A1, A2, C, B2, B1
             var shrinkCorrection = 1f / Mathf.Sin(Mathf.Deg2Rad * g.a2b / 2);
@@ -68,7 +81,7 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
             Ring(ref vs, ref ns, j, g.nJ, g.tJ, 1 + 3 * settings.resolution, settings, shrinkCorrection);
             Ring(ref vs, ref ns, j, g.nJ, g.tJ, 1 + 4 * settings.resolution, settings, shrinkCorrection);
             Ring(ref vs, ref ns, j, g.nJ, g.tJ, 1 + 5 * settings.resolution, settings, shrinkCorrection);
-        } else if (Mathf.Abs(g.a2b) > 30f)// bending outwards
+        } else if (a2b < 330f && a2b > 159f)// bending outwards
         {
             // A1, A2, C, B2, B1
             var dispC = g.nJ * settings.elevation;
@@ -86,22 +99,16 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         {
             // A1, A2, C, B2, B1
             // note nJ2A = nJ2B = nJ at extreme case
-            var dispC = - g.nJ * settings.elevation;
+            var dispC = g.nJ * settings.elevation;
             var dispA2 = g.nA * settings.elevation;
             var dispB2 = g.nB * settings.elevation;
             var dispA1 = Vector3.Slerp(dispC, dispA2, 0.5f);
             var dispB1 = Vector3.Slerp(dispC, dispB2, 0.5f);
 
-            Debug.DrawRay(g.pJ + dispA2, g.nA, Color.red);
-            Debug.DrawRay(g.pJ + dispA1, g.nA, Color.blue);
-            Debug.DrawRay(g.pJ + dispC, Vector3.Slerp(g.nJ2A, g.nJ2B, 0.5f), Color.green);
-            Debug.DrawRay(g.pJ + dispB1, g.nB, Color.cyan);
-            Debug.DrawRay(g.pJ + dispB2, g.nB, Color.yellow);
-
             Ring(ref vs, ref ns, g.pJ + dispA2, g.nA, g.tJ, 1 + settings.resolution, settings);
-            Ring(ref vs, ref ns, g.pJ + dispA1, (g.nA - g.nJ).normalized, g.tJ, 1 + 2 * settings.resolution, settings);
-            Ring(ref vs, ref ns, g.pJ + dispC, -g.nJ, g.tJ, 1 + 3 * settings.resolution, settings);
-            Ring(ref vs, ref ns, g.pJ + dispB1, (g.nB - g.nJ).normalized, g.tJ, 1 + 4 * settings.resolution, settings);
+            Ring(ref vs, ref ns, g.pJ + dispA1, (g.nA + g.nJ).normalized, g.tJ, 1 + 2 * settings.resolution, settings);
+            Ring(ref vs, ref ns, g.pJ + dispC, g.nJ, g.tJ, 1 + 3 * settings.resolution, settings);
+            Ring(ref vs, ref ns, g.pJ + dispB1, (g.nB + g.nJ).normalized, g.tJ, 1 + 4 * settings.resolution, settings);
             Ring(ref vs, ref ns, g.pJ + dispB2, g.nB, g.tJ, 1 + 5 * settings.resolution, settings);
         }
         // head B
