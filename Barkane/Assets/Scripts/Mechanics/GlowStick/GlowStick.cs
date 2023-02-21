@@ -75,70 +75,25 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
 
         ga2b = gSide.a2b;
 
-        float a2b = gSide.a2b < 0 ? gSide.a2b + 360 : gSide.a2b;
+        var correction = Mathf.Max(-Vector3.Dot(gSide.nJ, g.nJ2A), 0) * gSide.nJ * margin;
+        var anchor = gSide.nJ * settings.elevation * (Mathf.Abs(Vector3.Dot(gSide.nJ, g.nJ2A)) + 1);
+        var dA2 = g.nJ2A * margin + gSide.nA * settings.elevation;
+        var dB2 = g.nJ2B * margin + gSide.nB * settings.elevation;
+        var dC = QuadraticBezier(dA2, anchor, dB2, 0.5f);
+        var dA1 = QuadraticBezier(dA2, anchor, dB2, 0.25f);
+        var dB1 = QuadraticBezier(dA2, anchor, dB2, 0.75f);
+
+        Ring(ref vs, g.pJ + dA2 + correction, gSide.nA, gSide.tJ, 1 + settings.resolution, settings);
+        Ring(ref vs, g.pJ + dA1 + correction, DDQuadraticBezier(dA2, anchor, dB2, 0.25f, gSide.tJ), gSide.tJ, 1 + 2 * settings.resolution, settings);
+        Ring(ref vs, g.pJ + dC + correction, gSide.nJ, gSide.tJ, 1 + 3 * settings.resolution, settings);
+        Ring(ref vs, g.pJ + dB1 + correction, DDQuadraticBezier(dA2, anchor, dB2, 0.75f, gSide.tJ), gSide.tJ, 1 + 4 * settings.resolution, settings);
+        Ring(ref vs, g.pJ + dB2 + correction, gSide.nB, gSide.tJ, 1 + 5 * settings.resolution, settings);
 
         Debug.DrawRay(g.pJ, gSide.tJ, Color.black);
-        Debug.DrawRay(g.pJ + g.nJ2A, g.nJ2A, Color.red);
-        Debug.DrawRay(g.pJ + g.nJ2A, gSide.nA, Color.magenta);
+        Debug.DrawRay(g.pJ, DDQuadraticBezier(dA2, anchor, dB2, 0.25f, gSide.tJ), Color.red);
         Debug.DrawRay(g.pJ, gSide.nJ, Color.green);
-        Debug.DrawRay(g.pJ + g.nJ2B, gSide.nB, Color.cyan);
-        Debug.DrawRay(g.pJ + g.nJ2B, g.nJ2B, Color.blue);
+        Debug.DrawRay(g.pJ, DDQuadraticBezier(dA2, anchor, dB2, 0.75f, gSide.tJ), Color.blue);
 
-        if (a2b > 20f && a2b < 160f) // bending inwards
-        {
-            // A1, A2, C, B2, B1
-            //var shrinkCorrection = 1f / Mathf.Sin(Mathf.Deg2Rad * gSide.a2b / 2);
-            //var j = g.pJ + gSide.nJ * (settings.elevation * shrinkCorrection);
-            //Ring(ref vs, j, gSide.nJ, gSide.tJ, 1 + settings.resolution, settings, shrinkCorrection);
-            //Ring(ref vs, j, gSide.nJ, gSide.tJ, 1 + 2 * settings.resolution, settings, shrinkCorrection);
-            //Ring(ref vs, j, gSide.nJ, gSide.tJ, 1 + 3 * settings.resolution, settings, shrinkCorrection);
-            //Ring(ref vs, j, gSide.nJ, gSide.tJ, 1 + 4 * settings.resolution, settings, shrinkCorrection);
-            //Ring(ref vs, j, gSide.nJ, gSide.tJ, 1 + 5 * settings.resolution, settings, shrinkCorrection);
-
-            // A1, A2, C, B2, B1
-            var anchor = gSide.nJ * settings.elevation / Vector3.Dot(gSide.nJ, g.nJ2A);
-            var dispA2 = g.nJ2A * margin + gSide.nA * settings.elevation;
-            var dispB2 = g.nJ2B * margin + gSide.nB * settings.elevation;
-            var dispC = QuadraticBezier(dispA2, anchor, dispB2, 0.5f);
-            var dispA1 = QuadraticBezier(dispA2, anchor, dispB2, 0.25f);
-            var dispB1 = QuadraticBezier(dispA2, anchor, dispB2, 0.75f);
-
-            Ring(ref vs, dispA2 + g.pJ, gSide.nA, gSide.tJ, 1 + settings.resolution, settings);
-            Ring(ref vs, dispA1 + g.pJ, (gSide.nA + gSide.nJ).normalized, gSide.tJ, 1 + 2 * settings.resolution, settings);
-            Ring(ref vs, dispC + g.pJ, gSide.nJ, gSide.tJ, 1 + 3 * settings.resolution, settings);
-            Ring(ref vs, dispB1 + g.pJ, (gSide.nB + gSide.nJ).normalized, gSide.tJ, 1 + 4 * settings.resolution, settings);
-            Ring(ref vs, dispB2 + g.pJ, gSide.nB, gSide.tJ, 1 + 5 * settings.resolution, settings);
-        } else if (a2b < 330f && a2b > 159f)// bending outwards
-        {
-            // A1, A2, C, B2, B1
-            var anchor = gSide.nJ * settings.elevation / Vector3.Dot(gSide.nJ, g.nJ2A);
-            var dispA2 = g.nJ2A * margin + gSide.nA * settings.elevation;
-            var dispB2 = g.nJ2B * margin + gSide.nB * settings.elevation;
-            var dispC = QuadraticBezier(dispA2, anchor, dispB2, 0.5f);
-            var dispA1 = QuadraticBezier(dispA2, anchor, dispB2, 0.25f);
-            var dispB1 = QuadraticBezier(dispA2, anchor, dispB2, 0.75f);
-
-            Ring(ref vs, dispA2 + g.pJ, gSide.nA, gSide.tJ, 1 + settings.resolution, settings);
-            Ring(ref vs, dispA1 + g.pJ, (gSide.nA + gSide.nJ).normalized, gSide.tJ, 1 + 2 * settings.resolution, settings);
-            Ring(ref vs, dispC + g.pJ, gSide.nJ, gSide.tJ, 1 + 3 * settings.resolution, settings);
-            Ring(ref vs, dispB1 + g.pJ, (gSide.nB + gSide.nJ).normalized, gSide.tJ, 1 + 4 * settings.resolution, settings);
-            Ring(ref vs, dispB2 + g.pJ, gSide.nB, gSide.tJ, 1 + 5 * settings.resolution, settings);
-        } else
-        {
-            // A1, A2, C, B2, B1
-            // note nJ2A = nJ2B = nJ at extreme case
-            var dispC = gSide.nJ * settings.elevation;
-            var dispA2 = gSide.nA * settings.elevation;
-            var dispB2 = gSide.nB * settings.elevation;
-            var dispA1 = Vector3.Slerp(dispC, dispA2, 0.5f);
-            var dispB1 = Vector3.Slerp(dispC, dispB2, 0.5f);
-
-            Ring(ref vs, g.pJ + dispA2, gSide.nA, gSide.tJ, 1 + settings.resolution, settings);
-            Ring(ref vs, g.pJ + dispA1, (gSide.nA + gSide.nJ).normalized, gSide.tJ, 1 + 2 * settings.resolution, settings);
-            Ring(ref vs, g.pJ + dispC, gSide.nJ, gSide.tJ, 1 + 3 * settings.resolution, settings);
-            Ring(ref vs, g.pJ + dispB1, (gSide.nB + gSide.nJ).normalized, gSide.tJ, 1 + 4 * settings.resolution, settings);
-            Ring(ref vs, g.pJ + dispB2, gSide.nB, gSide.tJ, 1 + 5 * settings.resolution, settings);
-        }
         // head B
         vs[^1] = g.pJ + g.nJ2B * (settings.halfLength + margin) + gSide.nB * settings.elevation;
         // ns[^1] = g.nJ2B;
@@ -146,8 +101,6 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
 
         m.SetVertices(vs, 0, vs.Length, fConsiderBounds);
         m.RecalculateNormals();
-        // m.normals = ns;
-        // m.RecalculateNormals();
 
         if (firstSet)
         {
@@ -212,8 +165,22 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
             true);
     }
 
+    // wikipedia
     Vector3 QuadraticBezier(Vector3 a, Vector3 b, Vector3 c, float t)
     {
         return (1 - t) * ((1 - t) * a + t * b) + t * ((1 - t) * b + t * c);
+    }
+
+    Vector3 DQuadraticBezier(Vector3 a, Vector3 b, Vector3 c, float t)
+    {
+        return 2 * ((c - 2 * b + a) * t + b - a);
+    }
+
+    // Normal direction
+    Vector3 DDQuadraticBezier(Vector3 a, Vector3 b, Vector3 c, float t, Vector3 axis)
+    {
+        var T = DQuadraticBezier(a, b, c, t);
+
+        return Vector3.Cross(axis, T).normalized;
     }
 }
