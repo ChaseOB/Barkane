@@ -379,43 +379,35 @@ namespace BarkaneJoint
             ref JointGeometryData g,
             ref JointSideGeometryData g1, ref JointSideGeometryData g2)
         {
-            var pA = a.transform.position;
-            var pB = b.transform.position;
-            var pJ = j.transform.position;
+            g.pA = a.transform.position;
+            g.pB = b.transform.position;
+            g.pJ = j.transform.position;
+            g.nJ2A = (g.pA - g.pJ).normalized;
+            g.nJ2B = (g.pB - g.pJ).normalized;
 
-            var nA = a.transform.up;
-            var nB = b.transform.up;
+            g1.nA = a.transform.up;
+            g1.nB = b.transform.up;
+            g1.tJ = Vector3.Cross(g1.nA, g.nJ2A);
+            g1.a2b = Vector3.SignedAngle(g.nJ2A, g.nJ2B, g1.tJ);
+            
+            // for large angles pA and pB are easy to cancel each other out (pA + pB approximates pJ) which is bad bc the first method will have a 0
+            // for small angles nA and nB are easy to cancel each other out which is bad bc the second method will have a 0
+            // overall, we favor using the second method bc it's shorter, so the threshold is set to 5 degrees and not something larger
+            // it is possible to do this thresholding without the angle, but the angle is also used elsewhere so might as well
+            g1.nJ = (g1.a2b < 20f && g1.a2b > -20f ? -g.nJ2A - g.nJ2B : g1.nA + g1.nB).normalized;
 
-            var nJ2A = (pA - pJ).normalized;
-            var nJ2B = (pB - pJ).normalized;
+            // TODO: simply below, remove trigs
 
-            var tJ = Vector3.Cross(nA, nJ2A); // tangent along joint
-            var a2b = Vector3.SignedAngle(nJ2A, nJ2B, tJ);
+            g2.nA = -a.transform.up;
+            g2.nB = -b.transform.up;
+            g2.tJ = Vector3.Cross(g2.nA, g.nJ2A);
+            g2.a2b = Vector3.SignedAngle(g.nJ2A, g.nJ2B, g2.tJ);
 
             // for large angles pA and pB are easy to cancel each other out (pA + pB approximates pJ) which is bad bc the first method will have a 0
             // for small angles nA and nB are easy to cancel each other out which is bad bc the second method will have a 0
             // overall, we favor using the second method bc it's shorter, so the threshold is set to 5 degrees and not something larger
             // it is possible to do this thresholding without the angle, but the angle is also used elsewhere so might as well
-            
-            var nJ = (a2b < 5f && a2b > -5f ? nJ2A + nJ2B : nA + nB).normalized;
-
-            g.pA = pA;
-            g.pB = pB;
-            g.pJ = pJ;
-            g.nJ2A = nJ2A;
-            g.nJ2B = nJ2B;
-
-            g1.nA = nA;
-            g1.nB = nB;
-            g1.nJ = nJ;
-            g1.tJ = tJ;
-            g1.a2b = a2b;
-
-            g2.nA = -nA;
-            g2.nB = -nB;
-            g2.nJ = -nJ;
-            g2.tJ = -tJ;
-            g2.a2b = -a2b;
+            g2.nJ = (g2.a2b < 20f && g2.a2b > -20f ? -g.nJ2A - g.nJ2B : g2.nA + g2.nB).normalized;
         }
     }
 }
