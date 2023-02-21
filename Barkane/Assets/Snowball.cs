@@ -6,6 +6,7 @@ public class Snowball : MonoBehaviour
 {
     public GameObject parentSide;
     public Transform center;
+    public Transform altRaycast;
     public bool playerContact = false; //set to true when player bumps to start animation
     public LayerMask snowballCollidingMask;
     public LayerMask validLocMask;
@@ -60,23 +61,18 @@ public class Snowball : MonoBehaviour
 
 
         //1. Raycast in direction to make sure square is not blocked
-        bool hit = Physics.Raycast(center.position, direction, 2, snowballCollidingMask); 
-        if(hit) {
-            print("snowball blocked");
+        if(Physics.Raycast(center.position, direction, 2, snowballCollidingMask)) 
             return false;
-        }
+        if(Physics.Raycast(altRaycast.position, direction, 2, snowballCollidingMask)) 
+            return false;
+
         //2. Check that there is a valid square to move to
         Collider[] colliders = Physics.OverlapBox(transform.position + convertedDir, new Vector3(0.1f, 0.1f, 0.1f), Quaternion.identity, validLocMask, QueryTriggerInteraction.Collide);
         if (colliders.Length > 0) {
-            print("Found Valid Loc");
             target = transform.position + convertedDir;
-            print("target:" + target);
             Debug.DrawRay(transform.position, convertedDir, Color.magenta, 30);
             return true;
         }
-        print("no valid loc found");
-                print(convertedDir);
-
         Debug.DrawRay(transform.position, convertedDir, Color.red, 30);
         return false;
     }
