@@ -88,6 +88,7 @@ public class SaveProfile
 
     public void SetLastLevel(Level level)
     {
+        Debug.Log($"Last level set to {level.levelName}");
         lastLevel = level.levelName;
         lastLevelNum = level.levelNum;
         lastLevelWorldNum = level.worldNum;

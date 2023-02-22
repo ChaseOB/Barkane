@@ -85,10 +85,12 @@ public class LevelManager : Singleton<LevelManager>
     //Handles scene and theme switching
     public void SwitchLevel(Level level) {
         this.level = level;
+        print($"Loading level {level.levelName}");
         if(currLevelTheme == null || level.theme != currLevelTheme)
         {
             AudioManager.Instance.PlayList(level.theme.musicStringName);
         }
+        SaveSystem.Current.SetLastLevel(level);
         StartCoroutine(LoadLevelAsynch(levelScenes[(int)level.theme.themeEnum]));
     }
 
@@ -158,9 +160,6 @@ public class LevelManager : Singleton<LevelManager>
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        if(level != null)
-            SaveSystem.Current.SetLastLevel(level);
-
         levelSwitchScreen.SetActive(false);
         imageAnimator.Stop();
         if(UIManager.Instance != null)
@@ -170,6 +169,7 @@ public class LevelManager : Singleton<LevelManager>
 
     public void ReturnToMenu() {
         SaveSystem.Current.SetLastLevel(level);
+        SaveSystem.SaveGame("Return to menu");
         UnloadLevel();
     }
 
