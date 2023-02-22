@@ -151,7 +151,7 @@ public class OcclusionQueue
         }
     }
 
-    public void MergeFrontAndDispose(OcclusionQueue other)
+    public void MergeToFrontAndDispose(OcclusionQueue other)
     {
 
         MergeSide(other.qFaceUp, ref qFaceUp);
@@ -159,9 +159,15 @@ public class OcclusionQueue
 
         other.qFaceUp.Clear();
         other.qFaceDown.Clear();
+
+        MergeChk(faceUp, other.faceUp);
+        MergeChk(faceDown, other.faceDown);
+
+        other.faceDown.Clear();
+        other.faceDown.Clear();
     }
 
-    public void MergeBackAndDispose(OcclusionQueue other)
+    public void MergeToBackAndDispose(OcclusionQueue other)
     {
         MergeSide(qFaceUp, ref other.qFaceUp);
         MergeSide(qFaceDown, ref other.qFaceDown);

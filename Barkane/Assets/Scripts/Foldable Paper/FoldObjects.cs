@@ -70,24 +70,38 @@ public class FoldObjects {
         return CoordUtils.CalculateCenter(vectors);
     }
 
-    public void MergeWithGlobalOcclusionMap(Dictionary<Vector3Int, OcclusionQueue> globalMap, Matrix4x4 finalTransform)
+    public void MergeWithGlobalOcclusionMap(Dictionary<Vector3Int, OcclusionQueue> globalMap, Vector3 axis, float angle)
     {
+        var fTransformQ = Quaternion.AngleAxis(angle, axis);
+        var fTransformM = Matrix4x4.Rotate(fTransformQ);
+        
+
         foreach (var (local, oq) in OcclusionMap)
         {
-            var corresponding = Vector3Int.RoundToInt(finalTransform.MultiplyPoint(local));
-            var correspondingUp = Vector3Int.RoundToInt(finalTransform.MultiplyVector(oq.upwards));
+            var corresponding = Vector3Int.RoundToInt(fTransformM.MultiplyVector(local));
+            var correspondingUp = Vector3Int.RoundToInt(fTransformM.MultiplyVector(oq.upwards));
 
             var alignedToNegative = correspondingUp.x < 0 || correspondingUp.y < 0 || correspondingUp.z < 0;
 
-            // matching position and direction
+            bool approachFromPositive;
+
+            // Matching position and direction
             if (globalMap.ContainsKey(corresponding))
             {
-                // figure out direction of the merge, 
-                globalMap[corresponding].MergeAndDispose(alignedToNegative ? oq.MakeFlippedCopy() : oq);
+                if (approachFromPositive)
+                {
+                    // When approaching from positive, the new tiles (contents of the local occlusion map) covers the old tiles
+                    // This means they come *after* the original items in the merged queue
+                    globalMap[corresponding].MergeToBackAndDispose(alignedToNegative ? oq.MakeFlippedCopy() : oq);
+                } else
+                {
+                    // Otherwise, local occlusion map content goes *before* the global content
+                    globalMap[corresponding].MergeToFrontAndDispose(alignedToNegative ? oq.MakeFlippedCopy() : oq);
+                }
             } else
             {
-                // insert local entry directly into global entry
-                // flip to always using positive direction, this isn't really necessary but is good for convention
+                // Insert local entry directly into global entry
+                // Flip to always using positive direction
                 globalMap.Add(corresponding, alignedToNegative ? oq.MakeFlippedCopy() : oq);
             }
         }
