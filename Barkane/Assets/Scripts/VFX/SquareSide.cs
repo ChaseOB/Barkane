@@ -26,7 +26,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
     public Vector3[] sprinkleVerts;
     public Vector3[] sprinkleNormals;
 
-    // A: unsure why this is needed
     public Transform sprinkleParent;
 
     public Color BaseColor, TintColor;
@@ -121,6 +120,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
         PushData();
 
 #if UNITY_EDITOR
+        if (!PrefabUtility.IsPartOfAnyPrefab(this)) return;
         var pRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(this);
         if (pRoot == null) return;
         var path = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(pRoot);
