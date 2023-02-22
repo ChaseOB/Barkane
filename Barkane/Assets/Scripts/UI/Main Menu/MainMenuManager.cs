@@ -20,7 +20,8 @@ public class MainMenuManager : Singleton<MainMenuManager>
     }
 
     public static void StartGame() {
-        SceneManager.LoadScene(gameStartScene);
+       // SceneManager.LoadScene(gameStartScene);
+        LevelManager.Instance.LoadLevel(0);
     }
 
     public void ToggleProfileSelectMenu(bool toggle) {

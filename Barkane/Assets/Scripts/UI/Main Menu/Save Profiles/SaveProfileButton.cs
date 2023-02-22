@@ -58,4 +58,11 @@ public class SaveProfileButton : ProfileButton
        CosmeticManager.Instance.SetCosmetics();
     }
 
+    public void DeleteProfile(){
+        SaveSystem.DeleteSaveProfile(index);
+        profile = null;
+        SaveSystem.SetProfile(index, profile);
+        SaveManager.Instance.UpdateAllButtons();
+    }
+
 }

@@ -10,7 +10,7 @@ public class NewProfileButton : ProfileButton
     public GameObject button;
     public GameObject creationScreen;
 
-    private string profileName;
+    private string profileName = "";
 
     public void toggleCreationScreen(bool val)
     {
@@ -19,23 +19,12 @@ public class NewProfileButton : ProfileButton
     }
 
     public void CreateProfileAndStartGame() {
-        if (profileName.Length == 0)
+        profileName = profileNameTextField.text;
+        print($"creating profile {profileName}");
+        if (profileName == null || profileName == "" || profileName.Trim().Length == 0)
             return;
-        SaveSystem.CreateNewProfile(profileName);
-        SaveSystem.SetMostRecentProfile();
+        int index = SaveSystem.CreateNewProfile(profileName.Trim());
+        SaveSystem.LoadSaveProfile(index);
         MainMenuManager.StartGame();
-    }
-
-    public void OnTextFieldChangeText(string text)
-    {
-        if (text.Contains("\n"))
-        {
-            profileNameTextField.text = text.Replace("\n", "");
-            profileName = profileNameTextField.text;
-
-            if (profileName.Length == 0)
-                return;
-            CreateProfileAndStartGame();
-        }
     }
 }

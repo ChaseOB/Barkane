@@ -103,6 +103,8 @@ public class SaveSystem
         
         SaveProfile newprofile = new SaveProfile(name);
         saveProfiles[index] = newprofile;
+
+        Debug.Log($"Created profile {name} at index {index}");
         return index;
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class SaveManager : MonoBehaviour
+public class SaveManager : Singleton<SaveManager>
 {
     public List<GameObject> profileButtons;
     public GameObject newProfileButton;
@@ -20,9 +20,14 @@ public class SaveManager : MonoBehaviour
     //responsible for dealing with creating and loading saves
     private void Awake() {
         SaveSystem s = new SaveSystem(); //load save systme on game startup
+        InitializeSingleton();
     }
 
     private void Start() {
+        UpdateAllButtons();
+    }
+
+    public void UpdateAllButtons() {
         CreateProfileButtons();
         CycleAndShowProfileButtons(0);
     }
