@@ -23,7 +23,9 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public Material MaterialPrototype => materialPrototype;
 
-    public (Vector3[], Vector3[]) sprinkles;
+    public Vector3[] sprinkleVerts;
+    public Vector3[] sprinkleNormals;
+
     // A: unsure why this is needed
     public Transform sprinkleParent;
 
@@ -36,7 +38,9 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     void IRefreshable.RuntimeRefresh()
     {
+        Debug.Log("Runtime refresh");
         PushData();
+        RuntimeParticleUpdate();
     }
 
     private void PushData()
@@ -64,10 +68,48 @@ public class SquareSide : MonoBehaviour, IRefreshable
         materialInstance.SetVector("_NormalOffset", new Vector2(Random.value, Random.value));
     }
 
+    public void RuntimeParticleUpdate()
+    {
+        // completely ignores prefab structure. this avoids the unpacking issue
+
+        Debug.Log(sprinkleParent.childCount);
+
+        // the while loop version goes into infinite loop for some reason
+        List<GameObject> prev = new List<GameObject>();
+        for (int i = 0; i < sprinkleParent.childCount; i++)
+        {
+            prev.Add(sprinkleParent.GetChild(i).gameObject);
+        }
+        foreach (var p in prev) { Destroy(p); }
+
+        //while (sprinkleParent.childCount > 0)
+        //{
+        //    Debug.Log(sprinkleParent.childCount);
+        //    Destroy(sprinkleParent.GetChild(0).gameObject);
+        //}
+
+        if (VFXManager.Theme.Sprinkle == null || materialPrototype.GetFloat("_UseSprinkles") < 0.5f) return;
+
+        Debug.Log("Reach sprinkle gen");
+
+        var ct = sprinkleVerts.Length;
+        for (int i = 0; i < ct; i++)
+        {
+            var child = Instantiate(VFXManager.Theme.Sprinkle, sprinkleParent);
+            child.transform.localPosition = sprinkleVerts[i];
+            child.transform.up = transform.rotation * sprinkleNormals[i];
+            child.transform.Rotate(child.transform.up, Random.value * 360f); // paper-parallel rotation
+            child.SetActive(true);
+        }
+    }
+
     public void UpdateMesh()
     {
 
         var (mesh, texture, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
+        this.sprinkleVerts = sprinkleVerts;
+        this.sprinkleNormals = sprinkleNorms;
+
         distanceTextureData = texture.EncodeToPNG();
         distanceTextureWidth = texture.width;
         materialInstance = new Material(materialPrototype)
@@ -79,6 +121,11 @@ public class SquareSide : MonoBehaviour, IRefreshable
         PushData();
 
 #if UNITY_EDITOR
+        var pRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(this);
+        if (pRoot == null) return;
+        var path = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(pRoot);
+        Debug.Log($"Auto apply changes {this.name} at prefab {pRoot.name}, asset path: {path}");
+        PrefabUtility.ApplyObjectOverride(this, path, InteractionMode.UserAction);
        /* var sprinkleCount = sprinkleVerts.Length;
 
         var paperIsPrefab = LevelEditorManager.IsEditingPrefab;
