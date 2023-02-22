@@ -70,20 +70,36 @@ public class FoldObjects {
         return CoordUtils.CalculateCenter(vectors);
     }
 
-    public void MergeWithGlobalOcclusionMap(Dictionary<Vector3Int, OcclusionQueue> globalMap, Vector3 axis, float angle)
+    public void MergeWithGlobalOcclusionMap(Dictionary<Vector3Int, OcclusionQueue> globalMap, Matrix4x4 fTransformM, Vector3 rotationRoot)
     {
-        var fTransformQ = Quaternion.AngleAxis(angle, axis);
-        var fTransformM = Matrix4x4.Rotate(fTransformQ);
-        
-
         foreach (var (local, oq) in OcclusionMap)
         {
-            var corresponding = Vector3Int.RoundToInt(fTransformM.MultiplyVector(local));
+            var corresponding = Vector3Int.RoundToInt(fTransformM.MultiplyPoint(local));
             var correspondingUp = Vector3Int.RoundToInt(fTransformM.MultiplyVector(oq.upwards));
 
             var alignedToNegative = correspondingUp.x < 0 || correspondingUp.y < 0 || correspondingUp.z < 0;
 
-            bool approachFromPositive;
+            // Note that all of these are ambiguous in real life
+            // The resolution comes from the fact that joints have width
+            // This means always insert new things "inward" w.r.t. rotation radial dir.
+            // ex.
+            //     __
+            //      |
+            // |    |
+            // |____| --> +x
+            // ^ existing wall stays outward
+            //  _____
+            // ||   |
+            // |____| --> +x
+            //  ^ new wall comes inward
+            // 
+            // ... in this case the new wall is approaching from positive, since it's radial is facing -x
+
+            // Note the inward direction is always offsetted *against* the radial
+            // Since axis is always on an offsetted joint, the distance to the new tile center is always nonzero
+            // This means we won't get a zero vector and the dot product is usable
+            var radial = corresponding - rotationRoot;
+            var approachFromPositive = Vector3.Dot(radial, correspondingUp) > 0;
 
             // Matching position and direction
             if (globalMap.ContainsKey(corresponding))

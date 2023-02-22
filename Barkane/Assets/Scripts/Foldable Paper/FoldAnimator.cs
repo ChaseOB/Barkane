@@ -119,7 +119,7 @@ public class FoldAnimator : MonoBehaviour
         isFolding = false;
 
         // UpdateSquareVisibility(objectsToFold);
-        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, finalTransform);
+        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, finalTransform, center);
 
         if(afterFold != null)
              afterFold();
