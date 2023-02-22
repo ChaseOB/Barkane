@@ -8,14 +8,15 @@ public class CosmeticManager : Singleton<CosmeticManager>
 
     public string cosmeticString;
 
-    private void Awake() {
+    public void SetCosmetics()
+    {
         cosmeticString = SaveSystem.Current.GetCosmetic(); 
         Dictionary<string, bool> cosmeticDict = SaveSystem.Current.GetCosmeticsDictionary();
         foreach(CosmeticButton button in buttons) 
             if(cosmeticDict.GetValueOrDefault(button.cosmeticName))
                 button.UnlockCosmetic();
     }
-
+    
     public void SelectCosmetic(string cosmeticName)
     {
         foreach(CosmeticButton button in buttons) {

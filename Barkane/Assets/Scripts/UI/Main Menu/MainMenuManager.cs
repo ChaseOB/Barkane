@@ -34,7 +34,7 @@ public class MainMenuManager : Singleton<MainMenuManager>
         LevelManager.Instance.LoadLevel(level);
     }
 
-    public void TogglePlayMenu(bool toggle)
+   /* public void TogglePlayMenu(bool toggle)
     {
        // playMenu.SetActive(toggle);
         mainMenu.SetActive(!toggle);
@@ -44,7 +44,7 @@ public class MainMenuManager : Singleton<MainMenuManager>
     {
         levelSelect.SetActive(toggle);
        // playMenu.SetActive(!toggle);
-    }
+    }*/
 
     public void ToggleCredits(bool toggle)
     {
@@ -52,20 +52,22 @@ public class MainMenuManager : Singleton<MainMenuManager>
         mainMenu.SetActive(!toggle); 
     }
 
-    public void ToggleCosmetics(bool toggle)
+    /*public void ToggleCosmetics(bool toggle)
     {
         cosmetics.SetActive(toggle);
         mainMenu.SetActive(!toggle); 
-    }
+    }*/
 
     public void ShowProfileScreen()
     {
-        
+        currentProfile.SetActive(true);
+        profileSelect.SetActive(false);
     }
 
     public void ReturnToProfileSelect()
     {
-
+        currentProfile.SetActive(false);
+        profileSelect.SetActive(true);
     }
 
 

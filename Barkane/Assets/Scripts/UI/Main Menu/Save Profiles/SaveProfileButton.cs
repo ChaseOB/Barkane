@@ -55,6 +55,7 @@ public class SaveProfileButton : ProfileButton
     public void LoadProfile() {
        SaveSystem.SetCurrentProfile(index);
        MainMenuManager.Instance.ShowProfileScreen();
+       CosmeticManager.Instance.SetCosmetics();
     }
 
 }
