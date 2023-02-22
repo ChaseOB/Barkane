@@ -85,7 +85,6 @@ public class LevelManager : Singleton<LevelManager>
     //Handles scene and theme switching
     public void SwitchLevel(Level level) {
         this.level = level;
-        print($"Loading level {level.levelName}");
         if(currLevelTheme == null || level.theme != currLevelTheme)
         {
             AudioManager.Instance.PlayList(level.theme.musicStringName);
@@ -145,13 +144,10 @@ public class LevelManager : Singleton<LevelManager>
         }
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneIndex);
-        print("starting asynch load");
         while (!asyncLoad.isDone)
         {
             yield return null;
         }
-        print("end asynch load");
-
         //bonus placebo time
         float elapsedTime = 0.0f;
         float time = 2.5f;

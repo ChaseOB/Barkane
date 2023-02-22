@@ -49,7 +49,6 @@ public class PauseManager : Singleton<PauseManager>
 
     private void OnCancel(InputValue value)
     {
-        Debug.Log("pause cancel");
         if(value.isPressed)
             TogglePause();
     }
