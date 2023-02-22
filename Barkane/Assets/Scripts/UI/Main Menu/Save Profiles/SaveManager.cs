@@ -11,7 +11,6 @@ public class SaveManager : MonoBehaviour
 
     public int firstVisIndex = 0;
     public int visibleProfiles = 3;
-    public int moveAmount = 1;
     public Transform buttonParent;
     public List<Transform> profilePosTransforms;
     public GameObject cycleRightArrow;
@@ -25,7 +24,7 @@ public class SaveManager : MonoBehaviour
 
     private void Start() {
         CreateProfileButtons();
-        ShowProfileButtons();
+        CycleAndShowProfileButtons(0);
     }
 
     public void CreateProfileButtons() {
@@ -34,6 +33,7 @@ public class SaveManager : MonoBehaviour
         {
             //if we have fewer than the max save profiles, add the "make new save profile" button
             GameObject button = Instantiate(newProfileButton, Vector3.zero, Quaternion.identity);
+            button.transform.SetParent(buttonParent, false);
             button.SetActive(false);
             profileButtons.Add(button);
         }
@@ -41,7 +41,7 @@ public class SaveManager : MonoBehaviour
         {
             if(profile != null) {
                 GameObject button = Instantiate(saveProfileButton, Vector3.zero, Quaternion.identity);
-                button.transform.parent = buttonParent;
+                button.transform.SetParent(buttonParent, false);
                 button.GetComponent<SaveProfileButton>().SetProfile(profile, profileToIndex[profile]);
                 button.SetActive(false);
                 profileButtons.Add(button);
@@ -64,11 +64,12 @@ public class SaveManager : MonoBehaviour
         return profiles;
     }
 
+
     public void CycleAndShowProfileButtons(int moveAmount)
     {
         CycleProfileButtons(moveAmount);
         cycleLeftArrow.SetActive(firstVisIndex > 0);
-        cycleRightArrow.SetActive(firstVisIndex + visibleProfiles < SaveSystem.maxSaves);
+        cycleRightArrow.SetActive(firstVisIndex + visibleProfiles < SaveSystem.maxSaves && profileButtons.Count >= visibleProfiles);
         ShowProfileButtons();
     }
 
