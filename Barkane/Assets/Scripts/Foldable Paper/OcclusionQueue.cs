@@ -6,12 +6,25 @@ using UnityEngine;
 public class OcclusionQueue
 {
     HashSet<SquareSide> faceUp = new HashSet<SquareSide>();
-    Queue<SquareSide> qFaceUp = new Queue<SquareSide>();
+    LinkedList<SquareSide> qFaceUp = new LinkedList<SquareSide>();
     HashSet<SquareSide> faceDown = new HashSet<SquareSide>();
-    Queue<SquareSide> qFaceDown = new Queue<SquareSide>();
+    LinkedList<SquareSide> qFaceDown = new LinkedList<SquareSide>();
 
     public Vector3Int upwards { get; private set; }
     public Vector3 center { get; private set; }
+
+    public OcclusionQueue MakeFlippedCopy()
+    {
+        return new OcclusionQueue
+        {
+            upwards = -upwards,
+            center = center,
+            qFaceDown = qFaceUp,
+            qFaceUp = qFaceDown,
+            faceDown = faceUp,
+            faceUp = faceDown,
+        };
+    }
 
     public static OcclusionQueue MakeOcclusionQueue(Vector3Int position)
     {
@@ -49,7 +62,7 @@ public class OcclusionQueue
 
     public void Enqueue(PaperSquare ps)
     {
-        if (ps.occlusionQueue != null)
+        if (ps.globalOcclusionQueue != null)
         {
             throw new UnityException("Must clear occlusion queue by dequeing before enqueuing a different one");
         }
@@ -74,24 +87,21 @@ public class OcclusionQueue
             EnqueueSide(ps.topSide, faceDown, qFaceDown);
         }
 
-        ps.occlusionQueue = this;
+        ps.globalOcclusionQueue = this;
     }
 
-    public void Dequeue(PaperSquare ps, SquareSide.SideVisiblity afterDequeue)
+    public void Dequeue(PaperSquare ps)
     {
-        ps.occlusionQueue = null;
+        ps.globalOcclusionQueue = null;
 
         // just try both lol
         DequeueSide(ps.topSide, faceUp, ref qFaceUp);
         DequeueSide(ps.topSide, faceDown, ref qFaceDown);
         DequeueSide(ps.bottomSide, faceUp, ref qFaceUp);
         DequeueSide(ps.bottomSide, faceDown, ref qFaceDown);
-
-        ps.topSide.SetVisibility(afterDequeue);
-        ps.bottomSide.SetVisibility(afterDequeue);
     }
 
-    private void EnqueueSide(SquareSide s, HashSet<SquareSide> chk, Queue<SquareSide> q)
+    private void EnqueueSide(SquareSide s, HashSet<SquareSide> chk, LinkedList<SquareSide> q)
     {
         if (chk.Contains(s))
         {
@@ -104,15 +114,15 @@ public class OcclusionQueue
         // notify the current outer-most display
         if (q.Count > 0)
         {
-            q.Peek().SetVisibility(SquareSide.SideVisiblity.none);
+            q.Last.Value.SetVisibility(SquareSide.SideVisiblity.none);
         }
-        q.Enqueue(s);
+        q.AddLast(s);
 
-        q.Peek().SetVisibility(SquareSide.SideVisiblity.full);
+        q.Last.Value.SetVisibility(SquareSide.SideVisiblity.full);
     }
 
     // MAY REPLACE Q, ref keyword needed!
-    private void DequeueSide(SquareSide s, HashSet<SquareSide> chk, ref Queue<SquareSide> q)
+    private void DequeueSide(SquareSide s, HashSet<SquareSide> chk, ref LinkedList<SquareSide> q)
     {
         if (!chk.Contains(s))
         {
@@ -123,21 +133,64 @@ public class OcclusionQueue
         chk.Remove(s);
 
         // O(0) remove if tail
-        if (q.Peek() == s)
+        if (q.Last.Value == s)
         {
-            q.Dequeue();
+            q.RemoveLast();
         }
         // O(n) remove if middle, for some reason C# doesn't support that on queues
         else
         {
             var qL = q.ToList();
             qL.Remove(s);
-            q = new Queue<SquareSide>(qL);
+            q = new LinkedList<SquareSide>(qL);
         }
         // notify the next outer-most display
         if (q.Count > 0)
         {
-            q.Peek().SetVisibility(SquareSide.SideVisiblity.full);
+            q.Last.Value.SetVisibility(SquareSide.SideVisiblity.full);
         }
+    }
+
+    public void MergeFrontAndDispose(OcclusionQueue other)
+    {
+
+        MergeSide(other.qFaceUp, ref qFaceUp);
+        MergeSide(other.qFaceDown, ref qFaceDown);
+
+        other.qFaceUp.Clear();
+        other.qFaceDown.Clear();
+    }
+
+    public void MergeBackAndDispose(OcclusionQueue other)
+    {
+        MergeSide(qFaceUp, ref other.qFaceUp);
+        MergeSide(qFaceDown, ref other.qFaceDown);
+
+        other.qFaceUp.Clear();
+        other.qFaceDown.Clear();
+
+        MergeChk(faceUp, other.faceUp);
+        MergeChk(faceDown, other.faceDown);
+
+        other.faceDown.Clear();
+        other.faceDown.Clear();
+    }
+
+    private void MergeChk(HashSet<SquareSide> mine, HashSet<SquareSide> theirs)
+    {
+        mine.UnionWith(theirs);
+    }
+
+    private void MergeSide(LinkedList<SquareSide> comesFirst, ref LinkedList<SquareSide> comesSecond)
+    {
+        comesFirst.Last.Value.SetVisibility(SquareSide.SideVisiblity.none);
+
+        // there's probably a better way to merge without new allocations
+        foreach (var i in comesSecond)
+        {
+            comesFirst.AddLast(i);
+        }
+
+        comesSecond = comesFirst;
     }
 }

@@ -31,7 +31,7 @@ public class PaperSquare : MonoBehaviour
     public PaperSquare topStack;
     public PaperSquare bottomStack;
 
-    public FoldablePaper.OcclusionQueue occlusionQueue;
+    public OcclusionQueue globalOcclusionQueue;
 
     public Vector3 storedPos;
 
@@ -68,9 +68,9 @@ public class PaperSquare : MonoBehaviour
 #endif
     }
 
-    public void EjectFromOcclusionQueue(SquareSide.SideVisiblity newVisibility)
+    public void EjectFromGlobalQueue()
     {
-        occlusionQueue?.Dequeue(this, newVisibility);
+        globalOcclusionQueue?.Dequeue(this);
     }
 
     public void ToggleTop(bool val)

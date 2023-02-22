@@ -83,18 +83,21 @@ public class FoldAnimator : MonoBehaviour
         int wait = 1;
         foreach(PaperJoint pj in foldablePaper.PaperJoints)
             pj.OnFold();
+
+        fd.foldObjects.TransferToLocalOcclusionMap();
+
         while (t < foldDuration)
         {
             t += Time.deltaTime;
             tempObj.transform.RotateAround(center, fd.axis, (fd.degrees / foldDuration) * Time.deltaTime);
             wait--;
             if(wait == 0){
-                LockFoldableSquaresOcclusion
                 // UpdateSquareVisibility(objectsToFold);
             }
             yield return null;
         }
-        
+
+        var finalTransform = tempObj.transform.worldToLocalMatrix;
 
         target.transform.RotateAround(center, fd.axis, fd.degrees);
         tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
@@ -115,14 +118,8 @@ public class FoldAnimator : MonoBehaviour
         Destroy(target);
         isFolding = false;
 
-        var relevantSquares = new List<PaperSquare>();
-        foreach (var sqrobj in objectsToFold.foldSquares)
-        {
-            relevantSquares.Add(sqrobj.GetComponent<PaperSquare>());
-        }
-
         // UpdateSquareVisibility(objectsToFold);
-        UnlockFoldableSquaresOcclusion(relevantSquares);
+        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, finalTransform);
 
         if(afterFold != null)
              afterFold();
@@ -145,39 +142,6 @@ public class FoldAnimator : MonoBehaviour
         {
             ps.StorePosition(ps.transform.position);
         }
-    }
-
-    public void UnlockFoldableSquaresOcclusion(List<PaperSquare> squares)
-    {
-        foreach (var sqr in squares)
-        {
-            sqr.EjectFromOcclusionQueue(newVisibility: SquareSide.SideVisiblity.ghost);
-        }
-    }
-
-    public bool LockFoldableSquaresOcclusion(List<PaperSquare> squares, FoldablePaper paper)
-    {
-        foreach(var sqr in squares)
-        {
-            var center = Vector3Int.RoundToInt(paper.transform.position);
-            if (paper.OcclusionMap.ContainsKey(center))
-            {
-                var q = FoldablePaper.OcclusionQueue.MakeOcclusionQueue(center);
-                if (q == null)
-                {
-                    return false; // queue cannot be created, probably because rounding issues
-                } else
-                {
-                    paper.OcclusionMap.Add(center, q);
-                    q.Enqueue(sqr);
-                }
-            } else
-            {
-                paper.OcclusionMap[center].Enqueue(sqr);
-            }
-        }
-
-        return true;
     }
 
     private void UpdateSquareVisibility(FoldObjects foldObjects)

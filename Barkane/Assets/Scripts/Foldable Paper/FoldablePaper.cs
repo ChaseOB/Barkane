@@ -112,7 +112,7 @@ public class FoldablePaper : MonoBehaviour
 
     //C: Uses a modified DFS to determine which objects should be folded
     // Returns fold side objects first, player side objects second 
-    public FoldObjects[] FindFoldObjects()
+    public (FoldObjects, FoldObjects) FindFoldObjects()
     {
         visitedJoints.Clear();
         visitedSquares.Clear();
@@ -125,10 +125,8 @@ public class FoldablePaper : MonoBehaviour
             if(ps.PlayerOccupied)
                 playerSquare = ps;
         DFSHelperSquare(playerSquare, true);
-        FoldObjects[] returnArr = new FoldObjects[2];
-        returnArr[0] = playerSide;
-        returnArr[1] = foldObjects;
-        return returnArr;
+
+        return (playerSide, foldObjects);
     }
 
     private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
