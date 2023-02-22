@@ -9,12 +9,17 @@ public class SaveProfileButton : ProfileButton
     public TextMeshProUGUI profileNameText;
     public TextMeshProUGUI currentLevelText;
     public TextMeshProUGUI timeText;
+    public TextMeshProUGUI levelNumText;
+    public TextMeshProUGUI completionText;
+
 
     public List<Sprite> worldIconSprites;
     public Image worldIcon;
 
     private SaveProfile profile;
     private int index;
+
+    private int numLevels = 9;
 
     public void SetProfile(SaveProfile profile, int ind)
     {
@@ -25,9 +30,13 @@ public class SaveProfileButton : ProfileButton
     private void UpdateButton() 
     {
         profileNameText.text = profile.GetProfileName();
-        currentLevelText.text = profile.GetLastLevel();
+        currentLevelText.text = profile.GetLastLevelString();
         float seconds = profile.GetPlayTimeInSeconds();
         timeText.text = GetTimeText(seconds);
+        levelNumText.text = profile.GetLastLevelNum().ToString();
+        worldIcon.sprite = worldIconSprites[profile.GetLastLevelWorldNum()];
+        int completionPercent = profile.GetNumLevelsCompleted() * 100 / numLevels;
+        completionText.text = $"{completionPercent}%";
     }
 
     private string GetTimeText(float seconds)
@@ -41,13 +50,11 @@ public class SaveProfileButton : ProfileButton
         return ret;
     }
 
-    private void UpdateIcon(int worldnum) {
-        worldIcon.sprite = worldIconSprites[worldnum];
-    }
 
 
     public void LoadProfile() {
        SaveSystem.SetCurrentProfile(index);
+       MainMenuManager.Instance.ShowProfileScreen();
     }
 
 }

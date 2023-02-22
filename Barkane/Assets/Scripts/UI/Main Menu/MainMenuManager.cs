@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenuManager : MonoBehaviour
+public class MainMenuManager : Singleton<MainMenuManager>
 {
     public static int gameStartScene = 1;
 
-    public GameObject playMenu;
+   // public GameObject playMenu;
     public GameObject mainMenu;
     public GameObject levelSelect;
     public GameObject credits;
     public GameObject cosmetics;
     public GameObject profileSelect;
+    public GameObject currentProfile;
 
+    private void Awake() {
+        InitializeSingleton();
+    }
 
     public static void StartGame() {
         SceneManager.LoadScene(gameStartScene);
@@ -32,14 +36,14 @@ public class MainMenuManager : MonoBehaviour
 
     public void TogglePlayMenu(bool toggle)
     {
-        playMenu.SetActive(toggle);
+       // playMenu.SetActive(toggle);
         mainMenu.SetActive(!toggle);
     }
 
     public void ToggleLevelSelect(bool toggle)
     {
         levelSelect.SetActive(toggle);
-        playMenu.SetActive(!toggle);
+       // playMenu.SetActive(!toggle);
     }
 
     public void ToggleCredits(bool toggle)
@@ -52,6 +56,16 @@ public class MainMenuManager : MonoBehaviour
     {
         cosmetics.SetActive(toggle);
         mainMenu.SetActive(!toggle); 
+    }
+
+    public void ShowProfileScreen()
+    {
+        
+    }
+
+    public void ReturnToProfileSelect()
+    {
+
     }
 
 

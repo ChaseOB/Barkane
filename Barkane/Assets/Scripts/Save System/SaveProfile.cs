@@ -32,6 +32,7 @@ public class SaveProfile
         cosmeticUnlocks.Add("None", true);
     }
 
+
     #region Getters / Setters
     public string GetProfileName()
     {
@@ -187,6 +188,11 @@ public class SaveProfile
             return true;
         }
         return false;
+    }
+
+    public int GetNumLevelsCompleted()
+    {
+        return numFolds.Keys.Count();
     }
 
     public bool GetLevelUnlock(string levelName)
