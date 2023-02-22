@@ -133,7 +133,7 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
-    - _UseSprinkles: 0
+    - _UseSprinkles: 1
     - _WorkflowMode: 1
     - _ZWrite: 1
     - _smoothness: 0.1
