@@ -45,13 +45,13 @@ public class GlowStickLogic : MonoBehaviour
         if(state == GlowstickState.CRACKED)
         {
             lifetime--;
+            OnGlowstickChange.Invoke(this, new GlowStickArgs(lifetime, state));
             Debug.Log($"Glowstick has {lifetime} folds left");
             if(lifetime == 0)
             {
                 state = GlowstickState.OFF;
                 ToggleGSBoxes(false);
                 GetComponent<GlowStick>().innerRenderer.material = materials[2];
-                OnGlowstickChange.Invoke(this, new GlowStickArgs(lifetime, state));
                 //foreach (CrystalShard shard in shards)
                    // shard.ActivateParticles(false);
             }

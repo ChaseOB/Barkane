@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -11,14 +12,30 @@ public class UIManager : Singleton<UIManager>
     public TMP_Text foldCountText;
     public TMP_Text yourFoldCountText;
     public TMP_Text bestFoldCountText;
+    public TMP_Text glowstickText;
+    public Image glowstickSprite;
+    public Sprite glowstickActive;
+    public Sprite glowstickDead;
+
 
     public GameObject shardCountGroup;
+    public GameObject glowstickGroup;
     public int menuIndex;
     public GameObject endLevelGroup;
     public GameObject inGameGroup;
 
+    private int glowstickHealth;
+
     private void Awake() {
         InitializeSingleton();
+    }
+
+    private void OnEnable() {
+        GlowStickLogic.OnGlowstickChange += OnGlowstickChange;
+    }
+
+    private void OnDisable() {
+        GlowStickLogic.OnGlowstickChange -= OnGlowstickChange;
     }
 
     private void Start() {
@@ -27,6 +44,17 @@ public class UIManager : Singleton<UIManager>
             ResetCounts(g.numShards);
         else
             ResetCounts();
+        
+        GlowStickLogic glow = FindObjectOfType<GlowStickLogic>();
+        if(glow != null) {
+            glowstickText.text = glow.lifetime.ToString();
+            glowstickHealth = glow.lifetime;
+        }
+        else 
+        {
+            glowstickGroup.SetActive(false);
+        }
+
     }
 
     public void ToggleLevelGroup(bool val)
@@ -56,6 +84,7 @@ public class UIManager : Singleton<UIManager>
         shardCountText.text = $"{currShards}/{totalShards}";
     }
 
+
     public static void UpdateFoldCount(int numFolds)
     {
         if(Instance != null)
@@ -66,6 +95,19 @@ public class UIManager : Singleton<UIManager>
     {
         foldCountText.text = numFolds.ToString();
         yourFoldCountText.text = numFolds.ToString();
+    }
+    private void OnGlowstickChange(object sender, GlowStickLogic.GlowStickArgs e) {
+        UpdateGlow(e.lifetime);
+        print(e.lifetime);
+    }
+
+    private void UpdateGlow(int lifetime)
+    {
+        glowstickText.text = lifetime.ToString();
+        if(lifetime == glowstickHealth)
+            glowstickSprite.sprite = glowstickActive;
+        if(lifetime <= 0)
+            glowstickSprite.sprite = glowstickDead;
     }
 
     public void EndLevel()

@@ -409,6 +409,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7954837596513525095, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
 --- !u!1 &1507698081
