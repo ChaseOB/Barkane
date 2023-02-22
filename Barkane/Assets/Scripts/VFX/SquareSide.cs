@@ -37,6 +37,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
     void IRefreshable.RuntimeRefresh()
     {
         PushData();
+        RuntimeParticleUpdate();
     }
 
     private void PushData()
@@ -64,10 +65,31 @@ public class SquareSide : MonoBehaviour, IRefreshable
         materialInstance.SetVector("_NormalOffset", new Vector2(Random.value, Random.value));
     }
 
+    public void RuntimeParticleUpdate()
+    {
+        // completely ignores prefab structure. this avoids the unpacking issue
+        while (sprinkleParent.childCount > 0)
+        {
+            Destroy(sprinkleParent.GetChild(0).gameObject);
+        }
+
+        var ct = sprinkles.Item1.Length;
+        for (int i = 0; i < ct; i++)
+        {
+            var child = Instantiate(VFXManager.Theme.Sprinkle, sprinkleParent);
+            child.transform.localPosition = sprinkles.Item1[i];
+            child.transform.up = transform.rotation * sprinkles.Item2[i];
+            child.transform.Rotate(child.transform.up, Random.value * 360f); // paper-parallel rotation
+            child.SetActive(true);
+        }
+    }
+
     public void UpdateMesh()
     {
 
         var (mesh, texture, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
+        sprinkles = (sprinkleVerts, sprinkleNorms);
+
         distanceTextureData = texture.EncodeToPNG();
         distanceTextureWidth = texture.width;
         materialInstance = new Material(materialPrototype)
