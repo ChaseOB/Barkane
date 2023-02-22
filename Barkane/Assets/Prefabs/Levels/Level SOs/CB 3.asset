@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: CB 3
   m_EditorClassIdentifier: 
   levelName: CB 3
+  worldNum: 0
+  levelNum: 3
   levelObject: {fileID: 4492842119818994499, guid: 488a81fd601c44a449cf72a17c77e4cf, type: 3}
   theme: {fileID: 11400000, guid: 23f30d238faa36944a41821ae891be95, type: 2}
   cosmeticUnlock: 

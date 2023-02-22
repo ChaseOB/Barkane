@@ -103,6 +103,8 @@ public class SaveSystem
         
         SaveProfile newprofile = new SaveProfile(name);
         saveProfiles[index] = newprofile;
+        SetCurrentProfile(index);
+        SaveGame("Made new profile");
 
         Debug.Log($"Created profile {name} at index {index}");
         return index;
@@ -165,8 +167,8 @@ public class SaveSystem
         SaveProfile profile;
         if (ssp == null)
         {
-            Debug.LogError("Creating a new temporary save profile -- this shouldn't happen!");
-            profile = new SaveProfile("Boomo");
+            Debug.LogError($"Creating a new temporary save profile -- this shouldn't happen! \n Index:{index}");
+            profile = new SaveProfile("Marmalade");
         }
         else
         {

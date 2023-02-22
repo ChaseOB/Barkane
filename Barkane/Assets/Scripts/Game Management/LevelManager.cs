@@ -158,8 +158,8 @@ public class LevelManager : Singleton<LevelManager>
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        SaveSystem.Current.SetLastLevel(level);
+        if(level != null)
+            SaveSystem.Current.SetLastLevel(level);
 
         levelSwitchScreen.SetActive(false);
         imageAnimator.Stop();
@@ -169,6 +169,7 @@ public class LevelManager : Singleton<LevelManager>
     }
 
     public void ReturnToMenu() {
+        SaveSystem.Current.SetLastLevel(level);
         UnloadLevel();
     }
 

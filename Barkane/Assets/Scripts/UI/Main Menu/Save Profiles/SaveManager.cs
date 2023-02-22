@@ -94,8 +94,10 @@ public class SaveManager : Singleton<SaveManager>
             button.SetActive(false);
         for(int i = firstVisIndex; i < firstVisIndex + visibleProfiles; i++) 
         {
-            profileButtons[i].transform.position = profilePosTransforms[i - firstVisIndex].position;
-            profileButtons[i].SetActive(true);
+            if(i < profileButtons.Count && profileButtons[i] != null) {
+                profileButtons[i].transform.position = profilePosTransforms[i - firstVisIndex].position;
+                profileButtons[i].SetActive(true);
+            }
         }
     }
 

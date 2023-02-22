@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: SS 2
   m_EditorClassIdentifier: 
   levelName: SS 2
+  worldNum: 1
+  levelNum: 2
   levelObject: {fileID: 6445395177646790876, guid: 108971276dc66f541a3ba576dd2eb27f, type: 3}
   theme: {fileID: 11400000, guid: f76e961422aa7114fa728acfcd66523b, type: 2}
   cosmeticUnlock: Antlers

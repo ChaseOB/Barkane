@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: SS 1
   m_EditorClassIdentifier: 
   levelName: SS 1
+  worldNum: 1
+  levelNum: 1
   levelObject: {fileID: 8773013858205733933, guid: 086b4b7d9a8775d4ca2e946e6a5b57cc, type: 3}
   theme: {fileID: 11400000, guid: f76e961422aa7114fa728acfcd66523b, type: 2}
   cosmeticUnlock: 
