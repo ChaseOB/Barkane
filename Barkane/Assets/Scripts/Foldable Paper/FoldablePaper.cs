@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(VFXThemeAdapter))]
@@ -23,6 +24,9 @@ public class FoldablePaper : MonoBehaviour
     public Vector3 centerPos;
     Dictionary<Vector3Int, List<PaperSquare>> squareLocs = new Dictionary<Vector3Int, List<PaperSquare>>();
     public PaperSquare playerSquare;
+
+    public Dictionary<Vector3Int, OcclusionQueue> OcclusionMap => m_OcclusionMap;
+    Dictionary<Vector3Int, OcclusionQueue> m_OcclusionMap = new Dictionary<Vector3Int, OcclusionQueue>();
 
     private void Awake() 
     {
@@ -87,9 +91,21 @@ public class FoldablePaper : MonoBehaviour
     private void IntializeSquarePosList()
     {
         foreach(PaperSquare ps in paperSquares){
+            var rounded = Vector3Int.RoundToInt(ps.transform.position);
             List<PaperSquare> list = new List<PaperSquare>();
                 list.Add(ps);
-                squareLocs.Add(Vector3Int.RoundToInt(ps.transform.position), list);
+                squareLocs.Add(rounded, list);
+
+            var q = OcclusionQueue.MakeOcclusionQueue(rounded);
+
+            if (q != null)
+            {
+                q.Enqueue(ps);
+                m_OcclusionMap.Add(rounded, q);
+            } else
+            {
+                throw new UnityException("Occlusion queue could not be created");
+            }
         }
     }
 
@@ -189,5 +205,7 @@ public class FoldablePaper : MonoBehaviour
         foreach (List<PaperSquare> list in dict.Values)
             overlapList.Add(list);
         return overlapList;
-    }
+    } 
+
+    
 }

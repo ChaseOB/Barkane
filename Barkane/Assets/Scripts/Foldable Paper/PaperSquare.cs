@@ -8,6 +8,7 @@ using UnityEngine;
 public class PaperSquare : MonoBehaviour
 {
 
+
     [SerializeField] private bool playerOccupied = false; //true if the player is on this square
     public bool PlayerOccupied { get => playerOccupied;}
 
@@ -29,6 +30,8 @@ public class PaperSquare : MonoBehaviour
 
     public PaperSquare topStack;
     public PaperSquare bottomStack;
+
+    public FoldablePaper.OcclusionQueue occlusionQueue;
 
     public Vector3 storedPos;
 
@@ -63,6 +66,11 @@ public class PaperSquare : MonoBehaviour
             RemoveAdjacentJoints();
         }
 #endif
+    }
+
+    public void EjectFromOcclusionQueue(SquareSide.SideVisiblity newVisibility)
+    {
+        occlusionQueue?.Dequeue(this, newVisibility);
     }
 
     public void ToggleTop(bool val)
