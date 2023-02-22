@@ -54,15 +54,7 @@ public class SaveProfileButton : ProfileButton
 
     public void LoadProfile() {
        SaveSystem.SetCurrentProfile(index);
-       MainMenuManager.Instance.ShowProfileScreen(profile.GetProfileName());
+       MainMenuManager.Instance.ShowProfileScreen(index);
        CosmeticManager.Instance.SetCosmetics();
     }
-
-    public void DeleteProfile(){
-        SaveSystem.DeleteSaveProfile(index);
-        profile = null;
-        SaveSystem.SetProfile(index, profile);
-        SaveManager.Instance.UpdateAllButtons();
-    }
-
 }

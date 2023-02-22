@@ -57,6 +57,17 @@ public class LevelManager : Singleton<LevelManager>
         return level;
     }
 
+    public void LoadLevel(string levelName)
+    {
+        for (int i = 0; i < levelList.Count; i++) {
+            if(levelList[i].levelName.Equals(levelName)) {
+                LoadLevel(i);
+                return;
+            }
+        }
+        Debug.LogWarning("No valid level found!");
+    }
+
     //Handles index setting, special case of last level
     public void LoadLevel(int index)
     {

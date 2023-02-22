@@ -33,6 +33,9 @@ public class SaveManager : Singleton<SaveManager>
     }
 
     public void CreateProfileButtons() {
+        foreach(GameObject go in profileButtons)
+            Destroy(go);
+        profileButtons.Clear();
         SaveProfile[] profiles = SortSaveProfilesByTime();
         if(profiles[SaveSystem.maxSaves - 1] == null)
         {
