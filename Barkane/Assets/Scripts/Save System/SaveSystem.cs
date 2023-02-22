@@ -31,11 +31,6 @@ public class SaveSystem
     private static int currentIndex = -1; // if -1, then it's a temporary profile
 
     public static int maxSaves = 4;
-
-    /*
-        C: What's the deal with unlimted save profiles?
-        This mostly exists for wreckcon
-    */
     private static SaveProfile[] saveProfiles = new SaveProfile[maxSaves];
 
     public SaveSystem()
