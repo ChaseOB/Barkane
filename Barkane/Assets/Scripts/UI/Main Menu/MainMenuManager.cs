@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class MainMenuManager : Singleton<MainMenuManager>
 {
@@ -14,6 +15,8 @@ public class MainMenuManager : Singleton<MainMenuManager>
     public GameObject cosmetics;
     public GameObject profileSelect;
     public GameObject currentProfile;
+
+    public TextMeshProUGUI profileNameText;
 
     private void Awake() {
         InitializeSingleton();
@@ -41,10 +44,11 @@ public class MainMenuManager : Singleton<MainMenuManager>
         mainMenu.SetActive(!toggle); 
     }
 
-    public void ShowProfileScreen()
+    public void ShowProfileScreen(string profileName)
     {
         currentProfile.SetActive(true);
         profileSelect.SetActive(false);
+        profileNameText.text = profileName;
     }
 
     public void ReturnToProfileSelect()
