@@ -159,6 +159,8 @@ public class LevelManager : Singleton<LevelManager>
             yield return null;
         }
 
+        SaveSystem.Current.SetLastLevel(level);
+
         levelSwitchScreen.SetActive(false);
         imageAnimator.Stop();
         if(UIManager.Instance != null)

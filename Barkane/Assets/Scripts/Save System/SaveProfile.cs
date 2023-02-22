@@ -14,11 +14,8 @@ public class SaveProfile
     private System.DateTime lastSaved;
     private string lastLevel;
     private string cosmetic;
-    
-    //ADD THESE
     private int lastLevelWorldNum;
     private int lastLevelNum;
-    private int numLevelsCompleted;
 
     //Level name -> number of folds. -1 if not completed
     private Dictionary<string, int> numFolds = new Dictionary<string, int>();
@@ -76,14 +73,43 @@ public class SaveProfile
         lastSaved = value;
     }
 
-    public string GetLastLevel()
+    public string GetLastLevelString()
     {
         return lastLevel;
     }
 
-    public void SetLastLevel(string level)
+    public void SetLastLevelString(String level)
     {
         lastLevel = level;
+    }
+
+
+
+    public void SetLastLevel(Level level)
+    {
+        lastLevel = level.levelName;
+        lastLevelNum = level.levelNum;
+        lastLevelWorldNum = level.worldNum;
+    }
+
+    public int GetLastLevelWorldNum()
+    {
+        return lastLevelWorldNum;
+    }
+
+    public void SetLastLevelNum(int num)
+    {
+        lastLevelNum = num;
+    }
+
+    public int GetLastLevelNum()
+    {
+        return lastLevelNum;
+    }
+
+    public void SetLastLevelWorldNum(int worldNum)
+    {
+        lastLevelWorldNum = worldNum;
     }
 
     public string GetCosmetic()

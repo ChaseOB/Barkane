@@ -12,6 +12,8 @@ public class SerializableSaveProfile
     public System.DateTime lastSaved;
     public string lastLevel;
     public string cosmetic;
+    public int lastLevelWorldNum;
+    public int lastLevelNum;
 
     public string[] cosmetics_Keys;
     public bool[]   cosmetics_Values;
@@ -29,8 +31,10 @@ public class SerializableSaveProfile
         ssp.completionStatus = saveProfile.GetCompletionStatus();
         ssp.playTimeInSeconds = saveProfile.GetPlayTimeInSeconds();
         ssp.lastSaved = saveProfile.GetLastSaved();
-        ssp.lastLevel = saveProfile.GetLastLevel();
+        ssp.lastLevel = saveProfile.GetLastLevelString();
         ssp.cosmetic = saveProfile.GetCosmetic();
+        ssp.lastLevelNum = saveProfile.GetLastLevelNum();
+        ssp.lastLevelWorldNum = saveProfile.GetLastLevelWorldNum();
 
         ssp.cosmetics_Keys = saveProfile.GetCosmeticsDictionary().Keys.ToArray();
         ssp.levelFolds_Keys = saveProfile.GetFoldsDictionary().Keys.ToArray();
@@ -48,7 +52,9 @@ public class SerializableSaveProfile
         sp.SetCompletionStatus(completionStatus);
         sp.SetPlayTimeInSeconds(playTimeInSeconds);
         sp.SetLastSaved(lastSaved);
-        sp.SetLastLevel(lastLevel);
+        sp.SetLastLevelString(lastLevel);
+        sp.SetLastLevelNum(lastLevelNum);
+        sp.SetLastLevelWorldNum(lastLevelWorldNum);
         sp.SetCosmetic(cosmetic);
 
 

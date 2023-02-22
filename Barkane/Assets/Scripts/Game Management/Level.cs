@@ -6,6 +6,8 @@ using UnityEngine;
 public class Level : ScriptableObject
 {
     public string levelName;
+    public int worldNum;
+    public int levelNum;
     public GameObject levelObject;
     public Theme theme;
     public string cosmeticUnlock;
