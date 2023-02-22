@@ -35,6 +35,9 @@
         },
         {
             "m_Id": "4a1cd72e27d446c29dd35a9a13621ca4"
+        },
+        {
+            "m_Id": "56ec83f9309a41df8b924ed09fd7531c"
         }
     ],
     "m_Keywords": [],
@@ -1941,6 +1944,33 @@
     "m_PreviewMode": 0,
     "m_CustomColors": {
         "m_SerializableColors": []
+    }
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "56ec83f9309a41df8b924ed09fd7531c",
+    "m_Guid": {
+        "m_GuidSerialized": "6de24b0e-6906-4ecf-9dfe-100d01784856"
+    },
+    "m_Name": "UseSprinkles",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "UseSprinkles",
+    "m_DefaultReferenceName": "_UseSprinkles",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 1.0,
+    "m_FloatType": 2,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
     }
 }
 
@@ -3956,6 +3986,9 @@
         },
         {
             "m_Id": "4a1cd72e27d446c29dd35a9a13621ca4"
+        },
+        {
+            "m_Id": "56ec83f9309a41df8b924ed09fd7531c"
         }
     ]
 }

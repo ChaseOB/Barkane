@@ -94,10 +94,10 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         Ring(ref vs, g.pJ + dB1 + correction, DDQuadraticBezier(dA2, anchor, dB2, 0.75f, gSide.tJ), gSide.tJ, 1 + 4 * settings.resolution, settings);
         Ring(ref vs, g.pJ + dB2 + correction, gSide.nB, gSide.tJ, 1 + 5 * settings.resolution, settings);
 
-        Debug.DrawRay(g.pJ, gSide.tJ, Color.black);
-        Debug.DrawRay(g.pJ, DDQuadraticBezier(dA2, anchor, dB2, 0.25f, gSide.tJ), Color.red);
-        Debug.DrawRay(g.pJ, gSide.nJ, Color.green);
-        Debug.DrawRay(g.pJ, DDQuadraticBezier(dA2, anchor, dB2, 0.75f, gSide.tJ), Color.blue);
+        // Debug.DrawRay(g.pJ, gSide.tJ, Color.black);
+        // Debug.DrawRay(g.pJ, DDQuadraticBezier(dA2, anchor, dB2, 0.25f, gSide.tJ), Color.red);
+        // Debug.DrawRay(g.pJ, gSide.nJ, Color.green);
+        // Debug.DrawRay(g.pJ, DDQuadraticBezier(dA2, anchor, dB2, 0.75f, gSide.tJ), Color.blue);
 
         // head B
         vs[^1] = g.pJ + g.nJ2B * (settings.halfLength + margin) + gSide.nB * settings.elevation;
