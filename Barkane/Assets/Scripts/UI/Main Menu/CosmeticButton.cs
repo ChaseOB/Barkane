@@ -15,7 +15,6 @@ public class CosmeticButton : MonoBehaviour
             UnlockCosmetic();
     }
 
-
     public void UnlockCosmetic()
     {
         lockIcon.SetActive(false);
@@ -24,6 +23,6 @@ public class CosmeticButton : MonoBehaviour
 
     public void ToggleSelectionImage(bool toggle)
     {
-        //selection?.SetActive(toggle);
+        selection.SetActive(toggle);
     }
 }

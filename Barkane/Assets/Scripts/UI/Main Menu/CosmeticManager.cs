@@ -16,14 +16,14 @@ public class CosmeticManager : Singleton<CosmeticManager>
         cosmeticString = SaveSystem.Current.GetCosmetic(); 
         Dictionary<string, bool> cosmeticDict = SaveSystem.Current.GetCosmeticsDictionary();
         foreach(CosmeticButton button in buttons) 
-            if(cosmeticDict.GetValueOrDefault(button.cosmeticName))
+            if(cosmeticDict.GetValueOrDefault(button.cosmeticName, false))
                 button.UnlockCosmetic();
     }
 
     public void SelectCosmetic(string cosmeticName)
     {
         foreach(CosmeticButton button in buttons) {
-            button.ToggleSelectionImage(button.cosmeticName == cosmeticName);
+            button.ToggleSelectionImage(button.cosmeticName.Equals(cosmeticName));
         }
 
         cosmeticString = cosmeticName;
