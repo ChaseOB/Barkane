@@ -154,33 +154,33 @@ public class FoldObjects {
 
                 var radial = worldSpacePos - worldSpaceRotationRoot;
                 var matchingFactor = Vector3.Dot(radial, worldSpaceUp);
-                var approachFromPositive = matchingFactor > 0.05f;
+                var approachFromPositive = matchingFactor < -0.05f;
 
-                Debug.Log($"Dot {matchingFactor}");
+                // When matchingFactor is 0, it means radial is orthogonal to positive and we have an ambiguous case
+                // The resolution for that can be figured out by rewinding the animation by a bit so that everything
+                // is a little tilted.
 
-                if (!approachFromPositive && matchingFactor > -0.05f)
+                if (!approachFromPositive && matchingFactor < 0.05f)
                 {
-                    // ambiguous case when we *only* view from the final state, as radial is orthogonal to positive
                     var nearEndRadial = nearEndTransform.MultiplyPoint(local) - worldSpaceRotationRoot;
-                    Debug.Log($"resolved transform: {nearEndTransform.MultiplyPoint(local)}");
                     var nearEndMatchingFactor = Vector3.Dot(nearEndRadial, worldSpaceUp);
 
-                    Debug.Log($"... resolves to {nearEndMatchingFactor}");
-
-                    approachFromPositive = nearEndMatchingFactor > 0f;
+                    approachFromPositive = nearEndMatchingFactor < 0f;
                 }
+
+                Debug.Log($"approach from: {(approachFromPositive ? "+" : "-")} should flip: {(alignedToNegative ? "+":"-")}");
 
                 if (approachFromPositive)
                 {
                     // When approaching from positive, the new tiles (contents of the local occlusion map) covers the old tiles
                     // This means they come *after* the original items in the merged queue
-                    globalMap[worldSpacePos].MergeToBackAndDispose(
+                    globalMap[worldSpacePos].MergeApproachingFromPositive(
                         alignedToNegative ? oq.MakeFlippedCopy() : oq);
                 }
                 else
                 {
                     // Coming from a local occlusion map content goes *before* the global content
-                    globalMap[worldSpacePos].MergeToFrontAndDispose(
+                    globalMap[worldSpacePos].MergeApproachingFromNegative(
                         alignedToNegative ? oq.MakeFlippedCopy() : oq);
                 }
 

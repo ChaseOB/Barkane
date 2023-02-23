@@ -120,19 +120,16 @@ public class OcclusionQueue
         return Matrix4x4.identity;
     };
 
-    public OcclusionQueue MakeFlippedCopy()
+    public OcclusionQueue MakeFlippedCopy() => new OcclusionQueue
     {
-        return new OcclusionQueue
-        {
-            upwards = -upwards,
-            center = center,
-            qFaceDown = qFaceUp,
-            qFaceUp = qFaceDown,
-            faceDown = faceUp,
-            faceUp = faceDown,
-            transformFactory = transformFactory
-        };
-    }
+        upwards = -upwards,
+        center = center,
+        qFaceDown = qFaceUp,
+        qFaceUp = qFaceDown,
+        faceDown = faceUp,
+        faceUp = faceDown,
+        transformFactory = transformFactory
+    };
 
     public void UpdateSpace(Vector3Int upwards, Vector3Int center, Func<Matrix4x4> transformFactory)
     {
@@ -269,29 +266,30 @@ public class OcclusionQueue
         }
     }
 
-    public void MergeToFrontAndDispose(OcclusionQueue other)
+    /// <summary>
+    /// Merge such that...
+    /// - the top queue of other is inserted in front of the top queue of this
+    /// - the bottom queue of this is inserted in front of the bottom queue of other
+    /// </summary>
+    /// <param name="other"></param>
+    public void MergeApproachingFromNegative(OcclusionQueue other)
     {
         MergeSide(other.qFaceUp, ref qFaceUp);
-        MergeSide(other.qFaceDown, ref qFaceDown);
+        MergeSide(qFaceDown, ref other.qFaceDown);
         MergeChk(faceUp, other.faceUp);
         MergeChk(faceDown, other.faceDown);
     }
 
-    public void MergeToBackAndDispose(OcclusionQueue other)
+    /// <summary>
+    /// Merge such that...
+    /// - the top queue of other is inserted behind the top queue of this
+    /// - the bottom queue of this is inserted behind the bottom queue of other
+    /// </summary>
+    /// <param name="other"></param>
+    public void MergeApproachingFromPositive(OcclusionQueue other)
     {
         MergeSide(qFaceUp, ref other.qFaceUp);
-        MergeSide(qFaceDown, ref other.qFaceDown);
-
-        if (qFaceUp.Count > 0)
-        {
-            qFaceUp.Last.Value.Visibility = SquareSide.SideVisiblity.full;
-        }
-        
-        if (qFaceDown.Count > 0)
-        {
-            qFaceDown.Last.Value.Visibility = SquareSide.SideVisiblity.full;
-        }
-
+        MergeSide(other.qFaceDown, ref qFaceDown);
         MergeChk(faceUp, other.faceUp);
         MergeChk(faceDown, other.faceDown);
     }
@@ -315,6 +313,11 @@ public class OcclusionQueue
         }
 
         comesSecond = comesFirst;
+
+        if (comesFirst.Count > 0)
+        {
+            comesFirst.Last.Value.Visibility = SquareSide.SideVisiblity.full;
+        }
     }
 
     public override string ToString()
