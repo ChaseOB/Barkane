@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>>
@@ -15,12 +16,17 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
         } set
         {
             var keyTuple = (key.x, key.y, key.z);
+
+            // Debug.Log($"... new entry at { keyTuple }");
+
             if (map.ContainsKey(keyTuple))
             {
+                // Debug.Log("... ... overwriting an old value");
                 map[keyTuple] = value;
             } else
             {
                 map.Add(keyTuple, value);
+                // Debug.Log("... ... this is a new value");
             }
         }
     }
@@ -30,7 +36,14 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
 
     public override string ToString()
     {
-        return string.Join("\n", map.Values);
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine($"Containing { map.Count } values:");
+        foreach(var (k, v) in map)
+        {
+            sb.AppendLine(v.ToString());
+        }
+
+        return sb.ToString();
     }
 
     public IEnumerator<KeyValuePair<Vector3Int, OcclusionQueue>> GetEnumerator()
@@ -90,7 +103,7 @@ public class OcclusionQueue
     LinkedList<SquareSide> qFaceDown = new LinkedList<SquareSide>();
 
     public Vector3Int upwards { get; private set; }
-    public Vector3 center { get; private set; }
+    public Vector3Int center { get; private set; }
 
     public OcclusionQueue MakeFlippedCopy()
     {
@@ -147,16 +160,11 @@ public class OcclusionQueue
             throw new UnityException("Must clear occlusion queue by dequeing before enqueuing a different one");
         }
 
-        var center = ps.transform.position;
-        var centerRounded = Vector3Int.RoundToInt(center);
+        var centerRounded = Vector3Int.RoundToInt(ps.transform.position);
 
         if (!centerRounded.Equals(center)) { return; }
-
-        var dist = (center - centerRounded).sqrMagnitude;
         var nA = ps.topSide.transform.up;
         var nB = ps.bottomSide.transform.up;
-
-        Debug.Log($"Enqueue {center}");
 
         if (Vector3.Dot(nA, upwards) > Vector3.Dot(nB, upwards))
         {

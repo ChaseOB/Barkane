@@ -199,6 +199,7 @@ public class FoldablePaper : MonoBehaviour
         foreach(var ps in paperSquares)
         {
             var rounded = Vector3Int.RoundToInt(ps.transform.position);
+            Debug.Log($"Paper square at {rounded}");
 
             if (OcclusionMap.ContainsKey(rounded))
             {
@@ -220,5 +221,7 @@ public class FoldablePaper : MonoBehaviour
                 }
             }
         }
+
+        Debug.Log(OcclusionMap);
     }
 }
