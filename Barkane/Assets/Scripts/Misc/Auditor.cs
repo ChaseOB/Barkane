@@ -2,9 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using TMPro;
 
 public class Auditor : Singleton<Auditor>
 {
+    public GameObject auditPanel;
+    public TextMeshProUGUI auditText;
+
     private void Awake() {
         InitializeSingleton();
     }
@@ -14,17 +18,24 @@ public class Auditor : Singleton<Auditor>
         Array.Copy(SaveSystem.GetProfiles(), profiles, SaveSystem.maxSaves);
         Array.Sort(profiles, SaveProfile.SortMostLevelsFewestFolds());
         
-        string ret = "";
+        string ret = "Audit \n Winner: \n";
 
         foreach (SaveProfile s in profiles)
         {
-            ret += s.GetProfileInfo();
-            ret += "\n";
+            if(s!= null) {
+                ret += s.GetProfileInfo();
+                ret += "\n";
+            }
         }
 
         Debug.Log(ret);
-
-        MainMenuManager.Instance.ShowAudit(ret);
+        auditText.text = ret;
+        auditPanel.SetActive(true);
+    
         return ret;
+    }
+
+    public void HidePanel() {
+        auditPanel.SetActive(false);
     }
 }

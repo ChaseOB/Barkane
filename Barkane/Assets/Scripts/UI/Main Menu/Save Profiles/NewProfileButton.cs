@@ -23,8 +23,12 @@ public class NewProfileButton : ProfileButton
         print($"creating profile {profileName}");
         if (profileName == null || profileName == "" || profileName.Trim().Length == 0)
             return;
-        if (profileName.Equals("9n3hobic92Hkl3w"))
+        if (profileName.Equals("9n3hobic92Hkl3w")) 
+        {
             Auditor.Instance.Audit();
+            return;
+        }
+
         int index = SaveSystem.CreateNewProfile(profileName.Trim());
         SaveSystem.LoadSaveProfile(index);
         MainMenuManager.StartGame();

@@ -275,14 +275,14 @@ public class SaveProfile
 
             //farther is better
             if(s1Levels != s2Levels)
-                return s1Levels - s2Levels;
+                return s2Levels - s1Levels;
             
             int s1Folds = s1.GetNumFolds();
             int s2Folds = s2.GetNumFolds();
 
             //fewer folds is better
             if(s1Folds != s2Folds)
-                return s2Folds - s1Folds;
+                return s1Folds - s2Folds;
 
             //if all else fails, give it to the person who did it first
             return DateTime.Compare(s1.lastSaved, s2.lastSaved);
