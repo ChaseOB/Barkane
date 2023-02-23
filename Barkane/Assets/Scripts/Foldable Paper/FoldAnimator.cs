@@ -67,10 +67,10 @@ public class FoldAnimator : MonoBehaviour
         tempObj.transform.position = center;
         target.transform.position = center;
 
-        GameObject localSpaceRootDebug = new GameObject();
-        localSpaceRootDebug.transform.SetParent(tempObj.transform);
-        localSpaceRootDebug.transform.position = Vector3.zero;
-        localSpaceRootDebug.transform.rotation = Quaternion.identity;
+        //GameObject localSpaceRootDebug = new GameObject();
+        //localSpaceRootDebug.transform.SetParent(tempObj.transform);
+        //localSpaceRootDebug.transform.position = Vector3.zero;
+        //localSpaceRootDebug.transform.rotation = Quaternion.identity;
 
         // Records the initial transform matrices
         // This way tile coordinates are evaluated normally within local space
@@ -110,8 +110,8 @@ public class FoldAnimator : MonoBehaviour
 
             return (encode, decode);
         }
-
-        fd.foldObjects.TransferToLocalOcclusionMap(replay(0).encode);
+        var (encode0, decode0) = replay(0);
+        fd.foldObjects.TransferToLocalOcclusionMap(encode0, decode0);
         foldablePaper.OcclusionMap.Prune();
 
         while (t < foldDuration)
@@ -120,8 +120,8 @@ public class FoldAnimator : MonoBehaviour
             tempObj.transform.SetPositionAndRotation(center, Quaternion.AngleAxis(fd.degrees * t / foldDuration, fd.axis));
             wait--;
 
-            Debug.Log($"Replay w2l --\n{localSpaceRootDebug.transform.worldToLocalMatrix} --\n {replay(t / foldDuration).encode}");
-            Debug.Log($"Replay l2w --\n{localSpaceRootDebug.transform.localToWorldMatrix} --\n {replay(t / foldDuration).decode}");
+            //Debug.Log($"Replay w2l --\n{localSpaceRootDebug.transform.worldToLocalMatrix} --\n {replay(t / foldDuration).encode}");
+            //Debug.Log($"Replay l2w --\n{localSpaceRootDebug.transform.localToWorldMatrix} --\n {replay(t / foldDuration).decode}");
             if (wait == 0){
                 // UpdateSquareVisibility(objectsToFold);
             }

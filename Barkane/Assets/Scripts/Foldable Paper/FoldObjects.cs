@@ -71,7 +71,7 @@ public class FoldObjects {
         return CoordUtils.CalculateCenter(vectors);
     }
 
-    public void TransferToLocalOcclusionMap(Matrix4x4 encode)
+    public void TransferToLocalOcclusionMap(Matrix4x4 encode, Matrix4x4 decode)
     {
         OcclusionMap.Clear();
         PaperSquaresCache = new List<PaperSquare>();
@@ -83,7 +83,7 @@ public class FoldObjects {
         foreach (var ps in PaperSquaresCache)
         {
             ps.EjectFromGlobalQueue();
-            var center = Vector3Int.RoundToInt(ps.transform.localPosition);
+            var center = Vector3Int.RoundToInt(encode.MultiplyPoint(ps.transform.position));
 
             if (!OcclusionMap.ContainsKey(center))
             {
@@ -99,8 +99,8 @@ public class FoldObjects {
                 OcclusionMap[center].Enqueue(ps);
 
             Debug.DrawRay(
-                encode.inverse.MultiplyPoint(OcclusionMap[center].center),
-                encode.inverse.MultiplyVector(OcclusionMap[center].upwards),
+                decode.MultiplyPoint(OcclusionMap[center].center),
+                decode.MultiplyVector(OcclusionMap[center].upwards),
                 Color.cyan, 6);
         }
 
@@ -164,40 +164,30 @@ public class FoldObjects {
                     approachFromPositive = nearEndMatchingFactor < 0f;
                 }
 
-                Debug.Log($"approach from: {(approachFromPositive ? "+" : "-")} should flip: {(alignedToNegative ? "true":"false")}");
+                Debug.Log($"approach from: {(approachFromPositive ? "+" : "-")} { local } -> { worldSpacePos } should flip: {(alignedToNegative ? "true":"false")}");
 
                 if (approachFromPositive)
-                {
                     // When approaching from positive, the new tiles (contents of the local occlusion map) covers the old tiles
                     // This means they come *after* the original items in the merged queue
                     globalMap[worldSpacePos].MergeApproachingFromPositive(
                         alignedToNegative ? oq.MakeFlippedCopy() : oq);
-                }
                 else
-                {
                     // Coming from a local occlusion map content goes *before* the global content
                     globalMap[worldSpacePos].MergeApproachingFromNegative(
                         alignedToNegative ? oq.MakeFlippedCopy() : oq);
-                }
-
-                globalMap[worldSpacePos].UseAsGlobal();
-
-                // Debug.Log($"Merge with global: {globalMap[corresponding]}");
             }
             else
             {
                 // Insert local entry directly into global entry
                 // Flip to always using positive direction
                 globalMap[worldSpacePos] = alignedToNegative ? oq.MakeFlippedCopy() : oq;
-                globalMap[worldSpacePos].UseAsGlobal();
-
-                // Debug.Log("Insert direct");
             }
 
             globalMap[worldSpacePos].UpdateSpace(
                 alignedToNegative ? -worldSpaceUp : worldSpaceUp,
                 worldSpacePos,
                 OcclusionQueue.Identity);
+            globalMap[worldSpacePos].UseAsGlobal();
 
             Debug.DrawRay(globalMap[worldSpacePos].center, globalMap[worldSpacePos].upwards * 2, Color.magenta, 3);
         }
