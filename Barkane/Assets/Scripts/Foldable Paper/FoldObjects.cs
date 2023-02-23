@@ -71,12 +71,7 @@ public class FoldObjects {
         return CoordUtils.CalculateCenter(vectors);
     }
 
-    private Matrix4x4 WorldToLocalEncoder (Func<float, Matrix4x4> replay)
-    {
-        return replay(0);
-    }
-
-    public void TransferToLocalOcclusionMap(Func<float, Matrix4x4> replay)
+    public void TransferToLocalOcclusionMap(Func<float, (Matrix4x4 encoder, Matrix4x4 decoder)> replay)
     {
         OcclusionMap.Clear();
         PaperSquaresCache = new List<PaperSquare>();
@@ -84,6 +79,8 @@ public class FoldObjects {
         {
             PaperSquaresCache.Add(ps.GetComponent<PaperSquare>());
         }
+
+        var (encoder, decoder) = replay(0);
 
         foreach (var ps in PaperSquaresCache)
         {
@@ -93,7 +90,7 @@ public class FoldObjects {
             if (!OcclusionMap.ContainsKey(center))
             {
                 var q = OcclusionQueue.MakeOcclusionQueue(center, delegate() {
-                    return WorldToLocalEncoder(replay);
+                    return encoder;
                 });
                 if (q == null)
                 {
@@ -110,7 +107,7 @@ public class FoldObjects {
                 OcclusionMap[center].Enqueue(ps);
             }
 
-            var mtrx = WorldToLocalEncoder(replay).inverse;
+            var mtrx = decoder;
             Debug.DrawRay(mtrx.MultiplyPoint(OcclusionMap[center].center), mtrx.MultiplyVector(OcclusionMap[center].upwards), Color.cyan, 6);
         }
 
@@ -119,15 +116,16 @@ public class FoldObjects {
 
 
     public void MergeWithGlobalOcclusionMap(
-        OcclusionMap globalMap, Vector3 worldSpaceRotationRoot, Func<float, Matrix4x4> replay)
+        OcclusionMap globalMap, Vector3 worldSpaceRotationRoot, Func<float, (Matrix4x4 encoder, Matrix4x4 decoder)> replay)
     {
-        var decoder = WorldToLocalEncoder(replay).inverse;
-        var nearEndDecoder = replay(0.9f).inverse;
+        // var (encoder0, decoder0) = replay(0);
+        var (encoderNear, decoderNear) = replay(0.9f);
+        var (encoder1, decoder1) = replay(1);
 
         foreach (var (local, oq) in OcclusionMap)
         {
-            var worldSpacePos = Vector3Int.RoundToInt(decoder.MultiplyPoint(local));
-            var worldSpaceUp = Vector3Int.RoundToInt(decoder.MultiplyVector(oq.upwards));
+            var worldSpacePos = Vector3Int.RoundToInt(decoder1.MultiplyPoint(local));
+            var worldSpaceUp = Vector3Int.RoundToInt(decoder1.MultiplyVector(oq.upwards));
 
             var alignedToNegative = worldSpaceUp.x < 0 || worldSpaceUp.y < 0 || worldSpaceUp.z < 0;
 
@@ -166,7 +164,7 @@ public class FoldObjects {
 
                 if (!approachFromPositive && matchingFactor < 0.05f)
                 {
-                    var nearEndPosition = nearEndDecoder.MultiplyPoint(local);
+                    var nearEndPosition = decoderNear.MultiplyPoint(local);
                     var nearEndRadial = nearEndPosition - worldSpaceRotationRoot;
                     var nearEndMatchingFactor = Vector3.Dot(nearEndRadial, worldSpaceUp);
 

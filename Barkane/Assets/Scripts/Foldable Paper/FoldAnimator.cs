@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using UnityEngine;
 
 public class FoldAnimator : MonoBehaviour
@@ -66,18 +67,19 @@ public class FoldAnimator : MonoBehaviour
         tempObj.transform.position = center;
         target.transform.position = center;
 
-        //GameObject localSpaceRootDebug = new GameObject();
-        //localSpaceRootDebug.transform.SetParent(tempObj.transform);
-        //localSpaceRootDebug.transform.position = Vector3.zero;
-        //localSpaceRootDebug.transform.rotation = Quaternion.identity;
+        GameObject localSpaceRootDebug = new GameObject();
+        localSpaceRootDebug.transform.SetParent(tempObj.transform);
+        localSpaceRootDebug.transform.position = Vector3.zero;
+        localSpaceRootDebug.transform.rotation = Quaternion.identity;
 
-        // Records the initial inverse transform matrix
+        // Records the initial transform matrices
         // This way tile coordinates are evaluated normally within local space
         // Because Occlusion uses coordinate MOD 2 to determine orientation, the local
         // space anchored around "center" actually messes everything up
-        var tempObjL2W0 = tempObj.transform.localToWorldMatrix;
+        var temp2Local = tempObj.transform.localToWorldMatrix;
+        var local2Temp = tempObj.transform.worldToLocalMatrix;
 
-        foreach(GameObject o in objectsToFold.foldSquares)
+        foreach (GameObject o in objectsToFold.foldSquares)
         {
             o.transform.SetParent(tempObj.transform, worldPositionStays: true);
         }
@@ -97,10 +99,16 @@ public class FoldAnimator : MonoBehaviour
         foreach(PaperJoint pj in foldablePaper.PaperJoints)
             pj.OnFold();
 
-        Matrix4x4 replay(float t)
+        (Matrix4x4 encode, Matrix4x4 decode) replay(float t)
         {
-            return tempObjL2W0 // tempObj -> local space root
-                * Matrix4x4.TRS(center, Quaternion.AngleAxis(fd.degrees * t, fd.axis), Vector3.one).inverse; // world space -> tempObj local space
+            // note that local space root takes the inverse of tempObj at t=0
+            var temp2Wld = Matrix4x4.TRS(center, Quaternion.AngleAxis(fd.degrees * t, fd.axis), Vector3.one);
+            var wld2Temp = temp2Wld.inverse;
+
+            var encode = temp2Local * wld2Temp;
+            var decode = temp2Wld * local2Temp;
+
+            return (encode, decode);
         }
 
         fd.foldObjects.TransferToLocalOcclusionMap(replay);
@@ -112,8 +120,9 @@ public class FoldAnimator : MonoBehaviour
             tempObj.transform.SetPositionAndRotation(center, Quaternion.AngleAxis(fd.degrees * t / foldDuration, fd.axis));
             wait--;
 
-            // Debug.Log($"Replay w2l --\n{localSpaceRootDebug.transform.worldToLocalMatrix} --\n {replay(t / foldDuration)}");
-            if(wait == 0){
+            Debug.Log($"Replay w2l --\n{localSpaceRootDebug.transform.worldToLocalMatrix} --\n {replay(t / foldDuration).encode}");
+            Debug.Log($"Replay l2w --\n{localSpaceRootDebug.transform.localToWorldMatrix} --\n {replay(t / foldDuration).decode}");
+            if (wait == 0){
                 // UpdateSquareVisibility(objectsToFold);
             }
             yield return null;
