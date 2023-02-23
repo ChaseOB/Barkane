@@ -195,6 +195,7 @@ public class LevelManager : Singleton<LevelManager>
 
         //set folds for current level
         SaveSystem.Current.SetNumFoldsIfLower(level.levelName, currLevelFoldCount);
+        currLevelFoldCount = 0;
         
         //Unlock Cosmetics if there are any
         if(level.cosmeticUnlock != string.Empty){

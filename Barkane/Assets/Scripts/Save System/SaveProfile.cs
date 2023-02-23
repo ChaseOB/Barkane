@@ -16,6 +16,7 @@ public class SaveProfile
     private string cosmetic;
     private int lastLevelWorldNum;
     private int lastLevelNum;
+    private System.DateTime lastImproved;
 
     //Level name -> number of folds. -1 if not completed
     private Dictionary<string, int> numFolds = new Dictionary<string, int>();
@@ -72,6 +73,16 @@ public class SaveProfile
     public void SetLastSaved(System.DateTime value)
     {
         lastSaved = value;
+    }
+
+     public System.DateTime GetLastImproved()
+    {
+        return lastImproved;
+    }
+
+    public void SetLastImproved(System.DateTime value)
+    {
+        lastImproved = value;
     }
 
     public string GetLastLevelString()
@@ -180,11 +191,13 @@ public class SaveProfile
         if(!numFolds.ContainsKey(levelName))
         {
             numFolds[levelName] = value;
+            lastImproved = System.DateTime.Now;
             return true;
         }
         if(value < numFolds[levelName])
         {
             numFolds[levelName] = value;
+            lastImproved = System.DateTime.Now;
             return true;
         }
         return false;
@@ -223,7 +236,7 @@ public class SaveProfile
         string ret = $"Name: {profileName} \n" +
                     $"Levels Completed: {numLevels} \n" +
                     $"Total Folds: {folds} \n" +
-                    $"Last Played: {lastSaved}";
+                    $"Last Played: {lastImproved}";
         return ret;
     }
 
@@ -285,7 +298,7 @@ public class SaveProfile
                 return s1Folds - s2Folds;
 
             //if all else fails, give it to the person who did it first
-            return DateTime.Compare(s1.lastSaved, s2.lastSaved);
+            return DateTime.Compare(s1.lastImproved, s2.lastImproved);
         }
     }
 
