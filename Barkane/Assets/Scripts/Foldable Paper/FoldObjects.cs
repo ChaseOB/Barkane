@@ -109,10 +109,8 @@ public class FoldObjects {
 
 
     public void MergeWithGlobalOcclusionMap(
-        OcclusionMap globalMap, Vector3 worldSpaceRotationRoot, Func<float, (Matrix4x4 encoder, Matrix4x4 decoder)> replay)
+        OcclusionMap globalMap, Vector3 worldSpaceRotationRoot, Vector3 ccwAxis, Func<float, (Matrix4x4 encoder, Matrix4x4 decoder)> replay)
     {
-        // var (encoder0, decoder0) = replay(0);
-        var (encoderNear, decoderNear) = replay(0.9f);
         var (encoder1, decoder1) = replay(1);
 
         foreach (var (local, oq) in OcclusionMap)
@@ -125,43 +123,37 @@ public class FoldObjects {
             // Matching position and direction
             if (globalMap.ContainsKey(worldSpacePos))
             {
-                // The resolution strategy comes from the fact that joints have width
-                // This means always insert new things "inward" w.r.t. rotation radial dir.
-                // ex.
-                //     __
-                //      |
-                // |    |
-                // |____| --> +x
-                // ^ existing wall stays outward
-                //  _____
-                // ||   |
-                // |____| --> +x
-                //  ^ new wall comes inward
-                // 
-                // ... in this case the new wall is approaching from positive, since it's radial is facing -x
-
-                // Obviously, in real life you can have the top flap going outwards *or* inwards, but
-                // here we want to simply it to only one case
-
-                // Note the inward direction is always offsetted *against* the radial
-                // Since axis is always on an offsetted joint, the distance to the new tile center is always nonzero
-                // This means we won't get a zero vector and the dot product is usable
-
+                bool approachFromPositive;
                 var radial = worldSpacePos - worldSpaceRotationRoot;
                 var matchingFactor = Vector3.Dot(radial, worldSpaceUp);
-                var approachFromPositive = matchingFactor < -0.05f;
-
-                // When matchingFactor is 0, it means radial is orthogonal to positive and we have an ambiguous case
-                // The resolution for that can be figured out by rewinding the animation by a bit so that everything
-                // is a little tilted.
-
-                if (!approachFromPositive && matchingFactor < 0.05f)
+                if (Mathf.Abs(matchingFactor) < 0.05f)
                 {
-                    var nearEndPosition = decoderNear.MultiplyPoint(local);
-                    var nearEndRadial = nearEndPosition - worldSpaceRotationRoot;
-                    var nearEndMatchingFactor = Vector3.Dot(nearEndRadial, worldSpaceUp);
+                    // Case where the tile is on the folding plane
+                    approachFromPositive = Vector3.Dot(Vector3.Cross(radial, ccwAxis), alignedToNegative ? -worldSpaceUp : worldSpaceUp) > 0;
+                } else
+                {
+                    // Inambiguous case where the tile has some slanted radial direction against the rotation center
+                    // Always insert new things "inward" w.r.t. rotation radial dir.
+                    // ex.
+                    //     __
+                    //      |
+                    // |    |
+                    // |____| --> +x
+                    // ^ existing wall stays outward
+                    //  _____
+                    // ||   |
+                    // |____| --> +x
+                    //  ^ new wall comes inward
+                    // 
+                    // ... in this case the new wall is approaching from positive, since it's radial is facing -x
 
-                    approachFromPositive = nearEndMatchingFactor < 0f;
+                    // Obviously, in real life you can have the top flap going outwards *or* inwards, but
+                    // here we want to simply it to only one case
+
+                    // Note the inward direction is always offsetted *against* the radial
+                    // Since axis is always on an offsetted joint, the distance to the new tile center is always nonzero
+                    // This means we won't get a zero vector and the dot product is usable
+                    approachFromPositive = matchingFactor < 0;
                 }
 
                 Debug.Log($"approach from: {(approachFromPositive ? "+" : "-")} { local } -> { worldSpacePos } should flip: {(alignedToNegative ? "true":"false")}");

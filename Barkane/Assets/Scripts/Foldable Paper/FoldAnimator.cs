@@ -142,7 +142,7 @@ public class FoldAnimator : MonoBehaviour
             o.transform.position = Vector3Int.RoundToInt(o.transform.position);
         }
 
-        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, center, replay);
+        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, center, fd.degrees > 0 ? fd.axis : -fd.axis, replay);
 
         foreach (GameObject o in objectsToFold.foldSquares)
         {
