@@ -65,10 +65,15 @@ public class FoldAnimator : MonoBehaviour
         tempObj.transform.position = center;
         target.transform.position = center;
 
+        // What this does is essentially inserting the inverse transform matrix
+        // This way tile coordinates are evaluated normally within local space
+        // Because Occlusion uses coordinate MOD 2 to determine orientation, the local
+        // space anchored around "center" actually messes everything up
         var localSpaceRoot = Instantiate(tempObj, tempObj.transform);
         localSpaceRoot.transform.position = Vector3.zero;
         localSpaceRoot.transform.rotation = Quaternion.identity;
-       
+        var localSpaceRoot2tempObj = tempObj.transform.worldToLocalMatrix; // the inverse of world to local, skips a matrix inv calc. :)
+        
         foreach(GameObject o in objectsToFold.foldSquares)
         {
             o.transform.parent = localSpaceRoot.transform;
@@ -120,11 +125,21 @@ public class FoldAnimator : MonoBehaviour
             o.GetComponent<PaperJoint>().ToggleCollider(true);
         }
 
+        // Now, only local space root is under tempObj
+        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, localSpaceRoot.transform, center, delegate(float t)
+        {
+            // https://math.stackexchange.com/questions/2093314/rotation-matrix-of-rotation-around-a-point-other-than-the-origin
+            // Read from bottom to top...
+            return 
+                Matrix4x4.Translate(center) // neutralize "snap" transform
+                * Matrix4x4.Rotate(Quaternion.AngleAxis(fd.degrees * t, fd.axis)) // rotate against axis
+                * Matrix4x4.Translate(-center) // "snap" to rotation center
+                * localSpaceRoot2tempObj; // go from local position to tempObj position
+        });
+
         isFolding = false;
 
         Debug.Log("Fold end reached");
-
-        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, localSpaceRoot.transform, center);
 
         Destroy(tempObj);
         Destroy(target);

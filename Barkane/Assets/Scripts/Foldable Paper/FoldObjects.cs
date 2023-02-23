@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BarkaneJoint;
+using System;
 
 public class FoldObjects {
     public List<GameObject> foldSquares; //C: every square being folded
@@ -114,57 +115,77 @@ public class FoldObjects {
     }
 
 
-    public void MergeWithGlobalOcclusionMap(OcclusionMap globalMap, Transform localSpaceRoot, Vector3 rotationRoot)
+    public void MergeWithGlobalOcclusionMap(
+        OcclusionMap globalMap, Transform localSpaceRoot, Vector3 worldSpaceRotationRoot,
+        Func<float, Matrix4x4> transformationReplay)
     {
         var localToWorld = localSpaceRoot.localToWorldMatrix;
         Debug.Log("Merge with global occlusion map");
         foreach (var (local, oq) in OcclusionMap)
         {
-            var corresponding = Vector3Int.RoundToInt(localToWorld.MultiplyPoint(local));
-            var correspondingUp = Vector3Int.RoundToInt(localToWorld.MultiplyVector(oq.upwards));
+            var worldSpacePos = Vector3Int.RoundToInt(localToWorld.MultiplyPoint(local));
+            var worldSpaceUp = Vector3Int.RoundToInt(localToWorld.MultiplyVector(oq.upwards));
 
-            var alignedToNegative = correspondingUp.x < 0 || correspondingUp.y < 0 || correspondingUp.z < 0;
-
-            // Note that all of these are ambiguous in real life
-            // The resolution comes from the fact that joints have width
-            // This means always insert new things "inward" w.r.t. rotation radial dir.
-            // ex.
-            //     __
-            //      |
-            // |    |
-            // |____| --> +x
-            // ^ existing wall stays outward
-            //  _____
-            // ||   |
-            // |____| --> +x
-            //  ^ new wall comes inward
-            // 
-            // ... in this case the new wall is approaching from positive, since it's radial is facing -x
-
-            // Note the inward direction is always offsetted *against* the radial
-            // Since axis is always on an offsetted joint, the distance to the new tile center is always nonzero
-            // This means we won't get a zero vector and the dot product is usable
-            var radial = corresponding - rotationRoot;
-            var approachFromPositive = Vector3.Dot(radial, correspondingUp) > 0;
+            var alignedToNegative = worldSpaceUp.x < 0 || worldSpaceUp.y < 0 || worldSpaceUp.z < 0;
 
             // Matching position and direction
-            if (globalMap.ContainsKey(corresponding))
+            if (globalMap.ContainsKey(worldSpacePos))
             {
+                // The resolution strategy comes from the fact that joints have width
+                // This means always insert new things "inward" w.r.t. rotation radial dir.
+                // ex.
+                //     __
+                //      |
+                // |    |
+                // |____| --> +x
+                // ^ existing wall stays outward
+                //  _____
+                // ||   |
+                // |____| --> +x
+                //  ^ new wall comes inward
+                // 
+                // ... in this case the new wall is approaching from positive, since it's radial is facing -x
+
+                // Obviously, in real life you can have the top flap going outwards *or* inwards, but
+                // here we want to simply it to only one case
+
+                // Note the inward direction is always offsetted *against* the radial
+                // Since axis is always on an offsetted joint, the distance to the new tile center is always nonzero
+                // This means we won't get a zero vector and the dot product is usable
+
+                var radial = worldSpacePos - worldSpaceRotationRoot;
+                var matchingFactor = Vector3.Dot(radial, worldSpaceUp);
+                var approachFromPositive = matchingFactor > 0.05f;
+
+                Debug.Log($"Dot {matchingFactor}");
+
+                if (!approachFromPositive && matchingFactor > -0.05f)
+                {
+                    // ambiguous case when we *only* view from the final state, as radial is orthogonal to positive
+                    var nearEndTransform = transformationReplay(0.9f);
+                    var nearEndRadial = nearEndTransform.MultiplyPoint(local) - worldSpaceRotationRoot;
+                    var nearEndMatchingFactor = Vector3.Dot(nearEndRadial, worldSpaceUp);
+
+                    Debug.Log($"... resolves to {nearEndMatchingFactor}");
+
+                    approachFromPositive = nearEndMatchingFactor > 0f;
+                }
+
                 if (approachFromPositive)
                 {
                     // When approaching from positive, the new tiles (contents of the local occlusion map) covers the old tiles
                     // This means they come *after* the original items in the merged queue
-                    globalMap[corresponding].MergeToBackAndDispose(
+                    globalMap[worldSpacePos].MergeToBackAndDispose(
                         alignedToNegative ? oq.MakeFlippedCopy() : oq);
                 }
                 else
                 {
-                    // Otherwise, local occlusion map content goes *before* the global content
-                    globalMap[corresponding].MergeToFrontAndDispose(
+                    // Coming from a local occlusion map content goes *before* the global content
+                    globalMap[worldSpacePos].MergeToFrontAndDispose(
                         alignedToNegative ? oq.MakeFlippedCopy() : oq);
                 }
 
-                globalMap[corresponding].UseAsGlobal();
+                globalMap[worldSpacePos].UseAsGlobal();
 
                 // Debug.Log($"Merge with global: {globalMap[corresponding]}");
             }
@@ -172,18 +193,18 @@ public class FoldObjects {
             {
                 // Insert local entry directly into global entry
                 // Flip to always using positive direction
-                globalMap[corresponding] = alignedToNegative ? oq.MakeFlippedCopy() : oq;
-                globalMap[corresponding].UseAsGlobal();
+                globalMap[worldSpacePos] = alignedToNegative ? oq.MakeFlippedCopy() : oq;
+                globalMap[worldSpacePos].UseAsGlobal();
 
                 // Debug.Log("Insert direct");
             }
 
-            globalMap[corresponding].UpdateSpace(
-                alignedToNegative ? -correspondingUp : correspondingUp,
-                corresponding,
+            globalMap[worldSpacePos].UpdateSpace(
+                alignedToNegative ? -worldSpaceUp : worldSpaceUp,
+                worldSpacePos,
                 OcclusionQueue.WorldTransformFactory);
 
-            Debug.DrawRay(globalMap[corresponding].center, globalMap[corresponding].upwards, Color.magenta, 3);
+            Debug.DrawRay(globalMap[worldSpacePos].center, globalMap[worldSpacePos].upwards * 2, Color.magenta, 3);
         }
 
         Debug.Log(globalMap);
