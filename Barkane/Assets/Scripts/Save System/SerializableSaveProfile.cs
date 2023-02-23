@@ -22,6 +22,9 @@ public class SerializableSaveProfile
     public string[] levelFolds_Keys;
     public int[] levelFolds_Values;
 
+    public string[] unlocks_Keys;
+    public bool[]   unlocks_Values;
+
     public static SerializableSaveProfile FromSaveProfile(SaveProfile saveProfile)
     {
         if (saveProfile == null) return null;
@@ -40,9 +43,12 @@ public class SerializableSaveProfile
 
         ssp.cosmetics_Keys = saveProfile.GetCosmeticsDictionary().Keys.ToArray();
         ssp.levelFolds_Keys = saveProfile.GetFoldsDictionary().Keys.ToArray();
+        ssp.unlocks_Keys = saveProfile.GetLevelUnlocksDictionary().Keys.ToArray();
 
         ssp.cosmetics_Values = saveProfile.GetCosmeticsDictionary().Values.ToArray();
         ssp.levelFolds_Values = saveProfile.GetFoldsDictionary().Values.ToArray();
+        ssp.unlocks_Values = saveProfile.GetLevelUnlocksDictionary().Values.ToArray();
+
 
         return ssp;
     }
@@ -75,6 +81,17 @@ public class SerializableSaveProfile
         } else
         {
             Debug.LogWarning("[SerializableSaveProfile] The saved Levels dictionary had no keys. No levels have been played.");
+        }
+
+        if (unlocks_Keys != null)
+        {
+            Dictionary<string, bool> bools2 = new Dictionary<string, bool>(unlocks_Keys.Length);
+            for (int i = 0; i < unlocks_Keys.Length; i++)
+                bools2.Add(unlocks_Keys[i], unlocks_Values[i]);
+            sp.SetLevelUnlocksDictionary(bools2);
+        } else
+        {
+            Debug.LogWarning("[SerializableSaveProfile] The Level Unlocks dictionary had no keys. No levels have been played.");
         }
         return sp;
     }

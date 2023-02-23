@@ -72,7 +72,7 @@ public class LevelManager : Singleton<LevelManager>
     public void LoadLevel(int index)
     {
         if(index == 0)
-            SaveSystem.Current.SetLevelUnlock(levelList[0].levelName, true);
+            SaveSystem.Current.UnlockLevel(levelList[0].levelName);
         currLevelIndex = index;
         if (index >= levelList.Count) 
             OnCompleteLastLevel();
@@ -206,7 +206,7 @@ public class LevelManager : Singleton<LevelManager>
         if(sequentialUnlock && currLevelIndex + 1 != levelList.Count)
         {
             string nextLevel = levelList[currLevelIndex + 1].levelName;
-            SaveSystem.Current.SetLevelUnlock(nextLevel, true);
+            SaveSystem.Current.UnlockLevel(nextLevel);
         }
 
         SaveSystem.SaveGame();

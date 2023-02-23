@@ -31,6 +31,7 @@ public class SaveProfile
         this.profileName = profileName;
         lastSaved = System.DateTime.Now;
         cosmeticUnlocks.Add("None", true);
+        levelUnlocks.Add("Cb 1", true);
     }
 
 
@@ -211,6 +212,15 @@ public class SaveProfile
     public bool GetLevelUnlock(string levelName)
     {
         return levelUnlocks.GetValueOrDefault(levelName, false);
+    }
+
+    public void UnlockLevel(string level)
+    {
+        if(!levelUnlocks.ContainsKey(level))
+            levelUnlocks.Add(level, true);
+        else
+            levelUnlocks[level] = true;
+        Debug.Log("Unlocked level " + level);
     }
 
     public void SetLevelUnlock(string levelName, bool value)
