@@ -204,8 +204,28 @@ public class SaveProfile
     {
         levelUnlocks[levelName] = value;
     }
-
+    
+    public int GetNumFolds()
+    {
+        int folds = 0;
+        foreach(int num in numFolds.Values) {
+            if(num >=0)
+                folds += num;
+        }
+        return folds;
+    }
     #endregion
+
+    public string GetProfileInfo()
+    {
+        int folds = GetNumFolds();
+        int numLevels = GetNumLevelsCompleted();
+        string ret = $"Name: {profileName} \n" +
+                    $"Levels Completed: {numLevels} \n" +
+                    $"Total Folds: {folds} \n" +
+                    $"Last Played: {lastSaved}";
+        return ret;
+    }
 
     #region sorting
 
@@ -213,8 +233,6 @@ public class SaveProfile
     {
         return (IComparer) new SortProfilesByMostRecentHelper();
     }
-
-      
     
 
     private class SortProfilesByMostRecentHelper : IComparer
@@ -232,6 +250,45 @@ public class SaveProfile
             return DateTime.Compare(s2.lastSaved, s1.lastSaved);
         }
     }
+
+    public static IComparer SortMostLevelsFewestFolds()
+    {
+        return (IComparer) new SortProfilesByMostLevelsAndFewestFolds();
+    }
+    
+
+    private class SortProfilesByMostLevelsAndFewestFolds : IComparer
+    {
+        public int Compare(object a, object b)
+        {
+            SaveProfile s1 = (SaveProfile) a;
+            SaveProfile s2 = (SaveProfile) b;
+            if(s1 == null && s2 == null)
+                return 0;
+            if (s1 == null)
+                return 1;
+            if(s2 == null)
+                return -1;
+            
+            int s1Levels = s1.GetNumLevelsCompleted();
+            int s2Levels = s2.GetNumLevelsCompleted();
+
+            //farther is better
+            if(s1Levels != s2Levels)
+                return s1Levels - s2Levels;
+            
+            int s1Folds = s1.GetNumFolds();
+            int s2Folds = s2.GetNumFolds();
+
+            //fewer folds is better
+            if(s1Folds != s2Folds)
+                return s2Folds - s1Folds;
+
+            //if all else fails, give it to the person who did it first
+            return DateTime.Compare(s1.lastSaved, s2.lastSaved);
+        }
+    }
+
     #endregion
 
 }

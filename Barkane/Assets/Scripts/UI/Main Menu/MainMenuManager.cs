@@ -17,12 +17,15 @@ public class MainMenuManager : Singleton<MainMenuManager>
     public GameObject profileSelect;
     public GameObject currentProfile;
     public GameObject deleteMenu;
+    public GameObject auditPanel;
 
 
 
     public List<Sprite> worldIconSprites;
     public Image worldIcon;
     public TextMeshProUGUI profileNameText;
+    public TextMeshProUGUI auditText;
+
 
     private SaveProfile profile;
     private int profileIndex;
@@ -99,6 +102,13 @@ public class MainMenuManager : Singleton<MainMenuManager>
     public void ContinueGame() {
         LevelManager.Instance.LoadLevel(profile.GetLastLevelString());
     }
+
+    public void ShowAudit(string text)
+    {
+        auditText.text = text;
+        auditPanel.SetActive(true);
+    }
+
 
 
     public void QuitGame() {
