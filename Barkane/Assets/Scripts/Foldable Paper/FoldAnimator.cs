@@ -84,6 +84,8 @@ public class FoldAnimator : MonoBehaviour
         foreach(PaperJoint pj in foldablePaper.PaperJoints)
             pj.OnFold();
 
+        Debug.Log("Fold start, setup local map");
+
         fd.foldObjects.TransferToLocalOcclusionMap();
 
         while (t < foldDuration)
@@ -117,6 +119,8 @@ public class FoldAnimator : MonoBehaviour
         Destroy(tempObj);
         Destroy(target);
         isFolding = false;
+
+        Debug.Log("Fold end reached");
 
         // UpdateSquareVisibility(objectsToFold);
         fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, finalTransform, center);

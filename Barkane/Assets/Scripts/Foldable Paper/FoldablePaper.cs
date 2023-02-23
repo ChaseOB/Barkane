@@ -25,8 +25,8 @@ public class FoldablePaper : MonoBehaviour
     Dictionary<Vector3Int, List<PaperSquare>> squareLocs = new Dictionary<Vector3Int, List<PaperSquare>>();
     public PaperSquare playerSquare;
 
-    public Dictionary<Vector3Int, OcclusionQueue> OcclusionMap => m_OcclusionMap;
-    Dictionary<Vector3Int, OcclusionQueue> m_OcclusionMap = new Dictionary<Vector3Int, OcclusionQueue>();
+    public OcclusionMap OcclusionMap => m_OcclusionMap;
+    OcclusionMap m_OcclusionMap = new OcclusionMap();
 
     private void Awake() 
     {
@@ -95,17 +95,6 @@ public class FoldablePaper : MonoBehaviour
             List<PaperSquare> list = new List<PaperSquare>();
                 list.Add(ps);
                 squareLocs.Add(rounded, list);
-
-            var q = OcclusionQueue.MakeOcclusionQueue(rounded);
-
-            if (q != null)
-            {
-                q.Enqueue(ps);
-                m_OcclusionMap.Add(rounded, q);
-            } else
-            {
-                throw new UnityException("Occlusion queue could not be created");
-            }
         }
     }
 
@@ -205,5 +194,31 @@ public class FoldablePaper : MonoBehaviour
         return overlapList;
     } 
 
-    
+    public void PopulateOcclusionMap()
+    {
+        foreach(var ps in paperSquares)
+        {
+            var rounded = Vector3Int.RoundToInt(ps.transform.position);
+
+            if (OcclusionMap.ContainsKey(rounded))
+            {
+                OcclusionMap[rounded].Enqueue(ps);
+            }
+            else
+            {
+                var q = OcclusionQueue.MakeOcclusionQueue(rounded);
+
+                if (q != null)
+                {
+                    Debug.Log("Add to occlusion queue");
+                    q.Enqueue(ps);
+                    m_OcclusionMap[rounded] = q;
+                }
+                else
+                {
+                    throw new UnityException("Occlusion queue could not be created");
+                }
+            }
+        }
+    }
 }

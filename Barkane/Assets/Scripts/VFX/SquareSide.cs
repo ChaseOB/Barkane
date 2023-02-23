@@ -32,13 +32,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
         private set
         {
             m_MaterialOverride = value;
-            if (value != null)
-            {
-                mRenderer.sharedMaterial = value;
-            } else
-            {
-                mRenderer.sharedMaterial = materialInstance;
-            }
+            mRenderer.sharedMaterial = value;
         }
     }
     public Material m_MaterialOverride;
@@ -108,8 +102,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
     {
         // completely ignores prefab structure. this avoids the unpacking issue
 
-        Debug.Log(sprinkleParent.childCount);
-
         // the while loop version goes into infinite loop for some reason
         List<GameObject> prev = new List<GameObject>();
         for (int i = 0; i < sprinkleParent.childCount; i++)
@@ -125,8 +117,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
         //}
 
         if (VFXManager.Theme.Sprinkle == null || materialPrototype.GetFloat("_UseSprinkles") < 0.5f) return;
-
-        Debug.Log("Reach sprinkle gen");
 
         var ct = sprinkleVerts.Length;
         for (int i = 0; i < ct; i++)

@@ -11,7 +11,7 @@ public class FoldObjects {
 
     public List<PaperSquare> PaperSquaresCache;
 
-    public Dictionary<Vector3Int, OcclusionQueue> OcclusionMap = new Dictionary<Vector3Int, OcclusionQueue>();
+    public OcclusionMap OcclusionMap = new OcclusionMap();
 
     public FoldObjects() {
         foldSquares = new List<GameObject>();
@@ -70,12 +70,54 @@ public class FoldObjects {
         return CoordUtils.CalculateCenter(vectors);
     }
 
-    public void MergeWithGlobalOcclusionMap(Dictionary<Vector3Int, OcclusionQueue> globalMap, Matrix4x4 fTransformM, Vector3 rotationRoot)
+    public void TransferToLocalOcclusionMap()
     {
+        OcclusionMap.Clear();
+        PaperSquaresCache = new List<PaperSquare>();
+        foreach (GameObject ps in foldSquares)
+        {
+            PaperSquaresCache.Add(ps.GetComponent<PaperSquare>());
+        }
+
+        foreach (var ps in PaperSquaresCache)
+        {
+            ps.EjectFromGlobalQueue();
+            var center = Vector3Int.RoundToInt(ps.transform.localPosition);
+            Debug.Log($"Handle square at {center}");
+            if (!OcclusionMap.ContainsKey(center))
+            {
+                Debug.Log("Occlusion map does not already contain key");
+                var q = OcclusionQueue.MakeOcclusionQueue(center);
+                if (q == null)
+                {
+                    throw new UnityException($"Local occlusion map entry could not be created { center }");
+                }
+                else
+                {
+                    q.Enqueue(ps);
+                }
+                OcclusionMap[center] = q;
+            }
+            else
+            {
+                Debug.Log("Occlusion map already contains key");
+                OcclusionMap[center].Enqueue(ps);
+            }
+        }
+
+        Debug.Log(OcclusionMap);
+    }
+
+
+    public void MergeWithGlobalOcclusionMap(OcclusionMap globalMap, Matrix4x4 fTransformM, Vector3 rotationRoot)
+    {
+        Debug.Log("Merge with glocal occlusion map");
         foreach (var (local, oq) in OcclusionMap)
         {
             var corresponding = Vector3Int.RoundToInt(fTransformM.MultiplyPoint(local));
             var correspondingUp = Vector3Int.RoundToInt(fTransformM.MultiplyVector(oq.upwards));
+
+            Debug.Log($"Handling {local} => {corresponding}");
 
             var alignedToNegative = correspondingUp.x < 0 || correspondingUp.y < 0 || correspondingUp.z < 0;
 
@@ -101,6 +143,8 @@ public class FoldObjects {
             var radial = corresponding - rotationRoot;
             var approachFromPositive = Vector3.Dot(radial, correspondingUp) > 0;
 
+            Debug.Log(globalMap);
+
             // Matching position and direction
             if (globalMap.ContainsKey(corresponding))
             {
@@ -109,48 +153,22 @@ public class FoldObjects {
                     // When approaching from positive, the new tiles (contents of the local occlusion map) covers the old tiles
                     // This means they come *after* the original items in the merged queue
                     globalMap[corresponding].MergeToBackAndDispose(alignedToNegative ? oq.MakeFlippedCopy() : oq);
-                } else
+                }
+                else
                 {
                     // Otherwise, local occlusion map content goes *before* the global content
                     globalMap[corresponding].MergeToFrontAndDispose(alignedToNegative ? oq.MakeFlippedCopy() : oq);
                 }
-            } else
-            {
-                // Insert local entry directly into global entry
-                // Flip to always using positive direction
-                globalMap.Add(corresponding, alignedToNegative ? oq.MakeFlippedCopy() : oq);
-            }
-        }
-    }
 
-    public void TransferToLocalOcclusionMap()
-    {
-        OcclusionMap.Clear();
-        PaperSquaresCache = new List<PaperSquare>();
-        foreach (GameObject ps in foldSquares)
-        {
-            PaperSquaresCache.Add(ps.GetComponent<PaperSquare>());
-        }
-
-        foreach (var ps in PaperSquaresCache)
-        {
-            ps.EjectFromGlobalQueue();
-            var center = Vector3Int.RoundToInt(ps.transform.localPosition);
-            if (OcclusionMap.ContainsKey(center))
-            {
-                var q = OcclusionQueue.MakeOcclusionQueue(center);
-                if (q == null)
-                {
-                    throw new UnityException("Local occlusion map entry could not be created");
-                }
-                else
-                {
-                    q.Enqueue(ps);
-                }
+                Debug.Log($"Merge with global: {globalMap[corresponding]}");
             }
             else
             {
-                OcclusionMap[center].Enqueue(ps);
+                // Insert local entry directly into global entry
+                // Flip to always using positive direction
+                globalMap[corresponding] = alignedToNegative ? oq.MakeFlippedCopy() : oq;
+
+                Debug.Log("Insert direct");
             }
         }
     }

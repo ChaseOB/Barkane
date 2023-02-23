@@ -1,7 +1,86 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
+public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>>
+{
+    private Dictionary<(int, int, int), OcclusionQueue> map = new Dictionary<(int, int, int), OcclusionQueue>();
+
+    public OcclusionQueue this[Vector3Int key] { 
+        get
+        {
+            return map[(key.x, key.y, key.z)];
+        } set
+        {
+            var keyTuple = (key.x, key.y, key.z);
+            if (map.ContainsKey(keyTuple))
+            {
+                map[keyTuple] = value;
+            } else
+            {
+                map.Add(keyTuple, value);
+            }
+        }
+    }
+
+    public void Clear() => map.Clear();
+    public bool ContainsKey(Vector3Int key) => map.ContainsKey((key.x, key.y, key.z));
+
+    public override string ToString()
+    {
+        return string.Join("\n", map.Values);
+    }
+
+    public IEnumerator<KeyValuePair<Vector3Int, OcclusionQueue>> GetEnumerator()
+    {
+        return new Enumerator(map);
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return new Enumerator(map);
+    }
+
+    public class Enumerator : IEnumerator<KeyValuePair<Vector3Int, OcclusionQueue>>
+    {
+        IEnumerator<KeyValuePair<(int, int, int), OcclusionQueue>> m_Enumerator;
+
+        public Enumerator(Dictionary<(int, int, int), OcclusionQueue> src) {
+            m_Enumerator = src.GetEnumerator();
+        }
+
+        KeyValuePair<Vector3Int, OcclusionQueue> IEnumerator<KeyValuePair<Vector3Int, OcclusionQueue>>.Current
+        {
+            get
+            {
+                var (k, v) = m_Enumerator.Current;
+                return new KeyValuePair<Vector3Int, OcclusionQueue>(new Vector3Int(k.Item1, k.Item2, k.Item3), v);
+            }
+        }
+
+        object IEnumerator.Current
+        {
+            get { return m_Enumerator.Current; }
+        }
+
+        public void Dispose()
+        {
+            m_Enumerator.Dispose();
+        }
+
+        public bool MoveNext()
+        {
+            return m_Enumerator.MoveNext();
+        }
+
+        public void Reset()
+        {
+            m_Enumerator.Reset();
+        }
+    }
+}
 
 public class OcclusionQueue
 {
@@ -32,18 +111,19 @@ public class OcclusionQueue
         var ymod = position.y % 2;
         var zmod = position.z % 2;
 
-        if (xmod + ymod + zmod != 1) { return null; }
+        var axSum = xmod + ymod + zmod;
+        if (axSum != 1 && axSum != -1) { return null; }
 
         var upwards = Vector3Int.zero;
-        if (xmod == 1)
+        if (xmod == 1 || xmod == -1)
         {
             upwards = Vector3Int.right;
         }
-        else if (ymod == 1)
+        else if (ymod == 1 || ymod == -1)
         {
             upwards = Vector3Int.up;
         }
-        else if (zmod == 1)
+        else if (zmod == 1 || zmod == -1)
         {
             upwards = Vector3Int.forward;
         }
@@ -75,6 +155,8 @@ public class OcclusionQueue
         var dist = (center - centerRounded).sqrMagnitude;
         var nA = ps.topSide.transform.up;
         var nB = ps.bottomSide.transform.up;
+
+        Debug.Log($"Enqueue {center}");
 
         if (Vector3.Dot(nA, upwards) > Vector3.Dot(nB, upwards))
         {
@@ -117,6 +199,8 @@ public class OcclusionQueue
             q.Last.Value.SetVisibility(SquareSide.SideVisiblity.none);
         }
         q.AddLast(s);
+
+        Debug.Log("Enqueue item to list");
 
         q.Last.Value.SetVisibility(SquareSide.SideVisiblity.full);
     }
@@ -198,5 +282,12 @@ public class OcclusionQueue
         }
 
         comesSecond = comesFirst;
+    }
+
+    public override string ToString()
+    {
+        return $"... oq ({center} facing {upwards}): " + 
+            string.Join(", ", qFaceUp) + "\n" + string.Join(", ", faceUp) + "\n"
+            + string.Join(", ", qFaceDown) + "\n" + string.Join(", ", faceDown) + "\n";
     }
 }
