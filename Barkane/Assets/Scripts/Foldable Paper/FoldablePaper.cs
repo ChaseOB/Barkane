@@ -207,7 +207,7 @@ public class FoldablePaper : MonoBehaviour
             }
             else
             {
-                var q = OcclusionQueue.MakeOcclusionQueue(rounded, OcclusionQueue.WorldTransformFactory);
+                var q = OcclusionQueue.MakeOcclusionQueue(rounded, OcclusionQueue.Identity);
 
                 if (q != null)
                 {

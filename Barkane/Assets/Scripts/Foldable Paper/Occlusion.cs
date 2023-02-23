@@ -113,9 +113,9 @@ public class OcclusionQueue
     public Vector3Int upwards { get; private set; }
     public Vector3Int center { get; private set; }
 
-    Func<Matrix4x4> transformFactory;
+    Func<Matrix4x4> encoderFactory;
 
-    public static Func<Matrix4x4> WorldTransformFactory = delegate ()
+    public static Func<Matrix4x4> Identity = delegate ()
     {
         return Matrix4x4.identity;
     };
@@ -128,14 +128,14 @@ public class OcclusionQueue
         qFaceUp = qFaceDown,
         faceDown = faceUp,
         faceUp = faceDown,
-        transformFactory = transformFactory
+        encoderFactory = encoderFactory
     };
 
     public void UpdateSpace(Vector3Int upwards, Vector3Int center, Func<Matrix4x4> transformFactory)
     {
         this.upwards = upwards;
         this.center = center;
-        this.transformFactory = transformFactory;
+        this.encoderFactory = transformFactory;
     }
 
     public static OcclusionQueue MakeOcclusionQueue(Vector3Int position, Func<Matrix4x4> transformFactory)
@@ -169,7 +169,7 @@ public class OcclusionQueue
             {
                 upwards = upwards,
                 center = position,
-                transformFactory = transformFactory
+                encoderFactory = transformFactory
             };
         }
 
@@ -190,7 +190,7 @@ public class OcclusionQueue
 
     public void Enqueue(PaperSquare ps)
     {
-        var mtrx = transformFactory();
+        var mtrx = encoderFactory();
         var centerRounded = Vector3Int.RoundToInt(mtrx.MultiplyPoint(ps.transform.position));
 
         if (!centerRounded.Equals(center)) { return; }

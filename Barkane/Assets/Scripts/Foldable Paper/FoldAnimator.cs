@@ -111,7 +111,7 @@ public class FoldAnimator : MonoBehaviour
             return (encode, decode);
         }
 
-        fd.foldObjects.TransferToLocalOcclusionMap(replay);
+        fd.foldObjects.TransferToLocalOcclusionMap(replay(0).encode);
         foldablePaper.OcclusionMap.Prune();
 
         while (t < foldDuration)

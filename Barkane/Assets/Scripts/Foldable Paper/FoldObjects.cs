@@ -71,7 +71,7 @@ public class FoldObjects {
         return CoordUtils.CalculateCenter(vectors);
     }
 
-    public void TransferToLocalOcclusionMap(Func<float, (Matrix4x4 encoder, Matrix4x4 decoder)> replay)
+    public void TransferToLocalOcclusionMap(Matrix4x4 encode)
     {
         OcclusionMap.Clear();
         PaperSquaresCache = new List<PaperSquare>();
@@ -80,8 +80,6 @@ public class FoldObjects {
             PaperSquaresCache.Add(ps.GetComponent<PaperSquare>());
         }
 
-        var (encoder, decoder) = replay(0);
-
         foreach (var ps in PaperSquaresCache)
         {
             ps.EjectFromGlobalQueue();
@@ -89,26 +87,21 @@ public class FoldObjects {
 
             if (!OcclusionMap.ContainsKey(center))
             {
-                var q = OcclusionQueue.MakeOcclusionQueue(center, delegate() {
-                    return encoder;
-                });
+                // use constant encoder factory as local structure does not change during fold
+                var q = OcclusionQueue.MakeOcclusionQueue(center, ()=>encode);
                 if (q == null)
-                {
                     throw new UnityException($"Local occlusion map entry could not be created { center }");
-                }
                 else
-                {
                     q.Enqueue(ps);
-                }
                 OcclusionMap[center] = q;
             }
             else
-            {
                 OcclusionMap[center].Enqueue(ps);
-            }
 
-            var mtrx = decoder;
-            Debug.DrawRay(mtrx.MultiplyPoint(OcclusionMap[center].center), mtrx.MultiplyVector(OcclusionMap[center].upwards), Color.cyan, 6);
+            Debug.DrawRay(
+                encode.inverse.MultiplyPoint(OcclusionMap[center].center),
+                encode.inverse.MultiplyVector(OcclusionMap[center].upwards),
+                Color.cyan, 6);
         }
 
         // Debug.Log(OcclusionMap);
@@ -204,7 +197,7 @@ public class FoldObjects {
             globalMap[worldSpacePos].UpdateSpace(
                 alignedToNegative ? -worldSpaceUp : worldSpaceUp,
                 worldSpacePos,
-                OcclusionQueue.WorldTransformFactory);
+                OcclusionQueue.Identity);
 
             Debug.DrawRay(globalMap[worldSpacePos].center, globalMap[worldSpacePos].upwards * 2, Color.magenta, 3);
         }
