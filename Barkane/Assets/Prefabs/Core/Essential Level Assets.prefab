@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3127616184884038503}
   - component: {fileID: 3127616184884038504}
   - component: {fileID: 3127616184884038502}
+  - component: {fileID: 3127616183961737505}
   m_Layer: 0
   m_Name: Essential Level Assets
   m_TagString: Untagged
@@ -47,6 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d52569e9ff7c13e48b9764b1cd393f03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lockObject: {fileID: 0}
 --- !u!114 &3127616184884038503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,3 +107,15 @@ MonoBehaviour:
   squareCollidingMask:
     serializedVersion: 2
     m_Bits: 256
+--- !u!114 &3127616183961737505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3127616184884038507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bd7a566cb68a1c4391f1bc383d49fc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

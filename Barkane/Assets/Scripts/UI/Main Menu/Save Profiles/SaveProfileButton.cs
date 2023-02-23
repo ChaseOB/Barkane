@@ -11,6 +11,7 @@ public class SaveProfileButton : ProfileButton
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI levelNumText;
     public TextMeshProUGUI completionText;
+    public TextMeshProUGUI foldsText;
 
 
     public List<Sprite> worldIconSprites;
@@ -37,6 +38,8 @@ public class SaveProfileButton : ProfileButton
         worldIcon.sprite = worldIconSprites[profile.GetLastLevelWorldNum()];
         int completionPercent = profile.GetNumLevelsCompleted() * 100 / numLevels;
         completionText.text = $"{completionPercent}%";
+        int numFolds = profile.GetNumFolds();
+        foldsText.text = $"{numFolds} Folds";
     }
 
     private string GetTimeText(float seconds)
@@ -46,7 +49,7 @@ public class SaveProfileButton : ProfileButton
         if(minutes > 60)
             ret = string.Format("{0} Hours\n{1:D2} Minutes", minutes / 60, minutes % 60);
         else
-            ret = string.Format("{0:D2} Minutes", minutes % 60);
+            ret = $"{minutes} Minutes";
         return ret;
     }
 
