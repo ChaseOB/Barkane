@@ -107,10 +107,10 @@ namespace BarkaneJoint
 
         void Update()
         {
-            PullVisibility(a1, mrA1);
-            PullVisibility(a2, mrA2);
-            PullVisibility(b1, mrB1);
-            PullVisibility(b2, mrB2);
+            // PullVisibility(a1, mrA1);
+            // PullVisibility(a2, mrA2);
+            // PullVisibility(b1, mrB1);
+            // PullVisibility(b2, mrB2);
             UpdateGeometryData();
         }
 

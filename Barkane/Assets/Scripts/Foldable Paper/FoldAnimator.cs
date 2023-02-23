@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -97,6 +98,9 @@ public class FoldAnimator : MonoBehaviour
         Debug.Log("Fold start, setup local map");
 
         fd.foldObjects.TransferToLocalOcclusionMap(localSpaceRoot.transform);
+        foldablePaper.OcclusionMap.Prune();
+
+        var nearEndTransform = new Matrix4x4?();
 
         while (t < foldDuration)
         {
@@ -106,6 +110,12 @@ public class FoldAnimator : MonoBehaviour
             if(wait == 0){
                 // UpdateSquareVisibility(objectsToFold);
             }
+
+            if (t / foldDuration > 0.8f && !nearEndTransform.HasValue)
+            {
+                nearEndTransform = localSpaceRoot.transform.localToWorldMatrix;
+            }
+
             yield return null;
         }
 
@@ -126,16 +136,7 @@ public class FoldAnimator : MonoBehaviour
         }
 
         // Now, only local space root is under tempObj
-        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, localSpaceRoot.transform, center, delegate(float t)
-        {
-            // https://math.stackexchange.com/questions/2093314/rotation-matrix-of-rotation-around-a-point-other-than-the-origin
-            // Read from bottom to top...
-            return 
-                Matrix4x4.Translate(center) // neutralize "snap" transform
-                * Matrix4x4.Rotate(Quaternion.AngleAxis(fd.degrees * t, fd.axis)) // rotate against axis
-                * Matrix4x4.Translate(-center) // "snap" to rotation center
-                * localSpaceRoot2tempObj; // go from local position to tempObj position
-        });
+        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, localSpaceRoot.transform, center, nearEndTransform.Value);
 
         isFolding = false;
 

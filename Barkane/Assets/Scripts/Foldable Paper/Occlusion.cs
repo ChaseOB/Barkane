@@ -18,16 +18,12 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
         {
             var keyTuple = (key.x, key.y, key.z);
 
-            // Debug.Log($"... new entry at { keyTuple }");
-
             if (map.ContainsKey(keyTuple))
             {
-                // Debug.Log("... ... overwriting an old value");
                 map[keyTuple] = value;
             } else
             {
                 map.Add(keyTuple, value);
-                // Debug.Log("... ... this is a new value");
             }
         }
     }
@@ -45,6 +41,15 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
         }
 
         return sb.ToString();
+    }
+
+    public void Prune()
+    {
+        // https://stackoverflow.com/questions/469202/best-way-to-remove-multiple-items-matching-a-predicate-from-a-net-dictionary
+        foreach (var (k, v) in map.Where( kv => kv.Value.IsEmpty ).ToList())
+        {
+            map.Remove(k);
+        }
     }
 
     public IEnumerator<KeyValuePair<Vector3Int, OcclusionQueue>> GetEnumerator()
@@ -102,6 +107,8 @@ public class OcclusionQueue
     LinkedList<SquareSide> qFaceUp = new LinkedList<SquareSide>();
     HashSet<SquareSide> faceDown = new HashSet<SquareSide>();
     LinkedList<SquareSide> qFaceDown = new LinkedList<SquareSide>();
+
+    public bool IsEmpty => faceUp.Count == 0 && faceDown.Count == 0;
 
     public Vector3Int upwards { get; private set; }
     public Vector3Int center { get; private set; }

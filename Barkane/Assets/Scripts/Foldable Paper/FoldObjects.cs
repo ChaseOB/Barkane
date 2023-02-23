@@ -116,8 +116,7 @@ public class FoldObjects {
 
 
     public void MergeWithGlobalOcclusionMap(
-        OcclusionMap globalMap, Transform localSpaceRoot, Vector3 worldSpaceRotationRoot,
-        Func<float, Matrix4x4> transformationReplay)
+        OcclusionMap globalMap, Transform localSpaceRoot, Vector3 worldSpaceRotationRoot, Matrix4x4 nearEndTransform)
     {
         var localToWorld = localSpaceRoot.localToWorldMatrix;
         Debug.Log("Merge with global occlusion map");
@@ -162,8 +161,8 @@ public class FoldObjects {
                 if (!approachFromPositive && matchingFactor > -0.05f)
                 {
                     // ambiguous case when we *only* view from the final state, as radial is orthogonal to positive
-                    var nearEndTransform = transformationReplay(0.9f);
                     var nearEndRadial = nearEndTransform.MultiplyPoint(local) - worldSpaceRotationRoot;
+                    Debug.Log($"resolved transform: {nearEndTransform.MultiplyPoint(local)}");
                     var nearEndMatchingFactor = Vector3.Dot(nearEndRadial, worldSpaceUp);
 
                     Debug.Log($"... resolves to {nearEndMatchingFactor}");
