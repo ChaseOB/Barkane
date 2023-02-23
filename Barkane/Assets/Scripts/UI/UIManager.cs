@@ -143,6 +143,6 @@ public class UIManager : Singleton<UIManager>
     {
         endLevelGroup.SetActive(false);
         LevelManager.Instance.UnloadLevel();
-        SceneManager.LoadScene(menuIndex);
+        Time.timeScale = 1;
     }
 }
