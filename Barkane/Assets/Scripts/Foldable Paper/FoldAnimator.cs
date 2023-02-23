@@ -66,23 +66,25 @@ public class FoldAnimator : MonoBehaviour
         tempObj.transform.position = center;
         target.transform.position = center;
 
-        // What this does is essentially inserting the inverse transform matrix
+        //GameObject localSpaceRootDebug = new GameObject();
+        //localSpaceRootDebug.transform.SetParent(tempObj.transform);
+        //localSpaceRootDebug.transform.position = Vector3.zero;
+        //localSpaceRootDebug.transform.rotation = Quaternion.identity;
+
+        // Records the initial inverse transform matrix
         // This way tile coordinates are evaluated normally within local space
         // Because Occlusion uses coordinate MOD 2 to determine orientation, the local
         // space anchored around "center" actually messes everything up
-        var localSpaceRoot = Instantiate(tempObj, tempObj.transform);
-        localSpaceRoot.transform.position = Vector3.zero;
-        localSpaceRoot.transform.rotation = Quaternion.identity;
-        var localSpaceRoot2tempObj = tempObj.transform.worldToLocalMatrix; // the inverse of world to local, skips a matrix inv calc. :)
-        
+        var tempObjL2W0 = tempObj.transform.localToWorldMatrix;
+
         foreach(GameObject o in objectsToFold.foldSquares)
         {
-            o.transform.parent = localSpaceRoot.transform;
+            o.transform.SetParent(tempObj.transform, worldPositionStays: true);
         }
         
         foreach(GameObject o in objectsToFold.foldJoints)
         {
-            o.transform.parent = tempObj.transform;
+            o.transform.SetParent(tempObj.transform, worldPositionStays: true);
             o.GetComponent<PaperJoint>().ToggleCollider(false);
         }
 
@@ -95,27 +97,25 @@ public class FoldAnimator : MonoBehaviour
         foreach(PaperJoint pj in foldablePaper.PaperJoints)
             pj.OnFold();
 
-        Debug.Log("Fold start, setup local map");
+        Matrix4x4 replay(float t)
+        {
+            return tempObjL2W0 // tempObj -> local space root
+                * Matrix4x4.TRS(center, Quaternion.AngleAxis(fd.degrees * t, fd.axis), Vector3.one).inverse; // world space -> tempObj local space
+        }
 
-        fd.foldObjects.TransferToLocalOcclusionMap(localSpaceRoot.transform);
+        fd.foldObjects.TransferToLocalOcclusionMap(replay);
         foldablePaper.OcclusionMap.Prune();
-
-        var nearEndTransform = new Matrix4x4?();
 
         while (t < foldDuration)
         {
             t += Time.deltaTime;
-            tempObj.transform.RotateAround(center, fd.axis, (fd.degrees / foldDuration) * Time.deltaTime);
+            tempObj.transform.SetPositionAndRotation(center, Quaternion.AngleAxis(fd.degrees * t / foldDuration, fd.axis));
             wait--;
+
+            // Debug.Log($"Replay w2l --\n{localSpaceRootDebug.transform.worldToLocalMatrix} --\n {replay(t / foldDuration)}");
             if(wait == 0){
                 // UpdateSquareVisibility(objectsToFold);
             }
-
-            if (t / foldDuration > 0.8f && !nearEndTransform.HasValue)
-            {
-                nearEndTransform = localSpaceRoot.transform.localToWorldMatrix;
-            }
-
             yield return null;
         }
 
@@ -125,22 +125,28 @@ public class FoldAnimator : MonoBehaviour
         foreach (GameObject o in objectsToFold.foldSquares)
         {
             o.transform.position = Vector3Int.RoundToInt(o.transform.position);
-            o.transform.parent =  objectsToFold.squareParent;
+            Debug.Log($"Square local position {o.transform.localPosition}");
         }
 
         foreach(GameObject o in objectsToFold.foldJoints)
         {
             o.transform.position = Vector3Int.RoundToInt(o.transform.position);
-            o.transform.parent =  objectsToFold.jointParent;
+        }
+
+        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, center, replay);
+
+        foreach (GameObject o in objectsToFold.foldSquares)
+        {
+            o.transform.SetParent(objectsToFold.squareParent, worldPositionStays: true);
+        }
+
+        foreach (GameObject o in objectsToFold.foldJoints)
+        {
+            o.transform.SetParent(objectsToFold.jointParent, worldPositionStays: true);
             o.GetComponent<PaperJoint>().ToggleCollider(true);
         }
 
-        // Now, only local space root is under tempObj
-        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, localSpaceRoot.transform, center, nearEndTransform.Value);
-
         isFolding = false;
-
-        Debug.Log("Fold end reached");
 
         Destroy(tempObj);
         Destroy(target);
