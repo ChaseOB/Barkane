@@ -59,14 +59,19 @@ public class FoldAnimator : MonoBehaviour
 
         AudioManager.Instance?.Play("Fold");
         isFolding = true;
+        Debug.DrawRay(center, fd.axis, Color.black, 3);
         GameObject tempObj = new GameObject(); //used for reparenting/rotating
         GameObject target = new GameObject(); //used for setting correct position due to float jank
         tempObj.transform.position = center;
         target.transform.position = center;
+
+        var localSpaceRoot = Instantiate(tempObj, tempObj.transform);
+        localSpaceRoot.transform.position = Vector3.zero;
+        localSpaceRoot.transform.rotation = Quaternion.identity;
        
         foreach(GameObject o in objectsToFold.foldSquares)
         {
-            o.transform.parent = tempObj.transform;
+            o.transform.parent = localSpaceRoot.transform;
         }
         
         foreach(GameObject o in objectsToFold.foldJoints)
@@ -86,7 +91,7 @@ public class FoldAnimator : MonoBehaviour
 
         Debug.Log("Fold start, setup local map");
 
-        fd.foldObjects.TransferToLocalOcclusionMap();
+        fd.foldObjects.TransferToLocalOcclusionMap(localSpaceRoot.transform);
 
         while (t < foldDuration)
         {
@@ -102,8 +107,6 @@ public class FoldAnimator : MonoBehaviour
         target.transform.RotateAround(center, fd.axis, fd.degrees);
         tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 
-        var finalTransform = tempObj.transform.localToWorldMatrix;
-
         foreach (GameObject o in objectsToFold.foldSquares)
         {
             o.transform.position = Vector3Int.RoundToInt(o.transform.position);
@@ -116,14 +119,17 @@ public class FoldAnimator : MonoBehaviour
             o.transform.parent =  objectsToFold.jointParent;
             o.GetComponent<PaperJoint>().ToggleCollider(true);
         }
-        Destroy(tempObj);
-        Destroy(target);
+
         isFolding = false;
 
         Debug.Log("Fold end reached");
 
+        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, localSpaceRoot.transform, center);
+
+        Destroy(tempObj);
+        Destroy(target);
+
         // UpdateSquareVisibility(objectsToFold);
-        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, finalTransform, center);
 
         if(afterFold != null)
              afterFold();

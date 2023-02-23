@@ -70,7 +70,7 @@ public class FoldObjects {
         return CoordUtils.CalculateCenter(vectors);
     }
 
-    public void TransferToLocalOcclusionMap()
+    public void TransferToLocalOcclusionMap(Transform localSpaceRoot)
     {
         OcclusionMap.Clear();
         PaperSquaresCache = new List<PaperSquare>();
@@ -83,10 +83,13 @@ public class FoldObjects {
         {
             ps.EjectFromGlobalQueue();
             var center = Vector3Int.RoundToInt(ps.transform.localPosition);
+
             if (!OcclusionMap.ContainsKey(center))
             {
                 Debug.Log("Occlusion map does not already contain key");
-                var q = OcclusionQueue.MakeOcclusionQueue(center, useLocalSpace: true);
+                var q = OcclusionQueue.MakeOcclusionQueue(center, delegate() { 
+                    return localSpaceRoot.worldToLocalMatrix;
+                });
                 if (q == null)
                 {
                     throw new UnityException($"Local occlusion map entry could not be created { center }");
@@ -102,14 +105,18 @@ public class FoldObjects {
                 Debug.Log("Occlusion map already contains key");
                 OcclusionMap[center].Enqueue(ps);
             }
+
+            var mtrx = localSpaceRoot.localToWorldMatrix;
+            Debug.DrawRay(mtrx.MultiplyPoint(OcclusionMap[center].center), mtrx.MultiplyVector(OcclusionMap[center].upwards), Color.cyan, 6);
         }
 
         // Debug.Log(OcclusionMap);
     }
 
 
-    public void MergeWithGlobalOcclusionMap(OcclusionMap globalMap, Matrix4x4 localToWorld, Vector3 rotationRoot)
+    public void MergeWithGlobalOcclusionMap(OcclusionMap globalMap, Transform localSpaceRoot, Vector3 rotationRoot)
     {
+        var localToWorld = localSpaceRoot.localToWorldMatrix;
         Debug.Log("Merge with global occlusion map");
         foreach (var (local, oq) in OcclusionMap)
         {
@@ -140,9 +147,6 @@ public class FoldObjects {
             var radial = corresponding - rotationRoot;
             var approachFromPositive = Vector3.Dot(radial, correspondingUp) > 0;
 
-            Debug.Log($"Approaching from {(approachFromPositive ? "+" : "-")}, aligned to {(alignedToNegative ? "-" : "+")}");
-
-
             // Matching position and direction
             if (globalMap.ContainsKey(corresponding))
             {
@@ -151,13 +155,13 @@ public class FoldObjects {
                     // When approaching from positive, the new tiles (contents of the local occlusion map) covers the old tiles
                     // This means they come *after* the original items in the merged queue
                     globalMap[corresponding].MergeToBackAndDispose(
-                        alignedToNegative ? oq.MakeFlippedCopy(useLocalPosition: false) : oq);
+                        alignedToNegative ? oq.MakeFlippedCopy() : oq);
                 }
                 else
                 {
                     // Otherwise, local occlusion map content goes *before* the global content
                     globalMap[corresponding].MergeToFrontAndDispose(
-                        alignedToNegative ? oq.MakeFlippedCopy(useLocalPosition: false) : oq);
+                        alignedToNegative ? oq.MakeFlippedCopy() : oq);
                 }
 
                 globalMap[corresponding].UseAsGlobal();
@@ -168,11 +172,18 @@ public class FoldObjects {
             {
                 // Insert local entry directly into global entry
                 // Flip to always using positive direction
-                globalMap[corresponding] = alignedToNegative ? oq.MakeFlippedCopy(useLocalPosition: false) : oq;
+                globalMap[corresponding] = alignedToNegative ? oq.MakeFlippedCopy() : oq;
                 globalMap[corresponding].UseAsGlobal();
 
                 // Debug.Log("Insert direct");
             }
+
+            globalMap[corresponding].UpdateSpace(
+                alignedToNegative ? -correspondingUp : correspondingUp,
+                corresponding,
+                OcclusionQueue.WorldTransformFactory);
+
+            Debug.DrawRay(globalMap[corresponding].center, globalMap[corresponding].upwards, Color.magenta, 3);
         }
 
         Debug.Log(globalMap);

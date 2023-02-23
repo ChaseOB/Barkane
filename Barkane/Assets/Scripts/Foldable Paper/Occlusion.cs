@@ -106,9 +106,14 @@ public class OcclusionQueue
     public Vector3Int upwards { get; private set; }
     public Vector3Int center { get; private set; }
 
-    bool useLocalPosition;
+    Func<Matrix4x4> transformFactory;
 
-    public OcclusionQueue MakeFlippedCopy(bool useLocalPosition)
+    public static Func<Matrix4x4> WorldTransformFactory = delegate ()
+    {
+        return Matrix4x4.identity;
+    };
+
+    public OcclusionQueue MakeFlippedCopy()
     {
         return new OcclusionQueue
         {
@@ -118,15 +123,24 @@ public class OcclusionQueue
             qFaceUp = qFaceDown,
             faceDown = faceUp,
             faceUp = faceDown,
-            useLocalPosition = useLocalPosition
+            transformFactory = transformFactory
         };
     }
 
-    public static OcclusionQueue MakeOcclusionQueue(Vector3Int position, bool useLocalSpace)
+    public void UpdateSpace(Vector3Int upwards, Vector3Int center, Func<Matrix4x4> transformFactory)
     {
-        var xmod = position.x % 2;
-        var ymod = position.y % 2;
-        var zmod = position.z % 2;
+        this.upwards = upwards;
+        this.center = center;
+        this.transformFactory = transformFactory;
+    }
+
+    public static OcclusionQueue MakeOcclusionQueue(Vector3Int position, Func<Matrix4x4> transformFactory)
+    {
+        var tCenter = Vector3Int.RoundToInt(transformFactory().MultiplyPoint(position));
+
+        var xmod = tCenter.x % 2;
+        var ymod = tCenter.y % 2;
+        var zmod = tCenter.z % 2;
 
         var axSum = xmod + ymod + zmod;
         if (axSum != 1 && axSum != -1) { return null; }
@@ -151,7 +165,7 @@ public class OcclusionQueue
             {
                 upwards = upwards,
                 center = position,
-                useLocalPosition = useLocalSpace
+                transformFactory = transformFactory
             };
         }
 
@@ -172,11 +186,12 @@ public class OcclusionQueue
 
     public void Enqueue(PaperSquare ps)
     {
-        var centerRounded = Vector3Int.RoundToInt(useLocalPosition ? ps.transform.localPosition : ps.transform.position);
+        var mtrx = transformFactory();
+        var centerRounded = Vector3Int.RoundToInt(mtrx.MultiplyPoint(ps.transform.position));
 
         if (!centerRounded.Equals(center)) { return; }
-        var nA = useLocalPosition ? ps.topSide.transform.worldToLocalMatrix.MultiplyVector(ps.topSide.transform.up) : ps.topSide.transform.up;
-        var nB = useLocalPosition ? ps.bottomSide.transform.worldToLocalMatrix.MultiplyVector(ps.bottomSide.transform.up) : ps.bottomSide.transform.up;
+        var nA = mtrx.MultiplyVector(ps.topSide.transform.up);
+        var nB = -nA;
 
         if (Vector3.Dot(nA, upwards) > Vector3.Dot(nB, upwards))
         {
