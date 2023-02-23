@@ -134,7 +134,6 @@ public class FoldAnimator : MonoBehaviour
         foreach (GameObject o in objectsToFold.foldSquares)
         {
             o.transform.position = Vector3Int.RoundToInt(o.transform.position);
-            Debug.Log($"Square local position {o.transform.localPosition}");
         }
 
         foreach(GameObject o in objectsToFold.foldJoints)

@@ -156,7 +156,7 @@ public class FoldObjects {
                     approachFromPositive = matchingFactor < 0;
                 }
 
-                Debug.Log($"approach from: {(approachFromPositive ? "+" : "-")} { local } -> { worldSpacePos } should flip: {(alignedToNegative ? "true":"false")}");
+                // Debug.Log($"approach from: {(approachFromPositive ? "+" : "-")} { local } -> { worldSpacePos } should flip: {(alignedToNegative ? "true":"false")}");
 
                 if (approachFromPositive)
                     // When approaching from positive, the new tiles (contents of the local occlusion map) covers the old tiles
@@ -181,9 +181,9 @@ public class FoldObjects {
                 OcclusionQueue.Identity);
             globalMap[worldSpacePos].UseAsGlobal();
 
-            Debug.DrawRay(globalMap[worldSpacePos].center, globalMap[worldSpacePos].upwards * 2, Color.magenta, 3);
+            // Debug.DrawRay(globalMap[worldSpacePos].center, globalMap[worldSpacePos].upwards * 2, Color.magenta, 3);
         }
 
-        Debug.Log(globalMap);
+        // Debug.Log(globalMap);
     }
 }

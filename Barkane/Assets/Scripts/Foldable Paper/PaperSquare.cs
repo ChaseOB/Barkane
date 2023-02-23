@@ -38,7 +38,7 @@ public class PaperSquare : MonoBehaviour
         {
             m_GlobalOcclusionQueue = value;
 
-            Debug.Log($"GOQ: {(value == null ? "NULL" : value)}");
+            // Debug.Log($"GOQ: {(value == null ? "NULL" : value)}");
         }
     }
     private OcclusionQueue m_GlobalOcclusionQueue;
