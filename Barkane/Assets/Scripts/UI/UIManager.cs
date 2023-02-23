@@ -24,6 +24,13 @@ public class UIManager : Singleton<UIManager>
     public GameObject endLevelGroup;
     public GameObject inGameGroup;
 
+    public GameObject cosmeticGroup;
+    public Image cosmeticImage;
+    public List<string> cosmeticStrings;
+    public List<Sprite> cosmeticSprites;
+
+    private bool showCosmetic = false;
+    private string cosmetic;
     private int glowstickHealth;
 
     private void Awake() {
@@ -110,12 +117,31 @@ public class UIManager : Singleton<UIManager>
             glowstickSprite.sprite = glowstickDead;
     }
 
+    public void SetCosmetic(string cosmetic)
+    {
+        if(cosmetic == null || !cosmeticStrings.Contains(cosmetic))
+            return;
+        cosmeticImage.sprite = cosmeticSprites[cosmeticStrings.IndexOf(cosmetic)];
+        showCosmetic = true;
+        this.cosmetic = cosmetic;
+    }
+
     public void EndLevel()
     {
         //C: This is a horrible way to do this. I don't care
         bestFoldCountText.text = SaveSystem.Current.GetFolds(LevelManager.Instance.GetCurrentLevel().levelName).ToString();
         Time.timeScale = 0;
-        endLevelGroup.SetActive(true);
+        if(showCosmetic) {
+            cosmeticGroup.SetActive(true);
+            showCosmetic = false;
+        }
+        else
+            endLevelGroup.SetActive(true);
+    }
+
+    public void EquiptCosmetic()
+    {
+        SaveSystem.Current.SetCosmetic(cosmetic);
     }
 
     public void ToggleEndLevelGroup(bool val)
