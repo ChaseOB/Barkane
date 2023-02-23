@@ -31,7 +31,15 @@ public class PaperSquare : MonoBehaviour
     public PaperSquare topStack;
     public PaperSquare bottomStack;
 
-    public OcclusionQueue globalOcclusionQueue;
+    public OcclusionQueue globalOcclusionQueue
+    {
+        get => m_GlobalOcclusionQueue;
+        set
+        {
+            m_GlobalOcclusionQueue = value;
+        }
+    }
+    private OcclusionQueue m_GlobalOcclusionQueue;
 
     public Vector3 storedPos;
 
@@ -47,13 +55,16 @@ public class PaperSquare : MonoBehaviour
 //#endif
 
 
-    private void Start() 
+    private void Awake() 
     {
         edgeParticles = GetComponent<EdgeParticles>();
         storedPos = transform.position;
         topSide = TopHalf.GetComponent<SquareSide>();
         bottomSide = BottomHalf.GetComponent<SquareSide>();
         foldablePaper = GetComponentInParent<FoldablePaper>();
+
+        topSide.parentSquare = this;
+        bottomSide.parentSquare = this;
     }
 
     private void OnDestroy()
@@ -70,7 +81,8 @@ public class PaperSquare : MonoBehaviour
 
     public void EjectFromGlobalQueue()
     {
-        globalOcclusionQueue?.Dequeue(this);
+        globalOcclusionQueue.Dequeue(this);
+        globalOcclusionQueue = null;
     }
 
     public void ToggleTop(bool val)

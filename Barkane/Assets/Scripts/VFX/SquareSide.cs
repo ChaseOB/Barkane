@@ -11,6 +11,8 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(MeshFilter))]
 public class SquareSide : MonoBehaviour, IRefreshable
 {
+    public PaperSquare parentSquare { get; set; }
+
     public enum SideVisiblity
     {
         full, ghost, none
@@ -58,18 +60,36 @@ public class SquareSide : MonoBehaviour, IRefreshable
         RuntimeParticleUpdate();
     }
 
-    public void SetVisibility(SideVisiblity sv)
+    public SideVisiblity Visibility
     {
-        switch (sv)
+        get => m_SideVisiblity;
+        set
         {
-            case SideVisiblity.full:
-                materialOverride = materialInstance; break;
-            case SideVisiblity.ghost:
-                materialOverride = VFXManager.Theme.GhostMat; break;
-            default:
-                materialOverride = null; break;
+            m_SideVisiblity = value;
+
+            switch (value)
+            {
+                case SideVisiblity.full:
+                    mRenderer.enabled = true;
+                    materialOverride = materialInstance;
+                    break;
+                case SideVisiblity.ghost:
+                    mRenderer.enabled = true;
+                    materialOverride = VFXManager.Theme.GhostMat;
+                    break;
+                case SideVisiblity.none:
+                    mRenderer.enabled = false;
+                    break;
+            }
+
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).gameObject.SetActive(value != SideVisiblity.none);
+            }
         }
     }
+
+    private SideVisiblity m_SideVisiblity;
 
     private void PushData()
     {

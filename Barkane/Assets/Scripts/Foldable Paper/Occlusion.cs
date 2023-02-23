@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
@@ -105,7 +106,9 @@ public class OcclusionQueue
     public Vector3Int upwards { get; private set; }
     public Vector3Int center { get; private set; }
 
-    public OcclusionQueue MakeFlippedCopy()
+    bool useLocalPosition;
+
+    public OcclusionQueue MakeFlippedCopy(bool useLocalPosition)
     {
         return new OcclusionQueue
         {
@@ -115,10 +118,11 @@ public class OcclusionQueue
             qFaceUp = qFaceDown,
             faceDown = faceUp,
             faceUp = faceDown,
+            useLocalPosition = useLocalPosition
         };
     }
 
-    public static OcclusionQueue MakeOcclusionQueue(Vector3Int position)
+    public static OcclusionQueue MakeOcclusionQueue(Vector3Int position, bool useLocalSpace)
     {
         var xmod = position.x % 2;
         var ymod = position.y % 2;
@@ -146,25 +150,33 @@ public class OcclusionQueue
             return new OcclusionQueue()
             {
                 upwards = upwards,
-                center = position
+                center = position,
+                useLocalPosition = useLocalSpace
             };
         }
 
         return null;
     }
 
+    public void UseAsGlobal()
+    {
+        foreach (var s in faceDown)
+        {
+            s.parentSquare.globalOcclusionQueue = this;
+        }
+        foreach (var s in faceUp)
+        {
+            s.parentSquare.globalOcclusionQueue = this;
+        }
+    }
+
     public void Enqueue(PaperSquare ps)
     {
-        if (ps.globalOcclusionQueue != null)
-        {
-            throw new UnityException("Must clear occlusion queue by dequeing before enqueuing a different one");
-        }
-
-        var centerRounded = Vector3Int.RoundToInt(ps.transform.position);
+        var centerRounded = Vector3Int.RoundToInt(useLocalPosition ? ps.transform.localPosition : ps.transform.position);
 
         if (!centerRounded.Equals(center)) { return; }
-        var nA = ps.topSide.transform.up;
-        var nB = ps.bottomSide.transform.up;
+        var nA = useLocalPosition ? ps.topSide.transform.worldToLocalMatrix.MultiplyVector(ps.topSide.transform.up) : ps.topSide.transform.up;
+        var nB = useLocalPosition ? ps.bottomSide.transform.worldToLocalMatrix.MultiplyVector(ps.bottomSide.transform.up) : ps.bottomSide.transform.up;
 
         if (Vector3.Dot(nA, upwards) > Vector3.Dot(nB, upwards))
         {
@@ -176,14 +188,10 @@ public class OcclusionQueue
             EnqueueSide(ps.bottomSide, faceUp, qFaceUp);
             EnqueueSide(ps.topSide, faceDown, qFaceDown);
         }
-
-        ps.globalOcclusionQueue = this;
     }
 
     public void Dequeue(PaperSquare ps)
     {
-        ps.globalOcclusionQueue = null;
-
         // just try both lol
         DequeueSide(ps.topSide, faceUp, ref qFaceUp);
         DequeueSide(ps.topSide, faceDown, ref qFaceDown);
@@ -195,8 +203,7 @@ public class OcclusionQueue
     {
         if (chk.Contains(s))
         {
-            Debug.Log("queue already contains side");
-            return;
+            throw new UnityException("queue already contains side");
         }
 
         chk.Add(s);
@@ -204,13 +211,11 @@ public class OcclusionQueue
         // notify the current outer-most display
         if (q.Count > 0)
         {
-            q.Last.Value.SetVisibility(SquareSide.SideVisiblity.none);
+            q.Last.Value.Visibility = SquareSide.SideVisiblity.none;
         }
         q.AddLast(s);
 
-        Debug.Log("Enqueue item to list");
-
-        q.Last.Value.SetVisibility(SquareSide.SideVisiblity.full);
+        q.Last.Value.Visibility = SquareSide.SideVisiblity.full;
     }
 
     // MAY REPLACE Q, ref keyword needed!
@@ -218,7 +223,6 @@ public class OcclusionQueue
     {
         if (!chk.Contains(s))
         {
-            Debug.Log("queue does not contain side");
             return;
         }
 
@@ -239,24 +243,16 @@ public class OcclusionQueue
         // notify the next outer-most display
         if (q.Count > 0)
         {
-            q.Last.Value.SetVisibility(SquareSide.SideVisiblity.full);
+            q.Last.Value.Visibility = SquareSide.SideVisiblity.full;
         }
     }
 
     public void MergeToFrontAndDispose(OcclusionQueue other)
     {
-
         MergeSide(other.qFaceUp, ref qFaceUp);
         MergeSide(other.qFaceDown, ref qFaceDown);
-
-        other.qFaceUp.Clear();
-        other.qFaceDown.Clear();
-
         MergeChk(faceUp, other.faceUp);
         MergeChk(faceDown, other.faceDown);
-
-        other.faceDown.Clear();
-        other.faceDown.Clear();
     }
 
     public void MergeToBackAndDispose(OcclusionQueue other)
@@ -264,14 +260,18 @@ public class OcclusionQueue
         MergeSide(qFaceUp, ref other.qFaceUp);
         MergeSide(qFaceDown, ref other.qFaceDown);
 
-        other.qFaceUp.Clear();
-        other.qFaceDown.Clear();
+        if (qFaceUp.Count > 0)
+        {
+            qFaceUp.Last.Value.Visibility = SquareSide.SideVisiblity.full;
+        }
+        
+        if (qFaceDown.Count > 0)
+        {
+            qFaceDown.Last.Value.Visibility = SquareSide.SideVisiblity.full;
+        }
 
         MergeChk(faceUp, other.faceUp);
         MergeChk(faceDown, other.faceDown);
-
-        other.faceDown.Clear();
-        other.faceDown.Clear();
     }
 
     private void MergeChk(HashSet<SquareSide> mine, HashSet<SquareSide> theirs)
@@ -281,7 +281,10 @@ public class OcclusionQueue
 
     private void MergeSide(LinkedList<SquareSide> comesFirst, ref LinkedList<SquareSide> comesSecond)
     {
-        comesFirst.Last.Value.SetVisibility(SquareSide.SideVisiblity.none);
+        if (comesFirst.Count > 0)
+        {
+            comesFirst.Last.Value.Visibility = SquareSide.SideVisiblity.none;
+        }
 
         // there's probably a better way to merge without new allocations
         foreach (var i in comesSecond)
@@ -294,8 +297,16 @@ public class OcclusionQueue
 
     public override string ToString()
     {
-        return $"... oq ({center} facing {upwards}): " + 
-            string.Join(", ", qFaceUp) + "\n" + string.Join(", ", faceUp) + "\n"
-            + string.Join(", ", qFaceDown) + "\n" + string.Join(", ", faceDown) + "\n";
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine($"... oq ({center} facing {upwards}): ");
+        if (qFaceUp.Count > 0)
+        {
+            sb.AppendLine(string.Join(", ", qFaceUp));
+        }
+        if (qFaceDown.Count > 0)
+        {
+            sb.AppendLine(string.Join(", ", qFaceDown));
+        }
+        return sb.ToString();
     }
 }

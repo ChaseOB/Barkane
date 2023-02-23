@@ -99,12 +99,12 @@ public class FoldAnimator : MonoBehaviour
             yield return null;
         }
 
-        var finalTransform = tempObj.transform.worldToLocalMatrix;
-
         target.transform.RotateAround(center, fd.axis, fd.degrees);
         tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 
-        foreach(GameObject o in objectsToFold.foldSquares)
+        var finalTransform = tempObj.transform.localToWorldMatrix;
+
+        foreach (GameObject o in objectsToFold.foldSquares)
         {
             o.transform.position = Vector3Int.RoundToInt(o.transform.position);
             o.transform.parent =  objectsToFold.squareParent;

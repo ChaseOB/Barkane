@@ -199,19 +199,18 @@ public class FoldablePaper : MonoBehaviour
         foreach(var ps in paperSquares)
         {
             var rounded = Vector3Int.RoundToInt(ps.transform.position);
-            Debug.Log($"Paper square at {rounded}");
 
-            if (OcclusionMap.ContainsKey(rounded))
+            if (m_OcclusionMap.ContainsKey(rounded))
             {
-                OcclusionMap[rounded].Enqueue(ps);
+                m_OcclusionMap[rounded].Enqueue(ps);
+                m_OcclusionMap[rounded].UseAsGlobal();
             }
             else
             {
-                var q = OcclusionQueue.MakeOcclusionQueue(rounded);
+                var q = OcclusionQueue.MakeOcclusionQueue(rounded, useLocalSpace: false);
 
                 if (q != null)
                 {
-                    Debug.Log("Add to occlusion queue");
                     q.Enqueue(ps);
                     m_OcclusionMap[rounded] = q;
                 }
@@ -219,6 +218,7 @@ public class FoldablePaper : MonoBehaviour
                 {
                     throw new UnityException("Occlusion queue could not be created");
                 }
+                m_OcclusionMap[rounded].UseAsGlobal();
             }
         }
 

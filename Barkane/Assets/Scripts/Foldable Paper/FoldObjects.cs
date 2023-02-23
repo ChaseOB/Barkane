@@ -83,11 +83,10 @@ public class FoldObjects {
         {
             ps.EjectFromGlobalQueue();
             var center = Vector3Int.RoundToInt(ps.transform.localPosition);
-            Debug.Log($"Handle square at {center}");
             if (!OcclusionMap.ContainsKey(center))
             {
                 Debug.Log("Occlusion map does not already contain key");
-                var q = OcclusionQueue.MakeOcclusionQueue(center);
+                var q = OcclusionQueue.MakeOcclusionQueue(center, useLocalSpace: true);
                 if (q == null)
                 {
                     throw new UnityException($"Local occlusion map entry could not be created { center }");
@@ -105,19 +104,17 @@ public class FoldObjects {
             }
         }
 
-        Debug.Log(OcclusionMap);
+        // Debug.Log(OcclusionMap);
     }
 
 
-    public void MergeWithGlobalOcclusionMap(OcclusionMap globalMap, Matrix4x4 fTransformM, Vector3 rotationRoot)
+    public void MergeWithGlobalOcclusionMap(OcclusionMap globalMap, Matrix4x4 localToWorld, Vector3 rotationRoot)
     {
-        Debug.Log("Merge with glocal occlusion map");
+        Debug.Log("Merge with global occlusion map");
         foreach (var (local, oq) in OcclusionMap)
         {
-            var corresponding = Vector3Int.RoundToInt(fTransformM.MultiplyPoint(local));
-            var correspondingUp = Vector3Int.RoundToInt(fTransformM.MultiplyVector(oq.upwards));
-
-            Debug.Log($"Handling {local} => {corresponding}");
+            var corresponding = Vector3Int.RoundToInt(localToWorld.MultiplyPoint(local));
+            var correspondingUp = Vector3Int.RoundToInt(localToWorld.MultiplyVector(oq.upwards));
 
             var alignedToNegative = correspondingUp.x < 0 || correspondingUp.y < 0 || correspondingUp.z < 0;
 
@@ -143,7 +140,8 @@ public class FoldObjects {
             var radial = corresponding - rotationRoot;
             var approachFromPositive = Vector3.Dot(radial, correspondingUp) > 0;
 
-            Debug.Log(globalMap);
+            Debug.Log($"Approaching from {(approachFromPositive ? "+" : "-")}, aligned to {(alignedToNegative ? "-" : "+")}");
+
 
             // Matching position and direction
             if (globalMap.ContainsKey(corresponding))
@@ -152,24 +150,31 @@ public class FoldObjects {
                 {
                     // When approaching from positive, the new tiles (contents of the local occlusion map) covers the old tiles
                     // This means they come *after* the original items in the merged queue
-                    globalMap[corresponding].MergeToBackAndDispose(alignedToNegative ? oq.MakeFlippedCopy() : oq);
+                    globalMap[corresponding].MergeToBackAndDispose(
+                        alignedToNegative ? oq.MakeFlippedCopy(useLocalPosition: false) : oq);
                 }
                 else
                 {
                     // Otherwise, local occlusion map content goes *before* the global content
-                    globalMap[corresponding].MergeToFrontAndDispose(alignedToNegative ? oq.MakeFlippedCopy() : oq);
+                    globalMap[corresponding].MergeToFrontAndDispose(
+                        alignedToNegative ? oq.MakeFlippedCopy(useLocalPosition: false) : oq);
                 }
 
-                Debug.Log($"Merge with global: {globalMap[corresponding]}");
+                globalMap[corresponding].UseAsGlobal();
+
+                // Debug.Log($"Merge with global: {globalMap[corresponding]}");
             }
             else
             {
                 // Insert local entry directly into global entry
                 // Flip to always using positive direction
-                globalMap[corresponding] = alignedToNegative ? oq.MakeFlippedCopy() : oq;
+                globalMap[corresponding] = alignedToNegative ? oq.MakeFlippedCopy(useLocalPosition: false) : oq;
+                globalMap[corresponding].UseAsGlobal();
 
-                Debug.Log("Insert direct");
+                // Debug.Log("Insert direct");
             }
         }
+
+        Debug.Log(globalMap);
     }
 }
