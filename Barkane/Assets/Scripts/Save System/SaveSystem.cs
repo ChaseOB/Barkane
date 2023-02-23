@@ -181,7 +181,7 @@ public class SaveSystem
 
     private static SerializableSaveProfile LoadFromFile(int index)
     {
-        Debug.Log($"[File IO] Loading data from file {index}.");
+//        Debug.Log($"[File IO] Loading data from file {index}.");
 
         string path = GetFilePath(index);
         if (File.Exists(path))
@@ -196,7 +196,7 @@ public class SaveSystem
         }
         else
         {
-            Debug.LogWarning($"[File IO] Save file not found at {path}");
+//            Debug.LogWarning($"[File IO] Save file not found at {path}"); C: Silence debug
             return null;
         }
     }

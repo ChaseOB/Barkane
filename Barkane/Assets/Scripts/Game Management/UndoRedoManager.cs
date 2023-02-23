@@ -31,7 +31,7 @@ public class UndoRedoManager : Singleton<UndoRedoManager>
     {
         actionRedoStack = new Stack<Action>();
         actionStack.Push(action);
-        Debug.Log($"added {action} to stack");
+//        Debug.Log($"added {action} to stack");
     }
 
     //undoes action on top of stack

@@ -17,11 +17,9 @@ public class LevelSelectButton : MonoBehaviour
         if(SaveSystem.Current == null) 
             return;
         if(SaveSystem.Current.GetLevelUnlocksDictionary().GetValueOrDefault(levelName, false)) {
-            print($"level {levelName} unlocked");
             SetLevelUnlocked(true);
             return;
         }
-        print("Level not unlocked");
         SetLevelUnlocked(false);
     }
 
