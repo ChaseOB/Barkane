@@ -94,6 +94,9 @@ namespace BarkaneJoint
         void IRefreshable.RuntimeRefresh() {
             UpdateGeometryData();
             UpdateMesh(true);
+
+            // CAUTION: keep the refresh order of JointRenderer after SquareSide
+            PushRelationToParent();
         }
 
         public bool IsAnimating = false;
@@ -370,6 +373,39 @@ namespace BarkaneJoint
                 fB1.sharedMesh.SetTriangles(settings.tB1CCW, 0, false);
                 fB2.sharedMesh.SetTriangles(settings.tB2CCW, 0, false);
             }
+        }
+
+        private void PushRelationToParent()
+        {
+            a1.JointPieces.Register(new JointPieceOwnership
+            {
+                PieceParent = this,
+                Renderer = mrA1
+            });
+
+            a2.JointPieces.Register(new JointPieceOwnership
+            {
+                PieceParent = this,
+                Renderer = mrA2
+            });
+
+            b1.JointPieces.Register(new JointPieceOwnership
+            {
+                PieceParent = this,
+                Renderer = mrB1
+            });
+
+            b2.JointPieces.Register(new JointPieceOwnership
+            {
+                PieceParent = this,
+                Renderer = mrB2
+            });
+        }
+
+        public class JointPieceOwnership
+        {
+            public JointRenderer PieceParent { get; internal set; }
+            public MeshRenderer Renderer { get; internal set; }
         }
     }
 

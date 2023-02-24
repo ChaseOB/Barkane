@@ -6,6 +6,9 @@ using UnityEditor;
 using System;
 using Random = UnityEngine.Random;
 
+using JointRenderer = BarkaneJoint.JointRenderer;
+using JointPieceOwnership = BarkaneJoint.JointRenderer.JointPieceOwnership;
+
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
@@ -48,6 +51,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public Color BaseColor, TintColor;
 
+    public JointPieceCollection JointPieces { get; private set; }
+
     void IRefreshable.EditorRefresh()
     {
         UpdateMesh();
@@ -58,6 +63,9 @@ public class SquareSide : MonoBehaviour, IRefreshable
         // Debug.Log("Runtime refresh");
         PushData();
         RuntimeParticleUpdate();
+
+        // CAUTION: keep the refresh order of JointRenderer after SquareSide
+        JointPieces = new JointPieceCollection(transform);
     }
 
     public SideVisiblity Visibility
@@ -269,4 +277,102 @@ public class SquareSide : MonoBehaviour, IRefreshable
         sprinkleParent.gameObject.SetActive(val);
     }
     #endregion
+
+    public class JointPieceCollection
+    {
+        /// <summary>
+        /// In counter clock-wise order
+        /// </summary>
+        public JointPieceOwnership[] jpos;
+        Transform root; 
+
+        public JointPieceVisibility Visibilities { get; private set; }
+
+        // YZX orientation, where local Y points up and +Z is the starting axis
+
+        public JointPieceCollection(Transform root)
+        {
+            this.root = root;
+            jpos = new JointPieceOwnership[] { null, null, null, null };
+            Visibilities = AllPiecesVisible;
+        }
+
+        public void Register(JointPieceOwnership jpo)
+        {
+            var p = jpo.PieceParent.transform.position;
+            this[p - root.position] = jpo;
+        }
+
+        public void AlignAndMask(JointPieceCollection prev)
+        {
+            Visibilities &= ~RotateVisibilities(prev.Visibilities, (ushort)tr2Idx(prev.root));
+            UpdateVisibility();
+        }
+
+        private static JointPieceVisibility RotateVisibilities(JointPieceVisibility start, ushort iterations)
+        {
+            ushort startVal = (ushort)start;
+            ushort reverse = (ushort)(4 - iterations);
+
+            return (JointPieceVisibility)(((startVal << iterations) | (startVal >> reverse)) & 0b1111);
+        }
+
+        private void UpdateVisibility()
+        {
+            jpos[0].Renderer.enabled = (Visibilities & JointPieceVisibility.First) != 0;
+            jpos[1].Renderer.enabled = (Visibilities & JointPieceVisibility.First) != 0;
+            jpos[2].Renderer.enabled = (Visibilities & JointPieceVisibility.First) != 0;
+            jpos[3].Renderer.enabled = (Visibilities & JointPieceVisibility.First) != 0;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="">World space direction of the joint piece relative to the square side's center</param>
+        /// <returns></returns>
+        public JointPieceOwnership this[Vector3 wDir]
+        {
+            get => jpos[wDir2Idx(wDir)];
+            private set
+            {
+                var idx = wDir2Idx(wDir);
+                if (jpos[idx] != null)
+                    throw new UnityException("Joint renderer slot can only be written once!");
+                jpos[idx] = value;
+            }
+        }
+
+        private int tr2Idx(Transform alignment) => wDir2Idx(alignment.right);
+
+        private int wDir2Idx(Vector3 wDir)
+        {
+            var lDir = Vector3Int.RoundToInt(root.InverseTransformDirection(wDir));
+            if (lDir.z > 0)
+                return 0;
+            else if (lDir.z < 0)
+                return 1;
+            else if (lDir.x > 0)
+                return 2;
+            else if (lDir.x < 0)
+                return 3;
+            else
+                throw new IndexOutOfRangeException($"{wDir}");
+        }
+
+        [System.Flags]
+        public enum JointPieceVisibility
+        {
+            None = 0,
+            First = 1 << 0,
+            Second = 1 << 1,
+            Third = 1 << 2,
+            Fourth = 1 << 3
+        }
+
+        public static JointPieceVisibility AllPiecesVisible =
+            JointPieceVisibility.First
+            | JointPieceVisibility.Second
+            | JointPieceVisibility.Third
+            | JointPieceVisibility.Fourth;
+    }
 }
