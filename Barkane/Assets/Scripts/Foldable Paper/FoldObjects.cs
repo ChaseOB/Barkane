@@ -99,8 +99,8 @@ public class FoldObjects {
                 OcclusionMap[center].Enqueue(ps);
 
             Debug.DrawRay(
-                decode.MultiplyPoint(OcclusionMap[center].center),
-                decode.MultiplyVector(OcclusionMap[center].upwards),
+                decode.MultiplyPoint(OcclusionMap[center].Offset),
+                decode.MultiplyVector(OcclusionMap[center].SpatialBasis.normal),
                 Color.cyan, 6);
         }
 
@@ -116,7 +116,7 @@ public class FoldObjects {
         foreach (var (local, oq) in OcclusionMap)
         {
             var worldSpacePos = Vector3Int.RoundToInt(decoder1.MultiplyPoint(local));
-            var worldSpaceUp = Vector3Int.RoundToInt(decoder1.MultiplyVector(oq.upwards));
+            var worldSpaceUp = Vector3Int.RoundToInt(decoder1.MultiplyVector(oq.SpatialBasis.normal));
 
             var alignedToNegative = worldSpaceUp.x < 0 || worldSpaceUp.y < 0 || worldSpaceUp.z < 0;
 
@@ -178,7 +178,7 @@ public class FoldObjects {
             globalMap[worldSpacePos].UpdateSpace(
                 alignedToNegative ? -worldSpaceUp : worldSpaceUp,
                 worldSpacePos,
-                OcclusionQueue.Identity);
+                OcclusionQueue.IdentityEncoder);
             globalMap[worldSpacePos].UseAsGlobal();
 
             // Debug.DrawRay(globalMap[worldSpacePos].center, globalMap[worldSpacePos].upwards * 2, Color.magenta, 3);

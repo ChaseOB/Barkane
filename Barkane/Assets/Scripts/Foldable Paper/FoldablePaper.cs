@@ -207,7 +207,7 @@ public class FoldablePaper : MonoBehaviour
             }
             else
             {
-                var q = OcclusionQueue.MakeOcclusionQueue(rounded, OcclusionQueue.Identity);
+                var q = OcclusionQueue.MakeOcclusionQueue(rounded, OcclusionQueue.IdentityEncoder);
 
                 if (q != null)
                 {
@@ -221,7 +221,7 @@ public class FoldablePaper : MonoBehaviour
                 m_OcclusionMap[rounded].UseAsGlobal();
             }
 
-            Debug.DrawRay(m_OcclusionMap[rounded].center, m_OcclusionMap[rounded].upwards, Color.yellow, 3);
+            Debug.DrawRay(m_OcclusionMap[rounded].Offset, m_OcclusionMap[rounded].upwards, Color.yellow, 3);
         }
 
         Debug.Log(OcclusionMap);

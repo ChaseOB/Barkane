@@ -1,3 +1,4 @@
+using BarkaneJoint;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,37 +9,29 @@ using UnityEngine;
 
 public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>>
 {
-    private Dictionary<(int, int, int), OcclusionQueue> map = new Dictionary<(int, int, int), OcclusionQueue>();
+    private Dictionary<(int, int, int), OcclusionQueue> Map = new Dictionary<(int, int, int), OcclusionQueue>();
 
     public OcclusionQueue this[Vector3Int key] { 
-        get
-        {
-            return map[(key.x, key.y, key.z)];
-        } set
+        get => Map[(key.x, key.y, key.z)]; 
+        set
         {
             var keyTuple = (key.x, key.y, key.z);
-
-            if (map.ContainsKey(keyTuple))
-            {
-                map[keyTuple] = value;
-            } else
-            {
-                map.Add(keyTuple, value);
-            }
+            if (Map.ContainsKey(keyTuple))
+                Map[keyTuple] = value;
+            else
+                Map.Add(keyTuple, value);
         }
     }
 
-    public void Clear() => map.Clear();
-    public bool ContainsKey(Vector3Int key) => map.ContainsKey((key.x, key.y, key.z));
+    public void Clear() => Map.Clear();
+    public bool ContainsKey(Vector3Int key) => Map.ContainsKey((key.x, key.y, key.z));
 
     public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.AppendLine($"Containing { map.Count } values:");
-        foreach(var (k, v) in map)
-        {
+        sb.AppendLine($"Containing { Map.Count } values:");
+        foreach(var (_, v) in Map) 
             sb.AppendLine(v.ToString());
-        }
 
         return sb.ToString();
     }
@@ -46,21 +39,15 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
     public void Prune()
     {
         // https://stackoverflow.com/questions/469202/best-way-to-remove-multiple-items-matching-a-predicate-from-a-net-dictionary
-        foreach (var (k, v) in map.Where( kv => kv.Value.IsEmpty ).ToList())
-        {
-            map.Remove(k);
-        }
+        foreach (var (k, v) in Map.Where( kv => kv.Value.IsEmpty ).ToList())
+            Map.Remove(k);
     }
 
-    public IEnumerator<KeyValuePair<Vector3Int, OcclusionQueue>> GetEnumerator()
-    {
-        return new Enumerator(map);
-    }
+    public IEnumerator<KeyValuePair<Vector3Int, OcclusionQueue>> GetEnumerator() 
+        => new Enumerator(Map);
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return new Enumerator(map);
-    }
+    IEnumerator IEnumerable.GetEnumerator() 
+        => new Enumerator(Map);
 
     public class Enumerator : IEnumerator<KeyValuePair<Vector3Int, OcclusionQueue>>
     {
@@ -79,51 +66,98 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
             }
         }
 
-        object IEnumerator.Current
-        {
-            get { return m_Enumerator.Current; }
-        }
+        object IEnumerator.Current => m_Enumerator.Current;
+        public void Dispose() => m_Enumerator.Dispose();
+        public bool MoveNext() => m_Enumerator.MoveNext();
 
-        public void Dispose()
-        {
-            m_Enumerator.Dispose();
-        }
-
-        public bool MoveNext()
-        {
-            return m_Enumerator.MoveNext();
-        }
-
-        public void Reset()
-        {
-            m_Enumerator.Reset();
-        }
+        public void Reset() => m_Enumerator.Reset();
     }
 }
 
 public class OcclusionQueue
 {
-    HashSet<SquareSide> faceUp = new HashSet<SquareSide>();
-    LinkedList<SquareSide> qFaceUp = new LinkedList<SquareSide>();
-    HashSet<SquareSide> faceDown = new HashSet<SquareSide>();
-    LinkedList<SquareSide> qFaceDown = new LinkedList<SquareSide>();
+    /// <summary>
+    /// Right-handed basis of the occlusion queue's orientation relative to its encoder
+    /// +Normal cross +Major = +Minor
+    /// </summary>
+    public enum SpatialOrientation
+    {
+        /// <summary>
+        /// X normal, Y major, Z minor
+        /// </summary>
+        XYZ,
+        /// <summary>
+        /// Y normal, Z major, X minor
+        /// </summary>
+        YZX,
+        /// <summary>
+        /// Z nnormal, X major, Y minor
+        /// </summary>
+        ZXY
+    }
+
+    public SpatialOrientation Orientation
+    {
+        get => m_Orientation;
+        set
+        {
+            m_Orientation = value;
+            switch (value)
+            {
+                case SpatialOrientation.XYZ:
+                    SpatialBasis = (
+                        Vector3Int.right,
+                        Vector3Int.up,
+                        Vector3Int.forward);
+                    break;
+                case SpatialOrientation.YZX:
+                    SpatialBasis = (
+                        Vector3Int.up,
+                        Vector3Int.forward,
+                        Vector3Int.right);
+                    break;
+                case SpatialOrientation.ZXY:
+                    SpatialBasis = (
+                        Vector3Int.forward,
+                        Vector3Int.right,
+                        Vector3Int.up);
+                    break;
+            }
+        }
+    }
+
+    public (Vector3Int normal, Vector3Int major, Vector3Int minor) SpatialBasis { get; private set; }
+
+    private SpatialOrientation m_Orientation;
+
+    LinkedList<SquareSide>
+        qFaceUp = new(),
+        qFaceDown = new();
+    HashSet<SquareSide>
+        faceDown = new(),
+        faceUp = new();
+
+    LinkedList<JointPieceOwnership>
+        majorUp = new(),
+        majorDown = new(),
+        minorUp = new(),
+        minorDown = new();
 
     public bool IsEmpty => faceUp.Count == 0 && faceDown.Count == 0;
 
-    public Vector3Int upwards { get; private set; }
-    public Vector3Int center { get; private set; }
+    public Vector3Int Offset { get; private set; }
 
     Func<Matrix4x4> encoderFactory;
 
-    public static Func<Matrix4x4> Identity = delegate ()
+    public static Func<Matrix4x4> IdentityEncoder = delegate ()
     {
         return Matrix4x4.identity;
     };
 
     public OcclusionQueue MakeFlippedCopy() => new OcclusionQueue
     {
-        upwards = -upwards,
-        center = center,
+        Orientation = Orientation,
+        Offset = Offset,
         qFaceDown = qFaceUp,
         qFaceUp = qFaceDown,
         faceDown = faceUp,
@@ -131,10 +165,22 @@ public class OcclusionQueue
         encoderFactory = encoderFactory
     };
 
-    public void UpdateSpace(Vector3Int upwards, Vector3Int center, Func<Matrix4x4> transformFactory)
+    public void UpdateSpace(Vector3Int normal, Vector3Int center, Func<Matrix4x4> transformFactory)
     {
-        this.upwards = upwards;
-        this.center = center;
+        if (normal.x == 1)
+        {
+            Orientation = SpatialOrientation.XYZ;
+        } else if (normal.y == 1)
+        {
+            Orientation = SpatialOrientation.YZX;
+        } else if (normal.z == 1)
+        {
+            Orientation = SpatialOrientation.ZXY;
+        } else
+        {
+            throw new UnityException($"Invalid normal {normal} does not match any spacial orientations");
+        }
+        this.Offset = center;
         this.encoderFactory = transformFactory;
     }
 
@@ -149,26 +195,26 @@ public class OcclusionQueue
         var axSum = xmod + ymod + zmod;
         if (axSum != 1 && axSum != -1) { return null; }
 
-        var upwards = Vector3Int.zero;
+        SpatialOrientation? orien = null;
         if (xmod == 1 || xmod == -1)
         {
-            upwards = Vector3Int.right;
+            orien = SpatialOrientation.XYZ;
         }
         else if (ymod == 1 || ymod == -1)
         {
-            upwards = Vector3Int.up;
+            orien = SpatialOrientation.YZX;
         }
         else if (zmod == 1 || zmod == -1)
         {
-            upwards = Vector3Int.forward;
+            orien = SpatialOrientation.ZXY;
         }
 
-        if (!upwards.Equals(Vector3.zero))
+        if (!orien.HasValue)
         {
             return new OcclusionQueue()
             {
-                upwards = upwards,
-                center = position,
+                Orientation = orien.Value,
+                Offset = position,
                 encoderFactory = transformFactory
             };
         }
@@ -193,11 +239,11 @@ public class OcclusionQueue
         var mtrx = encoderFactory();
         var centerRounded = Vector3Int.RoundToInt(mtrx.MultiplyPoint(ps.transform.position));
 
-        if (!centerRounded.Equals(center)) { return; }
+        if (!centerRounded.Equals(Offset)) { return; }
         var nA = mtrx.MultiplyVector(ps.topSide.transform.up);
         var nB = -nA;
 
-        if (Vector3.Dot(nA, upwards) > Vector3.Dot(nB, upwards))
+        if (Vector3.Dot(nA, SpatialBasis.normal) > Vector3.Dot(nB, SpatialBasis.normal))
         {
             EnqueueSide(ps.topSide, faceUp, qFaceUp);
             EnqueueSide(ps.bottomSide, faceDown, qFaceDown);
@@ -323,7 +369,7 @@ public class OcclusionQueue
     public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.AppendLine($"... oq ({center} facing {upwards}): ");
+        sb.AppendLine($"... oq ({Offset} facing {SpatialBasis}): ");
         if (qFaceUp.Count > 0)
         {
             sb.AppendLine(string.Join(", ", qFaceUp));
