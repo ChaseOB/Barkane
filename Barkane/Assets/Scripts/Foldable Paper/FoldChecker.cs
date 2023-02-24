@@ -136,33 +136,92 @@ public class FoldChecker : Singleton<FoldChecker>
         Dictionary<Vector3Int, HashSet<PaperSquare>> overlaps = fd.FindOverlappingSquares();
         foreach(HashSet<PaperSquare> list in overlaps.Values)
         {
-            //Vector3 intial = Vector3.zero;
-            //Vector3 newVec = Vector3.zero;
             if(list.Count > 1) //C: if count = 1 then only 1 square, can't fold through itself
             {
                 Debug.Log("Check Clip Square");
                 GameObject parent = new GameObject();
                 parent.transform.position = fd.center;
-                List<GameObject> activeSides = new List<GameObject>();
+               // List<GameObject> activeSides = new List<GameObject>();
+                List<GameObject> inactiveSides = new List<GameObject>();
                 GameObject t1 = new GameObject();
                 GameObject t2 = new GameObject();
                 foreach(PaperSquare ps in list) 
                 {
-                    if(ps.bottomSide.Visibility == SquareSide.SideVisiblity.full)
-                        activeSides.Add(ps.BottomHalf);
-                    if(ps.bottomSide.Visibility == SquareSide.SideVisiblity.full)
-                        activeSides.Add(ps.TopHalf);
+                    //if(ps.bottomSide.Visibility == SquareSide.SideVisiblity.full)
+                      //  activeSides.Add(ps.BottomHalf);
+                    //if(ps.topSide.Visibility == SquareSide.SideVisiblity.full)
+                      //  activeSides.Add(ps.TopHalf);
+                    if(ps.bottomSide.Visibility == SquareSide.SideVisiblity.none)
+                        inactiveSides.Add(ps.BottomHalf);
+                    if(ps.topSide.Visibility == SquareSide.SideVisiblity.none)
+                        inactiveSides.Add(ps.TopHalf);
                 }
-                print("Overlap Found");
-                foreach(PaperSquare ps in list)
-                        print(ps.gameObject.name);
-               if(activeSides.Count != 2){
-                    Debug.LogError($"!2 active sides in a single location (this should not happen). Count: {activeSides.Count}");
-                    foreach(PaperSquare ps in list)
-                        print(ps.gameObject.name);
+               // print("Overlap Found");
+           //     foreach(PaperSquare ps in list)
+           //             print(ps.gameObject.name);
+          //     if(activeSides.Count != 2){
+           //         Debug.LogError($"!2 active sides in a single location (this should not happen). Count: {activeSides.Count}");
+          //          foreach(PaperSquare ps in list)
+            //            print(ps.gameObject.name);
+            //    }
+                for(int i=0; i < inactiveSides.Count; i++)
+                {   
+                    GameObject o1 = inactiveSides[i];
+                    for(int j = i + 1; j < inactiveSides.Count; j++)
+                    {
+                        GameObject o2 = inactiveSides[j];
+                        if(o1 == o2) continue;
+
+                        GameObject o1parent = o1.GetComponentInParent<PaperSquare>().gameObject;
+                        GameObject o2parent = o2.GetComponentInParent<PaperSquare>().gameObject;
+                        //if true, one square is in the fold and the other is on the player side. If false, both squares are on the same side, so they cannot intersect eachother during the fold
+                        bool diffGroups = (fd.foldObjects.foldSquares.Contains(o1parent)
+                                            != fd.foldObjects.foldSquares.Contains(o2parent));
+                        if(!diffGroups) continue;
+
+                        Debug.Log($"Found overlap: {o1.name} {o1parent.name}, {o2.name} {o2parent.name}");
+                        //C: Else, check position of the ends of the normal vectors before and after fold
+                    // if there is no clipping, then the points at the ends of the normals will be farther apart (point away)
+                    // than if there was clipping (point towards eachother). So we can check this fold and the other fold direction
+                    // by folding 180* after the intial fold and then comapare distances
+                    
+                    t1.transform.SetPositionAndRotation(o1.transform.position, o2.transform.rotation);
+                    t2.transform.SetPositionAndRotation(o1.transform.position, o2.transform.rotation);        
+                    if(fd.foldObjects.foldSquares.Contains(o1.GetComponentInParent<PaperSquare>().gameObject))
+                        t1.transform.parent = parent.transform;
+                    else
+                        t2.transform.parent = parent.transform;    
+
+                    parent.transform.RotateAround(fd.center, fd.axis, fd.degrees);
+                    Vector3 t3 = t1.transform.position + t1.transform.up * 0.1f;
+                    Vector3 t4 = t2.transform.position + t2.transform.up * 0.1f;
+                    float d1 = Vector3.Distance(t3, t4);
+                    Debug.DrawLine(t3, t4, Color.blue, 30);
+                    
+                    parent.transform.RotateAround(fd.center, fd.axis, 180);
+                    t3 = t1.transform.position + t1.transform.up * 0.1f;
+                    t4 = t2.transform.position + t2.transform.up * 0.1f;   
+                    float d2 = Vector3.Distance(t3, t4);
+                    Debug.DrawLine(t3, t4, Color.yellow, 30);
+
+               
+                    if(d1 > d2) {
+                        Debug.Log($"Can't fold, would clip: {o1.name} {o1parent.name}, {o2.name} {o2parent.name}");
+                        //Debug.Log($"Cannot fold: would clip through adj paper {o1.transform.up} {o2.transform.up}");
+                        //Destroy(t1);
+                       // Destroy(t2);
+                       // Destroy(parent);
+                       // return false;
+                    }
+                    }
                 }
-                //C: if the active sides of this stack are both in or both out of the fold, then they won't clip
-                if(activeSides.Count == 2 &&
+
+
+
+
+                                //C: if the active sides of this stack are both in or both out of the fold, then they won't clip
+
+              /*  if(activeSides.Count == 2 &&
                     fd.foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject)
                     != fd.foldObjects.foldSquares.Contains(activeSides[1].GetComponentInParent<PaperSquare>().gameObject))
                 {
@@ -199,6 +258,9 @@ public class FoldChecker : Singleton<FoldChecker>
                         return false;
                     }
                 }
+                Destroy(t1);
+                Destroy(t2);
+                Destroy(parent);*/
                 Destroy(t1);
                 Destroy(t2);
                 Destroy(parent);

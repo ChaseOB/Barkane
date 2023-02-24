@@ -142,7 +142,6 @@ public class TileSelector : Singleton<TileSelector>
     {
         if(foldablePaper == null || foldablePaper.isComplete || !CameraOrbit.Instance.CameraDisabled || foldAnimator.isFolding)
             return;
-
         switch(state)
         {
             case SelectState.NONE:
@@ -191,6 +190,7 @@ public class TileSelector : Singleton<TileSelector>
                 foldAnimator.Fold(foldablePaper.BuildFoldData(-90));
                 break;
             case 0:
+                DeselectJoint(true);
                 break;
         }
         if(caseNum != 0)
@@ -264,7 +264,8 @@ public class TileSelector : Singleton<TileSelector>
             ghostFoldNeg90.SetActive(false);
             validFolds[1] = true;        
         }
-    }
+        
+        }
 
 
     private void OnFoldUp(InputValue value)
