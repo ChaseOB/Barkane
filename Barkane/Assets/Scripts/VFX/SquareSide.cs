@@ -8,6 +8,8 @@ using Random = UnityEngine.Random;
 
 using JointRenderer = BarkaneJoint.JointRenderer;
 using JointPieceOwnership = BarkaneJoint.JointRenderer.JointPieceOwnership;
+using UnityEditor.Callbacks;
+using System.Text;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
@@ -71,6 +73,14 @@ public class SquareSide : MonoBehaviour, IRefreshable
         JointPieces = new JointPieceCollection(transform);
 
         Metadata = GetComponent<PaperSquareFace>();
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (JointPieces != null)
+        {
+            JointPieces.Gizmo();
+        }
     }
 
     public SideVisiblity Visibility
@@ -308,11 +318,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
             get => m_Visibilities;
             private set
             {
-                if (m_Visibilities != value)
-                {
-                    m_Visibilities = value;
-                    UpdateVisibility();
-                }
+                m_Visibilities = value;
+                UpdateVisibility();
             }
         }
 
@@ -329,41 +336,51 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
         public void Register(JointPieceOwnership jpo)
         {
-            var p = jpo.PieceParent.transform.position;
+            var p = jpo.PieceParent.jointGeometry.pJ;
             this[p - root.position] = jpo;
         }
 
         public void UseAsInitialMask()
         {
-            var v = JointPieceVisibility.None;
-
-            for (ushort i = 0; i < 4; i++)
-            {
-                if (jpos[i] != null) v = (JointPieceVisibility)((ushort)v | ((ushort)1 << i));
-            }
-
-            Visibilities = v;
+            Visibilities = AllPiecesVisible;
         }
 
-        public void AlignAndMask(JointPieceCollection prev)
+        public void AlignAndMask(JointPieceCollection prev, bool useDebug = false)
         {
-            var vPrev = JointPieceVisibility.None;
+            var v = JointPieceVisibility.None;
 
-            // index remap
+            var sb = new StringBuilder();
 
-            var idx0 = WDir2Idx(prev.root.TransformPoint(Vector3.forward) - root.position);
-            var idx1 = WDir2Idx(prev.root.TransformPoint(Vector3.left) - root.position);
-            var idx2 = WDir2Idx(prev.root.TransformPoint(Vector3.back) - root.position);
-            var idx3 = WDir2Idx(prev.root.TransformPoint(Vector3.right) - root.position);
+            if (useDebug) Debug.Log($"Merge spv prev: { prev.root.position } -> curr: { root.position } ");
 
-            Debug.Log($"{idx0} {idx1} {idx2} {idx3}");
+            for (int i = 0; i < 4; i++)
+            {
+                if (prev.jpos[i] == null)
+                {
+                    var dir = Idx2LocalDir(i);
+                    var idx = WorldDir2Idx(Vector3Int.RoundToInt(prev.root.TransformDirection(dir)));
+                    var occluded = ((ushort)prev.Visibilities & (1 << i)) >> i;
 
-            vPrev |= (JointPieceVisibility)(((ushort)prev.Visibilities & (1 << 0)) << idx0);
-            vPrev |= (JointPieceVisibility)((((ushort)prev.Visibilities & (1 << 1)) >> 1) << idx1);
-            vPrev |= (JointPieceVisibility)((((ushort)prev.Visibilities & (1 << 2)) >> 2) << idx2);
-            vPrev |= (JointPieceVisibility)((((ushort)prev.Visibilities & (1 << 3)) >> 3) << idx3);
+                    sb.Append($"Open slot with with state: {(occluded == 1 ? "already blocked" : "not blocked yet")}\n... {i} -> {idx}@{Vector3Int.RoundToInt(prev.root.TransformDirection(dir))} | ");
+                    // if the i'th entry of prev is NOT occupied, follow the original bit
+                    v |= (JointPieceVisibility)(occluded << idx);
+                }
+#if UNITY_EDITOR
+                else
+                {
+                    var dir = Idx2LocalDir(i);
+                    var idx = WorldDir2Idx(Vector3Int.RoundToInt(prev.root.TransformDirection(dir)));
+                    sb.Append($"Close slot, automatically hiding {i} -> {idx}@{Vector3Int.RoundToInt(prev.root.TransformDirection(dir))} | ");
+                    // if the i'th entry of prev is occupied, then block the visibility in this side
+                    // v &= ~(JointPieceVisibility)(1 << idx);
+                }
+#endif
+            }
 
-            Visibilities &= ~vPrev; // RotateVisibilities(vPrev, (ushort)Tr2Idx(prev.root));
+            if (useDebug) Debug.Log(sb.ToString());
+            if (useDebug) Debug.Log(v);
+
+            Visibilities = v; // RotateVisibilities(vPrev, (ushort)Tr2Idx(prev.root));
         }
 
         private static JointPieceVisibility RotateVisibilities(JointPieceVisibility start, ushort iterations)
@@ -389,19 +406,28 @@ public class SquareSide : MonoBehaviour, IRefreshable
         /// <returns></returns>
         public JointPieceOwnership this[Vector3 wDir]
         {
-            get => jpos[WDir2Idx(wDir)];
+            get => jpos[WorldDir2Idx(wDir)];
             private set
             {
-                var idx = WDir2Idx(wDir);
+                var idx = WorldDir2Idx(wDir);
                 if (jpos[idx] != null)
                     throw new UnityException("Joint renderer slot can only be written once!");
                 jpos[idx] = value;
             }
         }
 
-        private int WDir2Idx(Vector3 wDir)
+        private static readonly Vector3Int[] dirs = new Vector3Int[]
         {
-            Debug.Log(root.InverseTransformDirection(wDir));
+            Vector3Int.forward,
+            Vector3Int.left,
+            Vector3Int.back,
+            Vector3Int.right,
+        };
+
+        private Vector3Int Idx2LocalDir(int i) => dirs[i];
+
+        private int WorldDir2Idx(Vector3 wDir)
+        {
             var lDir = Vector3Int.RoundToInt(root.InverseTransformDirection(wDir));
             if (lDir.z > 0)
                 return 0;
@@ -430,5 +456,17 @@ public class SquareSide : MonoBehaviour, IRefreshable
             | JointPieceVisibility.Second
             | JointPieceVisibility.Third
             | JointPieceVisibility.Fourth;
+
+        public void Gizmo()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (jpos[i] == null) continue;
+
+                var visible = jpos[i].Renderer.enabled;
+
+                Handles.Label(root.TransformDirection(Idx2LocalDir(i)) + root.position + root.up * 0.5f, $"{(visible ? "(" : "")}{i}{(visible ? ")" : "")}");
+            }
+        }
     }
 }

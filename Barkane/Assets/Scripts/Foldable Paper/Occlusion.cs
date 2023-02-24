@@ -216,24 +216,17 @@ public class OcclusionQueue
         return null;
     }
 
-    private void UpdateVisuals(LinkedList<SquareSide> q)
+    private void UpdateVisuals(LinkedList<SquareSide> q, bool useDebug = false)
     {
         if (q.Count == 0) return;
         var curr = q.Last;
         curr.Value.Visibility = SquareSide.SideVisiblity.full;
         curr.Value.JointPieces.UseAsInitialMask();
-        
-        if (q == qFaceUp)
-            Debug.Log($"Initial visibility: {curr.Value.JointPieces.Visibilities}");
-
-        while (curr.Previous != null)
+        curr = curr.Previous;
+        while (curr != null)
         {
-            curr.Previous.Value.Visibility = SquareSide.SideVisiblity.none;
-            curr.Previous.Value.JointPieces.AlignAndMask(curr.Value.JointPieces);
-
-            if (q == qFaceUp)
-                Debug.Log($"Curr visibility: {curr.Previous.Value.JointPieces.Visibilities}");
-
+            curr.Value.Visibility = SquareSide.SideVisiblity.none;
+            curr.Value.JointPieces.AlignAndMask(curr.Next.Value.JointPieces, useDebug);
             curr = curr.Previous;
         }
     }
@@ -332,6 +325,9 @@ public class OcclusionQueue
         MergeSide(qFaceDown, ref other.qFaceDown);
         MergeChk(faceUp, other.faceUp);
         MergeChk(faceDown, other.faceDown);
+
+        UpdateVisuals(qFaceUp);
+        UpdateVisuals(qFaceDown);
     }
 
     /// <summary>
@@ -346,6 +342,9 @@ public class OcclusionQueue
         MergeSide(other.qFaceDown, ref qFaceDown);
         MergeChk(faceUp, other.faceUp);
         MergeChk(faceDown, other.faceDown);
+
+        UpdateVisuals(qFaceUp, useDebug: true);
+        UpdateVisuals(qFaceDown, useDebug: false);
     }
 
     private void MergeChk(HashSet<SquareSide> mine, HashSet<SquareSide> theirs)
@@ -362,7 +361,6 @@ public class OcclusionQueue
         }
 
         comesSecond = comesFirst;
-        UpdateVisuals(comesFirst);
     }
 
     public override string ToString()
