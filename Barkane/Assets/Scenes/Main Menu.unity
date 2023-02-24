@@ -14904,6 +14904,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
+      propertyPath: sounds.Array.data[1].name
+      value: Fail
+      objectReference: {fileID: 0}
+    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
       propertyPath: musicLists.Array.data[1].name
       value: Snow
       objectReference: {fileID: 0}
