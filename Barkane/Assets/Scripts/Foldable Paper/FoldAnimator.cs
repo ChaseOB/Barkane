@@ -61,7 +61,7 @@ public class FoldAnimator : MonoBehaviour
 
         AudioManager.Instance?.Play("Fold");
         isFolding = true;
-        Debug.DrawRay(center, fd.axis, Color.black, 3);
+        // Debug.DrawRay(center, fd.axis, Color.black, 3);
         GameObject tempObj = new GameObject(); //used for reparenting/rotating
         GameObject target = new GameObject(); //used for setting correct position due to float jank
         tempObj.transform.position = center;

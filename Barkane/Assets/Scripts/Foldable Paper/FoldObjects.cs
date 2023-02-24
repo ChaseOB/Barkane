@@ -98,10 +98,10 @@ public class FoldObjects {
             else
                 OcclusionMap[center].Enqueue(ps);
 
-            Debug.DrawRay(
-                decode.MultiplyPoint(OcclusionMap[center].Offset),
-                decode.MultiplyVector(OcclusionMap[center].SpatialBasis.normal),
-                Color.cyan, 6);
+            //Debug.DrawRay(
+            //    decode.MultiplyPoint(OcclusionMap[center].Offset),
+            //    decode.MultiplyVector(OcclusionMap[center].SpatialBasis.normal),
+            //    Color.cyan, 6);
         }
 
         // Debug.Log(OcclusionMap);

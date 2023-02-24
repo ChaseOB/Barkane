@@ -286,7 +286,19 @@ public class SquareSide : MonoBehaviour, IRefreshable
         public JointPieceOwnership[] jpos;
         Transform root; 
 
-        public JointPieceVisibility Visibilities { get; private set; }
+        public JointPieceVisibility Visibilities {
+            get => m_Visibilities;
+            private set
+            {
+                if (m_Visibilities != value)
+                {
+                    m_Visibilities = value;
+                    UpdateVisibility();
+                }
+            }
+        }
+
+        private JointPieceVisibility m_Visibilities;
 
         // YZX orientation, where local Y points up and +Z is the starting axis
 
@@ -317,8 +329,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
         public void AlignAndMask(JointPieceCollection prev)
         {
-            Visibilities &= ~RotateVisibilities(prev.Visibilities, (ushort)tr2Idx(prev.root));
-            UpdateVisibility();
+            Visibilities &= ~RotateVisibilities(prev.Visibilities, (ushort)Tr2Idx(prev.root));
         }
 
         private static JointPieceVisibility RotateVisibilities(JointPieceVisibility start, ushort iterations)
@@ -344,29 +355,29 @@ public class SquareSide : MonoBehaviour, IRefreshable
         /// <returns></returns>
         public JointPieceOwnership this[Vector3 wDir]
         {
-            get => jpos[wDir2Idx(wDir)];
+            get => jpos[WDir2Idx(wDir)];
             private set
             {
-                var idx = wDir2Idx(wDir);
+                var idx = WDir2Idx(wDir);
                 if (jpos[idx] != null)
                     throw new UnityException("Joint renderer slot can only be written once!");
                 jpos[idx] = value;
             }
         }
 
-        private int tr2Idx(Transform alignment) => wDir2Idx(alignment.right);
+        private int Tr2Idx(Transform alignment) => WDir2Idx(alignment.forward);
 
-        private int wDir2Idx(Vector3 wDir)
+        private int WDir2Idx(Vector3 wDir)
         {
             var lDir = Vector3Int.RoundToInt(root.InverseTransformDirection(wDir));
             if (lDir.z > 0)
                 return 0;
             else if (lDir.z < 0)
-                return 1;
-            else if (lDir.x > 0)
                 return 2;
-            else if (lDir.x < 0)
+            else if (lDir.x > 0)
                 return 3;
+            else if (lDir.x < 0)
+                return 1;
             else
                 throw new IndexOutOfRangeException($"{wDir}");
         }
