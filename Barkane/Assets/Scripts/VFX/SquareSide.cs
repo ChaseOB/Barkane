@@ -361,7 +361,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
                     var idx = WorldDir2Idx(Vector3Int.RoundToInt(prev.root.TransformDirection(dir)));
                     var occluded = ((ushort)prev.Visibilities & (1 << i)) >> i;
 
-                    sb.Append($"Open slot with with state: {(occluded == 1 ? "already blocked" : "not blocked yet")}\n... {i} -> {idx}@{Vector3Int.RoundToInt(prev.root.TransformDirection(dir))} | ");
+                    if (useDebug) sb.Append($"Open slot with with state: {(occluded == 1 ? "already blocked" : "not blocked yet")}\n... {i} -> {idx}@{Vector3Int.RoundToInt(prev.root.TransformDirection(dir))} | ");
                     // if the i'th entry of prev is NOT occupied, follow the original bit
                     v |= (JointPieceVisibility)(occluded << idx);
                 }
@@ -370,7 +370,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
                 {
                     var dir = Idx2LocalDir(i);
                     var idx = WorldDir2Idx(Vector3Int.RoundToInt(prev.root.TransformDirection(dir)));
-                    sb.Append($"Close slot, automatically hiding {i} -> {idx}@{Vector3Int.RoundToInt(prev.root.TransformDirection(dir))} | ");
+                    if (useDebug) sb.Append($"Close slot, automatically hiding {i} -> {idx}@{Vector3Int.RoundToInt(prev.root.TransformDirection(dir))} | ");
                     // if the i'th entry of prev is occupied, then block the visibility in this side
                     // v &= ~(JointPieceVisibility)(1 << idx);
                 }
@@ -378,7 +378,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
             }
 
             if (useDebug) Debug.Log(sb.ToString());
-            if (useDebug) Debug.Log(v);
+            // if (useDebug) Debug.Log(v);
 
             Visibilities = v; // RotateVisibilities(vPrev, (ushort)Tr2Idx(prev.root));
         }
