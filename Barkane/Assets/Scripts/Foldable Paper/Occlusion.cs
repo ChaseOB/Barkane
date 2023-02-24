@@ -203,7 +203,7 @@ public class OcclusionQueue
             orien = SpatialOrientation.ZXY;
         }
 
-        if (!orien.HasValue)
+        if (orien.HasValue)
         {
             return new OcclusionQueue()
             {
@@ -223,7 +223,7 @@ public class OcclusionQueue
         curr.Value.Visibility = SquareSide.SideVisiblity.full;
         curr.Value.JointPieces.UseAsInitialMask();
 
-        while (curr != null)
+        while (curr.Previous != null)
         {
             curr.Previous.Value.Visibility = SquareSide.SideVisiblity.none;
             curr.Previous.Value.JointPieces.AlignAndMask(curr.Value.JointPieces);
@@ -311,8 +311,7 @@ public class OcclusionQueue
             q = new LinkedList<SquareSide>(qL);
         }
 
-        // Visuals of the removed item should NOT be updated here
-        // Instead the new queue it belongs to is responsible for updating it
+        UpdateVisuals(q);
     }
 
     /// <summary>

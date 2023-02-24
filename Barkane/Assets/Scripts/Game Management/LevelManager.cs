@@ -103,7 +103,6 @@ public class LevelManager : Singleton<LevelManager>
     {
         instantiatedLevel = Instantiate(level.levelObject, Vector3.zero, Quaternion.identity);
         FoldablePaper paper = instantiatedLevel.GetComponent<FoldablePaper>();
-        paper.PopulateOcclusionMap();
         Transform playerPos = paper.playerSpawn;
         if(playerInstance != null)
         {
@@ -114,6 +113,7 @@ public class LevelManager : Singleton<LevelManager>
 
         FollowTarget.Instance.SetTargetAndPosition(playerInstance.GetComponent<PlayerMovement>().cameraTrackingTransform);    
         VFXManager.Instance.Refresh();
+        paper.PopulateOcclusionMap();
         FindObjectOfType<TileSelector>().ReloadReferences();
         currLevelTheme = level.theme;
     }
