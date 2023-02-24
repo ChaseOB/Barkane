@@ -7,9 +7,8 @@ using UnityEngine.UI;
 
 public class MainMenuManager : Singleton<MainMenuManager>
 {
-    public static int gameStartScene = 1;
+    public static int gameStartScene = 4;
 
-   // public GameObject playMenu;
     public GameObject mainMenu;
     public GameObject levelSelect;
     public GameObject credits;

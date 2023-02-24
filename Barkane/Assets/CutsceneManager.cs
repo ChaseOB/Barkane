@@ -19,12 +19,22 @@ public class CutsceneManager : MonoBehaviour
 
 
     private void Start() {
+        Cursor.visible = false;
+        StartCoroutine(WaitToStart());
+    }
+
+    private IEnumerator WaitToStart()
+    {
+        videoPlayer.Play();
+        yield return new WaitForEndOfFrame();
+        videoPlayer.Pause();
+        yield return new WaitForSeconds(1f);
         StartCutscene();
     }
 
     private void Update() {
         if(active && !paused) {
-            time += Time.deltaTime;
+            time += Time.deltaTime * videoPlayer.playbackSpeed;
             foreach(CutsceneCaption c in captions)
             {
                 if(time > c.startTime && !c.played)
@@ -38,7 +48,7 @@ public class CutsceneManager : MonoBehaviour
 
         } 
 
-        if(time > mintime && active && !videoPlayer.isPlaying && !videoPlayer.isPaused)
+        if(time > mintime)
             EndCutscene();
     }
     
@@ -68,7 +78,8 @@ public class CutsceneManager : MonoBehaviour
 
 
     public void EndCutscene()
-    {
+    {        
+        Cursor.visible = true;
         LevelManager.Instance.LoadLevel(0);
     }
 }

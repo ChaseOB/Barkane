@@ -256,7 +256,7 @@ VideoPlayer:
   m_RenderMode: 2
   m_AspectRatio: 1
   m_DataSource: 0
-  m_PlaybackSpeed: 1
+  m_PlaybackSpeed: 0.5
   m_AudioOutputMode: 2
   m_TargetAudioSources:
   - {fileID: 0}
@@ -336,34 +336,39 @@ MonoBehaviour:
       protection of the gems of Ultimate Power.
     startTime: 0
     duration: 5
-    pauseOnDisplay: 1
+    pauseDuration: 0
+    pauseOnDisplay: 0
     played: 0
   - text: 'The Gems bestow magical world-bending powers to the Arcane Mage, a title
       passed down through generations. The current arcane mage is Meeplin the 7th,
       who resides in Pleasantville with his dog Marmalade.  '
-    startTime: 3.7
-    duration: 10
+    startTime: 4.125
+    duration: 9
+    pauseDuration: 10
     pauseOnDisplay: 1
     played: 0
   - text: One night, the evil mage Drazwi broke into Meeplin's tower and shattered
       all but 1 of the Gems of Ultimate Power. Meeplin the 7th gave his life in the
       fight to protect the final gem.
     startTime: 4.625
-    duration: 10
-    pauseOnDisplay: 1
+    duration: 9
+    pauseDuration: 0
+    pauseOnDisplay: 0
     played: 0
   - text: With no decendants to his name, as Meeplin the 7th dies, his powers past
       to Marmalade, marking the end of the Meeplin bloodline and making her the first
       Barkane Mage.
     startTime: 10
-    duration: 7
+    duration: 6
+    pauseDuration: 3.1
     pauseOnDisplay: 1
     played: 0
   - text: She must now traverse the broken paper lands, collecting the piecees of
       the Gems in order to grow her powers, defeat Drazwi, and save Pleasantville.
     startTime: 14
     duration: 7
-    pauseOnDisplay: 1
+    pauseDuration: 0
+    pauseOnDisplay: 0
     played: 0
   typer: {fileID: 1452949489}
   videoPlayer: {fileID: 329855778}
