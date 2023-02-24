@@ -210,7 +210,7 @@ public class TileSelector : Singleton<TileSelector>
     {
         if(updateState)
             state = SelectState.NONE;
-        OnFoldSelect.Invoke(this, false);
+        OnFoldSelect?.Invoke(this, false);
         currJoint?.Deselect();
         currJoint = null;
         foldablePaper.foldJoint = null;

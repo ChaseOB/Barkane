@@ -11,6 +11,13 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(MeshFilter))]
 public class SquareSide : MonoBehaviour, IRefreshable
 {
+    public PaperSquare parentSquare { get; set; }
+
+    public enum SideVisiblity
+    {
+        full, ghost, none
+    }
+
     [SerializeField] MeshFilter mFilter;
     [SerializeField] MeshRenderer mRenderer;
     [SerializeField] CrumbleMeshGenerator meshGenerator;
@@ -20,6 +27,17 @@ public class SquareSide : MonoBehaviour, IRefreshable
     [SerializeField, HideInInspector] byte[] distanceTextureData;
     [SerializeField, HideInInspector] int distanceTextureWidth;
     [SerializeField, HideInInspector] SerializedMesh meshData;
+
+    public Material materialOverride
+    {
+        get => m_MaterialOverride;
+        private set
+        {
+            m_MaterialOverride = value;
+            mRenderer.sharedMaterial = value;
+        }
+    }
+    public Material m_MaterialOverride;
 
     public Material MaterialPrototype => materialPrototype;
 
@@ -37,10 +55,41 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     void IRefreshable.RuntimeRefresh()
     {
-        Debug.Log("Runtime refresh");
+        // Debug.Log("Runtime refresh");
         PushData();
         RuntimeParticleUpdate();
     }
+
+    public SideVisiblity Visibility
+    {
+        get => m_SideVisiblity;
+        set
+        {
+            m_SideVisiblity = value;
+
+            switch (value)
+            {
+                case SideVisiblity.full:
+                    mRenderer.enabled = true;
+                    materialOverride = materialInstance;
+                    break;
+                case SideVisiblity.ghost:
+                    mRenderer.enabled = true;
+                    materialOverride = VFXManager.Theme.GhostMat;
+                    break;
+                case SideVisiblity.none:
+                    mRenderer.enabled = false;
+                    break;
+            }
+
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).gameObject.SetActive(value != SideVisiblity.none);
+            }
+        }
+    }
+
+    private SideVisiblity m_SideVisiblity;
 
     private void PushData()
     {
@@ -59,19 +108,19 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
             mFilter.sharedMesh = meshData.Rehydrated;
             materialInstance.SetTexture("Dist", distanceTexture);
-            mRenderer.sharedMaterial = materialInstance;
+            // mRenderer.sharedMaterial = materialInstance;
 
         }
         materialInstance.SetColor("_Color", BaseColor);
         materialInstance.SetColor("_EdgeTint", TintColor);
         materialInstance.SetVector("_NormalOffset", new Vector2(Random.value, Random.value));
+
+        materialOverride = materialInstance;
     }
 
     public void RuntimeParticleUpdate()
     {
         // completely ignores prefab structure. this avoids the unpacking issue
-
-        Debug.Log(sprinkleParent.childCount);
 
         // the while loop version goes into infinite loop for some reason
         List<GameObject> prev = new List<GameObject>();
@@ -88,8 +137,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
         //}
 
         if (VFXManager.Theme.Sprinkle == null || materialPrototype.GetFloat("_UseSprinkles") < 0.5f) return;
-
-        Debug.Log("Reach sprinkle gen");
 
         var ct = sprinkleVerts.Length;
         for (int i = 0; i < ct; i++)

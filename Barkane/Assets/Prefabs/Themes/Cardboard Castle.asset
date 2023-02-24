@@ -13,3 +13,15 @@ MonoBehaviour:
   m_Name: Cardboard Castle
   m_EditorClassIdentifier: 
   Sprinkle: {fileID: 0}
+  themeEnum: 0
+  musicStringName: 
+  WalkMat: {fileID: 0}
+  WalkColor: {r: 0, g: 0, b: 0, a: 0}
+  WalkTint: {r: 0, g: 0, b: 0, a: 0}
+  UnWalkMat: {fileID: 0}
+  UnwalkColor: {r: 0, g: 0, b: 0, a: 0}
+  UnwalkTint: {r: 0, g: 0, b: 0, a: 0}
+  JointParticle: {fileID: 0}
+  crystalMat: {fileID: 0}
+  Silhouette: {r: 0, g: 0, b: 0, a: 0}
+  GhostMatPrototype: {fileID: 2100000, guid: 75ed3fa3cf33c1a4e8274f62f8ae7c4d, type: 2}

@@ -107,7 +107,16 @@ namespace BarkaneJoint
 
         void Update()
         {
+            // PullVisibility(a1, mrA1);
+            // PullVisibility(a2, mrA2);
+            // PullVisibility(b1, mrB1);
+            // PullVisibility(b2, mrB2);
             UpdateGeometryData();
+        }
+
+        void PullVisibility(SquareSide sqr, MeshRenderer renderer)
+        {
+            renderer.enabled = sqr.Visibility != SquareSide.SideVisiblity.none;
         }
 
         void UpdateGeometryData()
@@ -313,12 +322,8 @@ namespace BarkaneJoint
             fB2.sharedMesh.SetVertices(vB2, 0, vA1.Length, flags: SidedJointAddon.fConsiderBounds);
         }
 
-        private Material BindColor(Material mat, SquareSide src, string name)
+        private Material BindColor(Material m, SquareSide src)
         {
-            var m = new Material(mat)
-            {
-                name = $"{mat.name} {name}"
-            };
             m.SetColor("_Color", src.BaseColor);
             m.SetColor("_EdgeTint", src.TintColor);
             return m;
@@ -331,7 +336,11 @@ namespace BarkaneJoint
             };
 
             f.sharedMesh.MarkDynamic();
-            mr.sharedMaterial = BindColor(materialPrototype, side, name);
+            var mInst = new Material(materialPrototype)
+            {
+                name = $"{materialPrototype.name} {name}"
+            };
+            mr.sharedMaterial = BindColor(mInst, side);
         }
 
         private void FullSetup()

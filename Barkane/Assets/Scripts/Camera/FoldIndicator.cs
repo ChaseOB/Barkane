@@ -31,8 +31,7 @@ public class FoldIndicator : MonoBehaviour
             locs.Add(pos);
             GameObject newSquare = Instantiate(ghostSquarePrefab, go.transform.position, go.transform.rotation);
             var ghostSquareRenderer = newSquare.GetComponent<MeshRenderer>();
-            if (ghostSquareRenderer)
-                ghostSquareRenderer.sharedMaterial.SetColor("_Color", VFXManager.Theme.Silhouette);
+            ghostSquareRenderer.sharedMaterial = VFXManager.Theme.GhostMat;
             newSquare.transform.parent = gameObject.transform;
             }
         }

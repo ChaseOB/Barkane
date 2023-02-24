@@ -115,6 +115,7 @@ public class LevelManager : Singleton<LevelManager>
     {
         instantiatedLevel = Instantiate(level.levelObject, Vector3.zero, Quaternion.identity);
         FoldablePaper paper = instantiatedLevel.GetComponent<FoldablePaper>();
+        paper.PopulateOcclusionMap();
         Transform playerPos = paper.playerSpawn;
         if(playerInstance != null)
         {
