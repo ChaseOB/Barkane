@@ -224,6 +224,6 @@ public class FoldablePaper : MonoBehaviour
             // Debug.DrawRay(m_OcclusionMap[rounded].Offset, m_OcclusionMap[rounded].upwards, Color.yellow, 3);
         }
 
-        Debug.Log(OcclusionMap);
+        // Debug.Log(OcclusionMap);
     }
 }
