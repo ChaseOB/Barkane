@@ -347,7 +347,23 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
         public void AlignAndMask(JointPieceCollection prev)
         {
-            Visibilities &= ~RotateVisibilities(prev.Visibilities, (ushort)Tr2Idx(prev.root));
+            var vPrev = JointPieceVisibility.None;
+
+            // index remap
+
+            var idx0 = WDir2Idx(prev.root.TransformPoint(Vector3.forward) - root.position);
+            var idx1 = WDir2Idx(prev.root.TransformPoint(Vector3.left) - root.position);
+            var idx2 = WDir2Idx(prev.root.TransformPoint(Vector3.back) - root.position);
+            var idx3 = WDir2Idx(prev.root.TransformPoint(Vector3.right) - root.position);
+
+            Debug.Log($"{idx0} {idx1} {idx2} {idx3}");
+
+            vPrev |= (JointPieceVisibility)(((ushort)prev.Visibilities & (1 << 0)) << idx0);
+            vPrev |= (JointPieceVisibility)((((ushort)prev.Visibilities & (1 << 1)) >> 1) << idx1);
+            vPrev |= (JointPieceVisibility)((((ushort)prev.Visibilities & (1 << 2)) >> 2) << idx2);
+            vPrev |= (JointPieceVisibility)((((ushort)prev.Visibilities & (1 << 3)) >> 3) << idx3);
+
+            Visibilities &= ~vPrev; // RotateVisibilities(vPrev, (ushort)Tr2Idx(prev.root));
         }
 
         private static JointPieceVisibility RotateVisibilities(JointPieceVisibility start, ushort iterations)
@@ -383,10 +399,9 @@ public class SquareSide : MonoBehaviour, IRefreshable
             }
         }
 
-        private int Tr2Idx(Transform alignment) => WDir2Idx(alignment.forward);
-
         private int WDir2Idx(Vector3 wDir)
         {
+            Debug.Log(root.InverseTransformDirection(wDir));
             var lDir = Vector3Int.RoundToInt(root.InverseTransformDirection(wDir));
             if (lDir.z > 0)
                 return 0;
@@ -400,7 +415,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
                 throw new IndexOutOfRangeException($"{wDir}");
         }
 
-        [System.Flags]
+        [Flags]
         public enum JointPieceVisibility
         {
             None = 0,

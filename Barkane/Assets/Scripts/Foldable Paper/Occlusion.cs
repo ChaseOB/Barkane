@@ -222,14 +222,17 @@ public class OcclusionQueue
         var curr = q.Last;
         curr.Value.Visibility = SquareSide.SideVisiblity.full;
         curr.Value.JointPieces.UseAsInitialMask();
-
-        Debug.Log($"Initial visibility: {curr.Value.JointPieces.Visibilities}");
+        
+        if (q == qFaceUp)
+            Debug.Log($"Initial visibility: {curr.Value.JointPieces.Visibilities}");
 
         while (curr.Previous != null)
         {
             curr.Previous.Value.Visibility = SquareSide.SideVisiblity.none;
             curr.Previous.Value.JointPieces.AlignAndMask(curr.Value.JointPieces);
-            Debug.Log($"Curr visibility: {curr.Previous.Value.JointPieces.Visibilities}");
+
+            if (q == qFaceUp)
+                Debug.Log($"Curr visibility: {curr.Previous.Value.JointPieces.Visibilities}");
 
             curr = curr.Previous;
         }
