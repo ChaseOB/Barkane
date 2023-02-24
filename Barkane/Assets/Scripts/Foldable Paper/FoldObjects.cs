@@ -10,6 +10,8 @@ public class FoldObjects {
     public Transform squareParent;
     public Transform jointParent;
 
+    public List<PaperSquare> squareScripts;
+
     public List<PaperSquare> PaperSquaresCache;
 
     public OcclusionMap OcclusionMap = new OcclusionMap();
@@ -18,6 +20,7 @@ public class FoldObjects {
         foldSquares = new List<GameObject>();
         foldJoints = new List<GameObject>();
         foldLineJoints = new List<GameObject>();
+        squareScripts = new List<PaperSquare>();
     }
 
     public FoldObjects(Transform sp, Transform jp) {
@@ -26,6 +29,7 @@ public class FoldObjects {
         foldLineJoints = new List<GameObject>();
         squareParent = sp;
         jointParent = jp;
+        squareScripts = new List<PaperSquare>();
     }
 
     public void EnableJointMeshes()

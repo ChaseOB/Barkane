@@ -125,7 +125,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
         }
     }
 
-    private SideVisiblity m_SideVisiblity;
+    [SerializeField] private SideVisiblity m_SideVisiblity; //for debugging
 
     private void PushData()
     {

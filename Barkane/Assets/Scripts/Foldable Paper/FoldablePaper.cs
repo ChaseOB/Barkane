@@ -122,10 +122,14 @@ public class FoldablePaper : MonoBehaviour
     {
         if(ps == null) return;
         visitedSquares.Add(ps);
-        if(isPlayerSide)
+        if(isPlayerSide) {
             playerSide.foldSquares.Add(ps.gameObject);
-        else
+            playerSide.squareScripts.Add(ps);
+        }
+        else {
             foldObjects.foldSquares.Add(ps.gameObject);
+            foldObjects.squareScripts.Add(ps);
+        }
         foreach(PaperJoint adjJoint in adjListSquareToJoint[ps])
         {
             if(!visitedJoints.Contains(adjJoint))

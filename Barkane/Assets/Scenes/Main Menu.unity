@@ -2610,6 +2610,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level Button 1 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1092961373653022622, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
+      propertyPath: levelName
+      value: GC 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2381363260956667262, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -9123,6 +9127,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level Button 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1092961373653022622, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
+      propertyPath: levelName
+      value: SS 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2381363260956667262, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -13510,6 +13518,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level Button 1 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1092961373653022622, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
+      propertyPath: levelName
+      value: SS 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2381363260956667262, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -14013,6 +14025,10 @@ PrefabInstance:
     - target: {fileID: 495376175726155516, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
       propertyPath: m_Name
       value: Level Button 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1092961373653022622, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
+      propertyPath: levelName
+      value: GC 1
       objectReference: {fileID: 0}
     - target: {fileID: 2381363260956667262, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
       propertyPath: m_Pivot.x

@@ -9,6 +9,8 @@ public class LevelSelectButton : MonoBehaviour
     public GameObject levelText;
     public string levelName;
 
+    private bool adminMode = true;
+
     private void OnEnable() {
         CheckUnlock();
     }
@@ -16,7 +18,7 @@ public class LevelSelectButton : MonoBehaviour
     public void CheckUnlock() {
         if(SaveSystem.Current == null) 
             return;
-        if(SaveSystem.Current.GetLevelUnlocksDictionary().GetValueOrDefault(levelName, false)) {
+        if(adminMode || SaveSystem.Current.GetLevelUnlocksDictionary().GetValueOrDefault(levelName, false)) {
             SetLevelUnlocked(true);
             return;
         }

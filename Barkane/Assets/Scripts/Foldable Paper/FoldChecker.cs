@@ -77,6 +77,49 @@ public class FoldChecker : Singleton<FoldChecker>
         return true;
     }
 
+     /* FOLD CHECK 2: PAPER CLIPPING
+        This checks that back to back squares do not clip through eachother. This is because the squares are so
+        thin that squares at the same location will not be caught using the raycast, thus another approach is needed.
+
+
+        In order to check this, we need to check the hidden sides of the current squares. If a hidden side of a fold side
+        square touches a hidden side of a non-fold side square, then there is the potential for clipping (if 2 hidden
+        sides touch but both are on the same side of the fold those sides will remain hidden)
+    */
+
+    private bool CheckPaperClipping(FoldData fd)
+    {
+        List<List<PaperSquare>> overlaps = fd.FindOverlappingSquares();
+        List<List<PaperSquare>> checks = new List<List<PaperSquare>>();
+        foreach(List<PaperSquare> list in overlaps)
+        {
+            bool foldSide = false;
+            bool playerSide = false;
+            foreach(PaperSquare s in list) {
+                if(fd.foldObjects.squareScripts.Contains(s))
+                    foldSide = true;
+                if(fd.playerFoldObjects.squareScripts.Contains(s))
+                    playerSide = true;
+            }
+            if(playerSide && foldSide)
+                checks.Add(list);
+        }
+
+        //If there are no positions to check, then there is no potentially invalid fold
+        if(checks.Count == 0)
+            return true;
+        
+        foreach(List<PaperSquare> list in checks)
+        {
+            
+        }
+
+
+
+        return true;
+    }
+
+
     /* FOLD CHECK 2: PAPER CLIPPING
         This checks that back to back squares do not clip through eachother. This is because the squares are so
         thin that squares at the same location will not be caught using the raycast, thus another approach is needed.
@@ -88,7 +131,7 @@ public class FoldChecker : Singleton<FoldChecker>
         -generally janky and unreliable, needs a total overhaul
     */
 
-    private bool CheckPaperClipping(FoldData fd)
+   /* private bool CheckPaperClipping(FoldData fd)
     {
         List<List<PaperSquare>> overlaps = fd.FindOverlappingSquares();
         foreach(List<PaperSquare> list in overlaps)
@@ -122,7 +165,7 @@ public class FoldChecker : Singleton<FoldChecker>
                     // if there is no clipping, then the points at the ends of the normals will be farther apart (point away)
                     // than if there was clipping (point towards eachother). So we can check this fold and the other fold direction
                     // by folding 180* after the intial fold and then comapare distances
-                    */
+                    
                     t1.transform.SetPositionAndRotation(activeSides[0].transform.position, activeSides[0].transform.rotation);
                     t2.transform.SetPositionAndRotation(activeSides[1].transform.position, activeSides[1].transform.rotation);        
                     if(fd.foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject))
@@ -157,7 +200,7 @@ public class FoldChecker : Singleton<FoldChecker>
             }
         }
         return true;
-    }
+    }*/
 
 
     /* FOLD CHECK 3: PAPER AND OBJECT COLLISION
