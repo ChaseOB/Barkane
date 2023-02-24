@@ -12,6 +12,7 @@ using JointPieceOwnership = BarkaneJoint.JointRenderer.JointPieceOwnership;
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(PaperSquareFace))]
 public class SquareSide : MonoBehaviour, IRefreshable
 {
     public PaperSquare parentSquare { get; set; }
@@ -53,6 +54,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public JointPieceCollection JointPieces { get; private set; }
 
+    PaperSquareFace Metadata;
+
     void IRefreshable.EditorRefresh()
     {
         UpdateMesh();
@@ -66,6 +69,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
         // CAUTION: keep the refresh order of JointRenderer after SquareSide
         JointPieces = new JointPieceCollection(transform);
+
+        Metadata = GetComponent<PaperSquareFace>();
     }
 
     public SideVisiblity Visibility
@@ -90,9 +95,22 @@ public class SquareSide : MonoBehaviour, IRefreshable
                     break;
             }
 
-            for (int i = 0; i < transform.childCount; i++)
+            if (Metadata.Shard)
             {
-                transform.GetChild(i).gameObject.SetActive(value != SideVisiblity.none);
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    // TODO: find more efficient way to do this, also generalize for all objects instead of just crystal
+                    var curr = transform.GetChild(i);
+                    if (curr.GetComponent<CrystalShard>() != null) continue;
+                    transform.GetChild(i).gameObject.SetActive(value != SideVisiblity.none);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    transform.GetChild(i).gameObject.SetActive(value != SideVisiblity.none);
+                }
             }
         }
     }
