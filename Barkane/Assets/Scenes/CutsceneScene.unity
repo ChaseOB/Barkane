@@ -335,7 +335,7 @@ MonoBehaviour:
   - text: The quiet town of Pleasantville has known peace for many years under the
       protection of the gems of Ultimate Power.
     startTime: 0
-    duration: 7
+    duration: 5
     pauseOnDisplay: 1
     played: 0
   - text: 'The Gems bestow magical world-bending powers to the Arcane Mage, a title

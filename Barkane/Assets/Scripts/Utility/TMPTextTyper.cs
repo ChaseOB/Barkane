@@ -74,6 +74,34 @@ public class TMPTextTyper : MonoBehaviour
         }
     }
 
+    public void FadeOutText(float duration)
+    {
+        StartCoroutine(fadetextHelper(duration));
+    }
+
+    private IEnumerator fadetextHelper(float t)
+    {
+        float duration = t;
+        byte alpha = (byte) 255;
+        while (t > 0) {
+            t -= Time.deltaTime;
+            alpha = (byte)Mathf.Clamp(255 * t/duration, 0, 255);
+            m_TextMeshPro.ForceMeshUpdate();
+            TMP_TextInfo textInfo = m_TextMeshPro.textInfo;
+            for (int i = 0; i < textInfo.characterCount; i++)
+            {
+                // Skip characters that are not visible and thus have no geometry to manipulate.
+                if (!textInfo.characterInfo[i].isVisible)
+                    continue;
+
+                textInfo.characterInfo[i].color.a = alpha;
+
+                SetCharacterColor(m_TextMeshPro, textInfo, textInfo.characterInfo[i].color, i);
+            }
+            yield return null;
+        }
+    }
+
     /// <summary>
     /// Types out the string character by character.
     /// </summary>

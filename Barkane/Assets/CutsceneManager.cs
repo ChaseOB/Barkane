@@ -31,6 +31,8 @@ public class CutsceneManager : MonoBehaviour
                 {
                     StartCoroutine(ShowCaption(c));
                     c.played = true;
+                    if(c.pauseOnDisplay)
+                        StartCoroutine(Pause(c.pauseDuration));
                 }
             }
 
@@ -45,19 +47,22 @@ public class CutsceneManager : MonoBehaviour
     {
         videoPlayer.Play();
         active = true;
-
     }
 
     private IEnumerator ShowCaption(CutsceneCaption caption)
     {
         typer.StartTyping(caption.text);
-        if(caption.pauseOnDisplay) {
-            videoPlayer.Pause();
-            paused = true;
-            yield return new WaitForSeconds(caption.duration);
-            videoPlayer.Play();
-            paused = false;
-        }
+        yield return new WaitForSeconds(caption.duration);
+        typer.FadeOutText(1f);
+    }
+
+    private IEnumerator Pause(float duration)
+    {
+        videoPlayer.Pause();
+        paused = true;
+        yield return new WaitForSeconds(duration);
+        videoPlayer.Play();
+        paused = false;
     }
 
 
@@ -74,6 +79,7 @@ public class CutsceneCaption
     public string text;
     public float startTime;
     public float duration;
+    public float pauseDuration;
     public bool pauseOnDisplay;
     public bool played = false;
 }
