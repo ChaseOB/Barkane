@@ -60,6 +60,7 @@ public class CrystalShard : MonoBehaviour, IThemedItem
         {
             goal.CollectShard();
             this.gameObject.SetActive(false);
+            AudioManager.Instance.Play("Ding");
         }
     }
 

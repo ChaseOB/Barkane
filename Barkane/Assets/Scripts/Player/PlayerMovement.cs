@@ -28,6 +28,8 @@ public class PlayerMovement : MonoBehaviour
     private Snowball snowball;
     private Animator animator;
 
+    private bool invalidMoveAnim = false;
+
 
     private void Start() 
     {
@@ -93,10 +95,14 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void PlayInvalidMoveAnimation() {
+        if(invalidMoveAnim) return;
+        invalidMoveAnim = true;
         animator.Play("MoveFail");
+        AudioManager.Instance.Play("Fail");
     }
 
     private void OnEndMoveAnimation() {
+        invalidMoveAnim = false;
         animator.Play("Idle");
         ActionLockManager.Instance.TryRemoveLock(this);
     }
