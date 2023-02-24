@@ -16,6 +16,7 @@ public class CutsceneManager : MonoBehaviour
 
 
     private float mintime = 17f;
+    private bool ended = false;
 
 
     private void Start() {
@@ -48,7 +49,7 @@ public class CutsceneManager : MonoBehaviour
 
         } 
 
-        if(time > mintime)
+        if(time > mintime && !ended)
             EndCutscene();
     }
     
@@ -78,9 +79,10 @@ public class CutsceneManager : MonoBehaviour
 
 
     public void EndCutscene()
-    {        
+    {
+        ended = true;   
+        LevelManager.Instance.LoadLevel(0);     
         Cursor.visible = true;
-        LevelManager.Instance.LoadLevel(0);
     }
 }
 
