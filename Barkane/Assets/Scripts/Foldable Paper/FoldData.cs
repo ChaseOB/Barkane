@@ -16,7 +16,7 @@ public class FoldData: Action
     public FoldData(List<PaperJoint> aj, FoldObjects fo, FoldObjects pfo, Vector3 c, Vector3 a, float deg) {
         axisJoints = aj;
         foldObjects = fo;
-        playerFoldObjects = fo;
+        playerFoldObjects = pfo; 
         center = c;
         axis = a;
         degrees = deg;
@@ -37,6 +37,15 @@ public class FoldData: Action
     public Dictionary<Vector3Int, HashSet<PaperSquare>> FindOverlappingSquares()
     {
         List<PaperSquare> paperSquares = new List<PaperSquare>();
+        Debug.Log("Fold squares count " + foldObjects.squareScripts.Count);
+        Debug.Log("Player squares count " + playerFoldObjects.squareScripts.Count);
+        
+        Debug.Log("player side squares");
+        foreach(PaperSquare ps in playerFoldObjects.squareScripts)
+            Debug.Log(ps.name);
+        Debug.Log("FOLD side squares");
+        foreach(PaperSquare ps in foldObjects.squareScripts)
+            Debug.Log(ps.name);
         paperSquares.AddRange(foldObjects.squareScripts);
         paperSquares.AddRange(playerFoldObjects.squareScripts);
 
@@ -45,6 +54,8 @@ public class FoldData: Action
         foreach(PaperSquare ps in paperSquares)
         {
             Vector3Int loc = Vector3Int.RoundToInt(ps.gameObject.transform.position);
+            Debug.Log(ps.name);
+            Debug.Log("location " + loc);
             if(!posToSquares.ContainsKey(loc))
             {
                 HashSet<PaperSquare> set = new HashSet<PaperSquare>();

@@ -114,19 +114,18 @@ public class FoldablePaper : MonoBehaviour
             if(ps.PlayerOccupied)
                 playerSquare = ps;
         DFSHelperSquare(playerSquare, true);
-
         return (playerSide, foldObjects);
     }
 
     private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
     {
-        if(ps == null) return;
+        if(ps == null || visitedSquares.Contains(ps)) return;
         visitedSquares.Add(ps);
-        if(isPlayerSide) {
+        if(isPlayerSide && ! playerSide.squareScripts.Contains(ps)) {
             playerSide.foldSquares.Add(ps.gameObject);
             playerSide.squareScripts.Add(ps);
         }
-        else {
+        else if (!foldObjects.squareScripts.Contains(ps)){
             foldObjects.foldSquares.Add(ps.gameObject);
             foldObjects.squareScripts.Add(ps);
         }
@@ -139,7 +138,7 @@ public class FoldablePaper : MonoBehaviour
 
     private void DFSHelperJoint(PaperJoint pj,  bool isPlayerSide)
     {
-        if(pj == null) return;
+        if(pj == null || visitedJoints.Contains(pj)) return;
         visitedJoints.Add(pj);
         isPlayerSide = pj.showLine ? !isPlayerSide : isPlayerSide; //C: if we cross the fold line, then this value changes. We're essentially slicing the graph into 2 parts
         if(pj.showLine)
