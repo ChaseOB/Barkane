@@ -17,6 +17,7 @@ public class MainMenuManager : Singleton<MainMenuManager>
     public GameObject profileSelect;
     public GameObject currentProfile;
     public GameObject deleteMenu;
+    public GameObject controls;
 
 
 
@@ -41,6 +42,11 @@ public class MainMenuManager : Singleton<MainMenuManager>
     public void ToggleProfileSelectMenu(bool toggle) {
         profileSelect.SetActive(toggle);
         mainMenu.SetActive(!toggle);
+    }
+
+    public void ToggleControls(bool toggle) {
+        mainMenu.SetActive(!toggle);
+        controls.SetActive(toggle);
     }
 
 
