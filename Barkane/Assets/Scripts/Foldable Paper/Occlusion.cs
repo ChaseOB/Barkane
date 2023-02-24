@@ -137,12 +137,6 @@ public class OcclusionQueue
         faceDown = new(),
         faceUp = new();
 
-    LinkedList<JointPieceOwnership>
-        majorUp = new(),
-        majorDown = new(),
-        minorUp = new(),
-        minorDown = new();
-
     public bool IsEmpty => faceUp.Count == 0 && faceDown.Count == 0;
 
     public Vector3Int Offset { get; private set; }
@@ -222,6 +216,22 @@ public class OcclusionQueue
         return null;
     }
 
+    private void UpdateVisuals(LinkedList<SquareSide> q)
+    {
+        if (q.Count == 0) return;
+        var curr = q.Last;
+        curr.Value.Visibility = SquareSide.SideVisiblity.full;
+        curr.Value.JointPieces.UseAsInitialMask();
+
+        while (curr != null)
+        {
+            curr.Previous.Value.Visibility = SquareSide.SideVisiblity.none;
+            curr.Previous.Value.JointPieces.AlignAndMask(curr.Value.JointPieces);
+
+            curr = curr.Previous;
+        }
+    }
+
     public void UseAsGlobal()
     {
         foreach (var s in faceDown)
@@ -273,14 +283,9 @@ public class OcclusionQueue
 
         chk.Add(s);
 
-        // notify the current outer-most display
-        if (q.Count > 0)
-        {
-            q.Last.Value.Visibility = SquareSide.SideVisiblity.none;
-        }
         q.AddLast(s);
 
-        q.Last.Value.Visibility = SquareSide.SideVisiblity.full;
+        UpdateVisuals(q);
     }
 
     // MAY REPLACE Q, ref keyword needed!
@@ -305,11 +310,9 @@ public class OcclusionQueue
             qL.Remove(s);
             q = new LinkedList<SquareSide>(qL);
         }
-        // notify the next outer-most display
-        if (q.Count > 0)
-        {
-            q.Last.Value.Visibility = SquareSide.SideVisiblity.full;
-        }
+
+        // Visuals of the removed item should NOT be updated here
+        // Instead the new queue it belongs to is responsible for updating it
     }
 
     /// <summary>
@@ -347,11 +350,6 @@ public class OcclusionQueue
 
     private void MergeSide(LinkedList<SquareSide> comesFirst, ref LinkedList<SquareSide> comesSecond)
     {
-        if (comesFirst.Count > 0)
-        {
-            comesFirst.Last.Value.Visibility = SquareSide.SideVisiblity.none;
-        }
-
         // there's probably a better way to merge without new allocations
         foreach (var i in comesSecond)
         {
@@ -359,11 +357,7 @@ public class OcclusionQueue
         }
 
         comesSecond = comesFirst;
-
-        if (comesFirst.Count > 0)
-        {
-            comesFirst.Last.Value.Visibility = SquareSide.SideVisiblity.full;
-        }
+        UpdateVisuals(comesFirst);
     }
 
     public override string ToString()

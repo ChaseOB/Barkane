@@ -303,6 +303,18 @@ public class SquareSide : MonoBehaviour, IRefreshable
             this[p - root.position] = jpo;
         }
 
+        public void UseAsInitialMask()
+        {
+            var v = JointPieceVisibility.None;
+
+            for (ushort i = 0; i < 4; i++)
+            {
+                if (jpos[i] != null) v = (JointPieceVisibility)((ushort)v | ((ushort)1 << i));
+            }
+
+            Visibilities = v;
+        }
+
         public void AlignAndMask(JointPieceCollection prev)
         {
             Visibilities &= ~RotateVisibilities(prev.Visibilities, (ushort)tr2Idx(prev.root));
@@ -314,15 +326,15 @@ public class SquareSide : MonoBehaviour, IRefreshable
             ushort startVal = (ushort)start;
             ushort reverse = (ushort)(4 - iterations);
 
-            return (JointPieceVisibility)(((startVal << iterations) | (startVal >> reverse)) & 0b1111);
+            return (JointPieceVisibility)(((startVal << iterations) | (startVal >> reverse)) & (ushort) 0b1111);
         }
 
         private void UpdateVisibility()
         {
-            jpos[0].Renderer.enabled = (Visibilities & JointPieceVisibility.First) != 0;
-            jpos[1].Renderer.enabled = (Visibilities & JointPieceVisibility.First) != 0;
-            jpos[2].Renderer.enabled = (Visibilities & JointPieceVisibility.First) != 0;
-            jpos[3].Renderer.enabled = (Visibilities & JointPieceVisibility.First) != 0;
+            for (ushort i = 0; i < 4; i++)
+            {
+                if (jpos[i] != null) jpos[i].Renderer.enabled = ((ushort)Visibilities & ((ushort) 1 << i)) != 0;
+            }
         }
 
         /// <summary>

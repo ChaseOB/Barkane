@@ -117,11 +117,6 @@ namespace BarkaneJoint
             UpdateGeometryData();
         }
 
-        void PullVisibility(SquareSide sqr, MeshRenderer renderer)
-        {
-            renderer.enabled = sqr.Visibility != SquareSide.SideVisiblity.none;
-        }
-
         void UpdateGeometryData()
         {
 
