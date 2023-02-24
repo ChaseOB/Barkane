@@ -29,9 +29,9 @@ public abstract class SidedJointAddon : MonoBehaviour
         | MeshUpdateFlags.DontNotifyMeshUsers
         | MeshUpdateFlags.DontRecalculateBounds;
 
-    public static MeshUpdateFlags fConsiderBounds => fQuiet;
-        // MeshUpdateFlags.DontValidateIndices
-        // | MeshUpdateFlags.DontResetBoneBounds;
+    public static MeshUpdateFlags fConsiderBounds => 
+        MeshUpdateFlags.DontValidateIndices
+        | MeshUpdateFlags.DontResetBoneBounds;
 }
 
 public interface IDynamicMesh<T> where T : IDynamicMeshRenderSettings

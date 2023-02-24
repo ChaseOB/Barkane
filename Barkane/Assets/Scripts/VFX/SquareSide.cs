@@ -6,11 +6,24 @@ using UnityEditor;
 using System;
 using Random = UnityEngine.Random;
 
+using JointRenderer = BarkaneJoint.JointRenderer;
+using JointPieceOwnership = BarkaneJoint.JointRenderer.JointPieceOwnership;
+using UnityEditor.Callbacks;
+using System.Text;
+
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(PaperSquareFace))]
 public class SquareSide : MonoBehaviour, IRefreshable
 {
+    public PaperSquare parentSquare { get; set; }
+
+    public enum SideVisiblity
+    {
+        full, ghost, none
+    }
+
     [SerializeField] MeshFilter mFilter;
     [SerializeField] MeshRenderer mRenderer;
     [SerializeField] CrumbleMeshGenerator meshGenerator;
@@ -21,6 +34,17 @@ public class SquareSide : MonoBehaviour, IRefreshable
     [SerializeField, HideInInspector] int distanceTextureWidth;
     [SerializeField, HideInInspector] SerializedMesh meshData;
 
+    public Material materialOverride
+    {
+        get => m_MaterialOverride;
+        private set
+        {
+            m_MaterialOverride = value;
+            mRenderer.sharedMaterial = value;
+        }
+    }
+    public Material m_MaterialOverride;
+
     public Material MaterialPrototype => materialPrototype;
 
     public Vector3[] sprinkleVerts;
@@ -30,6 +54,10 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public Color BaseColor, TintColor;
 
+    public JointPieceCollection JointPieces { get; private set; }
+
+    PaperSquareFace Metadata;
+
     void IRefreshable.EditorRefresh()
     {
         UpdateMesh();
@@ -37,10 +65,67 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     void IRefreshable.RuntimeRefresh()
     {
-        Debug.Log("Runtime refresh");
+        // Debug.Log("Runtime refresh");
         PushData();
         RuntimeParticleUpdate();
+
+        // CAUTION: keep the refresh order of JointRenderer after SquareSide
+        JointPieces = new JointPieceCollection(transform);
+
+        Metadata = GetComponent<PaperSquareFace>();
     }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (JointPieces != null)
+        {
+            JointPieces.Gizmo();
+        }
+    }
+
+    public SideVisiblity Visibility
+    {
+        get => m_SideVisiblity;
+        set
+        {
+            m_SideVisiblity = value;
+
+            switch (value)
+            {
+                case SideVisiblity.full:
+                    mRenderer.enabled = true;
+                    materialOverride = materialInstance;
+                    break;
+                case SideVisiblity.ghost:
+                    mRenderer.enabled = true;
+                    materialOverride = VFXManager.Theme.GhostMat;
+                    break;
+                case SideVisiblity.none:
+                    mRenderer.enabled = false;
+                    break;
+            }
+
+            if (Metadata.Shard)
+            {
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    // TODO: find more efficient way to do this, also generalize for all objects instead of just crystal
+                    var curr = transform.GetChild(i);
+                    if (curr.GetComponent<CrystalShard>() != null) continue;
+                    transform.GetChild(i).gameObject.SetActive(value != SideVisiblity.none);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    transform.GetChild(i).gameObject.SetActive(value != SideVisiblity.none);
+                }
+            }
+        }
+    }
+
+    private SideVisiblity m_SideVisiblity;
 
     private void PushData()
     {
@@ -59,19 +144,19 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
             mFilter.sharedMesh = meshData.Rehydrated;
             materialInstance.SetTexture("Dist", distanceTexture);
-            mRenderer.sharedMaterial = materialInstance;
+            // mRenderer.sharedMaterial = materialInstance;
 
         }
         materialInstance.SetColor("_Color", BaseColor);
         materialInstance.SetColor("_EdgeTint", TintColor);
         materialInstance.SetVector("_NormalOffset", new Vector2(Random.value, Random.value));
+
+        materialOverride = materialInstance;
     }
 
     public void RuntimeParticleUpdate()
     {
         // completely ignores prefab structure. this avoids the unpacking issue
-
-        Debug.Log(sprinkleParent.childCount);
 
         // the while loop version goes into infinite loop for some reason
         List<GameObject> prev = new List<GameObject>();
@@ -88,8 +173,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
         //}
 
         if (VFXManager.Theme.Sprinkle == null || materialPrototype.GetFloat("_UseSprinkles") < 0.5f) return;
-
-        Debug.Log("Reach sprinkle gen");
 
         var ct = sprinkleVerts.Length;
         for (int i = 0; i < ct; i++)
@@ -222,4 +305,168 @@ public class SquareSide : MonoBehaviour, IRefreshable
         sprinkleParent.gameObject.SetActive(val);
     }
     #endregion
+
+    public class JointPieceCollection
+    {
+        /// <summary>
+        /// In counter clock-wise order
+        /// </summary>
+        public JointPieceOwnership[] jpos;
+        Transform root; 
+
+        public JointPieceVisibility Visibilities {
+            get => m_Visibilities;
+            private set
+            {
+                m_Visibilities = value;
+                UpdateVisibility();
+            }
+        }
+
+        private JointPieceVisibility m_Visibilities;
+
+        // YZX orientation, where local Y points up and +Z is the starting axis
+
+        public JointPieceCollection(Transform root)
+        {
+            this.root = root;
+            jpos = new JointPieceOwnership[] { null, null, null, null };
+            Visibilities = AllPiecesVisible;
+        }
+
+        public void Register(JointPieceOwnership jpo)
+        {
+            var p = jpo.PieceParent.jointGeometry.pJ;
+            this[p - root.position] = jpo;
+        }
+
+        public void UseAsInitialMask()
+        {
+            Visibilities = AllPiecesVisible;
+        }
+
+        public void AlignAndMask(JointPieceCollection prev, bool useDebug = false)
+        {
+            var v = JointPieceVisibility.None;
+
+            var sb = new StringBuilder();
+
+            if (useDebug) Debug.Log($"Merge spv prev: { prev.root.position } -> curr: { root.position } ");
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (prev.jpos[i] == null)
+                {
+                    var dir = Idx2LocalDir(i);
+                    var idx = WorldDir2Idx(Vector3Int.RoundToInt(prev.root.TransformDirection(dir)));
+                    var occluded = ((ushort)prev.Visibilities & (1 << i)) >> i;
+
+                    if (useDebug) sb.Append($"Open slot with with state: {(occluded == 1 ? "already blocked" : "not blocked yet")}\n... {i} -> {idx}@{Vector3Int.RoundToInt(prev.root.TransformDirection(dir))} | ");
+                    // if the i'th entry of prev is NOT occupied, follow the original bit
+                    v |= (JointPieceVisibility)(occluded << idx);
+                }
+#if UNITY_EDITOR
+                else
+                {
+                    var dir = Idx2LocalDir(i);
+                    var idx = WorldDir2Idx(Vector3Int.RoundToInt(prev.root.TransformDirection(dir)));
+                    if (useDebug) sb.Append($"Close slot, automatically hiding {i} -> {idx}@{Vector3Int.RoundToInt(prev.root.TransformDirection(dir))} | ");
+                    // if the i'th entry of prev is occupied, then block the visibility in this side
+                    // v &= ~(JointPieceVisibility)(1 << idx);
+                }
+#endif
+            }
+
+            if (useDebug) Debug.Log(sb.ToString());
+            // if (useDebug) Debug.Log(v);
+
+            Visibilities = v; // RotateVisibilities(vPrev, (ushort)Tr2Idx(prev.root));
+        }
+
+        private static JointPieceVisibility RotateVisibilities(JointPieceVisibility start, ushort iterations)
+        {
+            ushort startVal = (ushort)start;
+            ushort reverse = (ushort)(4 - iterations);
+
+            return (JointPieceVisibility)(((startVal << iterations) | (startVal >> reverse)) & (ushort) 0b1111);
+        }
+
+        private void UpdateVisibility()
+        {
+            for (ushort i = 0; i < 4; i++)
+            {
+                if (jpos[i] != null) jpos[i].Renderer.enabled = ((ushort)Visibilities & ((ushort) 1 << i)) != 0;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="">World space direction of the joint piece relative to the square side's center</param>
+        /// <returns></returns>
+        public JointPieceOwnership this[Vector3 wDir]
+        {
+            get => jpos[WorldDir2Idx(wDir)];
+            private set
+            {
+                var idx = WorldDir2Idx(wDir);
+                if (jpos[idx] != null)
+                    throw new UnityException("Joint renderer slot can only be written once!");
+                jpos[idx] = value;
+            }
+        }
+
+        private static readonly Vector3Int[] dirs = new Vector3Int[]
+        {
+            Vector3Int.forward,
+            Vector3Int.left,
+            Vector3Int.back,
+            Vector3Int.right,
+        };
+
+        private Vector3Int Idx2LocalDir(int i) => dirs[i];
+
+        private int WorldDir2Idx(Vector3 wDir)
+        {
+            var lDir = Vector3Int.RoundToInt(root.InverseTransformDirection(wDir));
+            if (lDir.z > 0)
+                return 0;
+            else if (lDir.z < 0)
+                return 2;
+            else if (lDir.x > 0)
+                return 3;
+            else if (lDir.x < 0)
+                return 1;
+            else
+                throw new IndexOutOfRangeException($"{wDir}");
+        }
+
+        [Flags]
+        public enum JointPieceVisibility
+        {
+            None = 0,
+            First = 1 << 0,
+            Second = 1 << 1,
+            Third = 1 << 2,
+            Fourth = 1 << 3
+        }
+
+        public static JointPieceVisibility AllPiecesVisible =
+            JointPieceVisibility.First
+            | JointPieceVisibility.Second
+            | JointPieceVisibility.Third
+            | JointPieceVisibility.Fourth;
+
+        public void Gizmo()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (jpos[i] == null) continue;
+
+                var visible = jpos[i].Renderer.enabled;
+
+                Handles.Label(root.TransformDirection(Idx2LocalDir(i)) + root.position + root.up * 0.5f, $"{(visible ? "(" : "")}{i}{(visible ? ")" : "")}");
+            }
+        }
+    }
 }

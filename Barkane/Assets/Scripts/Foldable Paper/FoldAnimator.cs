@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using UnityEngine;
 
 public class FoldAnimator : MonoBehaviour
@@ -59,19 +61,32 @@ public class FoldAnimator : MonoBehaviour
 
         AudioManager.Instance?.Play("Fold");
         isFolding = true;
+        // Debug.DrawRay(center, fd.axis, Color.black, 3);
         GameObject tempObj = new GameObject(); //used for reparenting/rotating
         GameObject target = new GameObject(); //used for setting correct position due to float jank
         tempObj.transform.position = center;
         target.transform.position = center;
-       
-        foreach(GameObject o in objectsToFold.foldSquares)
+
+        //GameObject localSpaceRootDebug = new GameObject();
+        //localSpaceRootDebug.transform.SetParent(tempObj.transform);
+        //localSpaceRootDebug.transform.position = Vector3.zero;
+        //localSpaceRootDebug.transform.rotation = Quaternion.identity;
+
+        // Records the initial transform matrices
+        // This way tile coordinates are evaluated normally within local space
+        // Because Occlusion uses coordinate MOD 2 to determine orientation, the local
+        // space anchored around "center" actually messes everything up
+        var temp2Local = tempObj.transform.localToWorldMatrix;
+        var local2Temp = tempObj.transform.worldToLocalMatrix;
+
+        foreach (GameObject o in objectsToFold.foldSquares)
         {
-            o.transform.parent = tempObj.transform;
+            o.transform.SetParent(tempObj.transform, worldPositionStays: true);
         }
         
         foreach(GameObject o in objectsToFold.foldJoints)
         {
-            o.transform.parent = tempObj.transform;
+            o.transform.SetParent(tempObj.transform, worldPositionStays: true);
             o.GetComponent<PaperJoint>().ToggleCollider(false);
         }
 
@@ -83,39 +98,69 @@ public class FoldAnimator : MonoBehaviour
         int wait = 1;
         foreach(PaperJoint pj in foldablePaper.PaperJoints)
             pj.OnFold();
+
+        (Matrix4x4 encode, Matrix4x4 decode) replay(float t)
+        {
+            // note that local space root takes the inverse of tempObj at t=0
+            var temp2Wld = Matrix4x4.TRS(center, Quaternion.AngleAxis(fd.degrees * t, fd.axis), Vector3.one);
+            var wld2Temp = temp2Wld.inverse;
+
+            var encode = temp2Local * wld2Temp;
+            var decode = temp2Wld * local2Temp;
+
+            return (encode, decode);
+        }
+        var (encode0, decode0) = replay(0);
+        fd.foldObjects.TransferToLocalOcclusionMap(encode0, decode0);
+        foldablePaper.OcclusionMap.Prune();
+
         while (t < foldDuration)
         {
             t += Time.deltaTime;
-            tempObj.transform.RotateAround(center, fd.axis, (fd.degrees / foldDuration) * Time.deltaTime);
+            tempObj.transform.SetPositionAndRotation(center, Quaternion.AngleAxis(fd.degrees * t / foldDuration, fd.axis));
             wait--;
-            if(wait == 0){
-                UpdateSquareVisibility(objectsToFold);
+
+            //Debug.Log($"Replay w2l --\n{localSpaceRootDebug.transform.worldToLocalMatrix} --\n {replay(t / foldDuration).encode}");
+            //Debug.Log($"Replay l2w --\n{localSpaceRootDebug.transform.localToWorldMatrix} --\n {replay(t / foldDuration).decode}");
+            if (wait == 0){
+                // UpdateSquareVisibility(objectsToFold);
             }
             yield return null;
         }
-        
 
         target.transform.RotateAround(center, fd.axis, fd.degrees);
         tempObj.transform.SetPositionAndRotation(target.transform.position, target.transform.rotation);
 
-        foreach(GameObject o in objectsToFold.foldSquares)
+        foreach (GameObject o in objectsToFold.foldSquares)
         {
             o.transform.position = Vector3Int.RoundToInt(o.transform.position);
-            o.transform.parent =  objectsToFold.squareParent;
         }
 
         foreach(GameObject o in objectsToFold.foldJoints)
         {
             o.transform.position = Vector3Int.RoundToInt(o.transform.position);
-            o.transform.parent =  objectsToFold.jointParent;
+        }
+
+        fd.foldObjects.MergeWithGlobalOcclusionMap(foldablePaper.OcclusionMap, center, fd.degrees > 0 ? fd.axis : -fd.axis, replay);
+
+        foreach (GameObject o in objectsToFold.foldSquares)
+        {
+            o.transform.SetParent(objectsToFold.squareParent, worldPositionStays: true);
+        }
+
+        foreach (GameObject o in objectsToFold.foldJoints)
+        {
+            o.transform.SetParent(objectsToFold.jointParent, worldPositionStays: true);
             o.GetComponent<PaperJoint>().ToggleCollider(true);
         }
-        Destroy(tempObj);
-        Destroy(target);
+
         isFolding = false;
 
-        UpdateSquareVisibility(objectsToFold);
-        
+        Destroy(tempObj);
+        Destroy(target);
+
+        // UpdateSquareVisibility(objectsToFold);
+
         if(afterFold != null)
              afterFold();
         if(undo)

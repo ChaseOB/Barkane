@@ -24,3 +24,4 @@ MonoBehaviour:
   JointParticle: {fileID: 2100000, guid: 31684caa5e3d4fc4b842e9d020eea23f, type: 2}
   crystalMat: {fileID: 2100000, guid: f5447dafc959982469afa3a031bf8fa0, type: 2}
   Silhouette: {r: 0.92549026, g: 0.28235295, b: 0.5686275, a: 1}
+  GhostMatPrototype: {fileID: 2100000, guid: 75ed3fa3cf33c1a4e8274f62f8ae7c4d, type: 2}

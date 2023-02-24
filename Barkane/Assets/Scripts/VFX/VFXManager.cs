@@ -55,9 +55,9 @@ namespace BarkaneEditor
 
             Refresh<EdgeParticles>();
             Refresh<MaskFoldParticles>();
+            Refresh<SquareSide>();
             Refresh<JointRenderer>();
             Refresh<SquareSizeManager>();
-            Refresh<SquareSide>();
             Refresh<GlowStick>();
         }
 

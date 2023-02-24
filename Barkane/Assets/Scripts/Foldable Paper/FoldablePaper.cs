@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(VFXThemeAdapter))]
@@ -23,6 +24,9 @@ public class FoldablePaper : MonoBehaviour
     public Vector3 centerPos;
     Dictionary<Vector3Int, List<PaperSquare>> squareLocs = new Dictionary<Vector3Int, List<PaperSquare>>();
     public PaperSquare playerSquare;
+
+    public OcclusionMap OcclusionMap => m_OcclusionMap;
+    OcclusionMap m_OcclusionMap = new OcclusionMap();
 
     private void Awake() 
     {
@@ -87,16 +91,17 @@ public class FoldablePaper : MonoBehaviour
     private void IntializeSquarePosList()
     {
         foreach(PaperSquare ps in paperSquares){
+            var rounded = Vector3Int.RoundToInt(ps.transform.position);
             List<PaperSquare> list = new List<PaperSquare>();
                 list.Add(ps);
-                squareLocs.Add(Vector3Int.RoundToInt(ps.transform.position), list);
+                squareLocs.Add(rounded, list);
         }
     }
 
 
     //C: Uses a modified DFS to determine which objects should be folded
     // Returns fold side objects first, player side objects second 
-    public FoldObjects[] FindFoldObjects()
+    public (FoldObjects, FoldObjects) FindFoldObjects()
     {
         visitedJoints.Clear();
         visitedSquares.Clear();
@@ -109,10 +114,8 @@ public class FoldablePaper : MonoBehaviour
             if(ps.PlayerOccupied)
                 playerSquare = ps;
         DFSHelperSquare(playerSquare, true);
-        FoldObjects[] returnArr = new FoldObjects[2];
-        returnArr[0] = playerSide;
-        returnArr[1] = foldObjects;
-        return returnArr;
+
+        return (playerSide, foldObjects);
     }
 
     private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
@@ -189,5 +192,38 @@ public class FoldablePaper : MonoBehaviour
         foreach (List<PaperSquare> list in dict.Values)
             overlapList.Add(list);
         return overlapList;
+    } 
+
+    public void PopulateOcclusionMap()
+    {
+        foreach(var ps in paperSquares)
+        {
+            var rounded = Vector3Int.RoundToInt(ps.transform.position);
+
+            if (m_OcclusionMap.ContainsKey(rounded))
+            {
+                m_OcclusionMap[rounded].Enqueue(ps);
+                m_OcclusionMap[rounded].UseAsGlobal();
+            }
+            else
+            {
+                var q = OcclusionQueue.MakeOcclusionQueue(rounded, OcclusionQueue.IdentityEncoder);
+
+                if (q != null)
+                {
+                    q.Enqueue(ps);
+                    m_OcclusionMap[rounded] = q;
+                }
+                else
+                {
+                    throw new UnityException("Occlusion queue could not be created");
+                }
+                m_OcclusionMap[rounded].UseAsGlobal();
+            }
+
+            // Debug.DrawRay(m_OcclusionMap[rounded].Offset, m_OcclusionMap[rounded].upwards, Color.yellow, 3);
+        }
+
+        // Debug.Log(OcclusionMap);
     }
 }
