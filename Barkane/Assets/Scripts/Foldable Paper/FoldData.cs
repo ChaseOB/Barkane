@@ -34,11 +34,33 @@ public class FoldData: Action
        GameObject.FindObjectOfType<FoldAnimator>().Fold(this, true, undo);
     }
 
-    public List<List<PaperSquare>> FindOverlappingSquares()
+    public Dictionary<Vector3Int, HashSet<PaperSquare>> FindOverlappingSquares()
     {
-        List<List<PaperSquare>> overlapList = new List<List<PaperSquare>>();
+        List<PaperSquare> paperSquares = new List<PaperSquare>();
+        paperSquares.AddRange(foldObjects.squareScripts);
+        paperSquares.AddRange(playerFoldObjects.squareScripts);
 
-        Dictionary<Vector3, List<PaperSquare>> dict = new Dictionary<Vector3, List<PaperSquare>>();
+        Dictionary<Vector3Int, HashSet<PaperSquare>> posToSquares = new Dictionary<Vector3Int, HashSet<PaperSquare>>();
+
+        foreach(PaperSquare ps in paperSquares)
+        {
+            Vector3Int loc = Vector3Int.RoundToInt(ps.gameObject.transform.position);
+            if(!posToSquares.ContainsKey(loc))
+            {
+                HashSet<PaperSquare> set = new HashSet<PaperSquare>();
+                set.Add(ps);
+                posToSquares.TryAdd(loc, set);
+            }
+            else
+            {
+                posToSquares[loc].Add(ps);
+            }
+        }
+
+        return posToSquares;
+      /*  List<HashSet<PaperSquare>> overlapList = new List<HashSet<PaperSquare>>();
+
+        Dictionary<Vector3, HashSet<PaperSquare>> dict = new Dictionary<Vector3, HashSet<PaperSquare>>();
 
         List<PaperSquare> paperSquares = new List<PaperSquare>();
         foreach(GameObject go in foldObjects.foldSquares)
@@ -52,19 +74,20 @@ public class FoldData: Action
                 if (Vector3.Magnitude(key - ps.transform.position) < 0.0001f) {
                     dict[key].Add(ps);
                     didAdd = true;
+                    Debug.Log("overlapping squares");
                 }
             }
             if(!didAdd)
             {
-                List<PaperSquare> list = new List<PaperSquare>();
-                list.Add(ps);
-                dict.Add(ps.transform.position, list);
+                HashSet<PaperSquare> set = new HashSet<PaperSquare>();
+                set.Add(ps);
+                dict.Add(ps.transform.position, set);
             }
         }
 
-        foreach (List<PaperSquare> list in dict.Values){
-                overlapList.Add(list);
+        foreach (HashSet<PaperSquare> set in dict.Values){
+                overlapList.Add(set);
         }
-        return overlapList;
+        return overlapList;*/
     }
 }

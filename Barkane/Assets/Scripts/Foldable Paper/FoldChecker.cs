@@ -87,7 +87,7 @@ public class FoldChecker : Singleton<FoldChecker>
         sides touch but both are on the same side of the fold those sides will remain hidden)
     */
 
-    private bool CheckPaperClipping(FoldData fd)
+    /*private bool CheckPaperClipping(FoldData fd)
     {
         List<List<PaperSquare>> overlaps = fd.FindOverlappingSquares();
         List<List<PaperSquare>> checks = new List<List<PaperSquare>>();
@@ -115,9 +115,9 @@ public class FoldChecker : Singleton<FoldChecker>
         }
 
 
-
+        //WIP: WILL ALWAYS RETURN TRUE RN
         return true;
-    }
+    }*/
 
 
     /* FOLD CHECK 2: PAPER CLIPPING
@@ -131,10 +131,10 @@ public class FoldChecker : Singleton<FoldChecker>
         -generally janky and unreliable, needs a total overhaul
     */
 
-   /* private bool CheckPaperClipping(FoldData fd)
+    private bool CheckPaperClipping(FoldData fd)
     {
-        List<List<PaperSquare>> overlaps = fd.FindOverlappingSquares();
-        foreach(List<PaperSquare> list in overlaps)
+        Dictionary<Vector3Int, HashSet<PaperSquare>> overlaps = fd.FindOverlappingSquares();
+        foreach(HashSet<PaperSquare> list in overlaps.Values)
         {
             //Vector3 intial = Vector3.zero;
             //Vector3 newVec = Vector3.zero;
@@ -148,20 +148,25 @@ public class FoldChecker : Singleton<FoldChecker>
                 GameObject t2 = new GameObject();
                 foreach(PaperSquare ps in list) 
                 {
-                    if(ps.BottomHalf.activeSelf)
+                    if(ps.bottomSide.Visibility == SquareSide.SideVisiblity.full)
                         activeSides.Add(ps.BottomHalf);
-                    if(ps.TopHalf.activeSelf)
+                    if(ps.bottomSide.Visibility == SquareSide.SideVisiblity.full)
                         activeSides.Add(ps.TopHalf);
                 }
-               //if(activeSides.Count != 2){
-               //     Debug.LogError($"!2 active sides in a single location (this should not happen). Count: {activeSides.Count}");
-               // }
+                print("Overlap Found");
+                foreach(PaperSquare ps in list)
+                        print(ps.gameObject.name);
+               if(activeSides.Count != 2){
+                    Debug.LogError($"!2 active sides in a single location (this should not happen). Count: {activeSides.Count}");
+                    foreach(PaperSquare ps in list)
+                        print(ps.gameObject.name);
+                }
                 //C: if the active sides of this stack are both in or both out of the fold, then they won't clip
                 if(activeSides.Count == 2 &&
                     fd.foldObjects.foldSquares.Contains(activeSides[0].GetComponentInParent<PaperSquare>().gameObject)
                     != fd.foldObjects.foldSquares.Contains(activeSides[1].GetComponentInParent<PaperSquare>().gameObject))
                 {
-                    /*C: Else, check position of the ends of the normal vectors before and after fold
+                    //C: Else, check position of the ends of the normal vectors before and after fold
                     // if there is no clipping, then the points at the ends of the normals will be farther apart (point away)
                     // than if there was clipping (point towards eachother). So we can check this fold and the other fold direction
                     // by folding 180* after the intial fold and then comapare distances
@@ -200,7 +205,7 @@ public class FoldChecker : Singleton<FoldChecker>
             }
         }
         return true;
-    }*/
+    }
 
 
     /* FOLD CHECK 3: PAPER AND OBJECT COLLISION
