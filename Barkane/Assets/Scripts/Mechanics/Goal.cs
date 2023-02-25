@@ -41,7 +41,7 @@ public class Goal : MonoBehaviour, IThemedItem
     }
 
     private void OnTriggerStay(Collider other) {
-        if(other.gameObject.CompareTag("Player") && goalActive && !ending)
+        if(other.gameObject.CompareTag("Player") && goalActive && glowstickActive && !ending)
             StartCoroutine(WaitToEndLevel());
     }
 

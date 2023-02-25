@@ -348,14 +348,14 @@ MonoBehaviour:
     pauseOnDisplay: 1
     played: 0
   - text: One night, the evil mage Drazwi broke into Meeplin's tower and shattered
-      all but 1 of the Gems of Ultimate Power. Meeplin the 7th gave his life in the
-      fight to protect the final gem.
+      all of the Gems of Ultimate Power. Meeplin the 7th gave his life in the fight
+      to protect the final gem.
     startTime: 4.625
     duration: 9
     pauseDuration: 0
     pauseOnDisplay: 0
     played: 0
-  - text: With no decendants to his name, as Meeplin the 7th dies, his powers passed
+  - text: With no descendants to his name, as Meeplin the 7th dies, his powers passed
       to Marmalade, marking the end of the Meeplin bloodline and making her the first
       Barkane Mage.
     startTime: 10
@@ -363,7 +363,7 @@ MonoBehaviour:
     pauseDuration: 3.1
     pauseOnDisplay: 1
     played: 0
-  - text: She must now traverse the broken paper lands, collecting the piecees of
+  - text: She must now traverse the broken paper lands, collecting the pieces of
       the Gems in order to grow her powers, defeat Drazwi, and save Pleasantville.
     startTime: 14
     duration: 7
