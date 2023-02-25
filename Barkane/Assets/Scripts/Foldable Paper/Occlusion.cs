@@ -32,12 +32,11 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
             var sepUp = oq.GetFoldPlayerSeparatorFaceUp(fObjs);
             var sepDown = oq.GetFoldPlayerSeparatorFaceDown(fObjs);
 
-            if (!sepUp.HasValue) result.Add(sepUp.Value);
-            if (!sepDown.HasValue) result.Add(sepDown.Value);
+            if (sepUp.HasValue) result.Add(sepUp.Value);
+            if (sepDown.HasValue) result.Add(sepDown.Value);
         }
         return result;
     }
-    private List<(SquareSide f, SquareSide p)> m_SeparatorPairs;
 
     public override string ToString()
     {
