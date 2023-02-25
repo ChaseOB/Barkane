@@ -37,7 +37,7 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
                 var inP = pObjs.Contains(curr.Value);
                 if (inF != inP)
                 {
-                    result.Add((curr.Value, curr.Next.Value));
+                    result.Add((inF ? curr.Value : curr.Next.Value, inP ? curr.Value : curr.Next.Value));
                     break;
                 }
             }
