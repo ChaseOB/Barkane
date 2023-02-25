@@ -179,6 +179,18 @@ public class FoldChecker : Singleton<FoldChecker>
                                             != fd.foldObjects.foldSquares.Contains(o2parent));
                         if(!diffGroups) continue;
 
+                        //CURRENT ISSUE: Overlaps between all faces, not just direct ones
+                        //Example
+                        //
+                        //    1 top vis
+                        //    1 bot hidden
+                        //    5 bot hidden
+                        //    5 top hidden
+                        //    4 top hidden
+                        //    4 bottom vis
+                        // 
+                        //   I only want the pairs (1bot, 5bot) and (5top, 4bot) but i get (1bot, 5bot), (1bot, 5top), (1bot, 4bot)... etc
+
                         Debug.Log($"Found overlap: {o1.name} {o1parent.name}, {o2.name} {o2parent.name}");
                         //C: Else, check position of the ends of the normal vectors before and after fold
                     // if there is no clipping, then the points at the ends of the normals will be farther apart (point away)
