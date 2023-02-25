@@ -101,15 +101,14 @@ public class FoldChecker : Singleton<FoldChecker>
         }
 
         foreach((SquareSide, SquareSide) pair in pairs) {
-            SquareSide sq1 = pair.Item1;
-            SquareSide sq2 = pair.Item2;
+            SquareSide f = pair.Item1;
+            SquareSide p = pair.Item2;
             string s1 = pair.Item1.GetComponentInParent<PaperSquare>().name;
             string s2 = pair.Item2.GetComponentInParent<PaperSquare>().name;
             print($"Pair: {s1} {pair.Item1.name}, {s2} {pair.Item2.name}");
 
-            SquareSide foldSide = fd.foldObjects.foldSquares.Contains(sq1.GetComponentInParent<PaperSquare>().gameObject) ? sq1 : sq2;
 
-            Vector3 foldNormal = foldSide.transform.up;
+            Vector3 foldNormal = f.transform.up;
             Vector3 axis = fd.axis;
             Vector3 Cross = Vector3.Cross(foldNormal, axis);
 
@@ -117,41 +116,18 @@ public class FoldChecker : Singleton<FoldChecker>
             if(Cross.magnitude < 0.001f)
                 continue; 
             
+            Debug.DrawRay(f.transform.position, foldNormal, Color.cyan, 15f);
+            Vector3 rotatedNormal = Quaternion.AngleAxis(fd.degrees, fd.axis) * foldNormal;
+            Vector3 oppositeRotated = Quaternion.AngleAxis(fd.degrees * -1, fd.axis) * foldNormal;
+
             Ray axisRay = new Ray(fd.axisJoints[0].transform.position, fd.axis);
+            float distNormal = Vector3.Cross(axisRay.direction, transform.position + rotatedNormal - axisRay.origin).magnitude;
+            float distOpp = Vector3.Cross(axisRay.direction, transform.position + oppositeRotated - axisRay.origin).magnitude;
 
-            Vector3 ToJointVector = Vector3.Cross(axisRay.direction, foldSide.transform.position - axisRay.origin);
-            Debug.DrawRay(foldSide.transform.position, ToJointVector, Color.yellow, 20f);
-
-            /*GameObject parent = new GameObject();
-            parent.transform.position = fd.center;
-            GameObject t1 = new GameObject();
-            GameObject t2 = new GameObject();
-            t1.transform.SetPositionAndRotation(sq1.transform.position, sq1.transform.rotation);
-            t2.transform.SetPositionAndRotation(sq1.transform.position, sq2.transform.rotation);        
-            if(foldSide == sq1)
-                t1.transform.parent = parent.transform;
-            else
-                t2.transform.parent = parent.transform;    
-
-            parent.transform.RotateAround(fd.center, fd.axis, fd.degrees);
-            Vector3 t3 = t1.transform.position + t1.transform.up * 0.1f;
-            Vector3 t4 = t2.transform.position + t2.transform.up * 0.1f;
-            float d1 = Vector3.Distance(t3, t4);
-            Debug.DrawLine(t3, t4, Color.blue, 30);
-                    
-            parent.transform.RotateAround(fd.center, fd.axis, 180);
-            t3 = t1.transform.position + t1.transform.up * 0.1f;
-            t4 = t2.transform.position + t2.transform.up * 0.1f;   
-            float d2 = Vector3.Distance(t3, t4);
-            Debug.DrawLine(t3, t4, Color.yellow, 30);
-                
-            Destroy(t1);
-            Destroy(t2);
-            Destroy(parent);
-            if(d1 > d2) {
+            if (distNormal < distOpp) {
                 Debug.Log($"Can't fold, would clip: {s1} {pair.Item1.name}, {s2} {pair.Item2.name}");
                 return false;
-            } */
+            }
         }
         return true;
     }
