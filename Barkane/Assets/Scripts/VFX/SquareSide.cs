@@ -21,7 +21,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public enum SideVisiblity
     {
-        full, ghost, none
+        full, none
     }
 
     [SerializeField] MeshFilter mFilter;
@@ -33,17 +33,6 @@ public class SquareSide : MonoBehaviour, IRefreshable
     [SerializeField, HideInInspector] byte[] distanceTextureData;
     [SerializeField, HideInInspector] int distanceTextureWidth;
     [SerializeField, HideInInspector] SerializedMesh meshData;
-
-    public Material materialOverride
-    {
-        get => m_MaterialOverride;
-        private set
-        {
-            m_MaterialOverride = value;
-            mRenderer.sharedMaterial = value;
-        }
-    }
-    public Material m_MaterialOverride;
 
     public Material MaterialPrototype => materialPrototype;
 
@@ -92,20 +81,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
         {
             m_SideVisiblity = value;
 
-            switch (value)
-            {
-                case SideVisiblity.full:
-                    mRenderer.enabled = true;
-                    materialOverride = materialInstance;
-                    break;
-                case SideVisiblity.ghost:
-                    mRenderer.enabled = true;
-                    materialOverride = VFXManager.Theme.GhostMat;
-                    break;
-                case SideVisiblity.none:
-                    mRenderer.enabled = false;
-                    break;
-            }
+            mRenderer.enabled = value == SideVisiblity.full;
 
             if (Metadata.Shard)
             {
@@ -137,8 +113,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
             {
                 name = $"rehydrated {materialPrototype.name}"
             };
-        }
-        if (materialInstance != null)
+        } else
         {
             var distanceTexture = new Texture2D(distanceTextureWidth, distanceTextureWidth);
             distanceTexture.LoadImage(distanceTextureData);
@@ -146,14 +121,12 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
             mFilter.sharedMesh = meshData.Rehydrated;
             materialInstance.SetTexture("Dist", distanceTexture);
-            // mRenderer.sharedMaterial = materialInstance;
 
         }
         materialInstance.SetColor("_Color", BaseColor);
         materialInstance.SetColor("_EdgeTint", TintColor);
         materialInstance.SetVector("_NormalOffset", new Vector2(Random.value, Random.value));
-
-        materialOverride = materialInstance;
+        mRenderer.sharedMaterial = materialInstance;
     }
 
     public void RuntimeParticleUpdate()
