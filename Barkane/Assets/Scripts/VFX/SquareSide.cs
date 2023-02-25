@@ -205,7 +205,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
 #if UNITY_EDITOR
         if (!PrefabUtility.IsPartOfAnyPrefab(this)) return;
         var pRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(this);
-        if (pRoot == null) return;
+        if (pRoot == null || pRoot.GetComponent<FoldablePaper>() == null) return;
         var path = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(pRoot);
         Debug.Log($"Auto apply changes {this.name} at prefab {pRoot.name}, asset path: {path}");
         PrefabUtility.ApplyObjectOverride(this, path, InteractionMode.UserAction);
