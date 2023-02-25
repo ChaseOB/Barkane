@@ -56,6 +56,8 @@ public class Goal : MonoBehaviour, IThemedItem
     public void UpdateTheme(Theme t) {
         activeGoal.GetComponent<MeshRenderer>().material = t.crystalMat;
         goalPlane.GetComponent<MeshRenderer>().material = swirlMaterials[(int)t.themeEnum];
+        var col = particleSystem.colorOverLifetime;
+        col.color = themePartColors[(int)t.themeEnum];
     }
 
     public void CollectShard()
