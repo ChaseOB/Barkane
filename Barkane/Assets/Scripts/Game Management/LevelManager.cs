@@ -168,6 +168,7 @@ public class LevelManager : Singleton<LevelManager>
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+        VFXManager.Instance?.Refresh();
         levelSwitchScreen.SetActive(false);
         imageAnimator.Stop();
         if(UIManager.Instance != null)
