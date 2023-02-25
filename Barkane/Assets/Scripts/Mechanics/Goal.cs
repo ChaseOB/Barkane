@@ -95,7 +95,7 @@ public class Goal : MonoBehaviour, IThemedItem
 
     private bool CheckIfGoalActive()
     {
-        return (numShardsCollected >= numShards && inGlowstickRange);
+        return (numShardsCollected >= numShards && inGlowstickRange && glowstickActive);
     }
 
     public void ActivateParticles(bool val)
