@@ -107,7 +107,8 @@ public class FoldChecker : Singleton<FoldChecker>
             string s2 = pair.Item2.GetComponentInParent<PaperSquare>().name;
             print($"Pair: {s1} {pair.Item1.name}, {s2} {pair.Item2.name}");
 
-            GameObject parent = new GameObject();
+            SquareSide foldSide = fd.foldObjects.foldSquares.Contains(sq1.GetComponentInParent<PaperSquare>().gameObject) ? sq1 : sq2;
+            /*GameObject parent = new GameObject();
             parent.transform.position = fd.center;
             GameObject t1 = new GameObject();
             GameObject t2 = new GameObject();
@@ -136,7 +137,7 @@ public class FoldChecker : Singleton<FoldChecker>
             if(d1 > d2) {
                 Debug.Log($"Can't fold, would clip: {s1} {pair.Item1.name}, {s2} {pair.Item2.name}");
                 return false;
-            }   
+            } */  
         }
         return true;
     }

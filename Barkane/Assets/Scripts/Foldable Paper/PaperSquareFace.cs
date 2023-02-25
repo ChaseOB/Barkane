@@ -93,6 +93,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
 
     public void ChangeFaceType()
     {
+        Debug.Log("change face type");
         if (m_FaceType == FaceType.WALKABLE)
         {
             playerWalk.enabled = true;
@@ -163,7 +164,8 @@ public class PaperSquareFaceEditor : Editor
     {
         this.propertyActions = new Dictionary<string, Action<SerializedProperty, PaperSquareFace>>
         {
-            { "faceType", (prop, face) => face.ChangeFaceType() },
+           // { "faceType", (prop, face) => face.ChangeFaceType() },
+            { "faceType", (prop, face) => Debug.Log("changed face type") },
             { "shard", (prop, face) => face.SetFaceObject(FaceObjectType.SHARD, prop.boolValue) },
             { "goal", (prop, face) => face.SetFaceObject(FaceObjectType.GOAL, prop.boolValue) },
             { "fence", (prop, face) => face.SetFaceObject(FaceObjectType.FENCE, prop.boolValue) },
