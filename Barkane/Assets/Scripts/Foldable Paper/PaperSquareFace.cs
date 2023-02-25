@@ -23,10 +23,8 @@ public enum FaceObjectType
 [ExecuteInEditMode]
 public class PaperSquareFace : MonoBehaviour, IThemedItem
 {
-    public FaceType FaceType => m_FaceType;
-
     [Header("Surface")]
-    [SerializeField] private FaceType m_FaceType;
+    [SerializeField] private FaceType faceType;
 
     public bool Shard => shard;
 
@@ -93,14 +91,14 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
 
     public void ChangeFaceType()
     {
-        if (m_FaceType == FaceType.WALKABLE)
+        if (faceType == FaceType.WALKABLE)
         {
             playerWalk.enabled = true;
             squareSide.materialPrototype = theme.WalkMat;
             squareSide.BaseColor = theme.WalkColor;
             squareSide.TintColor = theme.WalkTint;
         }
-        else if(m_FaceType == FaceType.UNWALKABLE)
+        else if(faceType == FaceType.UNWALKABLE)
         {
             playerWalk.enabled = false;
             squareSide.materialPrototype = theme.UnWalkMat;
