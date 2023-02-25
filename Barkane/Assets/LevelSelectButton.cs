@@ -9,7 +9,7 @@ public class LevelSelectButton : MonoBehaviour
     public GameObject levelText;
     public string levelName;
 
-    private bool adminMode = false;
+    private bool adminMode = true;
 
     private void OnEnable() {
         CheckUnlock();

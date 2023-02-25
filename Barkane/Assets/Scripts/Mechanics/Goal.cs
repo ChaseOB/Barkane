@@ -14,7 +14,7 @@ public class Goal : MonoBehaviour, IThemedItem
     public bool inGlowstickRange = true; //C: True except when in caves and no glowstick in area
     public bool particlesActive = true; //C: True except when in caves and no glowstick active
 
-    private bool glowstickActive = false;
+    [SerializeField] private bool glowstickActive = true;
 
     private bool ending = false;
 
@@ -41,7 +41,7 @@ public class Goal : MonoBehaviour, IThemedItem
     }
 
     private void OnTriggerStay(Collider other) {
-        if(other.gameObject.CompareTag("Player") && goalActive && glowstickActive && !ending)
+        if(other.gameObject.CompareTag("Player") && goalActive && inGlowstickRange && glowstickActive && !ending)
             StartCoroutine(WaitToEndLevel());
     }
 
@@ -49,7 +49,11 @@ public class Goal : MonoBehaviour, IThemedItem
     private IEnumerator WaitToEndLevel() {
         ending = true;
         yield return new WaitUntil(() => !ActionLockManager.Instance.IsLocked);
-        EndLevel();
+        if(!glowstickActive || !goalActive || !inGlowstickRange || !glowstickActive) {
+            ending = false;
+        } else {
+            EndLevel();
+        }
     }
     
     public void EndLevel() {
@@ -84,7 +88,7 @@ public class Goal : MonoBehaviour, IThemedItem
 
     public void SetInGlowstickRange (bool val = true)
     {
-        if(glowstickActive)
+        //if(glowstickActive)
             inGlowstickRange = val;
         ActivateGoal(CheckIfGoalActive());
     }

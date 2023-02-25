@@ -50,6 +50,7 @@ public class GlowStickLogic : MonoBehaviour
             if(lifetime == 0)
             {
                 state = GlowstickState.OFF;
+                OnGlowstickChange?.Invoke(this, new GlowStickArgs(lifetime, state));
                 ToggleGSBoxes(false);
                 GetComponent<GlowStick>().innerRenderer.material = materials[2];
                 //foreach (CrystalShard shard in shards)
