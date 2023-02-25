@@ -37,7 +37,6 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
         }
         return result;
     }
-    private List<(SquareSide f, SquareSide p)> m_SeparatorPairs;
 
     public override string ToString()
     {
@@ -388,7 +387,7 @@ public class OcclusionQueue
 
         for (var curr = start.Next; curr != null; curr = curr.Next)
         {
-            (toAdd, inF) = FoldPlayerSeparatorCheck(toAdd, curr.Next.Value, curr.Value, f, inF);
+            (toAdd, inF) = FoldPlayerSeparatorCheck(toAdd, curr.Previous.Value, curr.Value, f, inF);
         }
 
         return toAdd;
