@@ -91,8 +91,14 @@ public class FoldChecker : Singleton<FoldChecker>
     private bool CheckPaperClipping(FoldData fd, FoldablePaper foldablePaper)
     {
         List<(SquareSide, SquareSide)> pairs = new List<(SquareSide, SquareSide)>();
+        try{
+            pairs = foldablePaper.OcclusionMap.SeparatorPairs(fd.foldObjects.SidesSet);
+        } catch(SidesInterlockedException)
+        {
+            print("interlocks");
+            return false;
+        }
 
-        pairs = foldablePaper.OcclusionMap.SeparatorPairs(fd.foldObjects.SidesSet);
         foreach((SquareSide, SquareSide) pair in pairs) {
             string s1 = pair.Item1.GetComponentInParent<PaperSquare>().name;
             string s2 = pair.Item2.GetComponentInParent<PaperSquare>().name;
