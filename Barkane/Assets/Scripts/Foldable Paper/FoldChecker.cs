@@ -349,16 +349,19 @@ public class FoldChecker : Singleton<FoldChecker>
                         Destroy(parent2);
                         return false;
                     }
-                    if(ps == null)
-                        Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to null paper square.");
-                    else
-                        Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to same side collision.");
+                    //if(ps == null)
+                    //    Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to null paper square.");
+                   // else
+                       // Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to same side collision.");
                 }
                 j++;               
             }
             foreach (GameObject go in obstList)
             {
-                Collider[] hits = Physics.OverlapBox(go.transform.position, colliderDict[go], go.transform.rotation, squareCollidingMask);
+                LayerMask m = squareCollidingMask;
+                if(go.GetComponent<SquareCast>().customMask)
+                    m = go.GetComponent<SquareCast>().mask;
+                Collider[] hits = Physics.OverlapBox(go.transform.position, colliderDict[go], go.transform.rotation, m);
                 foreach(Collider c in hits)
                 {
                     PaperSquare ps =  c.transform.gameObject.GetComponentInParent<PaperSquare>();

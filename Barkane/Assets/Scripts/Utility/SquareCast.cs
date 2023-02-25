@@ -21,7 +21,7 @@ public class SquareCast : MonoBehaviour
             if(collide)
             {
                 Debug.DrawRay(pos1, this.transform.forward * size, Color.red, 30);
-                Debug.Log($"Cannot Fold: hit {h.transform.gameObject.name} when calculating fold path");
+//                Debug.Log($"Cannot Fold: hit {h.transform.gameObject.name} when calculating fold path");
                 hit = h;
                 return true;
             }
