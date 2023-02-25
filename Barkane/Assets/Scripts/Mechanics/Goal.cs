@@ -14,6 +14,10 @@ public class Goal : MonoBehaviour, IThemedItem
     public bool inGlowstickRange = true; //C: True except when in caves and no glowstick in area
     public bool particlesActive = true; //C: True except when in caves and no glowstick active
 
+    private bool glowstickActive = false;
+
+    private bool ending = false;
+
     [SerializeField] private GameObject inactiveGoal;
     [SerializeField] private GameObject activeGoal;
     [SerializeField] private GameObject goalPlane;
@@ -36,13 +40,14 @@ public class Goal : MonoBehaviour, IThemedItem
         ActivateParticles(particlesActive);
     }
 
-    private void OnTriggerEnter(Collider other) {
-        if(other.gameObject.CompareTag("Player") && goalActive)
+    private void OnTriggerStay(Collider other) {
+        if(other.gameObject.CompareTag("Player") && goalActive && !ending)
             StartCoroutine(WaitToEndLevel());
     }
 
     //C: Used so player finishes moving
     private IEnumerator WaitToEndLevel() {
+        ending = true;
         yield return new WaitUntil(() => !ActionLockManager.Instance.IsLocked);
         EndLevel();
     }
@@ -79,7 +84,8 @@ public class Goal : MonoBehaviour, IThemedItem
 
     public void SetInGlowstickRange (bool val = true)
     {
-        inGlowstickRange = val;
+        if(glowstickActive)
+            inGlowstickRange = val;
         ActivateGoal(CheckIfGoalActive());
     }
 
@@ -100,9 +106,13 @@ public class Goal : MonoBehaviour, IThemedItem
     }
 
     private void OnGlowstickChange(object sender, GlowStickLogic.GlowStickArgs e) {
-        if(e.state == GlowstickState.OFF)
+        if(e.state == GlowstickState.OFF) {
+            glowstickActive = false;
             ActivateParticles(false);
-        if(e.state == GlowstickState.CRACKED)
+        }
+        if(e.state == GlowstickState.CRACKED) {
+            glowstickActive = true;
             ActivateParticles(true);
+        }
     }
 }
