@@ -92,7 +92,7 @@ public class FoldChecker : Singleton<FoldChecker>
     {
         List<(SquareSide, SquareSide)> pairs = new List<(SquareSide, SquareSide)>();
 
-        pairs = foldablePaper.OcclusionMap.SeparatorPairs(fd.foldObjects.SidesSet, fd.playerFoldObjects.SidesSet);
+        pairs = foldablePaper.OcclusionMap.SeparatorPairs(fd.foldObjects.SidesSet);
         foreach((SquareSide, SquareSide) pair in pairs) {
             string s1 = pair.Item1.GetComponentInParent<PaperSquare>().name;
             string s2 = pair.Item2.GetComponentInParent<PaperSquare>().name;

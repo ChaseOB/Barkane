@@ -388,7 +388,7 @@ public class OcclusionQueue
 
         for (var curr = start.Next; curr != null; curr = curr.Next)
         {
-            (toAdd, inF) = FoldPlayerSeparatorCheck(toAdd, curr.Next.Value, curr.Value, f, inF);
+            (toAdd, inF) = FoldPlayerSeparatorCheck(toAdd, curr.Previous.Value, curr.Value, f, inF);
         }
 
         return toAdd;
