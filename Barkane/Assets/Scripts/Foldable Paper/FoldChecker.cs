@@ -108,13 +108,27 @@ public class FoldChecker : Singleton<FoldChecker>
             print($"Pair: {s1} {pair.Item1.name}, {s2} {pair.Item2.name}");
 
             SquareSide foldSide = fd.foldObjects.foldSquares.Contains(sq1.GetComponentInParent<PaperSquare>().gameObject) ? sq1 : sq2;
+
+            Vector3 foldNormal = foldSide.transform.up;
+            Vector3 axis = fd.axis;
+            Vector3 Cross = Vector3.Cross(foldNormal, axis);
+
+            //axis parallel to fold, no clipping
+            if(Cross.magnitude < 0.001f)
+                continue; 
+            
+            Ray axisRay = new Ray(fd.axisJoints[0].transform.position, fd.axis);
+
+            Vector3 ToJointVector = Vector3.Cross(axisRay.direction, foldSide.transform.position - axisRay.origin);
+            Debug.DrawRay(foldSide.transform.position, ToJointVector, Color.yellow, 20f);
+
             /*GameObject parent = new GameObject();
             parent.transform.position = fd.center;
             GameObject t1 = new GameObject();
             GameObject t2 = new GameObject();
             t1.transform.SetPositionAndRotation(sq1.transform.position, sq1.transform.rotation);
             t2.transform.SetPositionAndRotation(sq1.transform.position, sq2.transform.rotation);        
-            if(fd.foldObjects.foldSquares.Contains(sq1.GetComponentInParent<PaperSquare>().gameObject))
+            if(foldSide == sq1)
                 t1.transform.parent = parent.transform;
             else
                 t2.transform.parent = parent.transform;    
@@ -137,7 +151,7 @@ public class FoldChecker : Singleton<FoldChecker>
             if(d1 > d2) {
                 Debug.Log($"Can't fold, would clip: {s1} {pair.Item1.name}, {s2} {pair.Item2.name}");
                 return false;
-            } */  
+            } */
         }
         return true;
     }
