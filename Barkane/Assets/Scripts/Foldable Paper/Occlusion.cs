@@ -1,9 +1,7 @@
-using BarkaneJoint;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
@@ -26,21 +24,16 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
     public void Clear() => Map.Clear();
     public bool ContainsKey(Vector3Int key) => Map.ContainsKey((key.x, key.y, key.z));
 
-    public List<(SquareSide f, SquareSide p)> SeparatorPairs(HashSet<SquareSide> fObjs, HashSet<SquareSide> pObjs)
+    public List<(SquareSide f, SquareSide p)> SeparatorPairs(HashSet<SquareSide> fObjs)
     {
         var result = new List<(SquareSide f, SquareSide p)>();
         foreach (var (_, oq) in Map)
         {
-            for (var curr = oq.QFaceUp.First; curr.Next != null; curr = curr.Next)
-            {
-                var inF = fObjs.Contains(curr.Value);
-                var inP = pObjs.Contains(curr.Value);
-                if (inF != inP)
-                {
-                    result.Add((inF ? curr.Value : curr.Next.Value, inP ? curr.Value : curr.Next.Value));
-                    break;
-                }
-            }
+            var sepUp = oq.GetFoldPlayerSeparatorFaceUp(fObjs);
+            var sepDown = oq.GetFoldPlayerSeparatorFaceDown(fObjs);
+
+            if (!sepUp.HasValue) result.Add(sepUp.Value);
+            if (!sepDown.HasValue) result.Add(sepDown.Value);
         }
         return result;
     }
@@ -149,9 +142,6 @@ public class OcclusionQueue
     public (Vector3Int normal, Vector3Int major, Vector3Int minor) SpatialBasis { get; private set; }
 
     private SpatialOrientation m_Orientation;
-
-    public LinkedList<SquareSide> QFaceUp => qFaceUp;
-    public LinkedList<SquareSide> QFaceDown => qFaceDown;
 
     LinkedList<SquareSide>
         qFaceUp = new(),
@@ -387,6 +377,49 @@ public class OcclusionQueue
         }
 
         comesSecond = comesFirst;
+    }
+
+    public (SquareSide f, SquareSide p)? GetFoldPlayerSeparatorFaceUp(HashSet<SquareSide> f)
+    {
+        (SquareSide f, SquareSide p)? toAdd = null;
+        if (qFaceUp.Count < 2) return toAdd;
+        var start = qFaceUp.First;
+        var inF = f.Contains(start.Value);
+
+        for (var curr = start.Next; curr != null; curr = curr.Next)
+        {
+            (toAdd, inF) = FoldPlayerSeparatorCheck(toAdd, curr.Next.Value, curr.Value, f, inF);
+        }
+
+        return toAdd;
+    }
+
+    public (SquareSide f, SquareSide p)? GetFoldPlayerSeparatorFaceDown(HashSet<SquareSide> f)
+    {
+        (SquareSide f, SquareSide p)? toAdd = null;
+        if (qFaceUp.Count < 2) return toAdd;
+        var end = qFaceUp.Last;
+        var inF = f.Contains(end.Value);
+
+        for (var curr = end.Previous; curr != null; curr = curr.Previous)
+        {
+            (toAdd, inF) = FoldPlayerSeparatorCheck(toAdd, curr.Next.Value, curr.Value, f, inF);
+        }
+
+        return toAdd;
+    }
+
+    private ((SquareSide f, SquareSide p)?, bool currInF) FoldPlayerSeparatorCheck(
+        in (SquareSide f, SquareSide p)? toAdd, SquareSide prev, SquareSide curr, HashSet<SquareSide> f, bool prevInF)
+    {
+        var currInF = f.Contains(curr);
+        if (currInF != prevInF)
+        {
+            // more than one separator, meaning the queue is interlocked
+            if (!toAdd.HasValue) throw new SidesInterlockedException();
+            else return (((currInF ? curr.OtherSide : prev),(currInF ? prev : curr.OtherSide)), currInF);
+        } else
+            return (toAdd, currInF);
     }
 
     public override string ToString()

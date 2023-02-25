@@ -391,6 +391,7 @@ public class FoldChecker : Singleton<FoldChecker>
     }
 }
 
+public class SidesInterlockedException : UnityException { }
 
 public enum FoldFailureType {
     NONE, //Valid fold
