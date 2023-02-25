@@ -14,6 +14,8 @@ public class FoldObjects {
 
     public List<PaperSquare> PaperSquaresCache;
 
+    public HashSet<SquareSide> SidesSet;
+
     public OcclusionMap OcclusionMap = new OcclusionMap();
 
     public FoldObjects() {
@@ -30,6 +32,17 @@ public class FoldObjects {
         squareParent = sp;
         jointParent = jp;
         squareScripts = new List<PaperSquare>();
+    }
+
+    public void MakeSideSet()
+    {
+        List<SquareSide> sides = new List<SquareSide>();
+        foreach(PaperSquare ps in squareScripts) {
+            sides.Add(ps.bottomSide);
+            sides.Add(ps.topSide);
+        }
+        SidesSet = new HashSet<SquareSide>(sides);
+
     }
 
     public void EnableJointMeshes()

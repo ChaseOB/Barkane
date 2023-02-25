@@ -106,7 +106,7 @@ MonoBehaviour:
   SquareCollider: {fileID: 9111959285705571462, guid: d7555bfb195920947a47d504f148b475, type: 3}
   squareCollidingMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 229632
 --- !u!114 &3127616183961737505
 MonoBehaviour:
   m_ObjectHideFlags: 0

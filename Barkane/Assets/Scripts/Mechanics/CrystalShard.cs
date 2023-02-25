@@ -58,9 +58,9 @@ public class CrystalShard : MonoBehaviour, IThemedItem
     {
         if(crystalActive)
         {
-            goal.CollectShard();
+            goal?.CollectShard();
             this.gameObject.SetActive(false);
-            AudioManager.Instance.Play("Ding");
+            AudioManager.Instance?.Play("Ding");
         }
     }
 

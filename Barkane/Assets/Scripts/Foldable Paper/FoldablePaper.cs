@@ -114,6 +114,8 @@ public class FoldablePaper : MonoBehaviour
             if(ps.PlayerOccupied)
                 playerSquare = ps;
         DFSHelperSquare(playerSquare, true);
+        playerSide.MakeSideSet();
+        foldObjects.MakeSideSet();
         return (playerSide, foldObjects);
     }
 

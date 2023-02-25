@@ -24,9 +24,9 @@ TagManager:
   - PlayerLoc
   - BlocksPlayer
   - Snowball
-  - 
-  - 
-  - 
+  - CrystalHitbox
+  - GlowstickHitbox
+  - Player
   - 
   - 
   - 

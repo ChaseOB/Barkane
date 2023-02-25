@@ -8,14 +8,15 @@ public class SquareCast : MonoBehaviour
     public bool showRay = false;
     public LayerMask mask;
     public float size = 1.6f;
+    public bool customMask = false;
 
-    public bool SquareRaycast(out RaycastHit hit, LayerMask squareCollidingMask, bool overrideMask = true)
+    public bool SquareRaycast(out RaycastHit hit, LayerMask squareCollidingMask)
     {
         RaycastHit h;
         for(int i = 0; i< numRays; i++)
         {
             Vector3 pos1 = this.transform.position - this.transform.forward * size/2 + this.transform.right * size * ((float)i /numRays - 0.5f + 0.5f/numRays);
-            bool collide = Physics.Raycast(pos1, this.transform.forward, out h, size, overrideMask ? squareCollidingMask : mask);
+            bool collide = Physics.Raycast(pos1, this.transform.forward, out h, size, customMask ? mask : squareCollidingMask);
             if(showRay && i % 20 == 0) Debug.DrawRay(pos1, this.transform.forward * size, Color.green, 20);
             if(collide)
             {

@@ -291,7 +291,7 @@ GameObject:
   - component: {fileID: 4687013299889697705}
   - component: {fileID: 1507837465038601378}
   - component: {fileID: 7076500916339454846}
-  m_Layer: 8
+  m_Layer: 15
   m_Name: Block Fold
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -354,6 +354,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f0f92fa42c5900499c2e710cd27f2ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  size: 1.6
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 33024
+  customMask: 1
 --- !u!1 &6366243684362322572
 GameObject:
   m_ObjectHideFlags: 0

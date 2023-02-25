@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class FoldChecker : Singleton<FoldChecker>
 {
@@ -12,9 +13,9 @@ public class FoldChecker : Singleton<FoldChecker>
     }
     
     //Checks if the given fold data is a valid fold. If so, returns true. If not, returns false
-    public bool CheckFoldBool(FoldData foldData)
+    public bool CheckFoldBool(FoldData foldData, FoldablePaper foldablePaper)
     {
-        FoldFailureType failureType = CheckFold(foldData);
+        FoldFailureType failureType = CheckFold(foldData, foldablePaper);
         if(failureType == FoldFailureType.NONE)
             return true;
         return false;
@@ -27,7 +28,7 @@ public class FoldChecker : Singleton<FoldChecker>
     COLLISION   hit object, player, paper, etc on fold path
     NOCHECK     could not check fold due to another action occurring 
     */
-    public FoldFailureType CheckFold(FoldData foldData) 
+    public FoldFailureType CheckFold(FoldData foldData, FoldablePaper foldablePaper) 
     {
         if(!ActionLockManager.Instance.TryTakeLock(this))
             return FoldFailureType.NOCHECK;
@@ -36,7 +37,7 @@ public class FoldChecker : Singleton<FoldChecker>
             ActionLockManager.Instance.TryRemoveLock(this);
             return FoldFailureType.KINKED;
         }
-        if(!CheckPaperClipping(foldData))
+        if(!CheckPaperClipping(foldData, foldablePaper))
         {
             ActionLockManager.Instance.TryRemoveLock(this);
             return FoldFailureType.PAPERCLIP;
@@ -87,37 +88,19 @@ public class FoldChecker : Singleton<FoldChecker>
         sides touch but both are on the same side of the fold those sides will remain hidden)
     */
 
-    /*private bool CheckPaperClipping(FoldData fd)
+    private bool CheckPaperClipping(FoldData fd, FoldablePaper foldablePaper)
     {
-        List<List<PaperSquare>> overlaps = fd.FindOverlappingSquares();
-        List<List<PaperSquare>> checks = new List<List<PaperSquare>>();
-        foreach(List<PaperSquare> list in overlaps)
-        {
-            bool foldSide = false;
-            bool playerSide = false;
-            foreach(PaperSquare s in list) {
-                if(fd.foldObjects.squareScripts.Contains(s))
-                    foldSide = true;
-                if(fd.playerFoldObjects.squareScripts.Contains(s))
-                    playerSide = true;
-            }
-            if(playerSide && foldSide)
-                checks.Add(list);
+        List<(SquareSide, SquareSide)> pairs = new List<(SquareSide, SquareSide)>();
+
+        pairs = foldablePaper.OcclusionMap.SeparatorPairs(fd.foldObjects.SidesSet);
+        foreach((SquareSide, SquareSide) pair in pairs) {
+            string s1 = pair.Item1.GetComponentInParent<PaperSquare>().name;
+            string s2 = pair.Item2.GetComponentInParent<PaperSquare>().name;
+            print($"Pair: {s1} {pair.Item1.name}, {s2} {pair.Item2.name}");
         }
-
-        //If there are no positions to check, then there is no potentially invalid fold
-        if(checks.Count == 0)
-            return true;
-        
-        foreach(List<PaperSquare> list in checks)
-        {
-            
-        }
-
-
         //WIP: WILL ALWAYS RETURN TRUE RN
         return true;
-    }*/
+    }
 
 
     /* FOLD CHECK 2: PAPER CLIPPING
@@ -131,7 +114,7 @@ public class FoldChecker : Singleton<FoldChecker>
         -generally janky and unreliable, needs a total overhaul
     */
 
-    private bool CheckPaperClipping(FoldData fd)
+    /*private bool CheckPaperClipping(FoldData fd)
     {
         Dictionary<Vector3Int, HashSet<PaperSquare>> overlaps = fd.FindOverlappingSquares();
         foreach(HashSet<PaperSquare> list in overlaps.Values)
@@ -226,7 +209,7 @@ public class FoldChecker : Singleton<FoldChecker>
                        // return false;
                     }
                     }
-                }
+                }*/
 
 
 
@@ -272,14 +255,13 @@ public class FoldChecker : Singleton<FoldChecker>
                 }
                 Destroy(t1);
                 Destroy(t2);
-                Destroy(parent);*/
+                Destroy(parent);
                 Destroy(t1);
                 Destroy(t2);
                 Destroy(parent);
             }
         }
-        return true;
-    }
+    }*/
 
 
     /* FOLD CHECK 3: PAPER AND OBJECT COLLISION
@@ -319,9 +301,10 @@ public class FoldChecker : Singleton<FoldChecker>
                     GameObject blockSquare = Instantiate(SquareCollider, 
                                                 c.transform.position, 
                                                 go.transform.rotation);
-                    Debug.Log(c.center);
+                    blockSquare.GetComponent<SquareCast>().size = bfold.size;
                     blockSquare.name = "bs";
                     blockSquare.GetComponent<SquareCast>().showRay = true;
+                    blockSquare.GetComponent<SquareCast>().customMask = bfold.customMask;
                     blockSquare.transform.position = blockSquare.transform.position + blockSquare.transform.rotation * c.center;
                     blockSquare.transform.parent = parent2.transform;
                     if(bfold.GetComponentInParent<CrystalShard>())
