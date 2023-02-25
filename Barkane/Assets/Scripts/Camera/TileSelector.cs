@@ -238,7 +238,7 @@ public class TileSelector : Singleton<TileSelector>
     {
         if(FoldChecker.Instance == null) return;
         FoldData fd1 = foldablePaper.BuildFoldData(90);
-        FoldFailureType failureType1 = FoldChecker.Instance.CheckFold(fd1);
+        FoldFailureType failureType1 = FoldChecker.Instance.CheckFold(fd1, foldablePaper);
         if(failureType1 == FoldFailureType.KINKED ||
             failureType1 == FoldFailureType.NOCHECK)
             return;
@@ -252,7 +252,7 @@ public class TileSelector : Singleton<TileSelector>
         }
 
         FoldData fd2 = foldablePaper.BuildFoldData(-90);
-        FoldFailureType failureType2 = FoldChecker.Instance.CheckFold(fd2);
+        FoldFailureType failureType2 = FoldChecker.Instance.CheckFold(fd2, foldablePaper);
         if(failureType2 == FoldFailureType.KINKED ||
             failureType2 == FoldFailureType.NOCHECK)
             return;
