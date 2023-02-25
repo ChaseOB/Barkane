@@ -8,7 +8,6 @@ using Random = UnityEngine.Random;
 
 using JointRenderer = BarkaneJoint.JointRenderer;
 using JointPieceOwnership = BarkaneJoint.JointRenderer.JointPieceOwnership;
-using UnityEditor.Callbacks;
 using System.Text;
 
 [ExecuteInEditMode]
@@ -444,7 +443,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
                 var visible = jpos[i].Renderer.enabled;
 
-                Handles.Label(root.TransformDirection(Idx2LocalDir(i)) + root.position + root.up * 0.5f, $"{(visible ? "(" : "")}{i}{(visible ? ")" : "")}");
+               // Handles.Label(root.TransformDirection(Idx2LocalDir(i)) + root.position + root.up * 0.5f, $"{(visible ? "(" : "")}{i}{(visible ? ")" : "")}");
             }
         }
     }
