@@ -178,10 +178,14 @@ public class TileSelector : Singleton<TileSelector>
         switch (caseNum)
         {
             case 3:
-                if(dist90 < distNeg90)
-                    foldAnimator.Fold(foldablePaper.BuildFoldData(90));
+                if(ghostFold90.activeSelf)
+                    foldAnimator.Fold(foldData90);
                 else
-                    foldAnimator.Fold(foldablePaper.BuildFoldData(-90));
+                    foldAnimator.Fold(foldDataNeg90);
+                //if(dist90 < distNeg90)
+                   // foldAnimator.Fold(foldablePaper.BuildFoldData(90));
+               // else
+                   // foldAnimator.Fold(foldablePaper.BuildFoldData(-90));
                 break;
             case 2:
                 foldAnimator.Fold(foldablePaper.BuildFoldData(90));
@@ -216,9 +220,11 @@ public class TileSelector : Singleton<TileSelector>
         foldablePaper.foldJoint = null;
         if(ghostFold90 != null){
             Destroy(ghostFold90);
+            foldData90 = null;
         }
         if(ghostFoldNeg90 != null){
             Destroy(ghostFoldNeg90);
+            foldDataNeg90 = null;
         }
 
         validFolds = new bool[] {false, false};
@@ -249,6 +255,7 @@ public class TileSelector : Singleton<TileSelector>
             indicator90.BuildIndicator(fd1, camera);
             ghostFold90.SetActive(false);
             validFolds[0] = true;
+            foldData90 = fd1;
         }
 
         FoldData fd2 = foldablePaper.BuildFoldData(-90);
@@ -262,7 +269,8 @@ public class TileSelector : Singleton<TileSelector>
             indicatorNeg90 = ghostFoldNeg90.GetComponent<FoldIndicator>();
             indicatorNeg90.BuildIndicator(fd2, camera);
             ghostFoldNeg90.SetActive(false);
-            validFolds[1] = true;        
+            validFolds[1] = true;  
+            foldDataNeg90 = fd2;
         }
         
         }

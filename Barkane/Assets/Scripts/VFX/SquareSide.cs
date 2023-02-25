@@ -47,6 +47,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     PaperSquareFace Metadata;
 
+    public GameObject playerLoc;
+
     public SquareSide OtherSide => parentSquare.topSide == this ? parentSquare.bottomSide : parentSquare.topSide;
 
     void IRefreshable.EditorRefresh()
@@ -82,6 +84,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
             m_SideVisiblity = value;
 
             mRenderer.enabled = value == SideVisiblity.full;
+
+            playerLoc.SetActive(value == SideVisiblity.full);
 
             if (Metadata.Shard)
             {

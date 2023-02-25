@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 404eb79560c8e5f4e98c5f2862629bf5, type: 3}
   m_Name: Tape Render Settings
   m_EditorClassIdentifier: 
-  elevation: 0.032
+  elevation: 0
   width: 0.861
   thickness: 0.0153
   halfLength: 0.193
