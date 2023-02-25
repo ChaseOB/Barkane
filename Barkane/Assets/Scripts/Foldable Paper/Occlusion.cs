@@ -30,10 +30,10 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
         foreach (var (_, oq) in Map)
         {
             var sepUp = oq.GetFoldPlayerSeparatorFaceUp(fObjs);
-            var sepDown = oq.GetFoldPlayerSeparatorFaceDown(fObjs);
+            // var sepDown = oq.GetFoldPlayerSeparatorFaceDown(fObjs);
 
             if (sepUp.HasValue) result.Add(sepUp.Value);
-            if (sepDown.HasValue) result.Add(sepDown.Value);
+            // if (sepDown.HasValue) result.Add(sepDown.Value);
         }
         return result;
     }
