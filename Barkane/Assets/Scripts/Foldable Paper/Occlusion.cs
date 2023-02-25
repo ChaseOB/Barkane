@@ -415,7 +415,7 @@ public class OcclusionQueue
         if (currInF != prevInF)
         {
             // more than one separator, meaning the queue is interlocked
-            if (!toAdd.HasValue) throw new SidesInterlockedException();
+            if (toAdd.HasValue) throw new SidesInterlockedException();
             else return (((currInF ? curr.OtherSide : prev),(currInF ? prev : curr.OtherSide)), currInF);
         } else
             return (toAdd, currInF);
