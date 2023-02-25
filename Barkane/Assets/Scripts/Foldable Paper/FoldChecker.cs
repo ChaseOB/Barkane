@@ -93,18 +93,52 @@ public class FoldChecker : Singleton<FoldChecker>
         List<(SquareSide, SquareSide)> pairs = new List<(SquareSide, SquareSide)>();
         try{
             pairs = foldablePaper.OcclusionMap.SeparatorPairs(fd.foldObjects.SidesSet);
-        } catch(SidesInterlockedException)
+        } 
+        catch(SidesInterlockedException)
         {
             print("interlocks");
             return false;
         }
 
         foreach((SquareSide, SquareSide) pair in pairs) {
+            SquareSide sq1 = pair.Item1;
+            SquareSide sq2 = pair.Item2;
             string s1 = pair.Item1.GetComponentInParent<PaperSquare>().name;
             string s2 = pair.Item2.GetComponentInParent<PaperSquare>().name;
             print($"Pair: {s1} {pair.Item1.name}, {s2} {pair.Item2.name}");
+
+            SquareSide foldSide = fd.foldObjects.foldSquares.Contains(sq1.GetComponentInParent<PaperSquare>().gameObject) ? sq1 : sq2;
+            /*GameObject parent = new GameObject();
+            parent.transform.position = fd.center;
+            GameObject t1 = new GameObject();
+            GameObject t2 = new GameObject();
+            t1.transform.SetPositionAndRotation(sq1.transform.position, sq1.transform.rotation);
+            t2.transform.SetPositionAndRotation(sq1.transform.position, sq2.transform.rotation);        
+            if(fd.foldObjects.foldSquares.Contains(sq1.GetComponentInParent<PaperSquare>().gameObject))
+                t1.transform.parent = parent.transform;
+            else
+                t2.transform.parent = parent.transform;    
+
+            parent.transform.RotateAround(fd.center, fd.axis, fd.degrees);
+            Vector3 t3 = t1.transform.position + t1.transform.up * 0.1f;
+            Vector3 t4 = t2.transform.position + t2.transform.up * 0.1f;
+            float d1 = Vector3.Distance(t3, t4);
+            Debug.DrawLine(t3, t4, Color.blue, 30);
+                    
+            parent.transform.RotateAround(fd.center, fd.axis, 180);
+            t3 = t1.transform.position + t1.transform.up * 0.1f;
+            t4 = t2.transform.position + t2.transform.up * 0.1f;   
+            float d2 = Vector3.Distance(t3, t4);
+            Debug.DrawLine(t3, t4, Color.yellow, 30);
+                
+            Destroy(t1);
+            Destroy(t2);
+            Destroy(parent);
+            if(d1 > d2) {
+                Debug.Log($"Can't fold, would clip: {s1} {pair.Item1.name}, {s2} {pair.Item2.name}");
+                return false;
+            } */  
         }
-        //WIP: WILL ALWAYS RETURN TRUE RN
         return true;
     }
 
