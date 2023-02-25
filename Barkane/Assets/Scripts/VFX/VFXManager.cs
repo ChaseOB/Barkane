@@ -81,12 +81,17 @@ namespace BarkaneEditor
                 }
             }
         }
-
+        
         internal void UpdateTheme()
+        {
+            UpdateTheme(Theme);
+        }
+
+        internal void UpdateTheme(Theme theme)
         {
             foreach (var t in FindObjectsOfType<MonoBehaviour>().OfType<IThemedItem>())
             {
-                t.UpdateTheme(Theme);
+                t.UpdateTheme(theme);
             }
             Refresh();
         }

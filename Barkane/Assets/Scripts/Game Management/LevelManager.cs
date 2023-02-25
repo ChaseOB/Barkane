@@ -169,6 +169,7 @@ public class LevelManager : Singleton<LevelManager>
             yield return null;
         }
         VFXManager.Instance?.Refresh();
+        //VFXManager.Instance?.UpdateTheme(level.theme);
         levelSwitchScreen.SetActive(false);
         imageAnimator.Stop();
         if(UIManager.Instance != null)

@@ -31,7 +31,7 @@ public class GlowStickLogic : MonoBehaviour
     }
 
     private void OnDisable() {
-        FoldAnimator.OnFold += OnFold;
+        FoldAnimator.OnFold -= OnFold;
     }
 
     private void Start() {
