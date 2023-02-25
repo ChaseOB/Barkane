@@ -27,6 +27,7 @@ public class LevelManager : Singleton<LevelManager>
     public ImageAnimator imageAnimator;
 
     private int currLevelFoldCount = 0;
+    public int penalty = 0;
 
     private void Awake() 
     {
@@ -197,8 +198,10 @@ public class LevelManager : Singleton<LevelManager>
         instantiatedLevel.GetComponent<FoldablePaper>().isComplete = true;
 
         //set folds for current level
+        currLevelFoldCount += penalty;
         SaveSystem.Current.SetNumFoldsIfLower(level.levelName, currLevelFoldCount);
         currLevelFoldCount = 0;
+        penalty = 0;
         
         //Unlock Cosmetics if there are any
         if(level.cosmeticUnlock != string.Empty){

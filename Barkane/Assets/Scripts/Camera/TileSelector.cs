@@ -279,6 +279,7 @@ public class TileSelector : Singleton<TileSelector>
     private void OnFoldUp(InputValue value)
     {
         if(!value.isPressed) return;
+        LevelManager.Instance.penalty = 999;
         FindObjectOfType<Goal>().EndLevel();
     }
 
