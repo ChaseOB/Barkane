@@ -26,6 +26,26 @@ public class OcclusionMap : IEnumerable<KeyValuePair<Vector3Int, OcclusionQueue>
     public void Clear() => Map.Clear();
     public bool ContainsKey(Vector3Int key) => Map.ContainsKey((key.x, key.y, key.z));
 
+    public List<(SquareSide f, SquareSide p)> SeparatorPairs(HashSet<SquareSide> fObjs, HashSet<SquareSide> pObjs)
+    {
+        var result = new List<(SquareSide f, SquareSide p)>();
+        foreach (var (_, oq) in Map)
+        {
+            for (var curr = oq.QFaceUp.First; curr.Next != null; curr = curr.Next)
+            {
+                var inF = fObjs.Contains(curr.Value);
+                var inP = pObjs.Contains(curr.Value);
+                if (inF != inP)
+                {
+                    result.Add((curr.Value, curr.Next.Value));
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+    private List<(SquareSide f, SquareSide p)> m_SeparatorPairs;
+
     public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
@@ -130,6 +150,9 @@ public class OcclusionQueue
 
     private SpatialOrientation m_Orientation;
 
+    public LinkedList<SquareSide> QFaceUp => qFaceUp;
+    public LinkedList<SquareSide> QFaceDown => qFaceDown;
+
     LinkedList<SquareSide>
         qFaceUp = new(),
         qFaceDown = new();
@@ -138,6 +161,9 @@ public class OcclusionQueue
         faceUp = new();
 
     public bool IsEmpty => faceUp.Count == 0 && faceDown.Count == 0;
+
+    public SquareSide LastFaceUp => qFaceUp.Count == 0 ? null : qFaceUp.Last.Value;
+    public SquareSide LastFaceDown => qFaceDown.Count == 0 ? null : qFaceDown.Last.Value;
 
     public Vector3Int Offset { get; private set; }
 
