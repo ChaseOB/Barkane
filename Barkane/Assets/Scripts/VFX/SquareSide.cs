@@ -58,6 +58,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     PaperSquareFace Metadata;
 
+    public SquareSide OtherSide => parentSquare.topSide == this ? parentSquare.bottomSide : parentSquare.topSide;
+
     void IRefreshable.EditorRefresh()
     {
         UpdateMesh();
