@@ -163,16 +163,33 @@ public class OcclusionQueue
         return Matrix4x4.identity;
     };
 
-    public OcclusionQueue MakeFlippedCopy() => new OcclusionQueue
+    public OcclusionQueue MakeFlippedCopy()
     {
-        Orientation = Orientation,
-        Offset = Offset,
-        qFaceDown = qFaceUp,
-        qFaceUp = qFaceDown,
-        faceDown = faceUp,
-        faceUp = faceDown,
-        encoderFactory = encoderFactory
-    };
+        var rqFaceDown = new LinkedList<SquareSide>();
+        var rqFaceUp = new LinkedList<SquareSide>();
+        
+        if (qFaceUp.Count > 0) {
+            for (var curr = qFaceUp.Last; curr != null; curr = curr.Previous) {
+                rqFaceUp.Add(curr.Value);
+            }
+        }
+        
+        if (qFaceDown.Count > 0) {
+            for (var curr = qFaceDown.Last; curr != null; curr = curr.Previous) {
+                rqFaceDown.Add(curr.value);
+            }
+        }
+        
+        return new() {
+            Orientation = Orientation,
+            Offset = Offset,
+            qFaceDown = rqFaceUp,
+            qFaceUp = rqFaceDown,
+            faceDown = faceUp,
+            faceUp = faceDown,
+            encoderFactory = encoderFactory
+        };
+    }
 
     public void UpdateSpace(Vector3Int normal, Vector3Int center, Func<Matrix4x4> transformFactory)
     {
