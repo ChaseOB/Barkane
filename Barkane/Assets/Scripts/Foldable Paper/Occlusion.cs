@@ -170,13 +170,13 @@ public class OcclusionQueue
         
         if (qFaceUp.Count > 0) {
             for (var curr = qFaceUp.Last; curr != null; curr = curr.Previous) {
-                rqFaceUp.Add(curr.Value);
+                rqFaceUp.AddLast(curr.Value);
             }
         }
         
         if (qFaceDown.Count > 0) {
             for (var curr = qFaceDown.Last; curr != null; curr = curr.Previous) {
-                rqFaceDown.Add(curr.value);
+                rqFaceDown.AddLast(curr.Value);
             }
         }
         
