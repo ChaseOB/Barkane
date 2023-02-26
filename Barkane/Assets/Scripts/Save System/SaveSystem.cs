@@ -30,7 +30,7 @@ public class SaveSystem
     private static SaveProfile current;
     private static int currentIndex = -1; // if -1, then it's a temporary profile
 
-    public static int maxSaves = 30;
+    public static int maxSaves = 50;
     private static SaveProfile[] saveProfiles = new SaveProfile[maxSaves];
 
     public SaveSystem()
