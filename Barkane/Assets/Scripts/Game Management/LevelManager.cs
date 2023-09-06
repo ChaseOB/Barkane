@@ -69,6 +69,12 @@ public class LevelManager : Singleton<LevelManager>
         Debug.LogWarning("No valid level found!");
     }
 
+    public void UnlockLevel(int index)
+    {
+        SaveSystem.Current.UnlockLevel(levelList[index].levelName);
+    }
+
+
     //Handles index setting, special case of last level
     public void LoadLevel(int index)
     {

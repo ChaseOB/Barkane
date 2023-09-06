@@ -12,7 +12,7 @@ public class SaveProfile
     private bool completionStatus;
     private float playTimeInSeconds;
     private System.DateTime lastSaved;
-    private string lastLevel;
+    private string lastLevel = "cutscene";
     private string cosmetic;
     private int lastLevelWorldNum;
     private int lastLevelNum;

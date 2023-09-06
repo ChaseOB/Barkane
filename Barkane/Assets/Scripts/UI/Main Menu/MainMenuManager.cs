@@ -103,6 +103,13 @@ public class MainMenuManager : Singleton<MainMenuManager>
     }
 
     public void ContinueGame() {
+        string s = profile.GetLastLevelString();
+        print(s);
+        if(s == "cutscene")
+        {
+            StartGame();
+            return;
+        }
         LevelManager.Instance.LoadLevel(profile.GetLastLevelString());
     }
 

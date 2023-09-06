@@ -32,6 +32,7 @@ public class UIManager : Singleton<UIManager>
     private bool showCosmetic = false;
     private string cosmetic;
     private int glowstickHealth;
+    private int numFolds;
 
     private void Awake() {
         InitializeSingleton();
@@ -94,15 +95,16 @@ public class UIManager : Singleton<UIManager>
 
     public static void UpdateFoldCount(int numFolds)
     {
-        if(Instance != null)
-            Instance.UpdateFC(numFolds);
+        Instance?.UpdateFC(numFolds);
     }
 
     public void UpdateFC(int numFolds)
     {
+        this.numFolds = numFolds;
         foldCountText.text = numFolds.ToString();
         yourFoldCountText.text = numFolds.ToString();
     }
+
     private void OnGlowstickChange(object sender, GlowStickLogic.GlowStickArgs e) {
         UpdateGlow(e.lifetime);
         print(e.lifetime);
@@ -129,7 +131,10 @@ public class UIManager : Singleton<UIManager>
     public void EndLevel()
     {
         //C: This is a horrible way to do this. I don't care
-        bestFoldCountText.text = SaveSystem.Current.GetFolds(LevelManager.Instance.GetCurrentLevel().levelName).ToString();
+        int bestFolds = SaveSystem.Current.GetFolds(LevelManager.Instance.GetCurrentLevel().levelName);
+        if(bestFolds == -1 || numFolds < bestFolds) 
+            bestFolds = numFolds;
+        bestFoldCountText.text = bestFolds.ToString();
         Time.timeScale = 0;
         if(showCosmetic) {
             cosmeticGroup.SetActive(true);

@@ -18,8 +18,15 @@ public class CutsceneManager : MonoBehaviour
     private float mintime = 17f;
     private bool ended = false;
 
+    private bool disabled = false;
 
     private void Start() {
+       LevelManager.Instance.UnlockLevel(0);
+        if(disabled)
+        {
+            EndCutscene();
+            return;
+        }        
         Cursor.visible = false;
         StartCoroutine(WaitToStart());
     }
