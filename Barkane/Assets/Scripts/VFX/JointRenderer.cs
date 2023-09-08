@@ -286,10 +286,10 @@ namespace BarkaneJoint
 
                 // note that the margin is also affected by the size setting
                 // the margin applies to a 01 (uv) square which is sized to produce the actual square
-                vA1[i] = pivotBaseMid + margin * jointGeometry.nJ2A + new Vector3(0, a1.YOffsetJoint, 0);;// + side1Geometry.nA * 0.0006f;
-                vB1[i] = pivotBaseMid + margin * jointGeometry.nJ2B + new Vector3(0, b1.YOffsetJoint, 0);// + side1Geometry.nB * 0.0006f;
-                vA2[i] = pivotBaseMid + margin * jointGeometry.nJ2A + new Vector3(0, a2.YOffsetJoint, 0);// + side2Geometry.nA * 0.0006f;
-                vB2[i] = pivotBaseMid + margin * jointGeometry.nJ2B + new Vector3(0, b1.YOffsetJoint, 0);// + side2Geometry.nB * 0.0006f;
+                vA1[i] = pivotBaseMid + margin * jointGeometry.nJ2A +  a1.parentSquare.transform.rotation * new Vector3(0, a1.YOffsetJoint, 0);;// + side1Geometry.nA * 0.0006f;
+                vB1[i] = pivotBaseMid + margin * jointGeometry.nJ2B + b1.parentSquare.transform.rotation * new Vector3(0, b1.YOffsetJoint, 0);// + side1Geometry.nB * 0.0006f;
+                vA2[i] = pivotBaseMid + margin * jointGeometry.nJ2A + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);// + side2Geometry.nA * 0.0006f;
+                vB2[i] = pivotBaseMid + margin * jointGeometry.nJ2B + b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0);// + side2Geometry.nB * 0.0006f;
 
                 vA1[i + settings.PivotOffset] = pivotBaseStart;
                 vB1[i + settings.PivotOffset] = pivotBaseStart;

@@ -85,7 +85,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
         {
             m_SideVisiblity = value;
 
-            mRenderer.enabled = value == SideVisiblity.full;
+            //mRenderer.enabled = value == SideVisiblity.full;
 
             playerLoc.SetActive(value == SideVisiblity.full);
 
@@ -383,7 +383,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
         {
             for (ushort i = 0; i < 4; i++)
             {
-                if (jpos[i] != null) jpos[i].Renderer.enabled = ((ushort)Visibilities & ((ushort) 1 << i)) != 0;
+                if (jpos[i] != null) jpos[i].Renderer.enabled = true;
+                //((ushort)Visibilities & ((ushort) 1 << i)) != 0;
             }
         }
 
