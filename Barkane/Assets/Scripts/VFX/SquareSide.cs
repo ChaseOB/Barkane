@@ -50,6 +50,9 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public SquareSide OtherSide => parentSquare.topSide == this ? parentSquare.bottomSide : parentSquare.topSide;
 
+    public float YOffset;
+    public float YOffsetJoint =>  parentSquare.topSide == this ? YOffset : -1 * YOffset;
+
     void IRefreshable.EditorRefresh()
     {
         UpdateMesh();
@@ -276,6 +279,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public void SetYPositionOffset(float offset)
     {
+        YOffset = offset;
         if(materialInstance == null) return;
         materialInstance.SetFloat("_YOffset", offset);
     }

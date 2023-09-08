@@ -26,7 +26,7 @@ namespace BarkaneJoint
         [SerializeField] MeshRenderer mrA1, mrA2, mrB1, mrB2;
 
         public ((GameObject, GameObject), (GameObject, GameObject)) facePairs => ((a1.gameObject, b1.gameObject), (a2.gameObject, b2.gameObject));
-        [SerializeField, HideInInspector] private SquareSide a1, a2, b1, b2;
+        [SerializeField] private SquareSide a1, a2, b1, b2;
 
         [SerializeField, HideInInspector] private Vector3[] randoms;
 
@@ -44,6 +44,8 @@ namespace BarkaneJoint
         private Vector3[] vA1, vA2, vB1, vB2;// nA1, nA2, nB1, nB2;
 
         float scaledSquareSize => squareRenderSettings.squareSize * (1 - squareRenderSettings.margin);
+
+        public Vector3 start;
 
         /// <summary>
         /// Can be called manually in inspector or automatically by other scene editor utilities.
@@ -203,6 +205,12 @@ namespace BarkaneJoint
     #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(jointGeometry.pA, new Vector3(2, 0.1f, 2));
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(this.transform.position + start, 0.03f);
+            Gizmos.color = Color.black;
+            Gizmos.DrawWireCube(jointGeometry.pB, new Vector3(2, 0.1f, 2));
             //if (filter.sharedMesh != null)
             //{
             //    var vertices = filter.sharedMesh.vertices;
@@ -273,12 +281,15 @@ namespace BarkaneJoint
                 var pivotBaseMid = tMid * scaledSquareSize * jointGeometry1.tJ;
                 var margin = squareRenderSettings.margin + .001f;
 
+                start = pivotBaseMid + margin * jointGeometry.nJ2A + new Vector3(0, a1.YOffset, 0);
+                
+
                 // note that the margin is also affected by the size setting
                 // the margin applies to a 01 (uv) square which is sized to produce the actual square
-                vA1[i] = pivotBaseMid + margin * jointGeometry.nJ2A;// + side1Geometry.nA * 0.0006f;
-                vB1[i] = pivotBaseMid + margin * jointGeometry.nJ2B;// + side1Geometry.nB * 0.0006f;
-                vA2[i] = pivotBaseMid + margin * jointGeometry.nJ2A;// + side2Geometry.nA * 0.0006f;
-                vB2[i] = pivotBaseMid + margin * jointGeometry.nJ2B;// + side2Geometry.nB * 0.0006f;
+                vA1[i] = pivotBaseMid + margin * jointGeometry.nJ2A + new Vector3(0, a1.YOffsetJoint, 0);;// + side1Geometry.nA * 0.0006f;
+                vB1[i] = pivotBaseMid + margin * jointGeometry.nJ2B + new Vector3(0, b1.YOffsetJoint, 0);// + side1Geometry.nB * 0.0006f;
+                vA2[i] = pivotBaseMid + margin * jointGeometry.nJ2A + new Vector3(0, a2.YOffsetJoint, 0);// + side2Geometry.nA * 0.0006f;
+                vB2[i] = pivotBaseMid + margin * jointGeometry.nJ2B + new Vector3(0, b1.YOffsetJoint, 0);// + side2Geometry.nB * 0.0006f;
 
                 vA1[i + settings.PivotOffset] = pivotBaseStart;
                 vB1[i + settings.PivotOffset] = pivotBaseStart;
@@ -421,6 +432,9 @@ namespace BarkaneJoint
         {
             g.pA = a.transform.position;
             g.pB = b.transform.position;
+
+            //g.pA = a.transform.position + new Vector3(0, a.YOffset, 0);
+            //g.pB = b.transform.position + new Vector3(0, b.YOffset, 0);
             g.pJ = j.transform.position;
             g.nJ2A = (g.pA - g.pJ).normalized;
             g.nJ2B = (g.pB - g.pJ).normalized;
