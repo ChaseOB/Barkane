@@ -274,6 +274,12 @@ public class SquareSide : MonoBehaviour, IRefreshable
     public static implicit operator (int, int, int)(SquareSide s) => s.Coordinate;
 
 
+    public void SetYPositionOffset(float offset)
+    {
+        if(materialInstance == null) return;
+        materialInstance.SetFloat("_YOffset", offset);
+    }
+
     #region overlap
 
     public void ToggleMesh(bool val)

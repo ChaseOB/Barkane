@@ -22,6 +22,8 @@ public class PaperSquare : MonoBehaviour
     public GameObject BottomHalf => bottomHalf;
     [SerializeField] private EdgeParticles edgeParticles;
 
+    public float YOffset;
+
     public SquareSide topSide;
     public SquareSide bottomSide;
 
@@ -79,6 +81,11 @@ public class PaperSquare : MonoBehaviour
             RemoveAdjacentJoints();
         }
 #endif
+    }
+
+    private void Update() {
+        topSide.SetYPositionOffset(YOffset);
+        bottomSide.SetYPositionOffset(-1 * YOffset);
     }
 
     public void EjectFromGlobalQueue()
