@@ -135,6 +135,8 @@ public class FoldData2
     public Vector3Int axisPosition;
     public Vector3Int axisVector;
     public int degrees;
+    
+
 
     public FoldData2(List<PaperJoint> aj, List<FoldableObject> fo, List<FoldableObject> pfo, Vector3Int apos, Vector3Int avec, int deg) {
         axisJoints = aj;
@@ -148,7 +150,7 @@ public class FoldData2
 }
 
 
-
+ 
 public class FoldChecker2 : Singleton<FoldChecker2>
 {
     private void Awake() {
