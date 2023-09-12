@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 public class FoldChecker : Singleton<FoldChecker>
 {
     private void Awake() {
@@ -12,16 +13,18 @@ public class FoldChecker : Singleton<FoldChecker>
     {
         Quaternion rotation = Quaternion.Euler(fd.axisVector * fd.degrees);
 
-        foreach(SquareStack s in fd.foldObjects)
+        foreach(SquareStack s in fd.foldObjects.Where( s => s is SquareStack))
         {
+   
             Vector3Int target = Vector3Int.RoundToInt(rotation * (s.currLocation - fd.axisPosition) + fd.axisPosition);
             s.SetTarget(target);
             print("intial Location : " + s.currLocation  + " axis " + s.orientation + " Target Location: " + s.targetLocation + " axis " + s.targetorientation);
+            
         }
 
         List<FoldableObject> combined = new();
-        combined.AddRange(fd.playerFoldObjects);
-        combined.AddRange(fd.foldObjects);
+        combined.AddRange(fd.playerFoldObjects.Where( s => s is SquareStack));
+        combined.AddRange(fd.foldObjects.Where( s => s is SquareStack));
         foreach(SquareStack s1 in combined)
         {
             

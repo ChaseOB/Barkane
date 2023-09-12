@@ -13,8 +13,8 @@ public class FoldablePaper : MonoBehaviour
     private Dictionary<PaperSquare,  List<PaperJoint>> adjListSquareToJoint;
     private Dictionary<PaperJoint,  List<PaperSquare>> adjListJointToSquare;
     public FoldAnimator foldAnimator;
-    private  FoldObjects playerSide;
-    private  FoldObjects foldObjects;
+    // private  FoldObjects playerSide;
+    // private  FoldObjects foldObjects;
     private HashSet<PaperSquare> visitedSquares = new HashSet<PaperSquare>();
     private HashSet<PaperJoint> visitedJoints = new HashSet<PaperJoint>();
     public PaperJoint foldJoint;
@@ -30,7 +30,7 @@ public class FoldablePaper : MonoBehaviour
 
     // private List<FoldableObject> playerSideFoldableObjects = new();
     // private List<FoldableObject> foldSideFoldableObjects = new();
-    private FoldObjects2 foldObjects2 = new();
+    private FoldObjects foldObjects = new();
 
     private void Awake() 
     {
@@ -175,7 +175,7 @@ public class FoldablePaper : MonoBehaviour
     //     return null;
     // }
 
-    public (FoldObjects, FoldObjects) FindFoldObjects()
+    public FoldObjects FindFoldObjects()
     {
         visitedJoints.Clear();
         visitedSquares.Clear();
@@ -186,22 +186,22 @@ public class FoldablePaper : MonoBehaviour
             if(ps.PlayerOccupied)
                 playerSquare = ps;
         DFSHelperSquare(playerSquare, true);
-        return (playerSide, foldObjects);
+        return foldObjects;
     }
 
     private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
     {
         if(ps == null || visitedSquares.Contains(ps)) return;
         visitedSquares.Add(ps);
-        if(isPlayerSide && ! playerSide.squareScripts.Contains(ps)) {
+        if(isPlayerSide) { //Removed check for duplicate elements, but should be covered by visted set
             SquareStack s = new(Vector3Int.RoundToInt(ps.transform.position));
             s.squares.AddFirst(ps);
-            foldObjects2.playerSideObjects.Add(s);
+            foldObjects.playerSideObjects.Add(s);
         }
-        else if (!foldObjects.squareScripts.Contains(ps)){
+        else{
             SquareStack s = new(Vector3Int.RoundToInt(ps.transform.position));
             s.squares.AddFirst(ps);
-            foldObjects2.foldSideObjects.Add(s);
+            foldObjects.foldSideObjects.Add(s);
         }
         foreach(PaperJoint adjJoint in adjListSquareToJoint[ps])
         {
@@ -217,11 +217,11 @@ public class FoldablePaper : MonoBehaviour
         isPlayerSide = pj.showLine ? !isPlayerSide : isPlayerSide; //C: if we cross the fold line, then this value changes. We're essentially slicing the graph into 2 parts
         JointData j = new(pj);
         if(pj.showLine)
-            foldObjects2.axisJoints.Add(j);
+            foldObjects.axisJoints.Add(pj);
         if(isPlayerSide)
-           foldObjects2.playerSideObjects.Add(j);
+           foldObjects.playerSideObjects.Add(j);
         else
-            foldObjects2.foldSideObjects.Add(j);
+            foldObjects.foldSideObjects.Add(j);
         foreach(PaperSquare adjSquare in adjListJointToSquare[pj])
         {
             if(!visitedSquares.Contains(adjSquare))
@@ -232,27 +232,33 @@ public class FoldablePaper : MonoBehaviour
     public FoldData BuildFoldData(float degrees)
     {
         FindFoldObjects();
-        List<FoldableObject> playerStacks = new();
-        List<FoldableObject> foldStacks = new();
+        // List<FoldableObject> playerStacks = new();
+        // List<FoldableObject> foldStacks = new();
         if(!isComplete && foldJoint != null && foldJoint.canFold) {
             List<PaperJoint> foldJoints = new List<PaperJoint>();
             foreach(PaperJoint pj in PaperJoints)
                 if(pj.showLine)
                     foldJoints.Add(pj);
 
-            foreach(PaperSquare ps in playerSide.squareScripts)
-            {
-                SquareStack s = new(Vector3Int.RoundToInt(ps.transform.position));
-                s.squares.AddFirst(ps);
-                playerStacks.Add(s);
-            }
-            foreach(PaperSquare ps in foldObjects.squareScripts)
-            {
-                SquareStack s = new(Vector3Int.RoundToInt(ps.transform.position));
-                s.squares.AddFirst(ps);
-                foldStacks.Add(s);
-            }
-            FoldData fd = new FoldData(foldJoints, foldStacks, playerStacks, Vector3Int.RoundToInt(foldJoint.transform.position), Vector3Int.RoundToInt(foldJoint.transform.rotation * Vector3.right), (int) degrees);
+            // foreach(PaperSquare ps in playerSide.squareScripts)
+            // {
+            //     SquareStack s = new(Vector3Int.RoundToInt(ps.transform.position));
+            //     s.squares.AddFirst(ps);
+            //     playerStacks.Add(s);
+            // }
+            // foreach(PaperSquare ps in foldObjects.squareScripts)
+            // {
+            //     SquareStack s = new(Vector3Int.RoundToInt(ps.transform.position));
+            //     s.squares.AddFirst(ps);
+            //     foldStacks.Add(s);
+            // }
+            //FoldData fd = new FoldData(foldJoints, foldObjects.foldSideObjects, foldObjects, Vector3Int.RoundToInt(foldJoint.transform.position), Vector3Int.RoundToInt(foldJoint.transform.rotation * Vector3.right), (int) degrees);
+            FoldData fd = new(
+                foldObjects,
+                Vector3Int.RoundToInt(foldJoint.transform.position), 
+                Vector3Int.RoundToInt(foldJoint.transform.rotation * Vector3.right), 
+                (int) degrees
+            );
             return fd;
         }
         return null;

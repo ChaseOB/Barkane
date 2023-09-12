@@ -12,15 +12,23 @@ public class FoldData
     public int degrees;
     
 
-
-    public FoldData(List<PaperJoint> aj, List<FoldableObject> fo, List<FoldableObject> pfo, Vector3Int apos, Vector3Int avec, int deg) {
-        axisJoints = aj;
-        foldObjects = fo;
-        playerFoldObjects = pfo; 
+    public FoldData(FoldObjects fo, Vector3Int apos, Vector3Int avec, int deg) {
+        axisJoints = fo.axisJoints;
+        foldObjects = fo.foldSideObjects;
+        playerFoldObjects = fo.playerSideObjects; 
         axisPosition = apos;
         axisVector = avec;
         degrees = deg;
-    }
+    } 
+
+    // public FoldData(List<PaperJoint> aj, List<FoldableObject> fo, List<FoldableObject> pfo, Vector3Int apos, Vector3Int avec, int deg) {
+    //     axisJoints = aj;
+    //     foldObjects = fo;
+    //     playerFoldObjects = pfo; 
+    //     axisPosition = apos;
+    //     axisVector = avec;
+    //     degrees = deg;
+    // }
 
 }
 

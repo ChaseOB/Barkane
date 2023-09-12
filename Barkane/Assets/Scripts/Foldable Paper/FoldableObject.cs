@@ -117,10 +117,3 @@ public class SquareStack : FoldableObject
         return StackOverlapType.NONE;
     }
 }
-
-public class FoldObjects2
-{
-    public List<FoldableObject> playerSideObjects = new();
-    public List<FoldableObject> foldSideObjects = new();
-    public List<JointData> axisJoints = new();
-}
