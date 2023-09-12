@@ -171,6 +171,34 @@ public class FoldablePaper : MonoBehaviour
         return null;
     }
 
+    public FoldData2 BuildFoldData2(float degrees)
+    {
+        FindFoldObjects();
+        List<SquareStack> playerStacks = new();
+        List<SquareStack> foldStacks = new();
+        if(!isComplete && foldJoint != null && foldJoint.canFold) {
+            List<PaperJoint> foldJoints = new List<PaperJoint>();
+            foreach(PaperJoint pj in PaperJoints)
+                if(pj.showLine)
+                    foldJoints.Add(pj);
+            foreach(PaperSquare ps in playerSide.squareScripts)
+            {
+                SquareStack s = new(Vector3Int.RoundToInt(ps.transform.position));
+                s.squares.AddFirst(ps);
+                playerStacks.Add(s);
+            }
+            foreach(PaperSquare ps in foldObjects.squareScripts)
+            {
+                SquareStack s = new(Vector3Int.RoundToInt(ps.transform.position));
+                s.squares.AddFirst(ps);
+                foldStacks.Add(s);
+            }
+            FoldData2 fd2 = new FoldData2(foldJoints, foldStacks, playerStacks, Vector3Int.RoundToInt(foldJoint.transform.position), Vector3Int.RoundToInt(foldJoint.transform.rotation * Vector3.right), (int) degrees);
+            return fd2;
+        }
+        return null;
+    }
+
 
     public List<List<PaperSquare>> FindOverlappingSquares()
     {

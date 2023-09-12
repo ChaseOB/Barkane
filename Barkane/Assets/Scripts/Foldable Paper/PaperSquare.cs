@@ -90,8 +90,8 @@ public class PaperSquare : MonoBehaviour
 
     public void EjectFromGlobalQueue()
     {
-        globalOcclusionQueue.Dequeue(this);
-        globalOcclusionQueue = null;
+//        globalOcclusionQueue.Dequeue(this);
+  //      globalOcclusionQueue = null;
     }
 
     public void ToggleTop(bool val)

@@ -111,7 +111,8 @@ public class PlayerMovement : MonoBehaviour
     {
         isMoving = true;
         
-        TileSelector.Instance.DeselectJoint();
+        //TileSelector.Instance.DeselectJoint();
+        TileSelector2.Instance.DeselectJoint();
 
         Vector3 curr = transform.position;
         Vector3 goal = targetPos.transform.position;

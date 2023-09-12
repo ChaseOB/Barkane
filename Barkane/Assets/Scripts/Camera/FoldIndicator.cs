@@ -13,6 +13,8 @@ public class FoldIndicator : MonoBehaviour
     new private Camera camera;
     private List<Vector3Int> locs = new List<Vector3Int>();
     
+    public Vector3 Center = Vector3.zero;
+
     private void Update() 
     {
         if(camera == null) return;
@@ -45,4 +47,21 @@ public class FoldIndicator : MonoBehaviour
         foldCenter = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(transforms));
     }
 
+    public void BuildIndicator2(List<SquareStack> fd, Camera c)
+    {
+        foreach(SquareStack s in fd)
+        {
+            if(s.currLocation != s.targetLocation)
+            {
+                GameObject newSquare = Instantiate(ghostSquarePrefab, s.targetLocation, s.IndicatorRotation(s.targetorientation));
+                var ghostSquareRenderer = newSquare.GetComponent<MeshRenderer>();
+                ghostSquareRenderer.sharedMaterial = VFXManager.Theme.GhostMat;
+                newSquare.transform.parent = gameObject.transform;
+                locs.Add(s.targetLocation);
+            }
+        }
+
+        Center = CoordUtils.CalculateCenter(locs);
+
+    }
 }
