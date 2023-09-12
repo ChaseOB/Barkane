@@ -36,10 +36,16 @@ public enum Axis
     Z,
 }
 
-public class SquareStack
+public class FoldableObject
 {
     public Vector3Int currLocation;
     public Vector3Int targetLocation;
+}
+
+public class SquareStack : FoldableObject
+{
+    // public Vector3Int currLocation;
+    // public Vector3Int targetLocation;
     public Axis orientation = Axis.X;
     public Axis targetorientation = Axis.X;
     public LinkedList<PaperSquare> squares = new();
@@ -107,13 +113,13 @@ public class SquareStack
 public class FoldData2
 {
     public List<PaperJoint> axisJoints; //all joints along axis
-    public List<SquareStack> foldObjects;
-    public List<SquareStack> playerFoldObjects;
+    public List<FoldableObject> foldObjects;
+    public List<FoldableObject> playerFoldObjects;
     public Vector3Int axisPosition;
     public Vector3Int axisVector;
     public int degrees;
 
-    public FoldData2(List<PaperJoint> aj, List<SquareStack> fo, List<SquareStack> pfo, Vector3Int apos, Vector3Int avec, int deg) {
+    public FoldData2(List<PaperJoint> aj, List<FoldableObject> fo, List<FoldableObject> pfo, Vector3Int apos, Vector3Int avec, int deg) {
         axisJoints = aj;
         foldObjects = fo;
         playerFoldObjects = pfo; 
@@ -132,7 +138,7 @@ public class FoldChecker2 : Singleton<FoldChecker2>
         InitializeSingleton();
     }
 
-    public List<SquareStack> GetFoldPosition(FoldData2 fd)
+    public List<FoldableObject> GetFoldPosition(FoldData2 fd)
     {
         Quaternion rotation = Quaternion.Euler(fd.axisVector * fd.degrees);
 
@@ -143,7 +149,7 @@ public class FoldChecker2 : Singleton<FoldChecker2>
             print("intial Location : " + s.currLocation  + " axis " + s.orientation + " Target Location: " + s.targetLocation + " axis " + s.targetorientation);
         }
 
-        List<SquareStack> combined = new();
+        List<FoldableObject> combined = new();
         combined.AddRange(fd.playerFoldObjects);
         combined.AddRange(fd.foldObjects);
         foreach(SquareStack s1 in combined)

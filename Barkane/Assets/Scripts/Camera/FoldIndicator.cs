@@ -47,7 +47,7 @@ public class FoldIndicator : MonoBehaviour
         foldCenter = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(transforms));
     }
 
-    public void BuildIndicator2(List<SquareStack> fd, Camera c)
+    public void BuildIndicator2(List<FoldableObject> fd, Camera c)
     {
         foreach(SquareStack s in fd)
         {
@@ -60,8 +60,6 @@ public class FoldIndicator : MonoBehaviour
                 locs.Add(s.targetLocation);
             }
         }
-
         Center = CoordUtils.CalculateCenter(locs);
-
     }
 }

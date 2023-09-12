@@ -36,8 +36,9 @@ public class TileSelector2 : Singleton<TileSelector2>
 
     public SelectState state;
 
-
-    public List<SquareStack>[] foldStacks = new List<SquareStack>[2];
+    public List<FoldableObject> targetState90 = new();
+    public List<FoldableObject> targetStateNeg90 = new();
+    //public List<SquareStack>[] foldStacks = new List<SquareStack>[2];
 
     private void Awake()
     {
@@ -169,21 +170,21 @@ public class TileSelector2 : Singleton<TileSelector2>
     {
         if(FoldChecker2.Instance == null) return;
         foldData90 = foldablePaper.BuildFoldData2(90);
-        foldStacks[0] = FoldChecker2.Instance.GetFoldPosition(foldData90);
+        targetState90 = FoldChecker2.Instance.GetFoldPosition(foldData90);
 
         foldDataNeg90 = foldablePaper.BuildFoldData2(-90);
-        foldStacks[1] = FoldChecker2.Instance.GetFoldPosition(foldDataNeg90);
+        targetStateNeg90 = FoldChecker2.Instance.GetFoldPosition(foldDataNeg90);
     }
 
     private void CreateGhostFold()
     {
         ghostFold90 = Instantiate(indicatorPrefab);
         indicator90 = ghostFold90.GetComponent<FoldIndicator>();
-        indicator90.BuildIndicator2(foldStacks[0], camera);
+        indicator90.BuildIndicator2(targetState90, camera);
 
         ghostFoldNeg90 = Instantiate(indicatorPrefab);
         indicatorNeg90 = ghostFoldNeg90.GetComponent<FoldIndicator>();
-        indicatorNeg90.BuildIndicator2(foldStacks[1], camera);
+        indicatorNeg90.BuildIndicator2(targetStateNeg90, camera);
     }
 
     private void ChooseFoldDir()

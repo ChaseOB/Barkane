@@ -174,8 +174,8 @@ public class FoldablePaper : MonoBehaviour
     public FoldData2 BuildFoldData2(float degrees)
     {
         FindFoldObjects();
-        List<SquareStack> playerStacks = new();
-        List<SquareStack> foldStacks = new();
+        List<FoldableObject> playerStacks = new();
+        List<FoldableObject> foldStacks = new();
         if(!isComplete && foldJoint != null && foldJoint.canFold) {
             List<PaperJoint> foldJoints = new List<PaperJoint>();
             foreach(PaperJoint pj in PaperJoints)
