@@ -42,10 +42,20 @@ public class FoldableObject
     public Vector3Int targetLocation;
 }
 
+public class JointData: FoldableObject
+{
+    public PaperJoint paperJoint;
+
+    public JointData(PaperJoint pj)
+    {
+        paperJoint = pj;
+        currLocation = Vector3Int.RoundToInt(pj.transform.position);
+    }
+}
+
+
 public class SquareStack : FoldableObject
 {
-    // public Vector3Int currLocation;
-    // public Vector3Int targetLocation;
     public Axis orientation = Axis.X;
     public Axis targetorientation = Axis.X;
     public LinkedList<PaperSquare> squares = new();
@@ -106,6 +116,13 @@ public class SquareStack : FoldableObject
         if(sameStart) return StackOverlapType.START; //Split stacks at start of fold
         return StackOverlapType.NONE;
     }
+}
+
+public class FoldObjects2
+{
+    public List<FoldableObject> playerSideObjects = new();
+    public List<FoldableObject> foldSideObjects = new();
+    public List<JointData> axisJoints = new();
 }
 
 

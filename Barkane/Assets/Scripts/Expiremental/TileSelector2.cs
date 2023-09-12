@@ -23,8 +23,8 @@ public class TileSelector2 : Singleton<TileSelector2>
      private GameObject ghostFoldNeg90;
      private FoldIndicator indicator90;
      private FoldIndicator indicatorNeg90;
-    // private float dist90;
-    // private float distNeg90;
+    private float dist90;
+    private float distNeg90;
      private FoldData2 foldData90;
      private FoldData2 foldDataNeg90;
     // private bool[] validFolds = new bool[2];
@@ -108,8 +108,8 @@ public class TileSelector2 : Singleton<TileSelector2>
         Vector2 foldcenter90 = camera.WorldToScreenPoint(indicator90.Center);
         Vector2 foldcenterneg90 = camera.WorldToScreenPoint(indicatorNeg90.Center);
         Vector2 mousePos = Mouse.current.position.ReadValue();
-        float dist90 = Vector3.Magnitude(mousePos - foldcenter90);
-        float distNeg90 = Vector3.Magnitude(mousePos - foldcenterneg90);
+        dist90 = Vector3.Magnitude(mousePos - foldcenter90);
+        distNeg90 = Vector3.Magnitude(mousePos - foldcenterneg90);
 
         if(dist90 < distNeg90)
         {
@@ -189,34 +189,16 @@ public class TileSelector2 : Singleton<TileSelector2>
 
     private void ChooseFoldDir()
     {
-        // if(currJoint == null) return;
-        // int caseNum = (validFolds[0]? 2: 0) + (validFolds[1]? 1: 0);
-        // switch (caseNum)
-        // {
-        //     case 3:
-        //         if(ghostFold90.activeSelf)
-        //             foldAnimator.Fold(foldData90);
-        //         else
-        //             foldAnimator.Fold(foldDataNeg90);
-        //         //if(dist90 < distNeg90)
-        //            // foldAnimator.Fold(foldablePaper.BuildFoldData(90));
-        //        // else
-        //            // foldAnimator.Fold(foldablePaper.BuildFoldData(-90));
-        //         break;
-        //     case 2:
-        //         foldAnimator.Fold(foldablePaper.BuildFoldData(90));
-        //         break;
-        //     case 1:
-        //         foldAnimator.Fold(foldablePaper.BuildFoldData(-90));
-        //         break;
-        //     case 0:
-        //         DeselectJoint(true);
-        //         break;
-        // }
-        // if(caseNum != 0)
-        //     state = SelectState.FOLDING;
-
-        // DeselectJoint(false);
+        if(dist90 < distNeg90)
+        {
+            foldAnimator.Fold2(foldData90, () => state = SelectState.NONE);
+        }
+        else
+        {
+            foldAnimator.Fold2(foldDataNeg90, () => state = SelectState.NONE);
+        }
+        state = SelectState.FOLDING;
+        DeselectJoint(false);
     }
 
     private void OnRightClick(InputValue value)
@@ -242,8 +224,6 @@ public class TileSelector2 : Singleton<TileSelector2>
             Destroy(ghostFoldNeg90);
             foldDataNeg90 = null;
         }
-
-        //validFolds = new bool[] {false, false};
     }
 
     public void TryMakeNewGhost()
@@ -258,9 +238,3 @@ public class TileSelector2 : Singleton<TileSelector2>
 
     
 }
-
-// public enum SelectState {
-//     NONE, 
-//     SELECTED,
-//     FOLDING
-// }

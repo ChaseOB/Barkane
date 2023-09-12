@@ -391,7 +391,7 @@ public class FoldChecker : Singleton<FoldChecker>
                     PaperSquare ps =  c.transform.gameObject.GetComponentInParent<PaperSquare>();
                     //if(invertFold && ps == null)
                       //  Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to special case 1A"); //1a, ignore. 
-                    if(ps == null && go.tag == "NoBlockPlayer");
+                    if(ps == null && go.tag == "NoBlockPlayer") {}
                     else if(ps == null || !fd.foldObjects.foldSquares.Contains(ps.gameObject)) 
                     {
                         Debug.Log($"Collision with {c.transform.gameObject.name}.");

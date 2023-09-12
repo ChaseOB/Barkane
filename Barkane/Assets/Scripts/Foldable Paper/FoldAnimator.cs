@@ -35,6 +35,29 @@ public class FoldAnimator : MonoBehaviour
         foldablePaper = FindObjectOfType<FoldablePaper>();
     }
 
+    public void Fold2(FoldData2 fd, System.Action callback)
+    {
+        if(isFolding) return;
+
+        if(!ActionLockManager.Instance.TryTakeLock(this)){
+                Debug.LogError("Action Lock taken, can't fold (this is bad)");
+                return;
+            }
+        //AnimateFold
+        SetFoldPosition(fd);
+        callback?.Invoke();
+    }
+
+    // private IEnumerator AnimateFold(FoldData2 fd)
+    // {
+        
+    // }
+
+    private void SetFoldPosition(FoldData2 fd)
+    {
+        
+    }
+
     public void Fold(FoldData fd, bool fromStack = false, bool undo = false)
     {
         if(!isFolding) 
