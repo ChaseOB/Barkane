@@ -133,7 +133,6 @@ GameObject:
   m_Component:
   - component: {fileID: 133205281}
   - component: {fileID: 133205280}
-  - component: {fileID: 133205282}
   m_Layer: 0
   m_Name: Level Tester
   m_TagString: Untagged
@@ -148,7 +147,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 133205279}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0ff6c4f30da29949a0b233cfe102b6e, type: 3}
   m_Name: 
@@ -170,20 +169,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &133205282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 133205279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f604419fc3b7de4887c3d45205c4bc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  level: {fileID: 11400000, guid: 4d8493305e8c61842a5a0e81bc0ccd3d, type: 2}
-  playerPrefab: {fileID: 8814069561603125229, guid: e6122d66d72e2f248828794196740204, type: 3}
 --- !u!1001 &794092682
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -469,8 +454,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0d40b03b2793648a8f42b2da616967, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camera: {fileID: 0}
+  hoverJoint: {fileID: 0}
+  prevHoverJoint: {fileID: 0}
+  currJoint: {fileID: 0}
   hoverSquare: {fileID: 0}
   indicatorPrefab: {fileID: 2933429386292174230, guid: aea577dacb4f4a14b90d9ccc4b99004d, type: 3}
+  foldablePaper: {fileID: 0}
+  foldAnimator: {fileID: 0}
+  ghostFold90: {fileID: 0}
+  ghostFoldNeg90: {fileID: 0}
+  indicator90: {fileID: 0}
+  indicatorNeg90: {fileID: 0}
+  paperMask:
+    m_Bits: 1088
+  jointMask:
+    m_Bits: 128
+  state: 0
+--- !u!114 &1519856172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519856161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e08d5f052230941429eab5fc1b22cc65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverSquare: {fileID: 0}
+  indicatorPrefab: {fileID: 9111959285705571462, guid: d213b8ba935e57f47b3b671deb55f110, type: 3}
   foldablePaper: {fileID: 0}
   foldAnimator: {fileID: 0}
   paperMask:

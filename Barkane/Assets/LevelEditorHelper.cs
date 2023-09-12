@@ -8,7 +8,7 @@ public class LevelEditorHelper : MonoBehaviour
 {
     private void Start() {
         VFXManager.Instance.Refresh();
-        FindObjectOfType<FoldablePaper>().PopulateOcclusionMap();
+        //FindObjectOfType<FoldablePaper>().PopulateOcclusionMap();
         FindObjectOfType<TileSelector>().ReloadReferences();
     }
 }

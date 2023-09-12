@@ -21,7 +21,6 @@ public class PaperSquare : MonoBehaviour
     [SerializeField] private GameObject bottomHalf;
     public GameObject BottomHalf => bottomHalf;
     [SerializeField] private EdgeParticles edgeParticles;
-
     public float YOffset;
 
     public SquareSide topSide;
@@ -33,17 +32,17 @@ public class PaperSquare : MonoBehaviour
     public PaperSquare topStack;
     public PaperSquare bottomStack;
 
-    public OcclusionQueue globalOcclusionQueue
-    {
-        get => m_GlobalOcclusionQueue;
-        set
-        {
-            m_GlobalOcclusionQueue = value;
+    // public OcclusionQueue globalOcclusionQueue
+    // {
+    //     get => m_GlobalOcclusionQueue;
+    //     set
+    //     {
+    //         m_GlobalOcclusionQueue = value;
 
-            // Debug.Log($"GOQ: {(value == null ? "NULL" : value)}");
-        }
-    }
-    private OcclusionQueue m_GlobalOcclusionQueue;
+    //         // Debug.Log($"GOQ: {(value == null ? "NULL" : value)}");
+    //     }
+    // }
+    // private OcclusionQueue m_GlobalOcclusionQueue;
 
     public Vector3 storedPos;
 

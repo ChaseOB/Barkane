@@ -25,8 +25,8 @@ public class FoldablePaper : MonoBehaviour
     Dictionary<Vector3Int, List<PaperSquare>> squareLocs = new Dictionary<Vector3Int, List<PaperSquare>>();
     public PaperSquare playerSquare;
 
-    public OcclusionMap OcclusionMap => m_OcclusionMap;
-    OcclusionMap m_OcclusionMap = new OcclusionMap();
+    // public OcclusionMap OcclusionMap => m_OcclusionMap;
+    // OcclusionMap m_OcclusionMap = new OcclusionMap();
 
     // private List<FoldableObject> playerSideFoldableObjects = new();
     // private List<FoldableObject> foldSideFoldableObjects = new();
@@ -42,19 +42,19 @@ public class FoldablePaper : MonoBehaviour
         IntializeSquarePosList();
     }
 
-    private void OnEnable() {
-        TileSelector.OnFoldSelect += OnFoldSelect; 
-    }
+    // private void OnEnable() {
+    //     TileSelector.OnFoldSelect += OnFoldSelect; 
+    // }
 
-    private void OnDisable() {
-        TileSelector.OnFoldSelect -= OnFoldSelect; 
-    }
+    // private void OnDisable() {
+    //     TileSelector.OnFoldSelect -= OnFoldSelect; 
+    // }
 
-    private void OnFoldSelect(object sender, bool value)
-    {
-        FindFoldObjects();
-        foldObjects.OnFoldHighlight(value);
-    }
+    // private void OnFoldSelect(object sender, bool value)
+    // {
+    //     FindFoldObjects();
+    //     foldObjects.OnFoldHighlight(value);
+    // }
 
 
     private void UpdateAdjList()
@@ -103,79 +103,79 @@ public class FoldablePaper : MonoBehaviour
     }
 
 
-    //C: Uses a modified DFS to determine which objects should be folded
-    // Returns fold side objects first, player side objects second 
+    // //C: Uses a modified DFS to determine which objects should be folded
+    // // Returns fold side objects first, player side objects second 
+    // public (FoldObjects, FoldObjects) FindFoldObjects()
+    // {
+    //     visitedJoints.Clear();
+    //     visitedSquares.Clear();
+
+    //     playerSide = new FoldObjects(paperSquares[0].transform.parent, paperJoints[0].transform.parent);
+    //     foldObjects = new FoldObjects(paperSquares[0].transform.parent, paperJoints[0].transform.parent);
+
+    //     PaperSquare playerSquare = null;
+    //     foreach(PaperSquare ps in paperSquares)
+    //         if(ps.PlayerOccupied)
+    //             playerSquare = ps;
+    //     DFSHelperSquare(playerSquare, true);
+    //     playerSide.MakeSideSet();
+    //     foldObjects.MakeSideSet();
+    //     return (playerSide, foldObjects);
+    // }
+
+    // private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
+    // {
+    //     if(ps == null || visitedSquares.Contains(ps)) return;
+    //     visitedSquares.Add(ps);
+    //     if(isPlayerSide && ! playerSide.squareScripts.Contains(ps)) {
+    //         playerSide.foldSquares.Add(ps.gameObject);
+    //         playerSide.squareScripts.Add(ps);
+    //     }
+    //     else if (!foldObjects.squareScripts.Contains(ps)){
+    //         foldObjects.foldSquares.Add(ps.gameObject);
+    //         foldObjects.squareScripts.Add(ps);
+    //     }
+    //     foreach(PaperJoint adjJoint in adjListSquareToJoint[ps])
+    //     {
+    //         if(!visitedJoints.Contains(adjJoint))
+    //             DFSHelperJoint(adjJoint, isPlayerSide);
+    //     }
+    // }
+
+    // private void DFSHelperJoint(PaperJoint pj,  bool isPlayerSide)
+    // {
+    //     if(pj == null || visitedJoints.Contains(pj)) return;
+    //     visitedJoints.Add(pj);
+    //     isPlayerSide = pj.showLine ? !isPlayerSide : isPlayerSide; //C: if we cross the fold line, then this value changes. We're essentially slicing the graph into 2 parts
+    //     if(pj.showLine)
+    //         foldObjects.foldLineJoints.Add(pj.gameObject);
+    //     if(isPlayerSide)
+    //         playerSide.foldJoints.Add(pj.gameObject);
+    //     else
+    //         foldObjects.foldJoints.Add(pj.gameObject);
+    //     foreach(PaperSquare adjSquare in adjListJointToSquare[pj])
+    //     {
+    //         if(!visitedSquares.Contains(adjSquare))
+    //             DFSHelperSquare(adjSquare, isPlayerSide);
+    //     }
+    // }
+
+
+    // public FoldData BuildFoldData(float degrees)
+    // {
+    //     FindFoldObjects();
+    //     if(!isComplete && foldJoint != null && foldJoint.canFold) {
+    //         List<PaperJoint> foldJoints = new List<PaperJoint>();
+    //         foreach(PaperJoint pj in PaperJoints)
+    //             if(pj.showLine)
+    //                 foldJoints.Add(pj);
+    //         FoldData fd = new FoldData(foldJoints, foldObjects, playerSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
+    //         return fd;
+    //     }
+    //     return null;
+    // }
+
     public (FoldObjects, FoldObjects) FindFoldObjects()
-    {
-        visitedJoints.Clear();
-        visitedSquares.Clear();
-
-        playerSide = new FoldObjects(paperSquares[0].transform.parent, paperJoints[0].transform.parent);
-        foldObjects = new FoldObjects(paperSquares[0].transform.parent, paperJoints[0].transform.parent);
-
-        PaperSquare playerSquare = null;
-        foreach(PaperSquare ps in paperSquares)
-            if(ps.PlayerOccupied)
-                playerSquare = ps;
-        DFSHelperSquare(playerSquare, true);
-        playerSide.MakeSideSet();
-        foldObjects.MakeSideSet();
-        return (playerSide, foldObjects);
-    }
-
-    private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
-    {
-        if(ps == null || visitedSquares.Contains(ps)) return;
-        visitedSquares.Add(ps);
-        if(isPlayerSide && ! playerSide.squareScripts.Contains(ps)) {
-            playerSide.foldSquares.Add(ps.gameObject);
-            playerSide.squareScripts.Add(ps);
-        }
-        else if (!foldObjects.squareScripts.Contains(ps)){
-            foldObjects.foldSquares.Add(ps.gameObject);
-            foldObjects.squareScripts.Add(ps);
-        }
-        foreach(PaperJoint adjJoint in adjListSquareToJoint[ps])
-        {
-            if(!visitedJoints.Contains(adjJoint))
-                DFSHelperJoint(adjJoint, isPlayerSide);
-        }
-    }
-
-    private void DFSHelperJoint(PaperJoint pj,  bool isPlayerSide)
-    {
-        if(pj == null || visitedJoints.Contains(pj)) return;
-        visitedJoints.Add(pj);
-        isPlayerSide = pj.showLine ? !isPlayerSide : isPlayerSide; //C: if we cross the fold line, then this value changes. We're essentially slicing the graph into 2 parts
-        if(pj.showLine)
-            foldObjects.foldLineJoints.Add(pj.gameObject);
-        if(isPlayerSide)
-            playerSide.foldJoints.Add(pj.gameObject);
-        else
-            foldObjects.foldJoints.Add(pj.gameObject);
-        foreach(PaperSquare adjSquare in adjListJointToSquare[pj])
-        {
-            if(!visitedSquares.Contains(adjSquare))
-                DFSHelperSquare(adjSquare, isPlayerSide);
-        }
-    }
-
-
-    public FoldData BuildFoldData(float degrees)
-    {
-        FindFoldObjects();
-        if(!isComplete && foldJoint != null && foldJoint.canFold) {
-            List<PaperJoint> foldJoints = new List<PaperJoint>();
-            foreach(PaperJoint pj in PaperJoints)
-                if(pj.showLine)
-                    foldJoints.Add(pj);
-            FoldData fd = new FoldData(foldJoints, foldObjects, playerSide, foldJoint.transform.position, foldJoint.transform.rotation * Vector3.right, degrees);
-            return fd;
-        }
-        return null;
-    }
-
-    public (FoldObjects, FoldObjects) FindFoldObjects2()
     {
         visitedJoints.Clear();
         visitedSquares.Clear();
@@ -185,11 +185,11 @@ public class FoldablePaper : MonoBehaviour
         foreach(PaperSquare ps in paperSquares)
             if(ps.PlayerOccupied)
                 playerSquare = ps;
-        DFSHelperSquare2(playerSquare, true);
+        DFSHelperSquare(playerSquare, true);
         return (playerSide, foldObjects);
     }
 
-    private void DFSHelperSquare2(PaperSquare ps, bool isPlayerSide)
+    private void DFSHelperSquare(PaperSquare ps, bool isPlayerSide)
     {
         if(ps == null || visitedSquares.Contains(ps)) return;
         visitedSquares.Add(ps);
@@ -206,11 +206,11 @@ public class FoldablePaper : MonoBehaviour
         foreach(PaperJoint adjJoint in adjListSquareToJoint[ps])
         {
             if(!visitedJoints.Contains(adjJoint))
-                DFSHelperJoint2(adjJoint, isPlayerSide);
+                DFSHelperJoint(adjJoint, isPlayerSide);
         }
     }
 
-    private void DFSHelperJoint2(PaperJoint pj,  bool isPlayerSide)
+    private void DFSHelperJoint(PaperJoint pj,  bool isPlayerSide)
     {
         if(pj == null || visitedJoints.Contains(pj)) return;
         visitedJoints.Add(pj);
@@ -229,7 +229,7 @@ public class FoldablePaper : MonoBehaviour
         }
     }
 
-    public FoldData2 BuildFoldData2(float degrees)
+    public FoldData BuildFoldData(float degrees)
     {
         FindFoldObjects();
         List<FoldableObject> playerStacks = new();
@@ -252,70 +252,70 @@ public class FoldablePaper : MonoBehaviour
                 s.squares.AddFirst(ps);
                 foldStacks.Add(s);
             }
-            FoldData2 fd2 = new FoldData2(foldJoints, foldStacks, playerStacks, Vector3Int.RoundToInt(foldJoint.transform.position), Vector3Int.RoundToInt(foldJoint.transform.rotation * Vector3.right), (int) degrees);
-            return fd2;
+            FoldData fd = new FoldData(foldJoints, foldStacks, playerStacks, Vector3Int.RoundToInt(foldJoint.transform.position), Vector3Int.RoundToInt(foldJoint.transform.rotation * Vector3.right), (int) degrees);
+            return fd;
         }
         return null;
     }
 
 
-    public List<List<PaperSquare>> FindOverlappingSquares()
-    {
-        List<List<PaperSquare>> overlapList = new List<List<PaperSquare>>();
+    // public List<List<PaperSquare>> FindOverlappingSquares()
+    // {
+    //     List<List<PaperSquare>> overlapList = new List<List<PaperSquare>>();
 
-        Dictionary<Vector3, List<PaperSquare>> dict = new Dictionary<Vector3, List<PaperSquare>>();
+    //     Dictionary<Vector3, List<PaperSquare>> dict = new Dictionary<Vector3, List<PaperSquare>>();
 
-        foreach(PaperSquare ps in paperSquares) {
-            bool didAdd = false;
-            foreach(Vector3 key in dict.Keys){
-                if (Vector3.Magnitude(key - ps.transform.position) < 0.0001f) {
-                    dict[key].Add(ps);
-                    didAdd = true;
-                }
-            }
-            if(!didAdd)
-            {
-                List<PaperSquare> list = new List<PaperSquare>();
-                list.Add(ps);
-                dict.Add(ps.transform.position, list);
-            }
-        }
+    //     foreach(PaperSquare ps in paperSquares) {
+    //         bool didAdd = false;
+    //         foreach(Vector3 key in dict.Keys){
+    //             if (Vector3.Magnitude(key - ps.transform.position) < 0.0001f) {
+    //                 dict[key].Add(ps);
+    //                 didAdd = true;
+    //             }
+    //         }
+    //         if(!didAdd)
+    //         {
+    //             List<PaperSquare> list = new List<PaperSquare>();
+    //             list.Add(ps);
+    //             dict.Add(ps.transform.position, list);
+    //         }
+    //     }
 
-        foreach (List<PaperSquare> list in dict.Values)
-            overlapList.Add(list);
-        return overlapList;
-    } 
+    //     foreach (List<PaperSquare> list in dict.Values)
+    //         overlapList.Add(list);
+    //     return overlapList;
+    // } 
 
-    public void PopulateOcclusionMap()
-    {
-        foreach(var ps in paperSquares)
-        {
-            var rounded = Vector3Int.RoundToInt(ps.transform.position);
+    // public void PopulateOcclusionMap()
+    // {
+    //     foreach(var ps in paperSquares)
+    //     {
+    //         var rounded = Vector3Int.RoundToInt(ps.transform.position);
 
-            if (m_OcclusionMap.ContainsKey(rounded))
-            {
-                m_OcclusionMap[rounded].Enqueue(ps);
-                m_OcclusionMap[rounded].UseAsGlobal();
-            }
-            else
-            {
-                var q = OcclusionQueue.MakeOcclusionQueue(rounded, OcclusionQueue.IdentityEncoder);
+    //         if (m_OcclusionMap.ContainsKey(rounded))
+    //         {
+    //             m_OcclusionMap[rounded].Enqueue(ps);
+    //             m_OcclusionMap[rounded].UseAsGlobal();
+    //         }
+    //         else
+    //         {
+    //             var q = OcclusionQueue.MakeOcclusionQueue(rounded, OcclusionQueue.IdentityEncoder);
 
-                if (q != null)
-                {
-                    q.Enqueue(ps);
-                    m_OcclusionMap[rounded] = q;
-                }
-                else
-                {
-                    throw new UnityException("Occlusion queue could not be created");
-                }
-                m_OcclusionMap[rounded].UseAsGlobal();
-            }
+    //             if (q != null)
+    //             {
+    //                 q.Enqueue(ps);
+    //                 m_OcclusionMap[rounded] = q;
+    //             }
+    //             else
+    //             {
+    //                 throw new UnityException("Occlusion queue could not be created");
+    //             }
+    //             m_OcclusionMap[rounded].UseAsGlobal();
+    //         }
 
-            // Debug.DrawRay(m_OcclusionMap[rounded].Offset, m_OcclusionMap[rounded].upwards, Color.yellow, 3);
-        }
+    //         // Debug.DrawRay(m_OcclusionMap[rounded].Offset, m_OcclusionMap[rounded].upwards, Color.yellow, 3);
+    //     }
 
-        // Debug.Log(OcclusionMap);
-    }
+    //     // Debug.Log(OcclusionMap);
+    // }
 }
