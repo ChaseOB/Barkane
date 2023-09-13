@@ -21,7 +21,7 @@ public class FoldChecker : Singleton<FoldChecker>
                SquareStack s = (SquareStack)fo;
             Vector3Int target = Vector3Int.RoundToInt(rotation * (s.currLocation - fd.axisPosition) + fd.axisPosition);
             s.SetTarget(target, fd.axisVector);
-            print("intial Location : " + s.currLocation  + " axis " + s.orientation + " Target Location: " + s.targetLocation + " axis " + s.targetorientation);
+//            print("intial Location : " + s.currLocation  + " axis " + s.orientation + " Target Location: " + s.targetLocation + " axis " + s.targetorientation);
             }
             if(fo is JointData)
             {

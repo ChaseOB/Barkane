@@ -65,10 +65,15 @@ public class JointData: FoldableObject
 
     public override void SendToTarget(Vector3 axis)
     {
+        if(currLocation != targetLocation)
+        {
+            paperJoint.transform.position = targetLocation;
+            paperJoint.transform.Rotate(axis, 90);
+            // paperJoint.transform.Rotate(Vector3.Cross(axis, Vector3.left), 90);
+            Debug.Log("joint " + paperJoint.gameObject.name + " moved " + axis);
+        }
         currLocation = targetLocation;
         orientation = targetorientation;
-        paperJoint.transform.position = targetLocation;
-        //paperJoint.transform.Rotate(axis, 90);
     }
 
     public void SetCurrent(Vector3Int v)

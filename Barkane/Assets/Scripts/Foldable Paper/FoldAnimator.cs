@@ -39,7 +39,7 @@ public class FoldAnimator : MonoBehaviour
     public void Fold(FoldData fd, System.Action callback)
     {
         if(isFolding) return;
-
+        isFolding = true;
         if(!ActionLockManager.Instance.TryTakeLock(this)){
                 Debug.LogError("Action Lock taken, can't fold (this is bad)");
                 return;
@@ -47,6 +47,8 @@ public class FoldAnimator : MonoBehaviour
         OnFold?.Invoke(this, new FoldArgs{fd = fd});
         //AnimateFold
         SetFoldPosition(fd);
+        isFolding = false;
+        ActionLockManager.Instance.TryRemoveLock(this);
         callback?.Invoke();
     }
 
