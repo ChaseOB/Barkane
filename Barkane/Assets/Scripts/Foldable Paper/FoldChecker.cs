@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+
+public class FoldCheckData
+{
+    public FoldAction foldAction;
+    public PaperState initialState;
+    public PaperState finalState;
+}
 public class FoldChecker : Singleton<FoldChecker>
 {
 
@@ -56,6 +63,48 @@ public class FoldChecker : Singleton<FoldChecker>
         // }
         return combined;
     }   
+
+    public FoldFailureType CheckFold(FoldCheckData foldCheckData) 
+    {
+        if(!ActionLockManager.Instance.TryTakeLock(this))
+            return FoldFailureType.NOCHECK;
+        if(!CheckKinkedJoint(foldCheckData))
+        {
+            ActionLockManager.Instance.TryRemoveLock(this);
+            return FoldFailureType.KINKED;
+        }
+        if(!CheckPaperClipping(foldCheckData))
+        {
+            ActionLockManager.Instance.TryRemoveLock(this);
+            return FoldFailureType.PAPERCLIP;
+        }
+        if(!CheckCollision(foldCheckData))
+        {
+            ActionLockManager.Instance.TryRemoveLock(this);
+            return FoldFailureType.COLLISION;
+        }
+        ActionLockManager.Instance.TryRemoveLock(this);
+        return FoldFailureType.NONE;
+    }
+
+
+
+    private bool CheckKinkedJoint(FoldCheckData foldCheckData)
+    {
+        throw new NotImplementedException();
+    }
+
+
+    private bool CheckPaperClipping(FoldCheckData foldCheckData)
+    {
+        throw new NotImplementedException();
+    }
+
+    
+        private bool CheckCollision(FoldCheckData foldCheckData)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 
@@ -471,10 +520,10 @@ public class FoldChecker : Singleton<FoldChecker>
 
 // public class SidesInterlockedException : UnityException { }
 
-// public enum FoldFailureType {
-//     NONE, //Valid fold
-//     KINKED, //Could not physically fold along line
-//     PAPERCLIP, //folding paper through itself
-//     COLLISION, //hit object, player, paper, etc on fold path
-//     NOCHECK, //could not check fold due to another action occurring 
-// }
+public enum FoldFailureType {
+    NONE, //Valid fold
+    KINKED, //Could not physically fold along line
+    PAPERCLIP, //folding paper through itself
+    COLLISION, //hit object, player, paper, etc on fold path
+    NOCHECK, //could not check fold due to another action occurring 
+}

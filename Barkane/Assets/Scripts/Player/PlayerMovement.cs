@@ -182,7 +182,7 @@ public class PlayerMove: Action
 {
     //C: 0 = rotate right, 1 = move forward, 2 = rotate left, 3 = move back
     public int movetype = 0;
-    public override Action GetInverse()
+    public Action GetInverse()
     {
         PlayerMove pm = (PlayerMove)this.MemberwiseClone();
         pm.movetype = (this.movetype + 2) % 4;
@@ -190,7 +190,7 @@ public class PlayerMove: Action
         return (Action) pm;
     }
 
-    public override void ExecuteAction(bool undo)
+    public void ExecuteAction(bool undo)
     {
         PlayerMovement pm = GameObject.FindObjectOfType<PlayerMovement>();
         if(movetype == 0)

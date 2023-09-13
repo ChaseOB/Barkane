@@ -16,6 +16,12 @@ public class PaperStateManager : MonoBehaviour
 //C: can be a fold or a player movement
 public abstract class Action
 {
-    public abstract Action GetInverse();
-    public abstract void ExecuteAction(bool undo);
+    //public abstract Action GetInverse();
+    //public abstract void ExecuteAction(bool undo);
+}
+
+public class FoldAction: Action
+{
+    public JointData foldJoint;
+    public List<JointData> axisJoints;
 }

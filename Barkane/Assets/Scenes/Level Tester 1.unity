@@ -593,6 +593,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3127616184884038504, guid: 1cc4adc3a284c76478dbb982a250e796, type: 3}
+      propertyPath: m_DefaultActionMap
+      value: 272b9828-dc8b-49b4-a32b-29153b231beb
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127616184884038504, guid: 1cc4adc3a284c76478dbb982a250e796, type: 3}
+      propertyPath: m_NotificationBehavior
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3127616184884038505, guid: 1cc4adc3a284c76478dbb982a250e796, type: 3}
       propertyPath: m_RootOrder
       value: 3

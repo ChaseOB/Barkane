@@ -1,30 +1,94 @@
-// using System.Collections;
-// using System.Collections.Generic;
-// using UnityEngine;
-// using UnityEngine.InputSystem;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
-// public class UndoRedoManager : Singleton<UndoRedoManager>
-// {
-//     public Stack<Action> actionStack = new Stack<Action>();
-//     public Stack<Action> actionRedoStack = new Stack<Action>();
+public class UndoRedoManager : Singleton<UndoRedoManager>
+{
+    // public Stack<Action> actionStack = new Stack<Action>();
+    // public Stack<Action> actionRedoStack = new Stack<Action>();
 
-//     private void Awake() {
-//         InitializeSingleton();
-//     }
+    //C: Just folds for now as a POC
+    public Stack<FoldData> foldStack = new Stack<FoldData>();
+    public Stack<FoldData> foldRedoStack = new Stack<FoldData>();
+    public FoldAnimator foldAnimator;
 
-//     private void OnUndo(InputValue value)
-//     {
-//         if(!value.isPressed)
-//             return;
-//         UndoAction();
-//     }
+    private void Awake() {
+        InitializeSingleton();
+    }
 
-//     private void OnRedo(InputValue value)
-//     {
-//         if(!value.isPressed)
-//             return;
-//         RedoAction();    
-//     }
+
+    public void AddFold(FoldData foldData)
+    {
+        foldRedoStack = new();
+        foldStack.Push(foldData);
+    }
+
+    public void UndoFold()
+    {   
+        if(ActionLockManager.Instance.IsLocked || !ActionLockManager.Instance.TryTakeLock(this)){
+            print("cannot undo: lock taken");
+            return;
+        }
+        if(foldStack.Count == 0){
+            print("nothing to undo");
+            ActionLockManager.Instance.TryRemoveLock(this);
+            return;
+        }
+        FoldData fd = foldStack.Pop();
+        if(fd == null){
+            print("nothing to undo");
+            ActionLockManager.Instance.TryRemoveLock(this);
+            return;
+        }
+        foldRedoStack.Push(fd);
+        ActionLockManager.Instance.TryRemoveLock(this);
+        if(foldAnimator == null)
+            foldAnimator = FindObjectOfType<FoldAnimator>();
+        foldAnimator.Fold(fd.GetInverse(), null, fromStack: true);
+        //Debug.Log($"undid {action} from stack");
+    }
+
+    public void RedoFold()
+    {   
+        if(ActionLockManager.Instance.IsLocked || !ActionLockManager.Instance.TryTakeLock(this)){
+            print("cannot undo: lock taken");
+            return;
+        }
+        if(foldRedoStack.Count == 0){
+            print("nothing to redo");
+            ActionLockManager.Instance.TryRemoveLock(this);
+            return;
+        }
+        FoldData fd = foldRedoStack.Pop();
+        if(fd == null){
+            print("nothing to undo");
+            ActionLockManager.Instance.TryRemoveLock(this);
+            return;
+        }
+        foldStack.Push(fd);
+                if(foldAnimator == null)
+            foldAnimator = FindObjectOfType<FoldAnimator>();
+        ActionLockManager.Instance.TryRemoveLock(this);
+        foldAnimator.Fold(fd, null, fromStack: true);
+        //Debug.Log($"undid {action} from stack");
+    }
+
+
+
+    private void OnUndo(InputValue value)
+    {
+        if(!value.isPressed)
+            return;
+        UndoFold();
+    }
+
+    private void OnRedo(InputValue value)
+    {
+        if(!value.isPressed)
+            return;
+        RedoFold();    
+    }
 
 //      //adds action to the stack, clears redo stack
 //     public void AddAction(Action action)
@@ -82,7 +146,7 @@
 //         Debug.Log($"redid {action} from stack");
 
 //     }
-// }
+}
 
 
 

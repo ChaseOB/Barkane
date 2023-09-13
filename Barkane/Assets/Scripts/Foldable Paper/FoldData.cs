@@ -10,6 +10,7 @@ public class FoldData
     public Vector3Int axisPosition;
     public Vector3 axisVector;
     //public int degrees;
+    private FoldObjects fo;
     
     public List<FoldableObject> targetState;
 
@@ -19,8 +20,26 @@ public class FoldData
         playerFoldObjects = fo.playerSideObjects; 
         axisPosition = apos;
         axisVector = avec;
-       // degrees = deg;
+        this.fo = fo;
     } 
+
+    public FoldData(FoldObjects fo, Vector3Int apos, Vector3 avec, List<FoldableObject> targetState) {
+        axisJoints = fo.axisJoints;
+        foldObjects = fo.foldSideObjects;
+        playerFoldObjects = fo.playerSideObjects; 
+        axisPosition = apos;
+        axisVector = avec;
+        this.fo = fo;
+    } 
+
+    public FoldData GetInverse() 
+    {
+        return new FoldData(
+            fo,
+            axisPosition,
+            -1 * axisVector
+        );
+    }
 
     // public FoldData(List<PaperJoint> aj, List<FoldableObject> fo, List<FoldableObject> pfo, Vector3Int apos, Vector3Int avec, int deg) {
     //     axisJoints = aj;

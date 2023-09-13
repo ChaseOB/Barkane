@@ -36,7 +36,7 @@ public class FoldAnimator : MonoBehaviour
         foldablePaper = FindObjectOfType<FoldablePaper>();
     }
 
-    public void Fold(FoldData fd, System.Action callback)
+    public void Fold(FoldData fd, System.Action callback, bool fromStack = false)
     {
         if(isFolding) return;
         isFolding = true;
@@ -50,6 +50,10 @@ public class FoldAnimator : MonoBehaviour
         isFolding = false;
         ActionLockManager.Instance.TryRemoveLock(this);
         callback?.Invoke();
+        if(!fromStack)
+        {
+            UndoRedoManager.Instance.AddFold(fd);
+        }
     }
 
     // private IEnumerator AnimateFold(FoldData2 fd)
