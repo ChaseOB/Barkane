@@ -229,7 +229,7 @@ public class FoldablePaper : MonoBehaviour
         }
     }
 
-    public FoldData BuildFoldData(float degrees)
+    public FoldData BuildFoldData(bool invert)
     {
         FindFoldObjects();
         // List<FoldableObject> playerStacks = new();
@@ -257,21 +257,19 @@ public class FoldablePaper : MonoBehaviour
             FoldData fd = new(
                 foldObjects,
                 position,
-                GetFoldAxis(position, degrees), 
-                (int) degrees
+                GetFoldAxis(position, invert)
             );
             return fd;
         }
         return null;
     }
 
-    private Vector3Int GetFoldAxis(Vector3Int postion, float degrees)
+    private Vector3Int GetFoldAxis(Vector3Int postion, bool invert)
     {
         Vector3Int ret = Vector3Int.forward;
         if(postion.x % 2 == 0) ret = Vector3Int.right;
         if(postion.y % 2 == 0) ret = Vector3Int.up;
-        ret = degrees > 0 ? ret : -1 * ret;
-        print("Joint position " + postion + " degrees " + degrees + " axis " + ret);
+        ret = invert? -1 * ret : ret;
         return ret;
     }
 

@@ -166,11 +166,11 @@ public class TileSelector : Singleton<TileSelector>
     private void CheckForValidFolds()
     {
         if(FoldChecker.Instance == null) return;
-        foldData90 = foldablePaper.BuildFoldData(90);
+        foldData90 = foldablePaper.BuildFoldData(false);
         targetState90 = FoldChecker.Instance.GetFoldPosition(foldData90);
         foldData90.targetState = targetState90;
 
-        foldDataNeg90 = foldablePaper.BuildFoldData(-90);
+        foldDataNeg90 = foldablePaper.BuildFoldData(true);
         targetStateNeg90 = FoldChecker.Instance.GetFoldPosition(foldDataNeg90);
         foldDataNeg90.targetState = targetStateNeg90;
     }

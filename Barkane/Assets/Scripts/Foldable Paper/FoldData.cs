@@ -9,17 +9,17 @@ public class FoldData
     public List<FoldableObject> playerFoldObjects;
     public Vector3Int axisPosition;
     public Vector3 axisVector;
-    public int degrees;
+    //public int degrees;
     
     public List<FoldableObject> targetState;
 
-    public FoldData(FoldObjects fo, Vector3Int apos, Vector3 avec, int deg) {
+    public FoldData(FoldObjects fo, Vector3Int apos, Vector3 avec) {
         axisJoints = fo.axisJoints;
         foldObjects = fo.foldSideObjects;
         playerFoldObjects = fo.playerSideObjects; 
         axisPosition = apos;
         axisVector = avec;
-        degrees = deg;
+       // degrees = deg;
     } 
 
     // public FoldData(List<PaperJoint> aj, List<FoldableObject> fo, List<FoldableObject> pfo, Vector3Int apos, Vector3Int avec, int deg) {

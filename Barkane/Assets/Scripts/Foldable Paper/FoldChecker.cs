@@ -12,7 +12,7 @@ public class FoldChecker : Singleton<FoldChecker>
 
     public List<FoldableObject> GetFoldPosition(FoldData fd)
     {
-        Quaternion rotation = Quaternion.Euler(fd.axisVector * Math.Abs(fd.degrees));
+        Quaternion rotation = Quaternion.Euler(fd.axisVector * 90);
 
         foreach(FoldableObject fo in fd.foldObjects)
         {
