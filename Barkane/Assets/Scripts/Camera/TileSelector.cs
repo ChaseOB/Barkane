@@ -168,24 +168,27 @@ public class TileSelector : Singleton<TileSelector>
         if(FoldChecker.Instance == null) return;
         foldData90 = foldablePaper.BuildFoldData(90);
         targetState90 = FoldChecker.Instance.GetFoldPosition(foldData90);
+        foldData90.targetState = targetState90;
 
         foldDataNeg90 = foldablePaper.BuildFoldData(-90);
         targetStateNeg90 = FoldChecker.Instance.GetFoldPosition(foldDataNeg90);
+        foldDataNeg90.targetState = targetStateNeg90;
     }
 
     private void CreateGhostFold()
     {
         ghostFold90 = Instantiate(indicatorPrefab);
         indicator90 = ghostFold90.GetComponent<FoldIndicator>();
-        indicator90.BuildIndicator(targetState90, camera);
+        indicator90.BuildIndicator(targetState90);
 
         ghostFoldNeg90 = Instantiate(indicatorPrefab);
         indicatorNeg90 = ghostFoldNeg90.GetComponent<FoldIndicator>();
-        indicatorNeg90.BuildIndicator(targetStateNeg90, camera);
+        indicatorNeg90.BuildIndicator(targetStateNeg90);
     }
 
     private void ChooseFoldDir()
     {
+        state = SelectState.FOLDING;
         if(dist90 < distNeg90)
         {
             foldAnimator.Fold(foldData90, () => state = SelectState.NONE);
@@ -194,7 +197,6 @@ public class TileSelector : Singleton<TileSelector>
         {
             foldAnimator.Fold(foldDataNeg90, () => state = SelectState.NONE);
         }
-        state = SelectState.FOLDING;
         DeselectJoint(false);
     }
 

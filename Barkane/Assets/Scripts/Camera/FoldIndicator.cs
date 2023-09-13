@@ -47,10 +47,14 @@ public class FoldIndicator : MonoBehaviour
     //     foldCenter = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(transforms));
     // }
 
-    public void BuildIndicator(List<FoldableObject> fd, Camera c)
+    public void BuildIndicator(List<FoldableObject> fd)
     {
-        foreach(SquareStack s in fd)
+        foreach(FoldableObject fo in fd)
         {
+            if(fo is SquareStack)
+            {
+                SquareStack s = (SquareStack) fo;
+            
             if(s.currLocation != s.targetLocation)
             {
                 GameObject newSquare = Instantiate(ghostSquarePrefab, s.targetLocation, s.IndicatorRotation(s.targetorientation));
@@ -58,6 +62,7 @@ public class FoldIndicator : MonoBehaviour
                 ghostSquareRenderer.sharedMaterial = VFXManager.Theme.GhostMat;
                 newSquare.transform.parent = gameObject.transform;
                 locs.Add(s.targetLocation);
+            }
             }
         }
         Center = CoordUtils.CalculateCenter(locs);

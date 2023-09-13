@@ -57,7 +57,11 @@ public class FoldAnimator : MonoBehaviour
 
     private void SetFoldPosition(FoldData fd)
     {
-
+        var target = fd.targetState;
+        foreach(FoldableObject fo in target)
+        {
+            fo.SendToTarget(fd.axisVector);
+        }
     }
 
 //     public void Fold(FoldData fd, bool fromStack = false, bool undo = false)

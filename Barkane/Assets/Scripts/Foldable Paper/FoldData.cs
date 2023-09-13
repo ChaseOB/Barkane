@@ -8,11 +8,12 @@ public class FoldData
     public List<FoldableObject> foldObjects;
     public List<FoldableObject> playerFoldObjects;
     public Vector3Int axisPosition;
-    public Vector3Int axisVector;
+    public Vector3 axisVector;
     public int degrees;
     
+    public List<FoldableObject> targetState;
 
-    public FoldData(FoldObjects fo, Vector3Int apos, Vector3Int avec, int deg) {
+    public FoldData(FoldObjects fo, Vector3Int apos, Vector3 avec, int deg) {
         axisJoints = fo.axisJoints;
         foldObjects = fo.foldSideObjects;
         playerFoldObjects = fo.playerSideObjects; 

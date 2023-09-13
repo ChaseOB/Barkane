@@ -5,46 +5,55 @@ using System;
 using System.Linq;
 public class FoldChecker : Singleton<FoldChecker>
 {
+
     private void Awake() {
         InitializeSingleton();
     }
 
     public List<FoldableObject> GetFoldPosition(FoldData fd)
     {
-        Quaternion rotation = Quaternion.Euler(fd.axisVector * fd.degrees);
+        Quaternion rotation = Quaternion.Euler(fd.axisVector * Math.Abs(fd.degrees));
 
-        foreach(SquareStack s in fd.foldObjects.Where( s => s is SquareStack))
+        foreach(FoldableObject fo in fd.foldObjects)
         {
-   
+            if(fo is SquareStack)
+            {
+               SquareStack s = (SquareStack)fo;
             Vector3Int target = Vector3Int.RoundToInt(rotation * (s.currLocation - fd.axisPosition) + fd.axisPosition);
-            s.SetTarget(target);
+            s.SetTarget(target, fd.axisVector);
             print("intial Location : " + s.currLocation  + " axis " + s.orientation + " Target Location: " + s.targetLocation + " axis " + s.targetorientation);
-            
+            }
+            if(fo is JointData)
+            {
+                JointData jd = (JointData) fo;
+                Vector3Int target = Vector3Int.RoundToInt(rotation * (jd.currLocation - fd.axisPosition) + fd.axisPosition);
+                jd.targetLocation = target;
+            }
         }
 
         List<FoldableObject> combined = new();
-        combined.AddRange(fd.playerFoldObjects.Where( s => s is SquareStack));
-        combined.AddRange(fd.foldObjects.Where( s => s is SquareStack));
-        foreach(SquareStack s1 in combined)
-        {
+        combined.AddRange(fd.playerFoldObjects);
+        combined.AddRange(fd.foldObjects);
+        // foreach(SquareStack s1 in combined)
+        // {
             
-            foreach(SquareStack s2 in combined)
-            {
-                StackOverlapType overlap = s1.GetOverlap(s2);
-                switch(overlap)
-                {
-                    case StackOverlapType.SAME:
-                    case StackOverlapType.NONE:
-                        break;
-                    case StackOverlapType.BOTH:
-                        break;
-                    case StackOverlapType.START:
-                        break;
-                    case StackOverlapType.END:
-                        break;
-                }
-            }
-        }
+        //     foreach(SquareStack s2 in combined)
+        //     {
+        //         StackOverlapType overlap = s1.GetOverlap(s2);
+        //         switch(overlap)
+        //         {
+        //             case StackOverlapType.SAME:
+        //             case StackOverlapType.NONE:
+        //                 break;
+        //             case StackOverlapType.BOTH:
+        //                 break;
+        //             case StackOverlapType.START:
+        //                 break;
+        //             case StackOverlapType.END:
+        //                 break;
+        //         }
+        //     }
+        // }
         return combined;
     }   
 }

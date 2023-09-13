@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0ff6c4f30da29949a0b233cfe102b6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: {fileID: 11400000, guid: b564fd03e95c9d04bb20965d465c8966, type: 2}
+  level: {fileID: 11400000, guid: 4d8493305e8c61842a5a0e81bc0ccd3d, type: 2}
   playerPrefab: {fileID: 8814069561603125229, guid: e6122d66d72e2f248828794196740204, type: 3}
 --- !u!4 &133205281
 Transform:
@@ -162,7 +162,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 133205279}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 589.0554, y: 293.43732, z: -115.85242}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -454,23 +454,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0d40b03b2793648a8f42b2da616967, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 0}
-  hoverJoint: {fileID: 0}
-  prevHoverJoint: {fileID: 0}
-  currJoint: {fileID: 0}
-  hoverSquare: {fileID: 0}
-  indicatorPrefab: {fileID: 2933429386292174230, guid: aea577dacb4f4a14b90d9ccc4b99004d, type: 3}
-  foldablePaper: {fileID: 0}
-  foldAnimator: {fileID: 0}
-  ghostFold90: {fileID: 0}
-  ghostFoldNeg90: {fileID: 0}
-  indicator90: {fileID: 0}
-  indicatorNeg90: {fileID: 0}
-  paperMask:
-    m_Bits: 1088
-  jointMask:
-    m_Bits: 128
-  state: 0
 --- !u!114 &1519856172
 MonoBehaviour:
   m_ObjectHideFlags: 0
