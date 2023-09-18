@@ -72,4 +72,21 @@ public static class CoordUtils
        return center;
     }
 
+    public static int CheckNumDiffCoords(List<Vector3Int> vectors)
+    {
+       
+        HashSet<int> x = new HashSet<int>();
+        HashSet<int> y = new HashSet<int>();
+        HashSet<int> z = new HashSet<int>();
+
+        foreach(Vector3Int vector in vectors)
+        {
+            x.Add(vector.x);
+            y.Add(vector.y);
+            z.Add(vector.z);
+        }
+
+        return x.Count > 1 ? 1 : 0 + y.Count > 1 ? 1 : 0 + z.Count > 1 ? 1 : 0;
+    }
+
 }

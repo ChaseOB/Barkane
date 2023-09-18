@@ -5,6 +5,7 @@ using UnityEditor;
 using BarkaneEditor;
 using UnityEngine.Rendering;
 using UnityEngine.ProBuilder;
+using System;
 
 namespace BarkaneJoint
 {
@@ -46,7 +47,7 @@ namespace BarkaneJoint
         float scaledSquareSize => squareRenderSettings.squareSize * (1 - squareRenderSettings.margin);
 
         public Vector3 start;
-
+        public bool Debug;
         /// <summary>
         /// Can be called manually in inspector or automatically by other scene editor utilities.
         /// </summary>
@@ -81,9 +82,9 @@ namespace BarkaneJoint
             for (int i = 0; i <= settings.creaseSegmentCount; i++)
             {
                 randoms[i] = new Vector3(
-                    2 * (Random.value - 0.5f) * settings.creaseDeviation.x,
-                    2 * (Random.value - 0.5f) * settings.creaseDeviation.y,
-                    2 * (Random.value - 0.5f) * settings.creaseDeviation.z);
+                    2 * (UnityEngine.Random.value - 0.5f) * settings.creaseDeviation.x,
+                    2 * (UnityEngine.Random.value - 0.5f) * settings.creaseDeviation.y,
+                    2 * (UnityEngine.Random.value - 0.5f) * settings.creaseDeviation.z);
             }
 
 #if UNITY_EDITOR
@@ -291,8 +292,40 @@ namespace BarkaneJoint
                 vA2[i] = pivotBaseMid + margin * jointGeometry.nJ2A + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);// + side2Geometry.nA * 0.0006f;
                 vB2[i] = pivotBaseMid + margin * jointGeometry.nJ2B + b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0);// + side2Geometry.nB * 0.0006f;
                 
-                pivotBaseStart += b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
-                
+                List<Vector3Int> squarepositions = new List<Vector3Int>()
+                {
+                    Vector3Int.RoundToInt(a1.parentSquare.transform.position),
+                    Vector3Int.RoundToInt(a2.parentSquare.transform.position)
+                };
+                Vector3 offset = Vector3.zero;
+                if(Debug)
+                {
+                    print(CoordUtils.DiffAxisCount(a1, b1));
+                }
+                switch(CoordUtils.DiffAxisCount(a1, b1))
+                {
+                    case 0: //squares in same position, should be at midpoint of squares
+                    case 1:
+                        offset = b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
+                        offset *= 0.5f;
+                        break;
+                    case 2: //sqaures at 90* angle, offset by both y offsets
+                        offset = b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
+                        break;
+                    default: //squares coplaner, don't move
+                        break;
+                }
+                pivotBaseStart += offset;
+                // float angle = Mathf.Abs(jointGeometry1.a2b);
+                // if(angle > 135f)
+                // {
+                //     pivotBaseStart += b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
+                // }
+                // else if (angle > 10f && b2.YOffsetJoint != 0)
+                // {
+                //     print(angle);
+                //     pivotBaseStart += b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
+                // }
                 vA1[i + settings.PivotOffset] = pivotBaseStart;
                 vB1[i + settings.PivotOffset] = pivotBaseStart;
                 vA2[i + settings.PivotOffset] = pivotBaseStart;
