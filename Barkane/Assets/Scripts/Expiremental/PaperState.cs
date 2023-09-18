@@ -33,4 +33,13 @@ public class PaperState
 
 // public class
 
-//public class ObjectData:
+public class ObjectData
+{
+    public Vector3Int currentPosition;
+    public Vector3Int targetPosition;
+    public Vector3 displayPosition;
+
+    public Quaternion currentRotation;
+    public Quaternion targetRotation;
+    public Quaternion displayRotation;
+}

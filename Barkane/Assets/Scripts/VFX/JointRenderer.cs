@@ -281,7 +281,7 @@ namespace BarkaneJoint
                 var pivotBaseMid = tMid * scaledSquareSize * jointGeometry1.tJ;
                 var margin = squareRenderSettings.margin + .001f;
 
-                start = pivotBaseMid + margin * jointGeometry.nJ2A + new Vector3(0, a1.YOffset, 0);
+                //start = pivotBaseMid + margin * jointGeometry.nJ2A + new Vector3(0, a1.YOffset, 0);
                 
 
                 // note that the margin is also affected by the size setting
@@ -290,7 +290,9 @@ namespace BarkaneJoint
                 vB1[i] = pivotBaseMid + margin * jointGeometry.nJ2B + b1.parentSquare.transform.rotation * new Vector3(0, b1.YOffsetJoint, 0);// + side1Geometry.nB * 0.0006f;
                 vA2[i] = pivotBaseMid + margin * jointGeometry.nJ2A + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);// + side2Geometry.nA * 0.0006f;
                 vB2[i] = pivotBaseMid + margin * jointGeometry.nJ2B + b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0);// + side2Geometry.nB * 0.0006f;
-
+                
+                pivotBaseStart += b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
+                
                 vA1[i + settings.PivotOffset] = pivotBaseStart;
                 vB1[i + settings.PivotOffset] = pivotBaseStart;
                 vA2[i + settings.PivotOffset] = pivotBaseStart;
