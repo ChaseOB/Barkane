@@ -55,6 +55,7 @@ public class PaperSquare : MonoBehaviour
     public List<PaperJoint> adjacentJoints = new List<PaperJoint>();
 
     private FoldablePaper foldablePaper;
+    private Transform visuals;
 //#endif
 
 
@@ -68,6 +69,8 @@ public class PaperSquare : MonoBehaviour
 
         topSide.parentSquare = this;
         bottomSide.parentSquare = this;
+
+        visuals = GetComponentInChildren<SquareSizeManager>().gameObject.transform;
     }
 
     private void OnDestroy()
@@ -82,10 +85,17 @@ public class PaperSquare : MonoBehaviour
 #endif
     }
 
-    private void Update() {
+    private void LateUpdate() {
+       UpdateOffset();
+    }
+
+    private void UpdateOffset() {
         topSide.SetYPositionOffset(YOffset);
         bottomSide.SetYPositionOffset(-1 * YOffset);
+        // if(visuals != null)
+        //     visuals.transform.localPosition= YOffset  * Vector3.up;
     }
+
 
     public void EjectFromGlobalQueue()
     {

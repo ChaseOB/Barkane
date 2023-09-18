@@ -280,6 +280,12 @@ public class SquareSide : MonoBehaviour, IRefreshable
     public void SetYPositionOffset(float offset)
     {
         YOffset = offset;
+        int c = transform.childCount;
+        for(int i = 0; i < transform.childCount; i++)
+        {
+            Transform t = transform.GetChild(i);
+            t.localPosition = YOffset * Vector3.up;
+        }
         if(materialInstance == null) return;
         materialInstance.SetFloat("_YOffset", offset);
     }
