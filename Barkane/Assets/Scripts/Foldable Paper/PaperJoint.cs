@@ -90,7 +90,7 @@ public class PaperJoint : MonoBehaviour
 
     private void UpdateCenter()
     {
-        GetComponent<CapsuleCollider>().center = jointRenderer.offset;
+        GetComponent<CapsuleCollider>().center =  Quaternion.Inverse(transform.localRotation) * jointRenderer.offset;
     }
 
     /*private void FindAdjJoints()

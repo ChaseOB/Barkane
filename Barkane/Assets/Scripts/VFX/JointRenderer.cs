@@ -134,7 +134,7 @@ namespace BarkaneJoint
         void LateUpdate()
         {
             UpdateMesh();
-            indicator.transform.localPosition = offset;
+            indicator.transform.localPosition = Quaternion.Inverse(transform.parent.localRotation) * offset;
         }
 
         /// <summary>
@@ -317,6 +317,10 @@ namespace BarkaneJoint
                         break;
                 }
                 pivotBaseStart += offset;
+                if(Debug)
+                {
+                    print(offset);
+                }
                 // float angle = Mathf.Abs(jointGeometry1.a2b);
                 // if(angle > 135f)
                 // {
