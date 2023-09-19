@@ -46,8 +46,8 @@ namespace BarkaneJoint
 
         float scaledSquareSize => squareRenderSettings.squareSize * (1 - squareRenderSettings.margin);
 
-        public Vector3 start;
         public bool Debug;
+        public Vector3 offset = Vector3.zero;
         /// <summary>
         /// Can be called manually in inspector or automatically by other scene editor utilities.
         /// </summary>
@@ -134,6 +134,7 @@ namespace BarkaneJoint
         void LateUpdate()
         {
             UpdateMesh();
+            indicator.transform.localPosition = offset;
         }
 
         /// <summary>
@@ -209,7 +210,6 @@ namespace BarkaneJoint
             Gizmos.color = Color.red;
             Gizmos.DrawWireCube(jointGeometry.pA, new Vector3(2, 0.1f, 2));
             Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(this.transform.position + start, 0.03f);
             Gizmos.color = Color.black;
             Gizmos.DrawWireCube(jointGeometry.pB, new Vector3(2, 0.1f, 2));
             //if (filter.sharedMesh != null)
@@ -232,14 +232,14 @@ namespace BarkaneJoint
         public void ShowLine(bool value, bool staySelected = false)
         {
             indicator.SetActive(value || staySelected);
-            if (value || staySelected)
-            {
-                maskFoldParticles?.Emit();
-            }
-            else
-            {
-                maskFoldParticles?.UnEmit();
-            }
+            // if (value || staySelected)
+            // {
+            //     maskFoldParticles?.Emit();
+            // }
+            // else
+            // {
+            //     maskFoldParticles?.UnEmit();
+            // }
         }
 
 #if UNITY_EDITOR
@@ -297,11 +297,12 @@ namespace BarkaneJoint
                     Vector3Int.RoundToInt(a1.parentSquare.transform.position),
                     Vector3Int.RoundToInt(a2.parentSquare.transform.position)
                 };
-                Vector3 offset = Vector3.zero;
+                //Vector3 offset = Vector3.zero;
                 if(Debug)
                 {
                     print(CoordUtils.DiffAxisCount(a1, b1));
                 }
+                offset = Vector3.zero;
                 switch(CoordUtils.DiffAxisCount(a1, b1))
                 {
                     case 0: //squares in same position, should be at midpoint of squares

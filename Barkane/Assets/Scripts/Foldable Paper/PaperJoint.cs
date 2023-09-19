@@ -83,6 +83,16 @@ public class PaperJoint : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        UpdateCenter();
+    }
+
+    private void UpdateCenter()
+    {
+        GetComponent<CapsuleCollider>().center = jointRenderer.offset;
+    }
+
     /*private void FindAdjJoints()
     {
         Collider[] hits = Physics.OverlapCapsule(capsuleCollider.center - transform.forward * capsuleCollider.height/2,
