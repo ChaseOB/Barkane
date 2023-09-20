@@ -20,9 +20,12 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
 
     public float ga2b;
 
+    private JointRenderer jointRenderer;
+
     private void Awake()
     {
         visualRoot = transform.GetChild(0);
+        jointRenderer = transform.parent.GetComponentInChildren<JointRenderer>();
     }
 
     private void Update()
@@ -51,7 +54,6 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         // ref Vector3[] ns, 
         bool force = false)
     {
-
         Mesh m;
         var firstSet = force || filter.sharedMesh == null || vs == null || vs.Length != settings.VCount;
         if (firstSet)
@@ -69,7 +71,7 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
 
         // Order of joints: A, A1, A2, C, B2, B1, B
         // A
-        vs[0] = g.pJ + g.nJ2A * (settings.halfLength + margin) + gSide.nA * settings.elevation;
+        vs[0] = g.pJ + g.nJ2A * (settings.halfLength + margin) + gSide.nA * settings.elevation ; // + jointRenderer.GetParentSquareOffsets().Item1; A abchor
         // ns[0] = g.nJ2A;
         Ring(ref vs, vs[0], gSide.nA, gSide.tJ, 1, settings);
 
@@ -81,7 +83,7 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         correctionT *= correctionT;
         correctionT *= correctionT;
         var correction = correctionT * gSide.nJ * margin * settings.marginCorrection;
-        var anchor = gSide.nJ * settings.elevation * (Mathf.Abs(Vector3.Dot(gSide.nJ, g.nJ2A)) + 1);
+        var anchor = gSide.nJ * settings.elevation * (Mathf.Abs(Vector3.Dot(gSide.nJ, g.nJ2A)) + 1) + (jointRenderer != null ? jointRenderer.offset : Vector3.zero);
         var dA2 = g.nJ2A * margin + gSide.nA * settings.elevation;
         var dB2 = g.nJ2B * margin + gSide.nB * settings.elevation;
         var dC = QuadraticBezier(dA2, anchor, dB2, 0.5f);
@@ -100,7 +102,7 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         // Debug.DrawRay(g.pJ, DDQuadraticBezier(dA2, anchor, dB2, 0.75f, gSide.tJ), Color.blue);
 
         // head B
-        vs[^1] = g.pJ + g.nJ2B * (settings.halfLength + margin) + gSide.nB * settings.elevation;
+        vs[^1] = g.pJ + g.nJ2B * (settings.halfLength + margin) + gSide.nB * settings.elevation ;//+ Vector3.up * 0.5f;
         // ns[^1] = g.nJ2B;
         Ring(ref vs, vs[^1], gSide.nB, gSide.tJ, 1 + 6 * settings.resolution, settings);
 

@@ -421,6 +421,12 @@ namespace BarkaneJoint
             }
         }
 
+        public (Vector3, Vector3) GetParentSquareOffsets()
+        {
+            return( a1.parentSquare.transform.rotation * new Vector3(0, a1.YOffsetJoint, 0),
+                b1.parentSquare.transform.rotation * new Vector3(0, b1.YOffsetJoint, 0));
+        }
+
         private void PushRelationToParent()
         {
             a1.JointPieces.Register(new JointPieceOwnership
@@ -473,8 +479,9 @@ namespace BarkaneJoint
             g.pA = a.transform.position;
             g.pB = b.transform.position;
 
-            //g.pA = a.transform.position + new Vector3(0, a.YOffset, 0);
-            //g.pB = b.transform.position + new Vector3(0, b.YOffset, 0);
+            // g.pA = a.transform.position + a.transform.rotation * new Vector3(0, a.YOffset, 0) * 2;
+            // g.pB = b.transform.position + b.transform.rotation * new Vector3(0, b.YOffset, 0) * 2;
+
             g.pJ = j.transform.position;
             g.nJ2A = (g.pA - g.pJ).normalized;
             g.nJ2B = (g.pB - g.pJ).normalized;

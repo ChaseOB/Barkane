@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Animations;
@@ -30,15 +29,11 @@ public enum StackOverlapType
     BOTH,
 }
 
-// public enum Axis 
-// {
-//     X,
-//     NEGX,
-//     Y,
-//     NEGY,
-//     Z,
-//     NEGZ,
-// }
+public class PositionData
+{
+    Vector3Int location;
+    Quaternion rotation;
+}
 
 public abstract class FoldableObject
 {
