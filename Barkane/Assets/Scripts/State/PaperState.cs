@@ -5,7 +5,11 @@ using UnityEngine;
 public class PaperState
 {
     public List<SquareStack> squareStacks;
-    public List<JointData> joints;
+    public List<JointStack> jointStacks;
+
+    public Dictionary<PaperSquare,  List<PaperJoint>> adjListSquareToJoint;
+    public Dictionary<PaperJoint,  List<PaperSquare>> adjListJointToSquare;
+
     //
     //Stack data
         //location
@@ -24,6 +28,7 @@ public class PaperState
         //numfolds
     //Special data
         //glowstick states
+
 }
 
 // public abstract class PaperStateData

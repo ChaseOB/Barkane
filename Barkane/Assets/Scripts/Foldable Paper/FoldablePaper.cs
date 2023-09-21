@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using UnityEngine;
 
@@ -32,14 +33,19 @@ public class FoldablePaper : MonoBehaviour
     // private List<FoldableObject> foldSideFoldableObjects = new();
     private FoldObjects foldObjects = new();
 
+    private Dictionary<PaperSquare, SquareData> squareDict = new();
+    private Dictionary<PaperJoint, JointData> jointDict = new();
+
     private void Awake() 
     {
         CalculateCenter();
         paperSquares = GetComponentsInChildren<PaperSquare>();   
         paperJoints = GetComponentsInChildren<PaperJoint>(); 
         foldAnimator = FindObjectOfType<FoldAnimator>();
+        //Build Paper State
         UpdateAdjList();
         IntializeSquarePosList();
+        BuildPaperState();
     }
 
     // private void OnEnable() {
@@ -175,6 +181,23 @@ public class FoldablePaper : MonoBehaviour
     //     return null;
     // }
 
+    public void BuildPaperState()
+    {
+        PaperState state = new();
+        foreach (PaperSquare paperSquare in paperSquares)
+        {
+            state.squareStacks.Add(new SquareStack(paperSquare));
+        }
+        foreach (PaperJoint paperJoint in paperJoints)
+        {
+            state.jointStacks.Add(new JointStack(paperJoint));
+        }
+        state.adjListSquareToJoint = adjListSquareToJoint;
+        state.adjListJointToSquare = adjListJointToSquare;
+
+        PaperStateManager.SetPaperState(state);
+    }
+
     public FoldObjects FindFoldObjects()
     {
         visitedJoints.Clear();
@@ -193,14 +216,23 @@ public class FoldablePaper : MonoBehaviour
     {
         if(ps == null || visitedSquares.Contains(ps)) return;
         visitedSquares.Add(ps);
-        if(isPlayerSide) { //Removed check for duplicate elements, but should be covered by visted set
-            SquareStack s = new(Vector3Int.RoundToInt(ps.transform.position));
-            s.squares.AddFirst(ps);
+        //if first time, build new stack with only this square. else, get existing square data.
+        SquareData s;
+        if(squareDict.ContainsKey(ps))
+        {
+            s = squareDict[ps];
+        }
+        else
+        {
+            SquareStack stack = new(ps);
+            PaperStateManager.PaperState.squareStacks.Add(stack);
+            s = stack.squarelist.First();
+            squareDict.Add(ps, s);
+        }
+        if(isPlayerSide) { 
             foldObjects.playerSideObjects.Add(s);
         }
         else{
-            SquareStack s = new(Vector3Int.RoundToInt(ps.transform.position));
-            s.squares.AddFirst(ps);
             foldObjects.foldSideObjects.Add(s);
         }
         foreach(PaperJoint adjJoint in adjListSquareToJoint[ps])
@@ -215,7 +247,19 @@ public class FoldablePaper : MonoBehaviour
         if(pj == null || visitedJoints.Contains(pj)) return;
         visitedJoints.Add(pj);
         isPlayerSide = pj.showLine ? !isPlayerSide : isPlayerSide; //C: if we cross the fold line, then this value changes. We're essentially slicing the graph into 2 parts
-        JointData j = new(pj);
+        //if first time, build new stack with only this square. else, get existing square data.
+        JointData j;
+        if(jointDict.ContainsKey(pj))
+        {
+            j = jointDict[pj];
+        }
+        else
+        {
+            JointStack stack = new(pj);
+            PaperStateManager.PaperState.jointStacks.Add(stack);
+            j = stack.jointList.First();
+            jointDict.Add(pj, j);
+        }
         if(pj.showLine)
             foldObjects.axisJoints.Add(pj);
         if(isPlayerSide)
