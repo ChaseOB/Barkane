@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PaperState
 {
-    public List<SquareStack> squareStacks;
-    public List<JointStack> jointStacks;
+    public List<SquareStack> squareStacks = new();
+    public List<JointStack> jointStacks = new();
 
     //
     //Stack data
@@ -29,7 +29,14 @@ public class PaperState
 
     public void SendToTarget()
     {
-        
+        foreach(SquareStack s in squareStacks)
+        {
+            s.SendToTarget();
+        }
+        foreach(JointStack j in jointStacks)
+        {
+            j.SendToTarget();
+        }
     }
 }
 

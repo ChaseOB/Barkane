@@ -90,6 +90,7 @@ public class SquareData: FoldableObject
 
     public override void SendToTarget()
     {
+        Debug.Log("sent to target");
         currentPosition = targetPosition;
         currentYOffset = targetYOffset;
         paperSquare.transform.position = currentPosition.location;

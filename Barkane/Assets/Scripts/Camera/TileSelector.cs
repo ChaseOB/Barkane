@@ -27,8 +27,8 @@ public class TileSelector : Singleton<TileSelector>
     private float distNeg90;
     private FoldData foldData90;
     private FoldData foldDataNeg90;
-    public List<FoldableObject> targetState90 = new();
-    public List<FoldableObject> targetStateNeg90 = new();
+    public List<FoldPositionData> targetState90 = new();
+    public List<FoldPositionData> targetStateNeg90 = new();
 
     public LayerMask paperMask;
     public LayerMask jointMask;

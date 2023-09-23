@@ -10,6 +10,18 @@ public class FoldCheckData
     public PaperState initialState;
     public PaperState finalState;
 }
+
+public class FoldPositionData
+{
+    public FoldableObject obj;
+    public PositionData target;
+
+    public FoldPositionData(FoldableObject obj, PositionData target)
+    {
+        this.obj = obj;
+        this.target = target;
+    }
+}
 public class FoldChecker : Singleton<FoldChecker>
 {
 
@@ -17,43 +29,44 @@ public class FoldChecker : Singleton<FoldChecker>
         InitializeSingleton();
     }
 
-    public List<FoldableObject> GetFoldPosition(FoldData fd)
+    public List<FoldPositionData> GetFoldPosition(FoldData fd)
     {
+        List<FoldPositionData> data = new();
         Quaternion rotation = Quaternion.Euler(fd.axisVector * 90);
-
         foreach(FoldableObject fo in fd.foldObjects)
         {
             Vector3Int target = Vector3Int.RoundToInt(rotation * (fo.currentPosition.location - fd.axisPosition) + fd.axisPosition);
+            print(fo + " target " + target);
             Quaternion rot = rotation * fo.currentPosition.rotation;
             Vector3 axis = rotation * fo.currentPosition.axis;
-            PositionData targetData = new(target, rotation, axis); 
-            fo.targetPosition = targetData;
+            PositionData targetData = new(target, rot, axis); 
+            data.Add(new(fo, targetData));
         }
 
-        List<FoldableObject> combined = new();
-        combined.AddRange(fd.playerFoldObjects);
-        combined.AddRange(fd.foldObjects);
-        // foreach(SquareStack s1 in combined)
-        // {
+        // List<FoldableObject> combined = new();
+        // combined.AddRange(fd.playerFoldObjects);
+        // combined.AddRange(fd.foldObjects);
+        // // foreach(SquareStack s1 in combined)
+        // // {
             
-        //     foreach(SquareStack s2 in combined)
-        //     {
-        //         StackOverlapType overlap = s1.GetOverlap(s2);
-        //         switch(overlap)
-        //         {
-        //             case StackOverlapType.SAME:
-        //             case StackOverlapType.NONE:
-        //                 break;
-        //             case StackOverlapType.BOTH:
-        //                 break;
-        //             case StackOverlapType.START:
-        //                 break;
-        //             case StackOverlapType.END:
-        //                 break;
-        //         }
-        //     }
-        // }
-        return combined;
+        // //     foreach(SquareStack s2 in combined)
+        // //     {
+        // //         StackOverlapType overlap = s1.GetOverlap(s2);
+        // //         switch(overlap)
+        // //         {
+        // //             case StackOverlapType.SAME:
+        // //             case StackOverlapType.NONE:
+        // //                 break;
+        // //             case StackOverlapType.BOTH:
+        // //                 break;
+        // //             case StackOverlapType.START:
+        // //                 break;
+        // //             case StackOverlapType.END:
+        // //                 break;
+        // //         }
+        // //     }
+        // // }
+        return data;
     }   
 
     public FoldFailureType CheckFold(FoldCheckData foldCheckData) 

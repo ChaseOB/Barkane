@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
 
 public enum ActionCallEnum
 {
@@ -20,6 +22,10 @@ public class PaperStateManager: Singleton<PaperStateManager>
     public Stack<Action> actionRedoStack = new Stack<Action>();
     public FoldAnimator foldAnimator;
 
+    
+    public Dictionary<PaperSquare, SquareData> squareDict = new();
+    public Dictionary<PaperJoint, JointData> jointDict = new();
+
     //Apply the action to transition to the next state
     // public PaperState ProcessAction(PaperState startState, Action action)
     // {
@@ -34,6 +40,21 @@ public class PaperStateManager: Singleton<PaperStateManager>
     public void SetPaperState(PaperState ps)
     {
         paperState = ps;
+        print(paperState);
+    }
+
+     private void OnUndo(InputValue value)
+    {
+        if(!value.isPressed)
+            return;
+        UndoAction();
+    }
+
+    private void OnRedo(InputValue value)
+    {
+        if(!value.isPressed)
+            return;
+        RedoAction();    
     }
 
     public void AddAndExecuteFold(FoldData fd)
@@ -63,18 +84,32 @@ public class PaperStateManager: Singleton<PaperStateManager>
             Vector3 a = r * Vector3.up;
             PositionData target = new(l, r, a);
             fo.targetPosition = target;
+            if(fo is JointData)
+            {
+                JointData jd = (JointData)fo;
+                jd = jointDict[jd.paperJoint];
+                jd.targetPosition = target;
+            }
+            if(fo is SquareData)
+            {
+                SquareData sd = (SquareData)fo;
+                sd = squareDict[sd.paperSquare];
+                sd.targetPosition = target;
+            }
+            print(fo + "target " + target);
         }
 
         //Step 3: figure out which stacks need to be split and split them
 
         //Step 4: figue out which stacks need to be merged and merge them
 
-
         //Step 5: animate fold
          if(foldAnimator == null)
             foldAnimator = FindObjectOfType<FoldAnimator>();
         ActionLockManager.Instance.TryRemoveLock(this);
-        foldAnimator.Fold(foldAction.foldData, paperState, source);
+        if(paperState == null)
+            print("null paper state");
+        foldAnimator.Fold(fd, paperState, source);
         //Step 6: align to position
     }
 
@@ -107,7 +142,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
         //Debug.Log($"undid {action} from stack");
     }
 
-    public void RedoFold()
+    public void RedoAction()
     {   
         if(ActionLockManager.Instance.IsLocked || !ActionLockManager.Instance.TryTakeLock(this)){
             print("cannot undo: lock taken");

@@ -47,23 +47,27 @@ public class FoldIndicator : MonoBehaviour
     //     foldCenter = camera.WorldToScreenPoint(CoordUtils.CalculateCenterTransform(transforms));
     // }
 
-    public void BuildIndicator(List<FoldableObject> fd)
+    public void BuildIndicator(List<FoldPositionData> fd)
     {
-        foreach(FoldableObject fo in fd)
+        foreach(FoldPositionData data in fd)
         {
-            if(fo is SquareStack)
+            if(data.obj is SquareData)
             {
-                SquareStack s = (SquareStack) fo;
+                SquareData s = (SquareData) data.obj;
             
-            if(s.currentPosition.location != s.targetPosition.location)
+            if(s.currentPosition.location != data.target.location)
             {
-                GameObject newSquare = Instantiate(ghostSquarePrefab, s.targetPosition.location, s.targetPosition.rotation);
+                // print("diff location" + s.targetPosition.location);
+                GameObject newSquare = Instantiate(ghostSquarePrefab, data.target.location, data.target.rotation);
                 var ghostSquareRenderer = newSquare.GetComponent<MeshRenderer>();
                 ghostSquareRenderer.sharedMaterial = VFXManager.Theme.GhostMat;
                 newSquare.transform.parent = gameObject.transform;
-                locs.Add(s.targetPosition.location);
+                locs.Add(data.target.location);
             }
             }
+            // else{
+            //     print(data.obj);
+            // }
         }
         Center = CoordUtils.CalculateCenter(locs);
     }

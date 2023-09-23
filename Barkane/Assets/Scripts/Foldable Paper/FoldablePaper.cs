@@ -45,6 +45,10 @@ public class FoldablePaper : MonoBehaviour
         //Build Paper State
         UpdateAdjList();
         IntializeSquarePosList();
+    }
+
+    private void Start()
+    {
         BuildPaperState();
     }
 
@@ -186,12 +190,20 @@ public class FoldablePaper : MonoBehaviour
         PaperState state = new();
         foreach (PaperSquare paperSquare in paperSquares)
         {
-            state.squareStacks.Add(new SquareStack(paperSquare));
+            SquareStack stack = new(paperSquare);
+            state.squareStacks.Add(stack);
+            SquareData s = stack.squarelist.First();
+            squareDict.Add(paperSquare, s); 
         }
         foreach (PaperJoint paperJoint in paperJoints)
         {
-            state.jointStacks.Add(new JointStack(paperJoint));
+            JointStack stack = new(paperJoint);
+            state.jointStacks.Add(stack);
+            JointData s = stack.jointList.First();
+            jointDict.Add(paperJoint, s); 
         }
+        PaperStateManager.Instance.squareDict = squareDict;
+        PaperStateManager.Instance.jointDict = jointDict;
         // state.adjListSquareToJoint = adjListSquareToJoint;
         // state.adjListJointToSquare = adjListJointToSquare;
 
@@ -224,10 +236,12 @@ public class FoldablePaper : MonoBehaviour
         }
         else
         {
-            SquareStack stack = new(ps);
-          //  PaperStateManager.PaperState.squareStacks.Add(stack);
-            s = stack.squarelist.First();
-            squareDict.Add(ps, s);
+            Debug.Log("square key not found (bad)");
+        //     SquareStack stack = new(ps);
+        //   //  PaperStateManager.PaperState.squareStacks.Add(stack);
+        //     s = stack.squarelist.First();
+        //     squareDict.Add(ps, s);
+        s = null;
         }
         if(isPlayerSide) { 
             foldObjects.playerSideObjects.Add(s);
@@ -255,10 +269,12 @@ public class FoldablePaper : MonoBehaviour
         }
         else
         {
-            JointStack stack = new(pj);
-           //PaperStateManager.PaperState.jointStacks.Add(stack);
-            j = stack.jointList.First();
-            jointDict.Add(pj, j);
+                        Debug.Log("joint key not found (bad)");
+            j = null;
+        //     JointStack stack = new(pj);
+        //    //PaperStateManager.PaperState.jointStacks.Add(stack);
+        //     j = stack.jointList.First();
+        //     jointDict.Add(pj, j);
         }
         if(pj.showLine)
             foldObjects.axisJoints.Add(pj);
@@ -297,6 +313,10 @@ public class FoldablePaper : MonoBehaviour
             //     foldStacks.Add(s);
             // }
             //FoldData fd = new FoldData(foldJoints, foldObjects.foldSideObjects, foldObjects, Vector3Int.RoundToInt(foldJoint.transform.position), Vector3Int.RoundToInt(foldJoint.transform.rotation * Vector3.right), (int) degrees);
+            // foreach(FoldableObject fo in foldObjects.foldSideObjects)
+            // {
+            //     print(fo);
+            // }
             Vector3Int position = Vector3Int.RoundToInt(foldJoint.transform.position);
             FoldData fd = new(
                 foldObjects,
