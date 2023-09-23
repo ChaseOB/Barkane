@@ -23,19 +23,11 @@ public class FoldChecker : Singleton<FoldChecker>
 
         foreach(FoldableObject fo in fd.foldObjects)
         {
-            if(fo is SquareStack)
-            {
-               SquareStack s = (SquareStack)fo;
-            Vector3Int target = Vector3Int.RoundToInt(rotation * (s.currLocation - fd.axisPosition) + fd.axisPosition);
-            s.SetTarget(target, fd.axisVector);
-//            print("intial Location : " + s.currLocation  + " axis " + s.orientation + " Target Location: " + s.targetLocation + " axis " + s.targetorientation);
-            }
-            if(fo is JointData)
-            {
-                JointData jd = (JointData) fo;
-                Vector3Int target = Vector3Int.RoundToInt(rotation * (jd.currLocation - fd.axisPosition) + fd.axisPosition);
-                jd.targetLocation = target;
-            }
+            Vector3Int target = Vector3Int.RoundToInt(rotation * (fo.currentPosition.location - fd.axisPosition) + fd.axisPosition);
+            Quaternion rot = rotation * fo.currentPosition.rotation;
+            Vector3 axis = rotation * fo.currentPosition.axis;
+            PositionData targetData = new(target, rotation, axis); 
+            fo.targetPosition = targetData;
         }
 
         List<FoldableObject> combined = new();

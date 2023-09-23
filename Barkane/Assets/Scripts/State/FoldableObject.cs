@@ -50,7 +50,7 @@ public abstract class FoldableObject
     // public Vector3 orientation;
     // public Vector3 targetorientation;
 
-    // public abstract void SendToTarget(Vector3 axis);
+    public abstract void SendToTarget();
     
     public PositionData currentPosition;
     public PositionData targetPosition;
@@ -87,6 +87,15 @@ public class SquareData: FoldableObject
         this.targetPosition = targetPosition;
         this.paperSquare = paperSquare;
     }
+
+    public override void SendToTarget()
+    {
+        currentPosition = targetPosition;
+        currentYOffset = targetYOffset;
+        paperSquare.transform.position = currentPosition.location;
+        paperSquare.transform.rotation = currentPosition.rotation;
+        paperSquare.YOffset = currentYOffset;
+    }
 }
 
 public class SquareStack: FoldableObject
@@ -113,6 +122,14 @@ public class SquareStack: FoldableObject
         if(coordinates.y % 2 != 0) return Vector3.up;
         return Vector3.forward;
 
+    }
+
+    public override void SendToTarget()
+    {
+        foreach(SquareData sd in squarelist)
+        {
+            sd.SendToTarget();
+        }  
     }
 }
 
@@ -155,6 +172,15 @@ public class JointData: FoldableObject
         if(coordinates.y % 2 == 0) return Vector3.up;
         return Vector3.forward;
     }
+
+    public override void SendToTarget()
+    {
+        currentPosition = targetPosition;
+        currentOffset = targetOffset;
+        paperJoint.transform.position = currentPosition.location;
+        paperJoint.transform.rotation = currentPosition.rotation;
+        //paperJoint.Offset = currentYOffset;
+    }
 }
 
 public class JointStack: FoldableObject
@@ -180,6 +206,14 @@ public class JointStack: FoldableObject
         if(coordinates.x % 2 == 0) return Vector3.right;
         if(coordinates.y % 2 == 0) return Vector3.up;
         return Vector3.forward;
+    }
+
+    public override void SendToTarget()
+    {
+        foreach(JointData jd in jointList)
+        {
+            jd.SendToTarget();
+        }  
     }
 }
 

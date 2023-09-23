@@ -45,7 +45,7 @@ public class UndoRedoManager : Singleton<UndoRedoManager>
         ActionLockManager.Instance.TryRemoveLock(this);
         if(foldAnimator == null)
             foldAnimator = FindObjectOfType<FoldAnimator>();
-        foldAnimator.Fold(fd.GetInverse(), null, fromStack: true);
+       // foldAnimator.Fold(fd.GetInverse(), null, fromStack: true);
         //Debug.Log($"undid {action} from stack");
     }
 
@@ -70,7 +70,7 @@ public class UndoRedoManager : Singleton<UndoRedoManager>
                 if(foldAnimator == null)
             foldAnimator = FindObjectOfType<FoldAnimator>();
         ActionLockManager.Instance.TryRemoveLock(this);
-        foldAnimator.Fold(fd, null, fromStack: true);
+       // foldAnimator.Fold(fd, null, fromStack: true);
         //Debug.Log($"undid {action} from stack");
     }
 

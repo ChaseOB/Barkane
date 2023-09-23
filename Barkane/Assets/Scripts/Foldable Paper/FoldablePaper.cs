@@ -192,10 +192,10 @@ public class FoldablePaper : MonoBehaviour
         {
             state.jointStacks.Add(new JointStack(paperJoint));
         }
-        state.adjListSquareToJoint = adjListSquareToJoint;
-        state.adjListJointToSquare = adjListJointToSquare;
+        // state.adjListSquareToJoint = adjListSquareToJoint;
+        // state.adjListJointToSquare = adjListJointToSquare;
 
-        PaperStateManager.SetPaperState(state);
+        PaperStateManager.Instance.SetPaperState(state);
     }
 
     public FoldObjects FindFoldObjects()
@@ -225,7 +225,7 @@ public class FoldablePaper : MonoBehaviour
         else
         {
             SquareStack stack = new(ps);
-            PaperStateManager.PaperState.squareStacks.Add(stack);
+          //  PaperStateManager.PaperState.squareStacks.Add(stack);
             s = stack.squarelist.First();
             squareDict.Add(ps, s);
         }
@@ -256,7 +256,7 @@ public class FoldablePaper : MonoBehaviour
         else
         {
             JointStack stack = new(pj);
-            PaperStateManager.PaperState.jointStacks.Add(stack);
+           //PaperStateManager.PaperState.jointStacks.Add(stack);
             j = stack.jointList.First();
             jointDict.Add(pj, j);
         }
@@ -279,10 +279,10 @@ public class FoldablePaper : MonoBehaviour
         // List<FoldableObject> playerStacks = new();
         // List<FoldableObject> foldStacks = new();
         if(!isComplete && foldJoint != null && foldJoint.canFold) {
-            List<PaperJoint> foldJoints = new List<PaperJoint>();
-            foreach(PaperJoint pj in PaperJoints)
-                if(pj.showLine)
-                    foldJoints.Add(pj);
+            // List<PaperJoint> foldJoints = new List<PaperJoint>();
+            // foreach(PaperJoint pj in PaperJoints)
+            //     if(pj.showLine)
+            //         foldJoints.Add(pj);
 
             // foreach(PaperSquare ps in playerSide.squareScripts)
             // {

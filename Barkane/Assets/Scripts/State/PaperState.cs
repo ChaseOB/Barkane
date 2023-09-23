@@ -7,9 +7,6 @@ public class PaperState
     public List<SquareStack> squareStacks;
     public List<JointStack> jointStacks;
 
-    public Dictionary<PaperSquare,  List<PaperJoint>> adjListSquareToJoint;
-    public Dictionary<PaperJoint,  List<PaperSquare>> adjListJointToSquare;
-
     //
     //Stack data
         //location
@@ -29,6 +26,11 @@ public class PaperState
     //Special data
         //glowstick states
 
+
+    public void SendToTarget()
+    {
+        
+    }
 }
 
 // public abstract class PaperStateData

@@ -34,9 +34,10 @@ public class FoldAnimator : MonoBehaviour
     private void Start() 
     {
         foldablePaper = FindObjectOfType<FoldablePaper>();
+        PaperStateManager.Instance.foldAnimator = this;
     }
 
-    public void Fold(FoldData fd, System.Action callback, bool fromStack = false)
+    public void Fold(FoldData fd, PaperState state, ActionCallEnum actionCallEnum)
     {
         if(isFolding) return;
         isFolding = true;
@@ -46,14 +47,11 @@ public class FoldAnimator : MonoBehaviour
             }
         OnFold?.Invoke(this, new FoldArgs{fd = fd});
         //AnimateFold
-        SetFoldPosition(fd);
+        SetFoldPosition(fd, state);
         isFolding = false;
         ActionLockManager.Instance.TryRemoveLock(this);
-        callback?.Invoke();
-        if(!fromStack)
-        {
-            UndoRedoManager.Instance.AddFold(fd);
-        }
+        TileSelector.Instance.state = SelectState.NONE;
+        //callback?.Invoke();
     }
 
     // private IEnumerator AnimateFold(FoldData2 fd)
@@ -61,13 +59,13 @@ public class FoldAnimator : MonoBehaviour
         
     // }
 
-    private void SetFoldPosition(FoldData fd)
+    private void SetFoldPosition(FoldData fd, PaperState state)
     {
-        var target = fd.targetState;
-        foreach(FoldableObject fo in target)
-        {
-            fo.SendToTarget(fd.axisVector);
-        }
+        state.SendToTarget();
+        // foreach(FoldableObject fo in target)
+        // {
+        //     fo.SendToTarget(fd.axisVector);
+        // }
     }
 
 //     public void Fold(FoldData fd, bool fromStack = false, bool undo = false)

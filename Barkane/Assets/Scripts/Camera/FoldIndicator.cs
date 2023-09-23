@@ -55,13 +55,13 @@ public class FoldIndicator : MonoBehaviour
             {
                 SquareStack s = (SquareStack) fo;
             
-            if(s.currLocation != s.targetLocation)
+            if(s.currentPosition.location != s.targetPosition.location)
             {
-                GameObject newSquare = Instantiate(ghostSquarePrefab, s.targetLocation, s.IndicatorRotation(s.targetorientation));
+                GameObject newSquare = Instantiate(ghostSquarePrefab, s.targetPosition.location, s.targetPosition.rotation);
                 var ghostSquareRenderer = newSquare.GetComponent<MeshRenderer>();
                 ghostSquareRenderer.sharedMaterial = VFXManager.Theme.GhostMat;
                 newSquare.transform.parent = gameObject.transform;
-                locs.Add(s.targetLocation);
+                locs.Add(s.targetPosition.location);
             }
             }
         }

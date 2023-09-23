@@ -139,11 +139,11 @@ public class PlayerMovement : MonoBehaviour
         //                                    marmaladeY,  
            //                                 marmalade.transform.position.z);
         isMoving = false;
-        if(!fromStack && !undo) {
-            PlayerMove pm = new PlayerMove();
-            pm.movetype = 1;
-            //UndoRedoManager.Instance?.AddAction(pm);
-        }
+        // if(!fromStack && !undo) {
+        //     PlayerMove pm = new PlayerMove();
+        //     pm.movetype = 1;
+        //     //UndoRedoManager.Instance?.AddAction(pm);
+        // }
         animator.Play("Idle");
         ActionLockManager.Instance.TryRemoveLock(this);
     }
@@ -167,39 +167,39 @@ public class PlayerMovement : MonoBehaviour
         }
         transform.rotation = currRot * Quaternion.Euler(0, degrees, 0);
         isMoving = false;
-        if(!fromStack && !undo) {
-            PlayerMove pm = new PlayerMove();
-            pm.movetype = (degrees > 0 ? 0: 2);
-           // UndoRedoManager.Instance?.AddAction(pm);
-        }
+        // if(!fromStack && !undo) {
+        //     PlayerMove pm = new PlayerMove();
+        //     pm.movetype = (degrees > 0 ? 0: 2);
+        //    // UndoRedoManager.Instance?.AddAction(pm);
+        // }
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 
     #endregion
 }
 
-public class PlayerMove: Action 
-{
-    //C: 0 = rotate right, 1 = move forward, 2 = rotate left, 3 = move back
-    public int movetype = 0;
-    public Action GetInverse()
-    {
-        PlayerMove pm = (PlayerMove)this.MemberwiseClone();
-        pm.movetype = (this.movetype + 2) % 4;
+// public class PlayerMove: Action 
+// {
+//     //C: 0 = rotate right, 1 = move forward, 2 = rotate left, 3 = move back
+//     public int movetype = 0;
+//     public Action GetInverse()
+//     {
+//         PlayerMove pm = (PlayerMove)this.MemberwiseClone();
+//         pm.movetype = (this.movetype + 2) % 4;
 
-        return (Action) pm;
-    }
+//         return (Action) pm;
+//     }
 
-    public void ExecuteAction(bool undo)
-    {
-        PlayerMovement pm = GameObject.FindObjectOfType<PlayerMovement>();
-        if(movetype == 0)
-            pm.Rotate(90, true, undo);
-        else if(movetype == 2)
-            pm.Rotate(-90, true, undo);
-        else{
-            pm.Move(true, undo);
-        }
-    }
-}
+//     public void ExecuteAction(bool undo)
+//     {
+//         PlayerMovement pm = GameObject.FindObjectOfType<PlayerMovement>();
+//         if(movetype == 0)
+//             pm.Rotate(90, true, undo);
+//         else if(movetype == 2)
+//             pm.Rotate(-90, true, undo);
+//         else{
+//             pm.Move(true, undo);
+//         }
+//     }
+// }
 
