@@ -26,6 +26,9 @@ public class PaperStateManager: Singleton<PaperStateManager>
     public Dictionary<PaperSquare, SquareData> squareDict = new();
     public Dictionary<PaperJoint, JointData> jointDict = new();
 
+    private int numFolds;
+    public int NumFolds => numFolds;
+
     //Apply the action to transition to the next state
     // public PaperState ProcessAction(PaperState startState, Action action)
     // {
@@ -109,6 +112,15 @@ public class PaperStateManager: Singleton<PaperStateManager>
         ActionLockManager.Instance.TryRemoveLock(this);
         if(paperState == null)
             print("null paper state");
+        if(source == ActionCallEnum.UNDO)
+        {
+            numFolds--;
+        }
+        else
+        {
+            numFolds++;
+        }
+        UIManager.Instance.UpdateFC(numFolds);
         foldAnimator.Fold(fd, paperState, source);
         //Step 6: align to position
     }
