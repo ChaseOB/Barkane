@@ -339,7 +339,9 @@ namespace BarkaneJoint
             }
 
             // randomize middle vertices at significant fold angles
-            if (Mathf.Abs(jointGeometry1.a2b) > 10f)
+            // if(Debug)
+            //     print(Mathf.Abs(jointGeometry1.a2b));
+            if (true) //(Mathf.Abs(jointGeometry1.a2b) > 10f)
             {
                 for (int i = 1; i < settings.creaseSegmentCount - 1; i++)
                 {

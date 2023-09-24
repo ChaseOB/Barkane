@@ -35,6 +35,8 @@ public class FoldablePaper : MonoBehaviour
 
     private Dictionary<PaperSquare, SquareData> squareDict = new();
     private Dictionary<PaperJoint, JointData> jointDict = new();
+    
+    public List<SquareData> squareData = new();
 
     private void Awake() 
     {
@@ -194,6 +196,7 @@ public class FoldablePaper : MonoBehaviour
             state.squareStacks.Add(stack);
             SquareData s = stack.squarelist.First();
             squareDict.Add(paperSquare, s); 
+            squareData.Add(s);
         }
         foreach (PaperJoint paperJoint in paperJoints)
         {

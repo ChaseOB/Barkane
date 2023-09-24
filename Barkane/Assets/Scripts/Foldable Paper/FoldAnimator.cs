@@ -79,8 +79,6 @@ public class FoldAnimator : MonoBehaviour
         foreach(FoldableObject f in objectsToFold)
         {
             f.SetParent(tempObj.transform);
-            if(f is SquareData)
-                squares.Add((SquareData)f);
         }
 
         float t = 0;
@@ -92,7 +90,7 @@ public class FoldAnimator : MonoBehaviour
         {
             t += Time.deltaTime;
             tempObj.transform.SetPositionAndRotation(center, Quaternion.AngleAxis(90 * t / foldDuration, fd.axisVector));
-            foreach(SquareData s in squares)
+            foreach(SquareData s in foldablePaper.squareData)
             {
                 s.paperSquare.YOffset = math.lerp(s.currentYOffset, s.targetYOffset, t / foldDuration);
             }
