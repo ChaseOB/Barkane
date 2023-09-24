@@ -220,6 +220,7 @@ public class FoldablePaper : MonoBehaviour
         foreach(PaperSquare ps in paperSquares)
             if(ps.PlayerOccupied)
                 playerSquare = ps;
+        print(playerSquare.transform.position);
         DFSHelperSquare(playerSquare, true);
         return foldObjects;
     }

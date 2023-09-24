@@ -21,13 +21,15 @@ public class PaperStateManager: Singleton<PaperStateManager>
     public Stack<Action> actionStack = new Stack<Action>();
     public Stack<Action> actionRedoStack = new Stack<Action>();
     public FoldAnimator foldAnimator;
-
+    public PlayerMovement playerMovement;
     
     public Dictionary<PaperSquare, SquareData> squareDict = new();
     public Dictionary<PaperJoint, JointData> jointDict = new();
 
     private int numFolds;
     public int NumFolds => numFolds;
+
+
 
     //Apply the action to transition to the next state
     // public PaperState ProcessAction(PaperState startState, Action action)
@@ -58,6 +60,35 @@ public class PaperStateManager: Singleton<PaperStateManager>
         if(!value.isPressed)
             return;
         RedoAction();    
+    }
+
+    public void AddAndExecuteMove(PlayerMove playerMove)
+    {
+        ActionLockManager.Instance.TryTakeLock(this);
+        actionRedoStack.Clear();
+        actionStack.Push(playerMove);
+        ProcessMoveAction(playerMove, ActionCallEnum.PLAYER);
+    }
+
+    public void ProcessMoveAction(PlayerMove playerMove, ActionCallEnum source)
+    {
+        ActionLockManager.Instance.TryRemoveLock(this);
+        playerMovement.Move(playerMove, source);
+    }
+
+    public void AddAndExecuteRotate(float amount)
+    {
+        ActionLockManager.Instance.TryTakeLock(this);
+        PlayerRotate playerRotate = new(amount);
+        actionRedoStack.Clear();
+        actionStack.Push(playerRotate);
+        ProcessRotateAction(playerRotate, ActionCallEnum.PLAYER);
+    }
+
+    public void ProcessRotateAction(PlayerRotate playerRotate, ActionCallEnum source)
+    {
+        ActionLockManager.Instance.TryRemoveLock(this);
+        playerMovement.Rotate(playerRotate.amount, source);
     }
 
     public void AddAndExecuteFold(FoldData fd)
@@ -150,6 +181,14 @@ public class PaperStateManager: Singleton<PaperStateManager>
         {
             ProcessFoldAction((FoldAction)action.GetInverse(), ActionCallEnum.UNDO);
         }
+        if(action is PlayerMove)
+        {
+            ProcessMoveAction((PlayerMove)action.GetInverse(), ActionCallEnum.UNDO);
+        }
+        if(action is PlayerRotate)
+        {
+            ProcessRotateAction((PlayerRotate)action.GetInverse(), ActionCallEnum.UNDO);
+        }
         //foldAnimator.Fold(fd.GetInverse(), null, fromStack: true);
         //Debug.Log($"undid {action} from stack");
     }
@@ -179,6 +218,15 @@ public class PaperStateManager: Singleton<PaperStateManager>
         {
             ProcessFoldAction((FoldAction)action, ActionCallEnum.REDO);
         }
+        if(action is PlayerMove)
+        {
+            ProcessMoveAction((PlayerMove)action, ActionCallEnum.REDO);
+        }
+        if(action is PlayerRotate)
+        {
+            ProcessRotateAction((PlayerRotate)action, ActionCallEnum.REDO);
+        }
+        
     }
 
 }
@@ -202,7 +250,4 @@ public class FoldAction: Action
     {
         return new FoldAction(foldData.GetInverse());
     }
-    // public Vector3 axis;
-    // public JointData foldJoint;
-    // public List<JointData> axisJoints;
 }

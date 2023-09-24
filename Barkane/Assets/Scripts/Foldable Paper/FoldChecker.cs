@@ -36,7 +36,6 @@ public class FoldChecker : Singleton<FoldChecker>
         foreach(FoldableObject fo in fd.foldObjects)
         {
             Vector3Int target = Vector3Int.RoundToInt(rotation * (fo.currentPosition.location - fd.axisPosition) + fd.axisPosition);
-            print(fo + " target " + target);
             Quaternion rot = rotation * fo.currentPosition.rotation;
             Vector3 axis = rotation * fo.currentPosition.axis;
             PositionData targetData = new(target, rot, axis); 

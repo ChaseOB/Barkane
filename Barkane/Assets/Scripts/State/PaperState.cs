@@ -6,7 +6,8 @@ public class PaperState
 {
     public List<SquareStack> squareStacks = new();
     public List<JointStack> jointStacks = new();
-
+    // public Vector2 playerPosition = Vector2.zero;
+    // public Quaternion playerRotation;
     //
     //Stack data
         //location
@@ -51,9 +52,9 @@ public class ObjectData
 {
     public Vector3Int currentPosition;
     public Vector3Int targetPosition;
-    public Vector3 displayPosition;
+   // public Vector3 displayPosition;
 
     public Quaternion currentRotation;
     public Quaternion targetRotation;
-    public Quaternion displayRotation;
+   // public Quaternion displayRotation;
 }

@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   compareTags:
-  - Player
+  - Character
   OnEnter:
     m_PersistentCalls:
       m_Calls:
@@ -301,6 +301,7 @@ MonoBehaviour:
   BaseColor: {r: 0, g: 0, b: 0, a: 0}
   TintColor: {r: 0, g: 0, b: 0, a: 0}
   playerLoc: {fileID: 398644310617893384}
+  YOffset: -0
   m_SideVisiblity: 0
 --- !u!114 &4332946852583158350
 MonoBehaviour:
@@ -529,6 +530,7 @@ MonoBehaviour:
   BaseColor: {r: 0, g: 0, b: 0, a: 0}
   TintColor: {r: 0, g: 0, b: 0, a: 0}
   playerLoc: {fileID: 6208710809326013470}
+  YOffset: 0
   m_SideVisiblity: 0
 --- !u!114 &3583265718418767156
 MonoBehaviour:
@@ -722,6 +724,7 @@ MonoBehaviour:
   topHalf: {fileID: 2369556897618979814}
   bottomHalf: {fileID: 1793145467125830348}
   edgeParticles: {fileID: 7721798970483151979}
+  YOffset: 0
   topSide: {fileID: 8869331940603878471}
   bottomSide: {fileID: 3000609133104664072}
   topPlayerCol: {fileID: 6208710809326013470}
@@ -830,7 +833,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   compareTags:
-  - Player
+  - Character
   OnEnter:
     m_PersistentCalls:
       m_Calls:
@@ -912,7 +915,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6383896504923069985}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: -0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
