@@ -138,7 +138,8 @@ public class PaperStateManager: Singleton<PaperStateManager>
         }
 
         //Step 3: figure out which stacks need to be split and split them
-     
+        List<SquareStack> remove = new();
+
         for(int i = 0; i < oldStacks.Count; i++)
         {
             SquareStack s = oldStacks[i];
@@ -147,52 +148,67 @@ public class PaperStateManager: Singleton<PaperStateManager>
             {
                 newStacks.Add(newStack);
             }
+            if(s.IsEmpty)
+                remove.Add(s);
         }
+
+        foreach(SquareStack s in remove)
+            oldStacks.Remove(s);
         
        // newStacks = newStacks.Where(s => !s.IsEmpty);
+
 
         //Step 4: figue out which stacks need to be merged and merge them
         print("old stacks " + oldStacks.Count);
         print("new stacks " + newStacks.Count);
-        // for(int i = 0; i < oldStacks.Count; i++)
-        // {
-        //     SquareStack s1 = oldStacks[i];
-        //     for(int j = 0; i < newStacks.Count; i++)
-        //     {
-        //         SquareStack s2 = newStacks[j];
+        for(int i = 0; i < oldStacks.Count; i++)
+        {
+            SquareStack s1 = oldStacks[i];
+            for(int j = 0; j < newStacks.Count; j++)
+            {
+                SquareStack s2 = newStacks[j];
 
-        //         StackOverlapType overlap = s1.GetOverlap(s2);
-        //         switch(overlap)
-        //         {
-        //             case StackOverlapType.SAME:
-        //             case StackOverlapType.NONE:
-        //                 break;
-        //             case StackOverlapType.BOTH:
-        //                 break;
-        //             case StackOverlapType.START:
-        //                 break;
-        //             case StackOverlapType.END:
-        //                 s1.MergeIntoStack(s2);
-        //                 break;
-        //         }
-        //     }
-        // }
+                StackOverlapType overlap = s1.GetOverlap(s2);                
+                print(overlap);
+                switch(overlap)
+                {
+                    case StackOverlapType.SAME:
+                    case StackOverlapType.NONE:
+                        break;
+                    case StackOverlapType.BOTH:
+                        break;
+                    case StackOverlapType.START:
+                        break;
+                    case StackOverlapType.END:
+                        s1.MergeIntoStack(s2);
+                        break;
+                }
+            }
+        }
         
        // newStacks = (List<SquareStack>)newStacks.Where(s => !s.IsEmpty);
 
+        List<SquareStack> returnStacks = new();
+
         foreach(SquareStack s in newStacks)
         {
-            s.UpdateYOffsets();
+            if(!s.IsEmpty)
+                returnStacks.Add(s);
         }
 
         foreach(SquareStack s in oldStacks)
         {
             if(!s.IsEmpty)
-                newStacks.Add(s);
+                returnStacks.Add(s);
         }
 
-        paperState.squareStacks = newStacks;
-        print("new stacks 2 " + newStacks.Count);
+        foreach(SquareStack s in returnStacks)
+        {
+            s.UpdateYOffsets();
+        }
+        
+        paperState.squareStacks = returnStacks;
+        print("return stacks " + returnStacks.Count);
 
 
         //Step 5: animate fold

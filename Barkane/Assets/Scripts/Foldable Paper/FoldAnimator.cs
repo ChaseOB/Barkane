@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class FoldAnimator : MonoBehaviour
@@ -74,9 +75,12 @@ public class FoldAnimator : MonoBehaviour
         //     o.GetComponent<PaperJoint>().ToggleCollider(false);
         // }
 
+        List<SquareData> squares = new();
         foreach(FoldableObject f in objectsToFold)
         {
             f.SetParent(tempObj.transform);
+            if(f is SquareData)
+                squares.Add((SquareData)f);
         }
 
         float t = 0;
@@ -88,6 +92,10 @@ public class FoldAnimator : MonoBehaviour
         {
             t += Time.deltaTime;
             tempObj.transform.SetPositionAndRotation(center, Quaternion.AngleAxis(90 * t / foldDuration, fd.axisVector));
+            foreach(SquareData s in squares)
+            {
+                s.paperSquare.YOffset = math.lerp(s.currentYOffset, s.targetYOffset, t / foldDuration);
+            }
             yield return null;
         }
 

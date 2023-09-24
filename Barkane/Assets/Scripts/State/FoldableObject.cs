@@ -49,7 +49,7 @@ public class PositionData
     {
         if(other is not PositionData) return false;
         PositionData o = (PositionData) other;
-        return location == o.location && rotation == o.rotation && axis == o.axis;
+        return location == o.location;
     }
 
     public override int GetHashCode()
@@ -204,7 +204,7 @@ public class SquareStack : FoldableObject
                     newStack.squarelist.AddLast(squareData);
                 }
                 remove.Add(squareData);
-                Debug.Log(squareData.paperSquare.gameObject.name + " at " + squareData.currentPosition.location + " target " + squareData.targetPosition.location);
+                //Debug.Log(squareData.paperSquare.gameObject.name + " at " + squareData.currentPosition.location + " target " + squareData.targetPosition.location);
             }
         }
         foreach(SquareData s in remove)
@@ -222,8 +222,8 @@ public class SquareStack : FoldableObject
     public StackOverlapType GetOverlap(SquareStack other)
     {
         if(other == this) return StackOverlapType.SAME;
-        bool sameStart = currentPosition == other.currentPosition;
-        bool sameEnd = targetPosition == other.targetPosition;
+        bool sameStart = currentPosition.Equals(other.currentPosition);
+        bool sameEnd = targetPosition.Equals(other.targetPosition);
         if(sameStart && sameEnd) return StackOverlapType.BOTH;
         if(sameEnd) return StackOverlapType.END; //Merge stacks at end of fold
         if(sameStart) return StackOverlapType.START; //Split stacks at start of fold
@@ -233,6 +233,7 @@ public class SquareStack : FoldableObject
     //merge other into this stack
     public void MergeIntoStack(SquareStack other)
     {
+        Debug.Log("merging stacks at " + targetPosition.location);
         //TODO: how tf do you merge :sob:
         if(other.targetPosition.axis == targetPosition.axis)
         {
@@ -245,9 +246,12 @@ public class SquareStack : FoldableObject
         }
         else if (other.targetPosition.axis == -1 * targetPosition.axis)
         {
+            while(other.squarelist.Count > 0)
+            {
              SquareData s = other.squarelist.Last();
                 other.squarelist.Remove(s);
                 squarelist.AddLast(s);
+            }
         }
         else {
             Debug.LogWarning("Axis did not match, Other:" + other.targetPosition.axis + " This:" + targetPosition.axis);
@@ -256,6 +260,7 @@ public class SquareStack : FoldableObject
 
     public void UpdateYOffsets()
     {
+        Debug.Log("updating y offsets for " + squarelist.Count + "squares at " + targetPosition);
         float maxOffset = 0.1f;
         
         float inc = (squarelist.Count - 1) > 0 ? maxOffset / (squarelist.Count - 1) : 0;
