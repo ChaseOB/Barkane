@@ -204,8 +204,6 @@ public class FoldablePaper : MonoBehaviour
         }
         PaperStateManager.Instance.squareDict = squareDict;
         PaperStateManager.Instance.jointDict = jointDict;
-        // state.adjListSquareToJoint = adjListSquareToJoint;
-        // state.adjListJointToSquare = adjListJointToSquare;
 
         PaperStateManager.Instance.SetPaperState(state);
     }
@@ -220,7 +218,6 @@ public class FoldablePaper : MonoBehaviour
         foreach(PaperSquare ps in paperSquares)
             if(ps.PlayerOccupied)
                 playerSquare = ps;
-        print(playerSquare.transform.position);
         DFSHelperSquare(playerSquare, true);
         return foldObjects;
     }

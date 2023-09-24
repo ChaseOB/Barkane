@@ -91,6 +91,8 @@ public class FoldAnimator : MonoBehaviour
             yield return null;
         }
 
+        tempObj.transform.SetPositionAndRotation(center, Quaternion.AngleAxis(90, fd.axisVector));
+
         isFolding = false;
         
         foreach(FoldableObject f in objectsToFold)

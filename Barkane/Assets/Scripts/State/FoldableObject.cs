@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing.Printing;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Animations;
+using UnityEngine.InputSystem.EnhancedTouch;
 
 public enum FoldObjectType 
 {
@@ -41,6 +44,19 @@ public class PositionData
         rotation = r;
         axis = a;
     }
+
+    public override bool Equals(object other)
+    {
+        if(other is not PositionData) return false;
+        PositionData o = (PositionData) other;
+        return location == o.location && rotation == o.rotation && axis == o.axis;
+    }
+
+    public override int GetHashCode()
+    {
+        return location.GetHashCode() + rotation.GetHashCode() + axis.GetHashCode();
+    }
+
 }
 
 public abstract class FoldableObject
@@ -58,6 +74,11 @@ public abstract class FoldableObject
     protected Transform storedParent;
 
     public abstract void SetParent(Transform parent);
+
+    public bool IsInTargetPos()
+    {
+        return currentPosition.Equals(targetPosition);
+    }
     // public FoldableObject(PositionData position)
     // {
     //     currentPosition = position;
@@ -95,7 +116,6 @@ public class SquareData: FoldableObject
 
     public override void SendToTarget()
     {
-        Debug.Log("sent to target");
         currentPosition = targetPosition;
         currentYOffset = targetYOffset;
         paperSquare.transform.position = currentPosition.location;
@@ -114,11 +134,17 @@ public class SquareData: FoldableObject
             paperSquare.transform.parent = storedParent;
         }
     }
+
+    public void SetTargetYOffset(float offset)
+    {
+        targetYOffset = offset;
+    }
 }
 
 public class SquareStack : FoldableObject
 {
     public LinkedList<SquareData> squarelist = new();
+    public bool IsEmpty => squarelist.Count == 0;
 
     public SquareStack(PaperSquare paperSquare)
     {
@@ -134,6 +160,13 @@ public class SquareStack : FoldableObject
         targetPosition = positionData;
     }
 
+    public SquareStack(SquareData s)
+    {
+        squarelist.AddFirst(s);
+        currentPosition = s.currentPosition;
+        targetPosition = s.targetPosition;
+    }
+
     public static Vector3 GetAxisFromCoordinates(Vector3Int coordinates)
     {
         if(coordinates.x % 2 != 0) return Vector3.right;
@@ -144,15 +177,93 @@ public class SquareStack : FoldableObject
 
     public override void SendToTarget()
     {
+        targetPosition = currentPosition;
         foreach(SquareData sd in squarelist)
         {
             sd.SendToTarget();
         }  
     }
 
+    
+
+    //if elements of this stack should be in another stack, split them out into a new stack
+    public SquareStack SplitStack()
+    {
+        SquareStack newStack = null;
+        List<SquareData> remove = new();
+        foreach(SquareData squareData in squarelist)
+        {
+            if(!squareData.IsInTargetPos())
+            {
+                if(newStack == null)
+                {
+                    newStack = new(squareData);
+                }
+                else
+                {
+                    newStack.squarelist.AddLast(squareData);
+                }
+                remove.Add(squareData);
+                Debug.Log(squareData.paperSquare.gameObject.name + " at " + squareData.currentPosition.location + " target " + squareData.targetPosition.location);
+            }
+        }
+        foreach(SquareData s in remove)
+        {
+            squarelist.Remove(s);
+        }
+        return newStack;
+    }
+
     public override void SetParent(Transform parent)
     {
         throw new System.NotImplementedException();
+    }
+
+    public StackOverlapType GetOverlap(SquareStack other)
+    {
+        if(other == this) return StackOverlapType.SAME;
+        bool sameStart = currentPosition == other.currentPosition;
+        bool sameEnd = targetPosition == other.targetPosition;
+        if(sameStart && sameEnd) return StackOverlapType.BOTH;
+        if(sameEnd) return StackOverlapType.END; //Merge stacks at end of fold
+        if(sameStart) return StackOverlapType.START; //Split stacks at start of fold
+        return StackOverlapType.NONE;
+    }
+
+    //merge other into this stack
+    public void MergeIntoStack(SquareStack other)
+    {
+        //TODO: how tf do you merge :sob:
+        if(other.targetPosition.axis == targetPosition.axis)
+        {
+            while(other.squarelist.Count > 0)
+            {
+                SquareData s = other.squarelist.First();
+                other.squarelist.Remove(s);
+                squarelist.AddLast(s);
+            }
+        }
+        else if (other.targetPosition.axis == -1 * targetPosition.axis)
+        {
+             SquareData s = other.squarelist.Last();
+                other.squarelist.Remove(s);
+                squarelist.AddLast(s);
+        }
+        else {
+            Debug.LogWarning("Axis did not match, Other:" + other.targetPosition.axis + " This:" + targetPosition.axis);
+        }
+    }
+
+    public void UpdateYOffsets()
+    {
+        float maxOffset = 0.1f;
+        
+        float inc = (squarelist.Count - 1) > 0 ? maxOffset / (squarelist.Count - 1) : 0;
+        for(int i = 0; i < squarelist.Count; i++)
+        {
+            SquareData s = squarelist.ElementAt(i);
+            s.SetTargetYOffset(i * inc);
+        }
     }
 }
 
@@ -259,6 +370,8 @@ public class JointStack: FoldableObject
     {
         throw new System.NotImplementedException();
     }
+
+
 }
 
 

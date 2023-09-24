@@ -4,6 +4,7 @@ using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 public enum ActionCallEnum
 {
@@ -102,6 +103,9 @@ public class PaperStateManager: Singleton<PaperStateManager>
 
     public void ProcessFoldAction(FoldAction foldAction, ActionCallEnum source)
     {
+        List<SquareStack> oldStacks = paperState.squareStacks;
+        List<SquareStack> newStacks = new();
+
         //Step 1: find out which squares/joints need to be moved
         // FoldablePaper fp = FindObjectOfType<FoldablePaper>();
         // FoldObjects foldObjects = fp.FindFoldObjects();
@@ -130,12 +134,66 @@ public class PaperStateManager: Singleton<PaperStateManager>
                 sd = squareDict[sd.paperSquare];
                 sd.targetPosition = target;
             }
-            print(fo + "target " + target);
+//            print(fo + "target " + target);
         }
 
         //Step 3: figure out which stacks need to be split and split them
+     
+        for(int i = 0; i < oldStacks.Count; i++)
+        {
+            SquareStack s = oldStacks[i];
+            SquareStack newStack = s.SplitStack();
+            if(newStack != null)
+            {
+                newStacks.Add(newStack);
+            }
+        }
+        
+       // newStacks = newStacks.Where(s => !s.IsEmpty);
 
         //Step 4: figue out which stacks need to be merged and merge them
+        print("old stacks " + oldStacks.Count);
+        print("new stacks " + newStacks.Count);
+        // for(int i = 0; i < oldStacks.Count; i++)
+        // {
+        //     SquareStack s1 = oldStacks[i];
+        //     for(int j = 0; i < newStacks.Count; i++)
+        //     {
+        //         SquareStack s2 = newStacks[j];
+
+        //         StackOverlapType overlap = s1.GetOverlap(s2);
+        //         switch(overlap)
+        //         {
+        //             case StackOverlapType.SAME:
+        //             case StackOverlapType.NONE:
+        //                 break;
+        //             case StackOverlapType.BOTH:
+        //                 break;
+        //             case StackOverlapType.START:
+        //                 break;
+        //             case StackOverlapType.END:
+        //                 s1.MergeIntoStack(s2);
+        //                 break;
+        //         }
+        //     }
+        // }
+        
+       // newStacks = (List<SquareStack>)newStacks.Where(s => !s.IsEmpty);
+
+        foreach(SquareStack s in newStacks)
+        {
+            s.UpdateYOffsets();
+        }
+
+        foreach(SquareStack s in oldStacks)
+        {
+            if(!s.IsEmpty)
+                newStacks.Add(s);
+        }
+
+        paperState.squareStacks = newStacks;
+        print("new stacks 2 " + newStacks.Count);
+
 
         //Step 5: animate fold
          if(foldAnimator == null)
@@ -153,7 +211,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
         }
         UIManager.Instance.UpdateFC(numFolds);
         LevelManager.Instance?.SetFoldCount(numFolds);
-        
+
         foldAnimator.Fold(fd, paperState, source);
     }
 
