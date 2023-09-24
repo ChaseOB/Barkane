@@ -140,9 +140,9 @@ public class PaperStateManager: Singleton<PaperStateManager>
         //Step 5: animate fold
          if(foldAnimator == null)
             foldAnimator = FindObjectOfType<FoldAnimator>();
+
         ActionLockManager.Instance.TryRemoveLock(this);
-        if(paperState == null)
-            print("null paper state");
+
         if(source == ActionCallEnum.UNDO)
         {
             numFolds--;
@@ -152,8 +152,9 @@ public class PaperStateManager: Singleton<PaperStateManager>
             numFolds++;
         }
         UIManager.Instance.UpdateFC(numFolds);
+        LevelManager.Instance?.SetFoldCount(numFolds);
+        
         foldAnimator.Fold(fd, paperState, source);
-        //Step 6: align to position
     }
 
     public void UndoAction()

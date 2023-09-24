@@ -41,31 +41,73 @@ public class FoldAnimator : MonoBehaviour
     {
         if(isFolding) return;
         isFolding = true;
+
         if(!ActionLockManager.Instance.TryTakeLock(this)){
                 Debug.LogError("Action Lock taken, can't fold (this is bad)");
                 return;
             }
         OnFold?.Invoke(this, new FoldArgs{fd = fd});
-        //AnimateFold
+        StartCoroutine(AnimateFold(fd, state, actionCallEnum));
+        //callback?.Invoke();
+    }
+
+     private IEnumerator AnimateFold(FoldData fd, PaperState state, ActionCallEnum actionCallEnum)
+     {
+        //OnFold?.Invoke(this, new FoldArgs{fd = fd});
+
+        List<FoldableObject> objectsToFold = fd.foldObjects;
+        Vector3 center = fd.axisPosition;
+
+        AudioManager.Instance?.Play("Fold");
+        isFolding = true;
+        GameObject tempObj = new GameObject(); //used for reparenting/rotating
+        tempObj.transform.position = center;
+
+        // foreach (GameObject o in objectsToFold.foldSquares)
+        // {
+        //     o.transform.SetParent(tempObj.transform, worldPositionStays: true);
+        // }
+        
+        // foreach(GameObject o in objectsToFold.foldJoints)
+        // {
+        //     o.transform.SetParent(tempObj.transform, worldPositionStays: true);
+        //     o.GetComponent<PaperJoint>().ToggleCollider(false);
+        // }
+
+        foreach(FoldableObject f in objectsToFold)
+        {
+            f.SetParent(tempObj.transform);
+        }
+
+        float t = 0;
+        // foreach(PaperJoint pj in foldablePaper.PaperJoints)
+        //     pj.OnFold();
+
+        float foldDuration = 0.25f;
+        while (t < foldDuration)
+        {
+            t += Time.deltaTime;
+            tempObj.transform.SetPositionAndRotation(center, Quaternion.AngleAxis(90 * t / foldDuration, fd.axisVector));
+            yield return null;
+        }
+
+        isFolding = false;
+        
+        foreach(FoldableObject f in objectsToFold)
+        {
+            f.SetParent(null);
+        }
+        Destroy(tempObj);
+
         SetFoldPosition(fd, state);
         isFolding = false;
         ActionLockManager.Instance.TryRemoveLock(this);
         TileSelector.Instance.state = SelectState.NONE;
-        //callback?.Invoke();
     }
-
-    // private IEnumerator AnimateFold(FoldData2 fd)
-    // {
-        
-    // }
 
     private void SetFoldPosition(FoldData fd, PaperState state)
     {
         state.SendToTarget();
-        // foreach(FoldableObject fo in target)
-        // {
-        //     fo.SendToTarget(fd.axisVector);
-        // }
     }
 
 //     public void Fold(FoldData fd, bool fromStack = false, bool undo = false)

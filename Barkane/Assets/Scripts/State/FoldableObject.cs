@@ -55,6 +55,9 @@ public abstract class FoldableObject
     public PositionData currentPosition;
     public PositionData targetPosition;
 
+    protected Transform storedParent;
+
+    public abstract void SetParent(Transform parent);
     // public FoldableObject(PositionData position)
     // {
     //     currentPosition = position;
@@ -79,6 +82,7 @@ public class SquareData: FoldableObject
         currentPosition = position;
         targetPosition = position;
         this.paperSquare = paperSquare;
+        storedParent = paperSquare.transform.parent;
     }
 
     public SquareData(PositionData currentPosition, PositionData targetPosition, PaperSquare paperSquare)
@@ -86,6 +90,7 @@ public class SquareData: FoldableObject
         this.currentPosition = currentPosition;
         this.targetPosition = targetPosition;
         this.paperSquare = paperSquare;
+        storedParent = paperSquare.transform.parent;
     }
 
     public override void SendToTarget()
@@ -97,9 +102,21 @@ public class SquareData: FoldableObject
         paperSquare.transform.rotation = currentPosition.rotation;
         paperSquare.YOffset = currentYOffset;
     }
+
+    public override void SetParent(Transform parent)
+    {
+        if(parent != null)
+        {
+            paperSquare.transform.parent = parent;
+        }
+        else
+        {
+            paperSquare.transform.parent = storedParent;
+        }
+    }
 }
 
-public class SquareStack: FoldableObject
+public class SquareStack : FoldableObject
 {
     public LinkedList<SquareData> squarelist = new();
 
@@ -132,6 +149,11 @@ public class SquareStack: FoldableObject
             sd.SendToTarget();
         }  
     }
+
+    public override void SetParent(Transform parent)
+    {
+        throw new System.NotImplementedException();
+    }
 }
 
 public class JointData: FoldableObject
@@ -151,6 +173,7 @@ public class JointData: FoldableObject
         currentPosition = positionData;
         targetPosition = positionData;
         this.paperJoint = paperJoint;
+        storedParent = paperJoint.transform.parent;
     }
 
     public JointData(PositionData position, PaperJoint paperJoint)
@@ -158,6 +181,8 @@ public class JointData: FoldableObject
         currentPosition = position;
         targetPosition = position;
         this.paperJoint = paperJoint;
+        storedParent = paperJoint.transform.parent;
+
     }
 
     public JointData(PositionData currentPosition, PositionData targetPosition, PaperJoint paperJoint)
@@ -165,6 +190,7 @@ public class JointData: FoldableObject
         this.currentPosition = currentPosition;
         this.targetPosition = targetPosition;
         this.paperJoint = paperJoint;
+        storedParent = paperJoint.transform.parent;
     }
 
     public static Vector3 GetAxisFromCoordinates(Vector3Int coordinates)
@@ -181,6 +207,18 @@ public class JointData: FoldableObject
         paperJoint.transform.position = currentPosition.location;
         paperJoint.transform.rotation = currentPosition.rotation;
         //paperJoint.Offset = currentYOffset;
+    }
+
+    public override void SetParent(Transform parent)
+    {
+        if(parent != null)
+        {
+            paperJoint.transform.parent = parent;
+        }
+        else
+        {
+            paperJoint.transform.parent = storedParent;
+        }
     }
 }
 
@@ -215,6 +253,11 @@ public class JointStack: FoldableObject
         {
             jd.SendToTarget();
         }  
+    }
+
+    public override void SetParent(Transform parent)
+    {
+        throw new System.NotImplementedException();
     }
 }
 
