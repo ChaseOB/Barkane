@@ -226,6 +226,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
         foreach(SquareStack s in returnStacks)
         {
             s.UpdateYOffsets();
+            s.DisableStackInsides();
         }
 
         paperState.squareStacks = returnStacks;

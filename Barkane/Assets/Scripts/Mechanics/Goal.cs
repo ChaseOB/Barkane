@@ -17,6 +17,8 @@ public class Goal : MonoBehaviour, IThemedItem
     [SerializeField] private bool glowstickActive = true;
 
     private bool ending = false;
+    [SerializeField] private bool covered;
+
 
     [SerializeField] private GameObject inactiveGoal;
     [SerializeField] private GameObject activeGoal;
@@ -41,15 +43,20 @@ public class Goal : MonoBehaviour, IThemedItem
     }
 
     private void OnTriggerStay(Collider other) {
-        if(other.gameObject.CompareTag("Player") && goalActive && inGlowstickRange && glowstickActive && !ending)
+        if(other.gameObject.CompareTag("Player") && goalActive && inGlowstickRange && glowstickActive && !ending && !covered)
             StartCoroutine(WaitToEndLevel());
+    }
+
+    public void SetCovered(bool c)
+    {
+        covered = c;
     }
 
     //C: Used so player finishes moving
     private IEnumerator WaitToEndLevel() {
         ending = true;
         yield return new WaitUntil(() => !ActionLockManager.Instance.IsLocked);
-        if(!glowstickActive || !goalActive || !inGlowstickRange || !glowstickActive) {
+        if(!glowstickActive || !goalActive || !inGlowstickRange || covered) {
             ending = false;
         } else {
             EndLevel();

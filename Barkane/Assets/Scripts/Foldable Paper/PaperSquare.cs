@@ -60,7 +60,7 @@ public class PaperSquare : MonoBehaviour
     public bool debug;
 //#endif
 
-
+    
     private void Awake() 
     {
         edgeParticles = GetComponent<EdgeParticles>();
@@ -110,6 +110,11 @@ public class PaperSquare : MonoBehaviour
        // topHalf.SetActive(val);
         topPlayerCol.SetActive(val);
         topColActive = val;
+        Goal g = topHalf.GetComponentInChildren<Goal>();
+        if(g != null)
+        {
+            g.SetCovered(!val);
+        }
     }
 
     public void ToggleBottom(bool val)
@@ -117,6 +122,11 @@ public class PaperSquare : MonoBehaviour
         //bottomHalf.SetActive(val);
         botPlayerCol.SetActive(val);
         botColActive = val;
+        Goal g = bottomHalf.GetComponentInChildren<Goal>();
+        if(g != null)
+        {
+            g.SetCovered(!val);
+        }
     }
 
     public void SetPlayerOccupied(bool value)
