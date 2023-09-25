@@ -207,7 +207,7 @@ public class SquareStack : FoldableObject
         {
             SquareData s = squarelist.ElementAt(i);
             bool sameAxis = s.targetPosition.axis == targetPosition.axis;
-            float target = diff * i / (squarelist.Count - 1.0f) * (sameAxis ? 1 : -1);
+            float target = (diff * i / (squarelist.Count - 1.0f) + minOffset) * (sameAxis ? 1 : -1);
             s.SetTargetYOffset(target);
         }
     }
