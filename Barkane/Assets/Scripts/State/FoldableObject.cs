@@ -46,6 +46,13 @@ public class PositionData
         axis = a;
     }
 
+    public PositionData(PositionData other)
+    {
+        location = other.location;
+        rotation = other.rotation;
+        axis = other.axis;
+    }
+
     public override bool Equals(object other)
     {
         if(other is not PositionData) return false;
@@ -80,6 +87,11 @@ public abstract class FoldableObject
     {
         return currentPosition.Equals(targetPosition);
     }
+
+    public void SetTarget(PositionData positionData)
+    {
+        targetPosition = positionData;
+    }
     // public FoldableObject(PositionData position)
     // {
     //     currentPosition = position;
@@ -102,16 +114,16 @@ public class SquareData: FoldableObject
 
     public SquareData(PositionData position, PaperSquare paperSquare)
     {
-        currentPosition = position;
-        targetPosition = position;
+        currentPosition = new(position);
+        targetPosition = new(position);
         this.paperSquare = paperSquare;
         storedParent = paperSquare.transform.parent;
     }
 
     public SquareData(PositionData currentPosition, PositionData targetPosition, PaperSquare paperSquare)
     {
-        this.currentPosition = currentPosition;
-        this.targetPosition = targetPosition;
+        this.currentPosition = new(currentPosition);
+        this.targetPosition = new(targetPosition);
         this.paperSquare = paperSquare;
         storedParent = paperSquare.transform.parent;
     }
@@ -169,8 +181,8 @@ public class SquareStack : FoldableObject
     public SquareStack(SquareData s)
     {
         squarelist.AddFirst(s);
-        currentPosition = s.currentPosition;
-        targetPosition = s.targetPosition;
+        currentPosition = new(s.currentPosition);
+        targetPosition = new(s.targetPosition);
     }
 
     public static Vector3 GetAxisFromCoordinates(Vector3Int coordinates)
@@ -183,7 +195,9 @@ public class SquareStack : FoldableObject
 
     public override void SendToTarget()
     {
-        targetPosition = currentPosition;
+        //targetPosition = currentPosition;
+        //When sendToTarget is called, all squares should have the same position
+        targetPosition = new(squarelist.First().targetPosition);
         foreach(SquareData sd in squarelist)
         {
             sd.SendToTarget();

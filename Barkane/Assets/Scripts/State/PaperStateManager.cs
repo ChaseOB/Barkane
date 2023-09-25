@@ -121,18 +121,18 @@ public class PaperStateManager: Singleton<PaperStateManager>
             Quaternion r = rotation * current.rotation;
             Vector3 a = r * Vector3.up;
             PositionData target = new(l, r, a);
-            fo.targetPosition = target;
+           // fo.targetPosition = target;
             if(fo is JointData)
             {
                 JointData jd = (JointData)fo;
                 jd = jointDict[jd.paperJoint];
-                jd.targetPosition = target;
+                jd.SetTarget(target);
             }
             if(fo is SquareData)
             {
                 SquareData sd = (SquareData)fo;
                 sd = squareDict[sd.paperSquare];
-                sd.targetPosition = target;
+                sd.SetTarget(target);
                 print("updating target for square at " + sd.currentPosition.location + " target " + target.location);
             }
 //            print(fo + "target " + target);
@@ -153,6 +153,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
         }
         //THE SOURCE OF THE PROBLEM:
         // Newly generated stacks (from spliting) cannot be merged into properly
+        // Seem to have bad targets
 
         foreach(SquareStack s in remove)
             oldStacks.Remove(s);
@@ -200,8 +201,8 @@ public class PaperStateManager: Singleton<PaperStateManager>
             if(!s.IsEmpty)
             {
                 returnStacks.Add(s);
-                if(s.debug)
-                    print("new stack at " + s.currentPosition.location + " moved to " + s.targetPosition.location);
+               // if(s.debug)
+                   // print("new stack at " + s.currentPosition.location + " moved to " + s.targetPosition.location);
             }
             else
                 if(s.debug)
@@ -213,8 +214,8 @@ public class PaperStateManager: Singleton<PaperStateManager>
              if(!s.IsEmpty)
             {
                 returnStacks.Add(s);
-                if(s.debug)
-                    print("old stack at " + s.currentPosition.location + " moved to " + s.targetPosition.location);
+               // if(s.debug)
+                   // print("old stack at " + s.currentPosition.location + " moved to " + s.targetPosition.location);
             }
             else
                 if(s.debug)
