@@ -107,14 +107,14 @@ public class PaperSquare : MonoBehaviour
 
     public void ToggleTop(bool val)
     {
-        topHalf.SetActive(val);
+       // topHalf.SetActive(val);
         topPlayerCol.SetActive(val);
         topColActive = val;
     }
 
     public void ToggleBottom(bool val)
     {
-        bottomHalf.SetActive(val);
+        //bottomHalf.SetActive(val);
         botPlayerCol.SetActive(val);
         botColActive = val;
     }

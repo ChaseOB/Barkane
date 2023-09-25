@@ -253,6 +253,8 @@ public class PaperStateManager: Singleton<PaperStateManager>
         // TileSelector.Instance.state = SelectState.NONE;
 
         foldAnimator.Fold(fd, paperState, source);
+
+        //TODO: make sure to disable stuff on the inside stacks (most importantly player location setter)
     }
 
     public void UndoAction()
