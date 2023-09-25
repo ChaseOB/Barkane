@@ -85,8 +85,7 @@ public static class CoordUtils
             y.Add(vector.y);
             z.Add(vector.z);
         }
-
-        return x.Count > 1 ? 1 : 0 + y.Count > 1 ? 1 : 0 + z.Count > 1 ? 1 : 0;
+        return (x.Count > 1 ? 1 : 0) + (y.Count > 1 ? 1 : 0) + (z.Count > 1 ? 1 : 0);
     }
 
 }

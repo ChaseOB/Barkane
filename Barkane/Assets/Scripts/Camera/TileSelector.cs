@@ -101,7 +101,18 @@ public class TileSelector : Singleton<TileSelector>
 
     private void UpdateGhostPosition()
     {
-        if(ghostFold90 == null) return;
+        if(ghostFold90 == null && ghostFoldNeg90 == null) return;
+        if(ghostFold90 == null) 
+        {
+            ghostFoldNeg90.SetActive(true);
+            return;
+        }
+        if(ghostFoldNeg90 == null) 
+        {
+            ghostFold90.SetActive(true);
+            return;
+        }
+
         Vector2 foldcenter90 = camera.WorldToScreenPoint(indicator90.Center);
         Vector2 foldcenterneg90 = camera.WorldToScreenPoint(indicatorNeg90.Center);
         Vector2 mousePos = Mouse.current.position.ReadValue();
@@ -158,20 +169,51 @@ public class TileSelector : Singleton<TileSelector>
         currJoint = hoverJoint;
         currJoint.Select();
         foldablePaper.foldJoint = currJoint;
-        CheckForValidFolds();
-        CreateGhostFold();
         state = SelectState.SELECTED;
+        CheckForValidFolds();
+        //CreateGhostFold();
     }
 
     private void CheckForValidFolds()
     {
         if(FoldChecker.Instance == null) return;
+
         foldData90 = foldablePaper.BuildFoldData(false);
-        targetState90 = FoldChecker.Instance.GetFoldPosition(foldData90);
-        //foldData90.targetState = targetState90;
+
+        FoldFailureType failureType1 = FoldChecker.Instance.CheckFold(foldData90);
+        if(failureType1 == FoldFailureType.KINKED ||
+            failureType1 == FoldFailureType.NOCHECK)
+        {
+            DeselectJoint();
+            return;
+        }
+        if(failureType1 == FoldFailureType.NONE)
+        {
+            targetState90 = FoldChecker.Instance.GetFoldPosition(foldData90);
+            ghostFold90 = Instantiate(indicatorPrefab);
+            indicator90 = ghostFold90.GetComponent<FoldIndicator>();
+            indicator90.BuildIndicator(targetState90);
+        }
 
         foldDataNeg90 = foldablePaper.BuildFoldData(true);
-        targetStateNeg90 = FoldChecker.Instance.GetFoldPosition(foldDataNeg90);
+
+        FoldFailureType failureType2 = FoldChecker.Instance.CheckFold(foldDataNeg90);
+        if(failureType1 == FoldFailureType.KINKED ||
+            failureType1 == FoldFailureType.NOCHECK)
+            return;
+        if(failureType1 == FoldFailureType.NONE)
+        {
+            targetStateNeg90 = FoldChecker.Instance.GetFoldPosition(foldDataNeg90);
+            ghostFoldNeg90 = Instantiate(indicatorPrefab);
+            indicatorNeg90 = ghostFoldNeg90.GetComponent<FoldIndicator>();
+            indicatorNeg90.BuildIndicator(targetStateNeg90);
+        }
+
+        //targetState90 = FoldChecker.Instance.GetFoldPosition(foldData90);
+        //foldData90.targetState = targetState90;
+
+        // foldDataNeg90 = foldablePaper.BuildFoldData(true);
+        // targetStateNeg90 = FoldChecker.Instance.GetFoldPosition(foldDataNeg90);
         //foldDataNeg90.targetState = targetStateNeg90;
     }
 
@@ -189,15 +231,26 @@ public class TileSelector : Singleton<TileSelector>
     private void ChooseFoldDir()
     {
         state = SelectState.FOLDING;
-        if(dist90 < distNeg90)
+
+        if(ghostFold90 == null && ghostFoldNeg90 == null) return;
+        if(ghostFold90 == null) 
+        {
+            PaperStateManager.Instance.AddAndExecuteFold(foldDataNeg90);
+        }
+        if(ghostFoldNeg90 == null) 
         {
             PaperStateManager.Instance.AddAndExecuteFold(foldData90);
-            //foldAnimator.Fold(foldData90, () => state = SelectState.NONE);
         }
         else
         {
-            PaperStateManager.Instance.AddAndExecuteFold(foldDataNeg90);
-           // foldAnimator.Fold(foldDataNeg90, () => state = SelectState.NONE);
+            if(dist90 < distNeg90)
+            {
+                PaperStateManager.Instance.AddAndExecuteFold(foldData90);
+            }
+            else
+            {
+                PaperStateManager.Instance.AddAndExecuteFold(foldDataNeg90);
+            }
         }
         DeselectJoint(false);
     }

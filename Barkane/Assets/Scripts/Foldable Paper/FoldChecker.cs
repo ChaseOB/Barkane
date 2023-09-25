@@ -6,9 +6,7 @@ using System.Linq;
 
 public class FoldCheckData
 {
-    public FoldAction foldAction;
-    public PaperState initialState;
-    public PaperState finalState;
+   public FoldData foldData;
 }
 
 public class FoldPositionData
@@ -68,44 +66,59 @@ public class FoldChecker : Singleton<FoldChecker>
         return data;
     }   
 
-    public FoldFailureType CheckFold(FoldCheckData foldCheckData) 
+    public FoldFailureType CheckFold(FoldData foldData) 
     {
+        print("checking fold");
         if(!ActionLockManager.Instance.TryTakeLock(this))
             return FoldFailureType.NOCHECK;
-        if(!CheckKinkedJoint(foldCheckData))
+        if(!CheckKinkedJoint(foldData))
         {
+            print("Cannot fold. Fold axis is kinked");
             ActionLockManager.Instance.TryRemoveLock(this);
             return FoldFailureType.KINKED;
         }
-        if(!CheckPaperClipping(foldCheckData))
-        {
-            ActionLockManager.Instance.TryRemoveLock(this);
-            return FoldFailureType.PAPERCLIP;
-        }
-        if(!CheckCollision(foldCheckData))
-        {
-            ActionLockManager.Instance.TryRemoveLock(this);
-            return FoldFailureType.COLLISION;
-        }
+        // if(!CheckPaperClipping(foldData))
+        // {
+        //     ActionLockManager.Instance.TryRemoveLock(this);
+        //     return FoldFailureType.PAPERCLIP;
+        // }
+        // if(!CheckCollision(foldData))
+        // {
+        //     ActionLockManager.Instance.TryRemoveLock(this);
+        //     return FoldFailureType.COLLISION;
+        // }
         ActionLockManager.Instance.TryRemoveLock(this);
         return FoldFailureType.NONE;
     }
 
 
+    /* FOLD CHECK 1: KINKED JOINTS
+        This checks that the selected joint lies within a single plane. If it does, this might be a valid fold. If not, 
+        This is not a valid fold and we return false
 
-    private bool CheckKinkedJoint(FoldCheckData foldCheckData)
+        KNOWN ISSUES: None
+    */
+    private bool CheckKinkedJoint(FoldData foldData)
     {
-        throw new NotImplementedException();
+        List<Vector3Int> coords = new();
+        foreach(PaperJoint j in foldData.axisJoints)
+        {
+            Vector3Int coord = Vector3Int.RoundToInt(j.transform.position);
+            print(coord);
+            coords.Add(coord);
+        }
+        print(CoordUtils.CheckNumDiffCoords(coords));
+        return CoordUtils.CheckNumDiffCoords(coords) < 2;
     }
 
 
-    private bool CheckPaperClipping(FoldCheckData foldCheckData)
+    private bool CheckPaperClipping(FoldData foldData)
     {
         throw new NotImplementedException();
     }
 
     
-        private bool CheckCollision(FoldCheckData foldCheckData)
+        private bool CheckCollision(FoldData foldData)
     {
         throw new NotImplementedException();
     }
