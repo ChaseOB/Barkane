@@ -248,10 +248,10 @@ public class PaperStateManager: Singleton<PaperStateManager>
         UIManager.Instance.UpdateFC(numFolds);
         LevelManager.Instance?.SetFoldCount(numFolds);
 
-        paperState.SendToTarget();
-        TileSelector.Instance.state = SelectState.NONE;
+        // paperState.SendToTarget();
+        // TileSelector.Instance.state = SelectState.NONE;
 
-        //foldAnimator.Fold(fd, paperState, source);
+        foldAnimator.Fold(fd, paperState, source);
     }
 
     public void UndoAction()

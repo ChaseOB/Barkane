@@ -1,90 +1,69 @@
-using System.Collections;
-using System.Drawing.Printing;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Animations;
-using UnityEngine.InputSystem.EnhancedTouch;
-
-public enum FoldObjectType 
-{
-    NONE,
-    OBJECT, 
-    SQUARE,
-    JOINT,
-    SQUARESTACK,
-    JOINTSTACK,
-}
-
-public class FoldObjectData
-{
-    FoldObjectType type;
-    Vector3Int coordinates;
-}
-
-public enum StackOverlapType
-{
-    SAME,
-    NONE,
-    START,
-    END,
-    BOTH,
-}
 
 [System.Serializable]
-public class PositionData
+public class JointData: FoldableObject
 {
-    public Vector3Int location;
-    public Quaternion rotation;
-    public Vector3 axis;
+    public PaperJoint paperJoint;
+    public Vector3 currentOffset;
+    public Vector3 targetOffset;
 
-    public PositionData(Vector3Int l, Quaternion r, Vector3 a)
-    {
-        location = l;
-        rotation = r;
-        axis = a;
-    }
-
-    public PositionData(PositionData other)
-    {
-        location = other.location;
-        rotation = other.rotation;
-        axis = other.axis;
-    }
-
-    public override bool Equals(object other)
-    {
-        if(other is not PositionData) return false;
-        PositionData o = (PositionData) other;
-        return location == o.location;
-    }
-
-    public override int GetHashCode()
-    {
-        return location.GetHashCode() + rotation.GetHashCode() + axis.GetHashCode();
-    }
-
-}
-
-public abstract class FoldableObject
-{
-
-    public abstract void SendToTarget();
     
-    public PositionData currentPosition;
-    public PositionData targetPosition;
-
-    public Transform storedParent;
-
-    public abstract void SetParent(Transform parent);
-
-    public bool IsInTargetPos()
+    public JointData(PaperJoint paperJoint)
     {
-        return currentPosition.Equals(targetPosition);
+        PositionData positionData = new(
+            Vector3Int.RoundToInt(paperJoint.transform.position),
+            paperJoint.transform.rotation,
+            GetAxisFromCoordinates( Vector3Int.RoundToInt(paperJoint.transform.position))
+        );
+        currentPosition = positionData;
+        targetPosition = positionData;
+        this.paperJoint = paperJoint;
+        storedParent = paperJoint.transform.parent;
     }
 
-    public void SetTarget(PositionData positionData)
+    public JointData(PositionData position, PaperJoint paperJoint)
     {
-        targetPosition = positionData;
+        currentPosition = position;
+        targetPosition = position;
+        this.paperJoint = paperJoint;
+        storedParent = paperJoint.transform.parent;
+
+    }
+
+    public JointData(PositionData currentPosition, PositionData targetPosition, PaperJoint paperJoint)
+    {
+        this.currentPosition = currentPosition;
+        this.targetPosition = targetPosition;
+        this.paperJoint = paperJoint;
+        storedParent = paperJoint.transform.parent;
+    }
+
+    public static Vector3 GetAxisFromCoordinates(Vector3Int coordinates)
+    {
+        if(coordinates.x % 2 == 0) return Vector3.right;
+        if(coordinates.y % 2 == 0) return Vector3.up;
+        return Vector3.forward;
+    }
+
+    public override void SendToTarget()
+    {
+        currentPosition = targetPosition;
+        currentOffset = targetOffset;
+        paperJoint.transform.position = currentPosition.location;
+        paperJoint.transform.rotation = currentPosition.rotation;
+        //paperJoint.Offset = currentYOffset;
+    }
+
+    public override void SetParent(Transform parent)
+    {
+        if(parent != null)
+        {
+            paperJoint.transform.parent = parent;
+        }
+        else
+        {
+            paperJoint.transform.parent = storedParent;
+        }
     }
 }
 

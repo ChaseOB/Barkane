@@ -1,90 +1,52 @@
-using System.Collections;
-using System.Drawing.Printing;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Animations;
-using UnityEngine.InputSystem.EnhancedTouch;
-
-public enum FoldObjectType 
-{
-    NONE,
-    OBJECT, 
-    SQUARE,
-    JOINT,
-    SQUARESTACK,
-    JOINTSTACK,
-}
-
-public class FoldObjectData
-{
-    FoldObjectType type;
-    Vector3Int coordinates;
-}
-
-public enum StackOverlapType
-{
-    SAME,
-    NONE,
-    START,
-    END,
-    BOTH,
-}
 
 [System.Serializable]
-public class PositionData
+public class SquareData: FoldableObject
 {
-    public Vector3Int location;
-    public Quaternion rotation;
-    public Vector3 axis;
+    public PaperSquare paperSquare;
+    public float currentYOffset;
+    public float targetYOffset;
 
-    public PositionData(Vector3Int l, Quaternion r, Vector3 a)
+    public SquareData(PositionData position, PaperSquare paperSquare)
     {
-        location = l;
-        rotation = r;
-        axis = a;
+        currentPosition = new(position);
+        targetPosition = new(position);
+        this.paperSquare = paperSquare;
+        storedParent = paperSquare.transform.parent;
     }
 
-    public PositionData(PositionData other)
+    public SquareData(PositionData currentPosition, PositionData targetPosition, PaperSquare paperSquare)
     {
-        location = other.location;
-        rotation = other.rotation;
-        axis = other.axis;
+        this.currentPosition = new(currentPosition);
+        this.targetPosition = new(targetPosition);
+        this.paperSquare = paperSquare;
+        storedParent = paperSquare.transform.parent;
     }
 
-    public override bool Equals(object other)
+    public override void SendToTarget()
     {
-        if(other is not PositionData) return false;
-        PositionData o = (PositionData) other;
-        return location == o.location;
+        currentPosition = targetPosition;
+        currentYOffset = targetYOffset;
+        paperSquare.transform.position = currentPosition.location;
+        paperSquare.transform.rotation = currentPosition.rotation;
+        paperSquare.YOffset = currentYOffset;
     }
 
-    public override int GetHashCode()
+    public override void SetParent(Transform parent)
     {
-        return location.GetHashCode() + rotation.GetHashCode() + axis.GetHashCode();
+        if(parent != null)
+        {
+            paperSquare.transform.parent = parent;
+        }
+        else
+        {
+            paperSquare.transform.parent = storedParent;
+        }
     }
 
-}
-
-public abstract class FoldableObject
-{
-
-    public abstract void SendToTarget();
-    
-    public PositionData currentPosition;
-    public PositionData targetPosition;
-
-    public Transform storedParent;
-
-    public abstract void SetParent(Transform parent);
-
-    public bool IsInTargetPos()
+    public void SetTargetYOffset(float offset)
     {
-        return currentPosition.Equals(targetPosition);
-    }
-
-    public void SetTarget(PositionData positionData)
-    {
-        targetPosition = positionData;
+        targetYOffset = offset;
     }
 }
 
