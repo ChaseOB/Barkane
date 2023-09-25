@@ -8,6 +8,7 @@ using System.Linq;
 
 public enum ActionCallEnum
 {
+    NONE,
     PLAYER,
     UNDO,
     REDO

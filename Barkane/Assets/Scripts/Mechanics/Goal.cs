@@ -69,13 +69,12 @@ public class Goal : MonoBehaviour, IThemedItem
         col.color = themePartColors[(int)t.themeEnum];
     }
 
-    public void CollectShard()
+    public void CollectShard(int num)
     {
-        numShardsCollected++;
+        numShardsCollected += num;
         //update shard display
         UIManager.UpdateShardCount(numShardsCollected, numShards);
-        if(CheckIfGoalActive())
-            ActivateGoal();
+        ActivateGoal(CheckIfGoalActive());
     }
 
     private void ActivateGoal(bool val = true)

@@ -300,7 +300,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad882b6a0a5fcb44fa08158b04531a7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  paperState:
+    squareStacks: []
+    jointStacks: []
   foldAnimator: {fileID: 0}
+  playerMovement: {fileID: 0}
 --- !u!1 &1074238080
 GameObject:
   m_ObjectHideFlags: 0

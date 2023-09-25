@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool invalidMoveAnim = false;
 
+    public ActionCallEnum source = ActionCallEnum.NONE;
 
     private void Start() 
     {
@@ -130,6 +131,7 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator MoveHelper(ActionCallEnum source)
     {
         isMoving = true;
+        this.source = source;
         
         TileSelector.Instance.DeselectJoint();
 
@@ -159,6 +161,7 @@ public class PlayerMovement : MonoBehaviour
         //     pm.movetype = 1;
         //     //UndoRedoManager.Instance?.AddAction(pm);
         // }
+        this.source = ActionCallEnum.NONE;
         animator.Play("Idle");
         ActionLockManager.Instance.TryRemoveLock(this);
     }
