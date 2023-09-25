@@ -32,6 +32,7 @@ public enum StackOverlapType
     BOTH,
 }
 
+[System.Serializable]
 public class PositionData
 {
     public Vector3Int location;
@@ -71,7 +72,7 @@ public abstract class FoldableObject
     public PositionData currentPosition;
     public PositionData targetPosition;
 
-    protected Transform storedParent;
+    public Transform storedParent;
 
     public abstract void SetParent(Transform parent);
 
@@ -92,6 +93,7 @@ public abstract class FoldableObject
     // } 
 }
 
+[System.Serializable]
 public class SquareData: FoldableObject
 {
     public PaperSquare paperSquare;
@@ -141,10 +143,14 @@ public class SquareData: FoldableObject
     }
 }
 
+[System.Serializable]
+
 public class SquareStack : FoldableObject
 {
     public LinkedList<SquareData> squarelist = new();
     public bool IsEmpty => squarelist.Count == 0;
+
+    public bool debug;
 
     public SquareStack(PaperSquare paperSquare)
     {
@@ -198,6 +204,7 @@ public class SquareStack : FoldableObject
                 if(newStack == null)
                 {
                     newStack = new(squareData);
+                    newStack.debug = true;
                 }
                 else
                 {
@@ -210,6 +217,10 @@ public class SquareStack : FoldableObject
         foreach(SquareData s in remove)
         {
             squarelist.Remove(s);
+        }
+        if(newStack != null)
+        {
+            Debug.Log("made new stack with " + newStack.squarelist.Count + " squares at " + newStack.currentPosition.location + " target " + newStack.targetPosition.location);
         }
         return newStack;
     }
@@ -233,7 +244,9 @@ public class SquareStack : FoldableObject
     //merge other into this stack
     public void MergeIntoStack(SquareStack other)
     {
-        Debug.Log("merging stacks at " + targetPosition.location);
+        debug = debug || other.debug;
+        if(debug)
+            Debug.Log("merging stacks at " + targetPosition.location);
         //TODO: how tf do you merge :sob:
         if(other.targetPosition.axis == targetPosition.axis)
         {
@@ -256,11 +269,13 @@ public class SquareStack : FoldableObject
         else {
             Debug.LogWarning("Axis did not match, Other:" + other.targetPosition.axis + " This:" + targetPosition.axis);
         }
+        Debug.Log("stack with " + squarelist.Count + " squares merged at " + targetPosition.location);
     }
 
     public void UpdateYOffsets()
     {
-        Debug.Log("updating y offsets for " + squarelist.Count + "squares at " + targetPosition);
+        if(debug)
+            Debug.Log("updating y offsets for " + squarelist.Count + " squares at " + targetPosition.location);
         float maxOffset = 0.1f;
         
         float inc = (squarelist.Count - 1) > 0 ? maxOffset / (squarelist.Count - 1) : 0;
@@ -272,6 +287,7 @@ public class SquareStack : FoldableObject
     }
 }
 
+[System.Serializable]
 public class JointData: FoldableObject
 {
     public PaperJoint paperJoint;
@@ -338,6 +354,7 @@ public class JointData: FoldableObject
     }
 }
 
+[System.Serializable]
 public class JointStack: FoldableObject
 {
     public LinkedList<JointData> jointList = new();

@@ -107,15 +107,16 @@ public class FoldAnimator : MonoBehaviour
         }
         Destroy(tempObj);
 
-        SetFoldPosition(fd, state);
+        SetFoldPosition(state);
         isFolding = false;
         ActionLockManager.Instance.TryRemoveLock(this);
         TileSelector.Instance.state = SelectState.NONE;
     }
 
-    private void SetFoldPosition(FoldData fd, PaperState state)
+    private void SetFoldPosition(PaperState state)
     {
         state.SendToTarget();
+        PaperStateManager.Instance.SetPaperState(state);
     }
 
 //     public void Fold(FoldData fd, bool fromStack = false, bool undo = false)

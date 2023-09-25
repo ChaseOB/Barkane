@@ -197,6 +197,7 @@ public class FoldablePaper : MonoBehaviour
             SquareData s = stack.squarelist.First();
             squareDict.Add(paperSquare, s); 
             squareData.Add(s);
+            stack.debug = paperSquare.debug;
         }
         foreach (PaperJoint paperJoint in paperJoints)
         {

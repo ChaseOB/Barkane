@@ -56,6 +56,8 @@ public class PaperSquare : MonoBehaviour
 
     private FoldablePaper foldablePaper;
     private Transform visuals;
+
+    public bool debug;
 //#endif
 
 

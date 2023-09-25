@@ -16,7 +16,7 @@ public enum ActionCallEnum
 public class PaperStateManager: Singleton<PaperStateManager>
 {
    //State
-    private PaperState paperState;
+    public PaperState paperState;
     public  PaperState PaperState => paperState;
 
     public Stack<Action> actionStack = new Stack<Action>();
@@ -133,13 +133,13 @@ public class PaperStateManager: Singleton<PaperStateManager>
                 SquareData sd = (SquareData)fo;
                 sd = squareDict[sd.paperSquare];
                 sd.targetPosition = target;
+                print("updating target for square at " + sd.currentPosition.location + " target " + target.location);
             }
 //            print(fo + "target " + target);
         }
 
         //Step 3: figure out which stacks need to be split and split them
         List<SquareStack> remove = new();
-
         for(int i = 0; i < oldStacks.Count; i++)
         {
             SquareStack s = oldStacks[i];
@@ -148,15 +148,20 @@ public class PaperStateManager: Singleton<PaperStateManager>
             {
                 newStacks.Add(newStack);
             }
-            if(s.IsEmpty)
-                remove.Add(s);
+             if(s.IsEmpty)
+                 remove.Add(s);
         }
+        //THE SOURCE OF THE PROBLEM:
+        // Newly generated stacks (from spliting) cannot be merged into properly
 
         foreach(SquareStack s in remove)
             oldStacks.Remove(s);
         
        // newStacks = newStacks.Where(s => !s.IsEmpty);
-
+        
+        // List<SquareStack> combined = new();
+        // combined.AddRange(oldStacks);
+        // combined.AddRange(news)
 
         //Step 4: figue out which stacks need to be merged and merge them
         print("old stacks " + oldStacks.Count);
@@ -193,20 +198,34 @@ public class PaperStateManager: Singleton<PaperStateManager>
         foreach(SquareStack s in newStacks)
         {
             if(!s.IsEmpty)
+            {
                 returnStacks.Add(s);
+                if(s.debug)
+                    print("new stack at " + s.currentPosition.location + " moved to " + s.targetPosition.location);
+            }
+            else
+                if(s.debug)
+                    print("removing new empty stack at " + s.currentPosition.location);
         }
 
         foreach(SquareStack s in oldStacks)
         {
-            if(!s.IsEmpty)
+             if(!s.IsEmpty)
+            {
                 returnStacks.Add(s);
+                if(s.debug)
+                    print("old stack at " + s.currentPosition.location + " moved to " + s.targetPosition.location);
+            }
+            else
+                if(s.debug)
+                    print("removing old empty stack at " + s.currentPosition.location);
         }
 
         foreach(SquareStack s in returnStacks)
         {
             s.UpdateYOffsets();
         }
-        
+
         paperState.squareStacks = returnStacks;
         print("return stacks " + returnStacks.Count);
 
@@ -228,7 +247,10 @@ public class PaperStateManager: Singleton<PaperStateManager>
         UIManager.Instance.UpdateFC(numFolds);
         LevelManager.Instance?.SetFoldCount(numFolds);
 
-        foldAnimator.Fold(fd, paperState, source);
+        paperState.SendToTarget();
+        TileSelector.Instance.state = SelectState.NONE;
+
+        //foldAnimator.Fold(fd, paperState, source);
     }
 
     public void UndoAction()
