@@ -134,7 +134,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
                 SquareData sd = (SquareData)fo;
                 sd = squareDict[sd.paperSquare];
                 sd.SetTarget(target);
-                print("updating target for square at " + sd.currentPosition.location + " target " + target.location);
+//                print("updating target for square at " + sd.currentPosition.location + " target " + target.location);
             }
 //            print(fo + "target " + target);
         }
@@ -166,8 +166,8 @@ public class PaperStateManager: Singleton<PaperStateManager>
         // combined.AddRange(news)
 
         //Step 4: figue out which stacks need to be merged and merge them
-        print("old stacks " + oldStacks.Count);
-        print("new stacks " + newStacks.Count);
+        //print("old stacks " + oldStacks.Count);
+        //print("new stacks " + newStacks.Count);
         for(int i = 0; i < oldStacks.Count; i++)
         {
             SquareStack s1 = oldStacks[i];
@@ -187,7 +187,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
                     case StackOverlapType.START:
                         break;
                     case StackOverlapType.END:
-                        s1.MergeIntoStack(s2);
+                        s1.MergeIntoStack(s2, fd.axisVector);
                         break;
                 }
             }
@@ -229,7 +229,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
         }
 
         paperState.squareStacks = returnStacks;
-        print("return stacks " + returnStacks.Count);
+       // print("return stacks " + returnStacks.Count);
 
 
         //Step 5: animate fold

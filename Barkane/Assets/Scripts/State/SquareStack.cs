@@ -66,7 +66,7 @@ public class SquareStack : FoldableObject
                 if(newStack == null)
                 {
                     newStack = new(squareData);
-                    newStack.debug = true;
+                    //newStack.debug = true;
                 }
                 else
                 {
@@ -80,10 +80,10 @@ public class SquareStack : FoldableObject
         {
             squarelist.Remove(s);
         }
-        if(newStack != null)
-        {
-            Debug.Log("made new stack with " + newStack.squarelist.Count + " squares at " + newStack.currentPosition.location + " target " + newStack.targetPosition.location);
-        }
+        // if(newStack != null)
+        // {
+        //     Debug.Log("made new stack with " + newStack.squarelist.Count + " squares at " + newStack.currentPosition.location + " target " + newStack.targetPosition.location);
+        // }
         return newStack;
     }
 
@@ -104,33 +104,80 @@ public class SquareStack : FoldableObject
     }
 
     //merge other into this stack
-    public void MergeIntoStack(SquareStack other)
+    public void MergeIntoStack(SquareStack other, Vector3 foldAxis)
     {
         debug = debug || other.debug;
         if(debug)
             Debug.Log("merging stacks at " + targetPosition.location);
-        //TODO: how tf do you merge :sob:
-        if(other.targetPosition.axis == targetPosition.axis)
+
+        Vector3 cross = Vector3.Cross(currentPosition.axis, foldAxis);
+        Vector3 distance = other.currentPosition.location - currentPosition.location;
+        float dot = Vector3.Dot(cross, distance);
+        bool sameAxis = other.targetPosition.axis == targetPosition.axis;
+        Debug.Log("dot " + dot + " same axis" + sameAxis);
+        if(dot < 0) //merge onto the top of this stack
         {
-            while(other.squarelist.Count > 0)
+            if(other.targetPosition.axis == targetPosition.axis) //other stack in same dir, don't flip
             {
-                SquareData s = other.squarelist.First();
-                other.squarelist.Remove(s);
-                squarelist.AddLast(s);
+                while(other.squarelist.Count > 0)
+                {
+                    SquareData s = other.squarelist.Last();
+                    other.squarelist.Remove(s);
+                    squarelist.AddFirst(s);
+                }
+            }
+            else
+            {
+                while(other.squarelist.Count > 0)
+                {
+                    SquareData s = other.squarelist.First();
+                    other.squarelist.Remove(s);
+                    squarelist.AddFirst(s);
+                }
             }
         }
-        else if (other.targetPosition.axis == -1 * targetPosition.axis)
+        else
         {
-            while(other.squarelist.Count > 0)
+            if(other.targetPosition.axis == targetPosition.axis) //other stack in same dir, don't flip
             {
-             SquareData s = other.squarelist.Last();
-                other.squarelist.Remove(s);
-                squarelist.AddLast(s);
+                while(other.squarelist.Count > 0)
+                {
+                    SquareData s = other.squarelist.First();
+                    other.squarelist.Remove(s);
+                    squarelist.AddLast(s);
+                }
+            }
+            else
+            {
+                while(other.squarelist.Count > 0)
+                {
+                    SquareData s = other.squarelist.Last();
+                    other.squarelist.Remove(s);
+                    squarelist.AddLast(s);
+                }
             }
         }
-        else {
-            Debug.LogWarning("Axis did not match, Other:" + other.targetPosition.axis + " This:" + targetPosition.axis);
-        }
+        // if(other.targetPosition.axis == targetPosition.axis)
+        // {
+        //     while(other.squarelist.Count > 0)
+        //     {
+        //         SquareData s = other.squarelist.First();
+        //         other.squarelist.Remove(s);
+        //         squarelist.AddLast(s);
+        //     }
+        // }
+        // else if (other.targetPosition.axis == -1 * targetPosition.axis)
+        // {
+        //     while(other.squarelist.Count > 0)
+        //     {
+        //      SquareData s = other.squarelist.Last();
+        //         other.squarelist.Remove(s);
+        //         squarelist.AddLast(s);
+        //     }
+        // }
+        // else {
+        //     Debug.LogWarning("Axis did not match, Other:" + other.targetPosition.axis + " This:" + targetPosition.axis);
+        // }
         Debug.Log("stack with " + squarelist.Count + " squares merged at " + targetPosition.location);
     }
 
@@ -138,13 +185,30 @@ public class SquareStack : FoldableObject
     {
         if(debug)
             Debug.Log("updating y offsets for " + squarelist.Count + " squares at " + targetPosition.location);
-        float maxOffset = 0.1f;
-        
-        float inc = (squarelist.Count - 1) > 0 ? maxOffset / (squarelist.Count - 1) : 0;
-        for(int i = 0; i < squarelist.Count; i++)
+
+        if(squarelist.Count < 1) return;
+        if(squarelist.Count == 1)
+        {
+            squarelist.First().SetTargetYOffset(0);
+            return;
+        }
+        float MAX_DISPLACEMENT = 0.1f;
+
+        //If this is +y, we want the top of the stack to have a y-offset of 0
+        //If this is a -y, we want the bottom of the stack to have a y-offset of 0
+        //so marm can walk on them
+        //else, use the full range
+        float maxOffset = targetPosition.axis == Vector3.up ? 0 : MAX_DISPLACEMENT;
+        float minOffset = targetPosition.axis == Vector3.down ? 0 : -1 * MAX_DISPLACEMENT;
+        float diff = maxOffset - minOffset;
+        Debug.Log("axis " + targetPosition.axis + " max " + maxOffset + " min  " + minOffset);
+        //float inc = (squarelist.Count - 1) > 0 ? maxOffset / (squarelist.Count - 1) : 0;
+        for(int i = squarelist.Count - 1; i >= 0 ; i--)
         {
             SquareData s = squarelist.ElementAt(i);
-            s.SetTargetYOffset(i * inc);
+            bool sameAxis = s.targetPosition.axis == targetPosition.axis;
+            float target = diff * i / (squarelist.Count - 1.0f) * (sameAxis ? 1 : -1);
+            s.SetTargetYOffset(target);
         }
     }
 }
