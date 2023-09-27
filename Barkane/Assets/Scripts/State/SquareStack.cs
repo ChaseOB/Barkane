@@ -115,7 +115,7 @@ public class SquareStack : FoldableObject
         Vector3 distance = other.currentPosition.location - currentPosition.location;
         float dot = Vector3.Dot(cross, distance);
         bool sameAxis = other.targetPosition.axis == targetPosition.axis;
-        Debug.Log("dot " + dot + " same axis" + sameAxis);
+//        Debug.Log("dot " + dot + " same axis" + sameAxis);
         bool dotLessThanZero = dot < 0;
         while(other.squarelist.Count > 0)
         {
@@ -190,7 +190,7 @@ public class SquareStack : FoldableObject
         // else {
         //     Debug.LogWarning("Axis did not match, Other:" + other.targetPosition.axis + " This:" + targetPosition.axis);
         // }
-        Debug.Log("stack with " + squarelist.Count + " squares merged at " + targetPosition.location);
+       // Debug.Log("stack with " + squarelist.Count + " squares merged at " + targetPosition.location);
     }
 
     public void DisableStackInsides()
@@ -246,7 +246,7 @@ public class SquareStack : FoldableObject
         float minOffset = targetPosition.axis == Vector3.down ? 0 : -1 * MAX_DISPLACEMENT;
         float diff = maxOffset - minOffset;
 
-        Debug.Log("axis " + targetPosition.axis + " max " + maxOffset + " min  " + minOffset);
+      //  Debug.Log("axis " + targetPosition.axis + " max " + maxOffset + " min  " + minOffset);
         
         for(int i = squarelist.Count - 1; i >= 0 ; i--)
         {

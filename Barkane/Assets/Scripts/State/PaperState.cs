@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -39,6 +40,19 @@ public class PaperState
         {
             j.SendToTarget();
         }
+    }
+
+    //Returns position in stack and stack size
+    public (int, int) GetPositionInStack(SquareData s)
+    {
+        foreach(SquareStack stack in squareStacks)
+        {
+            if(stack.squarelist.Contains(s))
+            {
+                return (stack.squarelist.TakeWhile( i => i !=s).Count(), stack.squarelist.Count());
+            }
+        }
+        return (0, 0);
     }
 }
 

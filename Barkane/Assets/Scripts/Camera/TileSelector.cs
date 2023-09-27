@@ -198,10 +198,10 @@ public class TileSelector : Singleton<TileSelector>
         foldDataNeg90 = foldablePaper.BuildFoldData(true);
 
         FoldFailureType failureType2 = FoldChecker.Instance.CheckFold(foldDataNeg90);
-        if(failureType1 == FoldFailureType.KINKED ||
-            failureType1 == FoldFailureType.NOCHECK)
+        if(failureType2 == FoldFailureType.KINKED ||
+            failureType2 == FoldFailureType.NOCHECK)
             return;
-        if(failureType1 == FoldFailureType.NONE)
+        if(failureType2 == FoldFailureType.NONE)
         {
             targetStateNeg90 = FoldChecker.Instance.GetFoldPosition(foldDataNeg90);
             ghostFoldNeg90 = Instantiate(indicatorPrefab);

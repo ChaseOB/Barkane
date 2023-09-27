@@ -176,7 +176,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
                 SquareStack s2 = newStacks[j];
 
                 StackOverlapType overlap = s1.GetOverlap(s2);                
-                print(overlap);
+                //print(overlap);
                 switch(overlap)
                 {
                     case StackOverlapType.SAME:
