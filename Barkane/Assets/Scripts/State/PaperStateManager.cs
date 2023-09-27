@@ -47,7 +47,6 @@ public class PaperStateManager: Singleton<PaperStateManager>
     public void SetPaperState(PaperState ps)
     {
         paperState = ps;
-        print(paperState);
     }
 
      private void OnUndo(InputValue value)

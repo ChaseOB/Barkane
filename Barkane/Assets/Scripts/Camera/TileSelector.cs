@@ -58,7 +58,7 @@ public class TileSelector : Singleton<TileSelector>
     private void Update()
     {
         if(PauseManager.IsPaused) return;
-        if(foldablePaper.isComplete) return;
+        if(foldablePaper == null || foldablePaper.isComplete) return;
         UpdateSquareRefs();
         UpdateJointHoverIndicator();
         UpdateGhostPosition();

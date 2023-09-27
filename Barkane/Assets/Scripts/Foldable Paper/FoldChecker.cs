@@ -22,6 +22,8 @@ public class FoldPositionData
 }
 public class FoldChecker : Singleton<FoldChecker>
 {
+    public GameObject SquareCollider;
+    public LayerMask squareCollidingMask;
 
     private void Awake() {
         InitializeSingleton();
@@ -82,11 +84,11 @@ public class FoldChecker : Singleton<FoldChecker>
             ActionLockManager.Instance.TryRemoveLock(this);
             return FoldFailureType.PAPERCLIP;
         }
-        // if(!CheckCollision(foldData))
-        // {
-        //     ActionLockManager.Instance.TryRemoveLock(this);
-        //     return FoldFailureType.COLLISION;
-        // }
+        if(!CheckCollision(foldData))
+        {
+            ActionLockManager.Instance.TryRemoveLock(this);
+            return FoldFailureType.COLLISION;
+        }
         ActionLockManager.Instance.TryRemoveLock(this);
         return FoldFailureType.NONE;
     }
@@ -95,8 +97,6 @@ public class FoldChecker : Singleton<FoldChecker>
     /* FOLD CHECK 1: KINKED JOINTS
         This checks that the selected joint lies within a single plane. If it does, this might be a valid fold. If not, 
         This is not a valid fold and we return false
-
-        KNOWN ISSUES: None
     */
     private bool CheckKinkedJoint(FoldData foldData)
     {
@@ -108,21 +108,17 @@ public class FoldChecker : Singleton<FoldChecker>
         return CoordUtils.CheckNumDiffCoords(coords) < 2;
     }
 
-
+    /* FOLD CHECK 2: Adjacent square clipping
+        This method checks if squares would clip through the stack they are in, as this is not caught by the collision check. 
+        We check each stack as follows:
+            -If the stack has one square, it passes the check
+            -If all sqaures in the stack are in the fold or not in the fold, it passes
+            -If we have a sequence of fold/player/fold or player/fold/player, the stack fails (no legal fold)
+            -Else, check the fold squares to see if they fold in the correct direction
+        If all stacks pass, return true. Else, return false.
+    */
     private bool CheckPaperClipping(FoldData foldData)
     {
-        /*foreach square in folddata
-            if square is only element in stack continue
-            if all squares in stack are in fold data continue
-            if we have squares in fold sandwiched between squares not in fold, return false
-            
-            if square is top/bottom of stack
-                do vector math to see what directions you can fold in 
-            check edge cases with newly made stacks
-
-        */
-
-        //Step 1
         List<SquareStack> stacks = PaperStateManager.Instance.paperState.squareStacks;
 
         List<SquareData> squares = new();
@@ -140,74 +136,29 @@ public class FoldChecker : Singleton<FoldChecker>
             //get breakdown of fold side/non fold side squares
             var breakdown = stack.GetFoldSidesBreakdown(squares);
             int groups = breakdown.Item2.Count;
+
             //if all squares non fold side or all squares fold side continue
             if(groups < 2) continue;
+
             //if we have fold/non-fold/fold or non-fold/fold/non-fold, return false
             if(groups > 2) return false;
+
             //else, check the newly made stack is folding up (to the left) if on top and down (to the right) if on bottom, when viewed along the fold
             bool checkBottom = breakdown.Item1;
             Quaternion rotation = Quaternion.Euler(foldData.axisVector * 90);
             Vector3Int targetloc =   Vector3Int.RoundToInt(rotation * (stack.currentPosition.location - foldData.axisPosition) + foldData.axisPosition);
-                
-
             Vector3 axis = stack.currentPosition.axis;
             Vector3 cross = Vector3.Cross(axis, foldData.axisVector);
             Vector3 distance = targetloc - stack.currentPosition.location;
             float dot = Vector3.Dot(cross, distance);
+
+            //if this is the bottom square, it most move right (dot < 0)
+            //if this is the top square, it must move left (dot > 0)
             if (dot < 0 != checkBottom)
             {
-                print("square folding through stack");
-                print(checkBottom + "" + cross + distance + dot);
                 return false;
             }
-            else{
-                print("okay");
-                print(checkBottom + "" + cross + distance + dot);
-            }
         }
-
-        
-        
-        // Quaternion rotation = Quaternion.Euler(foldData.axisVector * 90);
-
-        // foreach(SquareData s in squares)
-        // {
-        //     var stackPos = PaperStateManager.Instance.paperState.GetPositionInStack(s);
-        //     int pos = stackPos.Item1;
-        //     int total = stackPos.Item2;
-        //     SquareStack stack = stackPos.Item3;
-        //     if(pos > 0 && pos < total - 1) 
-        //     {
-        //         print("square is in middle of stack");
-        //         return false;
-        //     }
-        //     if(total > 1)
-        //     {
-        //         PositionData current = s.currentPosition;
-        //         Vector3Int targetloc =   Vector3Int.RoundToInt(rotation * (current.location - foldData.axisPosition) + foldData.axisPosition);
-        //         // Quaternion r = rotation * current.rotation;
-        //         // Vector3 a = r * Vector3.up;
-        //         // PositionData target = new(l, r, a);
-
-
-        //         bool isTopSquare = pos == total - 1;
-        //         Vector3 axis = isTopSquare ? stack.currentPosition.axis : stack.currentPosition.axis * -1;
-        //         Vector3 cross = Vector3.Cross(axis, foldData.axisVector);
-        //         Vector3 distance = targetloc - s.currentPosition.location;
-        //         float dot = Vector3.Dot(cross, distance);
-        //         if (dot < 0 != isTopSquare)
-        //         {
-        //             print("square folding through stack");
-        //             print(isTopSquare + "" + cross + distance + dot);
-        //             return false;
-        //         }
-        //         else{
-        //             print("okay");
-        //                                 print(isTopSquare + "" + cross + distance + dot);
-        //         }
-        //     }
-        // }
-
         return true;
     }
 
@@ -217,8 +168,196 @@ public class FoldChecker : Singleton<FoldChecker>
         /*
 
         */
-        throw new NotImplementedException();
+        int numChecks = 10;
+
+        GameObject collisionCheckParent = new GameObject("Collision Check Parent");
+        collisionCheckParent.transform.position = foldData.axisPosition;
+
+        List<PaperSquare> squares = new();
+        foreach(FoldableObject f in foldData.foldObjects)
+        {
+            if(f is SquareData data)
+                squares.Add(data.paperSquare);
+        }
+
+        List<GameObject> casts = new();
+
+        //Build collider check obj
+        foreach(PaperSquare s in squares)
+        {
+            GameObject collider = Instantiate(SquareCollider, s.transform.position, s.transform.rotation);
+            collider.transform.parent = collisionCheckParent.transform;
+            casts.Add(collider);
+
+            BlocksFold[] bf = s.GetComponentsInChildren<BlocksFold>();
+            foreach(BlocksFold bfold in bf)
+            {
+                GameObject blockObj = bfold.gameObject;
+                BoxCollider[] colliders = blockObj.GetComponentsInChildren<BoxCollider>();
+                foreach(BoxCollider c in colliders)
+                {
+                    GameObject blockSquare = Instantiate(SquareCollider, 
+                                                c.transform.position, 
+                                                s.transform.rotation);
+                    blockSquare.GetComponent<SquareCast>().size = bfold.size;
+                    blockSquare.name = "bs";
+                    blockSquare.GetComponent<SquareCast>().showRay = true;
+                    blockSquare.GetComponent<SquareCast>().customMask = bfold.customMask;
+                    blockSquare.transform.position = blockSquare.transform.position + blockSquare.transform.rotation * c.center;
+                    blockSquare.transform.parent = collisionCheckParent.transform;
+                    if(bfold.GetComponentInParent<CrystalShard>())
+                        blockSquare.tag = "NoBlockPlayer";
+                    casts.Add(blockSquare);
+                }
+            }
+        }
+
+
+        for(int i = 0; i < numChecks; i++) 
+        {
+            collisionCheckParent.transform.rotation *= Quaternion.AngleAxis(90f/(numChecks + 1), foldData.axisVector);
+            foreach(GameObject go in casts)
+            {
+                SquareCast squareCast = go.GetComponent<SquareCast>();
+                List<RaycastHit> hits;
+                bool collide = squareCast.SquareRaycast(out hits, squareCollidingMask);
+                if(collide)
+                {
+                    foreach(RaycastHit hit in hits)
+                    {
+                        PaperSquare ps = hit.transform.gameObject.GetComponentInParent<PaperSquare>();
+
+                        //If ps is null, then we hit the player
+                        //If fold squares does not contain the square, 
+                        if(ps == null || !squares.Contains(ps)) 
+                        {
+                            Debug.Log($"Collision with {hit.transform.gameObject.name} on check {i}.");
+                            Destroy(collisionCheckParent);
+                            return false;
+                        }
+                    }
+                }
+            }
+        
+        }
+        Destroy(collisionCheckParent);
+        return true;
     }
+
+
+
+    //     /* FOLD CHECK 3: PAPER AND OBJECT COLLISION
+//             This checks that Paper squares do not clip through other squares or obstacles. This also checks that obstacles do not clip 
+//             through squares.
+
+//             KNOWN ISSUES: 
+//             -won't let you fold crystal into player
+//             -clipping squares through objects is hard, but clipping objects into squares is easy (fixed?)
+//         */
+
+
+//     private bool CheckCollision(FoldData fd) {
+//         Debug.Log("checking raycast...");
+//         //checkRaycast = false;
+//         int numChecks = 10;
+        
+//         GameObject parent2 = new GameObject("parent 2");
+//         parent2.transform.position = fd.center;
+//         List<GameObject> copiesList = new List<GameObject>();
+//         List<GameObject> obstList = new List<GameObject>();
+//         Dictionary<GameObject, Vector3> colliderDict = new Dictionary<GameObject, Vector3>();
+//         foreach(GameObject go in fd.foldObjects.foldSquares)
+//         {
+//             GameObject newSquare = Instantiate(SquareCollider, go.transform.position, go.transform.rotation);
+//             newSquare.name = "ns";
+//             newSquare.transform.parent = parent2.transform;
+//             copiesList.Add(newSquare);
+//             BlocksFold[] bf = go.GetComponentsInChildren<BlocksFold>();
+//             //if(!invertFold){
+//             foreach (BlocksFold bfold in bf)
+//             {
+//                 GameObject obj = bfold.gameObject;
+//                 BoxCollider[] colliders = obj.GetComponentsInChildren<BoxCollider>();
+//                 foreach(BoxCollider c in colliders)
+//                 {
+//                     GameObject blockSquare = Instantiate(SquareCollider, 
+//                                                 c.transform.position, 
+//                                                 go.transform.rotation);
+//                     blockSquare.GetComponent<SquareCast>().size = bfold.size;
+//                     blockSquare.name = "bs";
+//                     blockSquare.GetComponent<SquareCast>().showRay = true;
+//                     blockSquare.GetComponent<SquareCast>().customMask = bfold.customMask;
+//                     blockSquare.transform.position = blockSquare.transform.position + blockSquare.transform.rotation * c.center;
+//                     blockSquare.transform.parent = parent2.transform;
+//                     if(bfold.GetComponentInParent<CrystalShard>())
+//                         blockSquare.tag = "NoBlockPlayer";
+//                     copiesList.Add(blockSquare);
+//                     obstList.Add(blockSquare);
+//                     colliderDict.Add(blockSquare, c.size / 2);
+//                 }
+//             }    
+//             //}
+//         }
+        
+//         //C: checks for squares running into other stuff
+//         //Ideally we should check every point along the rotation axis, but this is not feasible. 
+//         float degrees = fd.degrees;
+
+//         for(int i = 1; i <= numChecks; i++) 
+//         {
+//             parent2.transform.RotateAround(fd.center, fd.axis, degrees/(numChecks+1));
+//             int j = 0;
+//             foreach(GameObject go in copiesList)
+//             {
+//                 SquareCast sc = go.GetComponent<SquareCast>();
+//                 RaycastHit hit;
+//                 bool collide = sc.SquareRaycast(out hit, squareCollidingMask);
+//                 if(collide) //C: We need to make sure the collision is with an object that is not part of the foldable objects group (these will move with the square)
+//                 {
+//                     PaperSquare ps =  hit.transform.gameObject.GetComponentInParent<PaperSquare>();
+//                     //C: There are 2 cases:
+//                     //1: we hit the player. Then ps is null, and there is a collision
+//                     //2: we hit an object/paper square. Then we need to check to see if it is in the fold side objects
+//                     // if so, this collision doesn't matter. if not, then we can't fold
+//                     if(ps == null || !fd.foldObjects.foldSquares.Contains(ps.gameObject)) 
+//                     {
+//                         Debug.Log($"Collision with {hit.transform.gameObject.name} on ray {i},{j}.");
+//                         Destroy(parent2);
+//                         return false;
+//                     }
+//                     //if(ps == null)
+//                     //    Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to null paper square.");
+//                    // else
+//                        // Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to same side collision.");
+//                 }
+//                 j++;               
+//             }
+//             foreach (GameObject go in obstList)
+//             {
+//                 LayerMask m = squareCollidingMask;
+//                 if(go.GetComponent<SquareCast>().customMask)
+//                     m = go.GetComponent<SquareCast>().mask;
+//                 Collider[] hits = Physics.OverlapBox(go.transform.position, colliderDict[go], go.transform.rotation, m);
+//                 foreach(Collider c in hits)
+//                 {
+//                     PaperSquare ps =  c.transform.gameObject.GetComponentInParent<PaperSquare>();
+//                     //if(invertFold && ps == null)
+//                       //  Debug.Log($"Collision with {hit.transform.gameObject.name} Ignored due to special case 1A"); //1a, ignore. 
+//                     if(ps == null && go.tag == "NoBlockPlayer") {}
+//                     else if(ps == null || !fd.foldObjects.foldSquares.Contains(ps.gameObject)) 
+//                     {
+//                         Debug.Log($"Collision with {c.transform.gameObject.name}.");
+//                         Destroy(parent2);
+//                         return false;
+//                     }
+//                 }
+//             }
+//         }
+//         Destroy(parent2);
+//         Debug.Log("end collision check, no collisions found");
+//         return true;
+//     }
+// }
 }
 
 

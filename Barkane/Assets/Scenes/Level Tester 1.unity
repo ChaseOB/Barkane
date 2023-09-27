@@ -593,6 +593,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3127616184884038502, guid: 1cc4adc3a284c76478dbb982a250e796, type: 3}
+      propertyPath: SquareCollider
+      value: 
+      objectReference: {fileID: 9111959285705571462, guid: d7555bfb195920947a47d504f148b475, type: 3}
+    - target: {fileID: 3127616184884038502, guid: 1cc4adc3a284c76478dbb982a250e796, type: 3}
+      propertyPath: squareCollidingMask.m_Bits
+      value: 181568
+      objectReference: {fileID: 0}
     - target: {fileID: 3127616184884038505, guid: 1cc4adc3a284c76478dbb982a250e796, type: 3}
       propertyPath: m_RootOrder
       value: 3

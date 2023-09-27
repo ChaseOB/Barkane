@@ -10,8 +10,9 @@ public class SquareCast : MonoBehaviour
     public float size = 1.6f;
     public bool customMask = false;
 
-    public bool SquareRaycast(out RaycastHit hit, LayerMask squareCollidingMask)
+    public bool SquareRaycast(out List<RaycastHit> hits, LayerMask squareCollidingMask)
     {
+        hits = new();
         RaycastHit h;
         for(int i = 0; i< numRays; i++)
         {
@@ -22,11 +23,21 @@ public class SquareCast : MonoBehaviour
             {
                 Debug.DrawRay(pos1, this.transform.forward * size, Color.red, 30);
 //                Debug.Log($"Cannot Fold: hit {h.transform.gameObject.name} when calculating fold path");
-                hit = h;
-                return true;
+                hits.Add(h);
             }
         }
-        hit = new RaycastHit();
-        return false;
+        for(int i = 0; i< numRays; i++)
+        {
+            Vector3 pos1 = this.transform.position - this.transform.right * size/2 + this.transform.forward * size * ((float)i /numRays - 0.5f + 0.5f/numRays);
+            bool collide = Physics.Raycast(pos1, this.transform.right, out h, size, customMask ? mask : squareCollidingMask);
+            if(showRay && i % 20 == 0) Debug.DrawRay(pos1, this.transform.right * size, Color.green, 20);
+            if(collide)
+            {
+                Debug.DrawRay(pos1, this.transform.forward * size, Color.red, 30);
+//                Debug.Log($"Cannot Fold: hit {h.transform.gameObject.name} when calculating fold path");
+                hits.Add(h);
+            }
+        }
+        return hits.Count > 0;
     }
 }
