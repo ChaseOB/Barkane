@@ -53,6 +53,35 @@ public class SquareStack : FoldableObject
         }  
     }
 
+    //0 is fold first, 1 is player first
+    public (bool, List<int>) GetFoldSidesBreakdown(List<SquareData> foldSquares)
+    {
+        List<int> list = new();
+        bool prevInFold = !foldSquares.Contains(squarelist.First());
+        for(int i = 0; i<squarelist.Count; i++)
+        {
+            SquareData curr = squarelist.ElementAt(i);
+            bool currInFold = foldSquares.Contains(curr);
+            if(currInFold != prevInFold)
+            {
+                list.Add(i);
+            }
+            prevInFold = currInFold;
+        }
+        // List<List<SquareData>> retList = new();
+        // int foldFirst = 0;
+        // bool prevInFold = foldSquares.Contains(squarelist.First());
+        // if(!prevInFold)
+        //     foldFirst = 1;
+        // foreach(SquareData s in squarelist)
+        // {
+        //     if(s == squarelist.First()) continue;
+
+        // }
+        // return(foldFirst, retList);
+        return(prevInFold, list);
+    }
+
     
 
     //if elements of this stack should be in another stack, split them out into a new stack

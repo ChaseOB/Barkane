@@ -43,16 +43,16 @@ public class PaperState
     }
 
     //Returns position in stack and stack size
-    public (int, int) GetPositionInStack(SquareData s)
+    public (int, int, SquareStack) GetPositionInStack(SquareData s)
     {
         foreach(SquareStack stack in squareStacks)
         {
             if(stack.squarelist.Contains(s))
             {
-                return (stack.squarelist.TakeWhile( i => i !=s).Count(), stack.squarelist.Count());
+                return (stack.squarelist.TakeWhile( i => i !=s).Count(), stack.squarelist.Count(), stack);
             }
         }
-        return (0, 0);
+        return (0, 0, null);
     }
 }
 

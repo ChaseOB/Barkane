@@ -113,56 +113,100 @@ public class FoldChecker : Singleton<FoldChecker>
     {
         /*foreach square in folddata
             if square is only element in stack continue
-            if square is in middle of stack
-                return false (can't fold any direction)
+            if all squares in stack are in fold data continue
+            if we have squares in fold sandwiched between squares not in fold, return false
+            
             if square is top/bottom of stack
                 do vector math to see what directions you can fold in 
+            check edge cases with newly made stacks
 
         */
+
+        //Step 1
+        List<SquareStack> stacks = PaperStateManager.Instance.paperState.squareStacks;
+
         List<SquareData> squares = new();
         foreach(FoldableObject f in foldData.foldObjects)
         {
             if(f is SquareData data)
                 squares.Add(data);
         }
-        
-        Quaternion rotation = Quaternion.Euler(foldData.axisVector * 90);
 
-        foreach(SquareData s in squares)
+        foreach (SquareStack stack in stacks)
         {
-            var stackPos = PaperStateManager.Instance.paperState.GetPositionInStack(s);
-            int pos = stackPos.Item1;
-            int total = stackPos.Item2;
-            if(pos > 0 && pos < total - 1) 
+            //if only 1 square, nothing to clip through
+            if(stack.squarelist.Count < 2) continue;
+
+            //get breakdown of fold side/non fold side squares
+            var breakdown = stack.GetFoldSidesBreakdown(squares);
+            int groups = breakdown.Item2.Count;
+            //if all squares non fold side or all squares fold side continue
+            if(groups < 2) continue;
+            //if we have fold/non-fold/fold or non-fold/fold/non-fold, return false
+            if(groups > 2) return false;
+            //else, check the newly made stack is folding up (to the left) if on top and down (to the right) if on bottom, when viewed along the fold
+            bool checkBottom = breakdown.Item1;
+            Quaternion rotation = Quaternion.Euler(foldData.axisVector * 90);
+            Vector3Int targetloc =   Vector3Int.RoundToInt(rotation * (stack.currentPosition.location - foldData.axisPosition) + foldData.axisPosition);
+                
+
+            Vector3 axis = stack.currentPosition.axis;
+            Vector3 cross = Vector3.Cross(axis, foldData.axisVector);
+            Vector3 distance = targetloc - stack.currentPosition.location;
+            float dot = Vector3.Dot(cross, distance);
+            if (dot < 0 != checkBottom)
             {
-                print("square is in middle of stack");
+                print("square folding through stack");
+                print(checkBottom + "" + cross + distance + dot);
                 return false;
             }
-            if(total > 1)
-            {
-                PositionData current = s.currentPosition;
-                Vector3Int targetloc =   Vector3Int.RoundToInt(rotation * (current.location - foldData.axisPosition) + foldData.axisPosition);
-                // Quaternion r = rotation * current.rotation;
-                // Vector3 a = r * Vector3.up;
-                // PositionData target = new(l, r, a);
-
-
-                bool isTopSquare = pos == total - 1;
-                Vector3 cross = Vector3.Cross(s.currentPosition.axis, foldData.axisVector);
-                Vector3 distance = targetloc - s.currentPosition.location;
-                float dot = Vector3.Dot(cross, distance);
-                if (dot < 0 != isTopSquare)
-                {
-                    print("square folding through stack");
-                    print(isTopSquare + "" + cross + distance + dot);
-                    return false;
-                }
-                else{
-                    print("okay");
-                                        print(isTopSquare + "" + cross + distance + dot);
-                }
+            else{
+                print("okay");
+                print(checkBottom + "" + cross + distance + dot);
             }
         }
+
+        
+        
+        // Quaternion rotation = Quaternion.Euler(foldData.axisVector * 90);
+
+        // foreach(SquareData s in squares)
+        // {
+        //     var stackPos = PaperStateManager.Instance.paperState.GetPositionInStack(s);
+        //     int pos = stackPos.Item1;
+        //     int total = stackPos.Item2;
+        //     SquareStack stack = stackPos.Item3;
+        //     if(pos > 0 && pos < total - 1) 
+        //     {
+        //         print("square is in middle of stack");
+        //         return false;
+        //     }
+        //     if(total > 1)
+        //     {
+        //         PositionData current = s.currentPosition;
+        //         Vector3Int targetloc =   Vector3Int.RoundToInt(rotation * (current.location - foldData.axisPosition) + foldData.axisPosition);
+        //         // Quaternion r = rotation * current.rotation;
+        //         // Vector3 a = r * Vector3.up;
+        //         // PositionData target = new(l, r, a);
+
+
+        //         bool isTopSquare = pos == total - 1;
+        //         Vector3 axis = isTopSquare ? stack.currentPosition.axis : stack.currentPosition.axis * -1;
+        //         Vector3 cross = Vector3.Cross(axis, foldData.axisVector);
+        //         Vector3 distance = targetloc - s.currentPosition.location;
+        //         float dot = Vector3.Dot(cross, distance);
+        //         if (dot < 0 != isTopSquare)
+        //         {
+        //             print("square folding through stack");
+        //             print(isTopSquare + "" + cross + distance + dot);
+        //             return false;
+        //         }
+        //         else{
+        //             print("okay");
+        //                                 print(isTopSquare + "" + cross + distance + dot);
+        //         }
+        //     }
+        // }
 
         return true;
     }
