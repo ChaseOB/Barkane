@@ -29,6 +29,8 @@ public class Goal : MonoBehaviour, IThemedItem
     [SerializeField] private new ParticleSystem particleSystem;
     public List<Gradient> themePartColors = new List<Gradient>();
 
+    private bool playerInGoalRange = false;
+
     private void OnEnable() {
         GlowStickLogic.OnGlowstickChange += OnGlowstickChange;
     }
@@ -47,6 +49,17 @@ public class Goal : MonoBehaviour, IThemedItem
             StartCoroutine(WaitToEndLevel());
     }
 
+    private void OnTriggerEnter(Collider other) {
+        if(other.gameObject.CompareTag("Player"))
+            playerInGoalRange = true;
+    }
+
+    private void OnTriggerExit(Collider other) {
+        if(other.gameObject.CompareTag("Player"))
+            playerInGoalRange = false;
+    }
+
+
     public void SetCovered(bool c)
     {
         covered = c;
@@ -56,7 +69,7 @@ public class Goal : MonoBehaviour, IThemedItem
     private IEnumerator WaitToEndLevel() {
         ending = true;
         yield return new WaitUntil(() => !ActionLockManager.Instance.IsLocked);
-        if(!glowstickActive || !goalActive || !inGlowstickRange || covered) {
+        if(!glowstickActive || !goalActive || !inGlowstickRange || covered || !playerInGoalRange) {
             ending = false;
         } else {
             EndLevel();
