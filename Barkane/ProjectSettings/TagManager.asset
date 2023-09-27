@@ -8,6 +8,7 @@ TagManager:
   - NoBlockPlayer
   - Crystal
   - GlowstickBox
+  - Character
   layers:
   - Default
   - TransparentFX

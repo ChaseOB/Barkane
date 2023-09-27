@@ -20,6 +20,10 @@ public class CrystalShard : MonoBehaviour, IThemedItem
     [SerializeField] private new ParticleSystem particleSystem;
     public List<Gradient> themePartColors = new List<Gradient>();
 
+    [SerializeField] private GameObject children;
+
+    private bool collected = false;
+
     private void OnEnable() {
         GlowStickLogic.OnGlowstickChange += OnGlowstickChange;
     }
@@ -56,11 +60,24 @@ public class CrystalShard : MonoBehaviour, IThemedItem
 
     public void Collect()
     {
-        if(crystalActive)
+        if(crystalActive && !collected)
         {
-            goal?.CollectShard();
-            this.gameObject.SetActive(false);
+            collected = true;
+            goal?.CollectShard(1);
+            children.SetActive(false);
             AudioManager.Instance?.Play("Ding");
+        }
+    }
+
+    public void UnCollect()
+    {
+        if(collected)
+        {
+            goal?.CollectShard(-1);
+            children.SetActive(true);
+            //AudioManager.Instance?.Play("Ding");
+            collected = false;
+            ActivateParticles(true);
         }
     }
 
@@ -95,4 +112,28 @@ public class CrystalShard : MonoBehaviour, IThemedItem
         if(e.state == GlowstickState.CRACKED)
             ActivateParticles(true);
     }
+
+    
+    private void OnTriggerEnter(Collider other) {
+        if(!other.TryGetComponent<PlayerMovement>(out var p)) return;
+        if(p.source == ActionCallEnum.PLAYER || p.source == ActionCallEnum.REDO)
+        {
+            Collect();
+        }
+    }
+
+    private void OnTriggerStay(Collider other) {
+        if(!other.TryGetComponent<PlayerMovement>(out var p)) return;
+        Collect();
+        
+    }
+    
+    private void OnTriggerExit(Collider other) {
+        if(!other.TryGetComponent<PlayerMovement>(out var p)) return;
+        if(p.source == ActionCallEnum.UNDO)
+        {
+            UnCollect();
+        };
+    }
+
 }

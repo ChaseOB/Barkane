@@ -5,6 +5,7 @@ using UnityEditor;
 using BarkaneEditor;
 using UnityEngine.Rendering;
 using UnityEngine.ProBuilder;
+using System;
 
 namespace BarkaneJoint
 {
@@ -26,7 +27,7 @@ namespace BarkaneJoint
         [SerializeField] MeshRenderer mrA1, mrA2, mrB1, mrB2;
 
         public ((GameObject, GameObject), (GameObject, GameObject)) facePairs => ((a1.gameObject, b1.gameObject), (a2.gameObject, b2.gameObject));
-        [SerializeField, HideInInspector] private SquareSide a1, a2, b1, b2;
+        [SerializeField] private SquareSide a1, a2, b1, b2;
 
         [SerializeField, HideInInspector] private Vector3[] randoms;
 
@@ -45,6 +46,8 @@ namespace BarkaneJoint
 
         float scaledSquareSize => squareRenderSettings.squareSize * (1 - squareRenderSettings.margin);
 
+        public bool Debug;
+        public Vector3 offset = Vector3.zero;
         /// <summary>
         /// Can be called manually in inspector or automatically by other scene editor utilities.
         /// </summary>
@@ -79,9 +82,9 @@ namespace BarkaneJoint
             for (int i = 0; i <= settings.creaseSegmentCount; i++)
             {
                 randoms[i] = new Vector3(
-                    2 * (Random.value - 0.5f) * settings.creaseDeviation.x,
-                    2 * (Random.value - 0.5f) * settings.creaseDeviation.y,
-                    2 * (Random.value - 0.5f) * settings.creaseDeviation.z);
+                    2 * (UnityEngine.Random.value - 0.5f) * settings.creaseDeviation.x,
+                    2 * (UnityEngine.Random.value - 0.5f) * settings.creaseDeviation.y,
+                    2 * (UnityEngine.Random.value - 0.5f) * settings.creaseDeviation.z);
             }
 
 #if UNITY_EDITOR
@@ -131,6 +134,7 @@ namespace BarkaneJoint
         void LateUpdate()
         {
             UpdateMesh();
+            indicator.transform.localPosition = Quaternion.Inverse(transform.parent.localRotation) * offset;
         }
 
         /// <summary>
@@ -203,6 +207,11 @@ namespace BarkaneJoint
     #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(jointGeometry.pA, new Vector3(2, 0.1f, 2));
+            Gizmos.color = Color.blue;
+            Gizmos.color = Color.black;
+            Gizmos.DrawWireCube(jointGeometry.pB, new Vector3(2, 0.1f, 2));
             //if (filter.sharedMesh != null)
             //{
             //    var vertices = filter.sharedMesh.vertices;
@@ -223,14 +232,14 @@ namespace BarkaneJoint
         public void ShowLine(bool value, bool staySelected = false)
         {
             indicator.SetActive(value || staySelected);
-            if (value || staySelected)
-            {
-                maskFoldParticles?.Emit();
-            }
-            else
-            {
-                maskFoldParticles?.UnEmit();
-            }
+            // if (value || staySelected)
+            // {
+            //     maskFoldParticles?.Emit();
+            // }
+            // else
+            // {
+            //     maskFoldParticles?.UnEmit();
+            // }
         }
 
 #if UNITY_EDITOR
@@ -273,13 +282,55 @@ namespace BarkaneJoint
                 var pivotBaseMid = tMid * scaledSquareSize * jointGeometry1.tJ;
                 var margin = squareRenderSettings.margin + .001f;
 
+                //start = pivotBaseMid + margin * jointGeometry.nJ2A + new Vector3(0, a1.YOffset, 0);
+                
+
                 // note that the margin is also affected by the size setting
                 // the margin applies to a 01 (uv) square which is sized to produce the actual square
-                vA1[i] = pivotBaseMid + margin * jointGeometry.nJ2A;// + side1Geometry.nA * 0.0006f;
-                vB1[i] = pivotBaseMid + margin * jointGeometry.nJ2B;// + side1Geometry.nB * 0.0006f;
-                vA2[i] = pivotBaseMid + margin * jointGeometry.nJ2A;// + side2Geometry.nA * 0.0006f;
-                vB2[i] = pivotBaseMid + margin * jointGeometry.nJ2B;// + side2Geometry.nB * 0.0006f;
-
+                vA1[i] = pivotBaseMid + margin * jointGeometry.nJ2A +  a1.parentSquare.transform.rotation * new Vector3(0, a1.YOffsetJoint, 0);;// + side1Geometry.nA * 0.0006f;
+                vB1[i] = pivotBaseMid + margin * jointGeometry.nJ2B + b1.parentSquare.transform.rotation * new Vector3(0, b1.YOffsetJoint, 0);// + side1Geometry.nB * 0.0006f;
+                vA2[i] = pivotBaseMid + margin * jointGeometry.nJ2A + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);// + side2Geometry.nA * 0.0006f;
+                vB2[i] = pivotBaseMid + margin * jointGeometry.nJ2B + b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0);// + side2Geometry.nB * 0.0006f;
+                
+                List<Vector3Int> squarepositions = new List<Vector3Int>()
+                {
+                    Vector3Int.RoundToInt(a1.parentSquare.transform.position),
+                    Vector3Int.RoundToInt(a2.parentSquare.transform.position)
+                };
+                //Vector3 offset = Vector3.zero;
+                if(Debug)
+                {
+                    print(CoordUtils.DiffAxisCount(a1, b1));
+                }
+                offset = Vector3.zero;
+                switch(CoordUtils.DiffAxisCount(a1, b1))
+                {
+                    case 0: //squares in same position, should be at midpoint of squares
+                    case 1:
+                        offset = b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
+                        offset *= 0.5f;
+                        break;
+                    case 2: //sqaures at 90* angle, offset by both y offsets
+                        offset = b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
+                        break;
+                    default: //squares coplaner, don't move
+                        break;
+                }
+                pivotBaseStart += offset;
+                if(Debug)
+                {
+                    print(offset);
+                }
+                // float angle = Mathf.Abs(jointGeometry1.a2b);
+                // if(angle > 135f)
+                // {
+                //     pivotBaseStart += b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
+                // }
+                // else if (angle > 10f && b2.YOffsetJoint != 0)
+                // {
+                //     print(angle);
+                //     pivotBaseStart += b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
+                // }
                 vA1[i + settings.PivotOffset] = pivotBaseStart;
                 vB1[i + settings.PivotOffset] = pivotBaseStart;
                 vA2[i + settings.PivotOffset] = pivotBaseStart;
@@ -288,7 +339,9 @@ namespace BarkaneJoint
             }
 
             // randomize middle vertices at significant fold angles
-            if (Mathf.Abs(jointGeometry1.a2b) > 10f)
+            // if(Debug)
+            //     print(Mathf.Abs(jointGeometry1.a2b));
+            if (true) //(Mathf.Abs(jointGeometry1.a2b) > 10f)
             {
                 for (int i = 1; i < settings.creaseSegmentCount - 1; i++)
                 {
@@ -370,6 +423,12 @@ namespace BarkaneJoint
             }
         }
 
+        public (Vector3, Vector3) GetParentSquareOffsets()
+        {
+            return( a1.parentSquare.transform.rotation * new Vector3(0, a1.YOffsetJoint, 0),
+                b1.parentSquare.transform.rotation * new Vector3(0, b1.YOffsetJoint, 0));
+        }
+
         private void PushRelationToParent()
         {
             a1.JointPieces.Register(new JointPieceOwnership
@@ -421,6 +480,10 @@ namespace BarkaneJoint
         {
             g.pA = a.transform.position;
             g.pB = b.transform.position;
+
+            // g.pA = a.transform.position + a.transform.rotation * new Vector3(0, a.YOffset, 0) * 2;
+            // g.pB = b.transform.position + b.transform.rotation * new Vector3(0, b.YOffset, 0) * 2;
+
             g.pJ = j.transform.position;
             g.nJ2A = (g.pA - g.pJ).normalized;
             g.nJ2B = (g.pB - g.pJ).normalized;

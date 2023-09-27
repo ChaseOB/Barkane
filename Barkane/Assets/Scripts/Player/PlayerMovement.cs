@@ -30,11 +30,13 @@ public class PlayerMovement : MonoBehaviour
 
     private bool invalidMoveAnim = false;
 
+    public ActionCallEnum source = ActionCallEnum.NONE;
 
     private void Start() 
     {
         marmaladeY = marmalade.transform.position.y;
         animator = GetComponent<Animator>();
+        PaperStateManager.Instance.playerMovement = this;
     }
 
     private void Update() {
@@ -51,9 +53,24 @@ public class PlayerMovement : MonoBehaviour
         
         Vector2 move = value.Get<Vector2>();
         if(move.y > 0.5)
-            Move();
+        {
+            if(CheckValidMove() && CheckValidSnowball())
+            {
+                ActionLockManager.Instance.TryRemoveLock(this);
+                PaperStateManager.Instance.AddAndExecuteMove(new PlayerMove(true));
+            }
+            else
+            {
+                PlayInvalidMoveAnimation();
+            }
+        }
+            //Move();
         else if (Mathf.Abs(move.x) > 0.5)
-            Rotate(move.x > 0 ? 90 : -90);
+        {
+            ActionLockManager.Instance.TryRemoveLock(this);
+            PaperStateManager.Instance.AddAndExecuteRotate(move.x > 0 ? 90 : -90);
+        }
+            //Rotate(move.x > 0 ? 90 : -90);
         else
             ActionLockManager.Instance.TryRemoveLock(this);
     }
@@ -61,15 +78,19 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
 
+
     #region movement
 
-    public void Move(bool fromStack = false, bool undo = false)
+
+    public void Move(PlayerMove move, ActionCallEnum source)
     {
-        if(undo || (CheckValidMove() && CheckValidSnowball())) {
-            StartCoroutine(MoveHelper(fromStack, undo));
-            return;
-        }
-        PlayInvalidMoveAnimation();
+        ActionLockManager.Instance.TryTakeLock(this);
+        StartCoroutine(MoveHelper(source));
+        // if(undo || (CheckValidMove() && CheckValidSnowball())) {
+        //     StartCoroutine(MoveHelper(source));
+        //     return;
+        // }
+        // PlayInvalidMoveAnimation();
     }
 
     private bool CheckValidMove()
@@ -107,15 +128,16 @@ public class PlayerMovement : MonoBehaviour
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 
-    private IEnumerator MoveHelper(bool fromStack, bool undo)
+    private IEnumerator MoveHelper(ActionCallEnum source)
     {
         isMoving = true;
+        this.source = source;
         
         TileSelector.Instance.DeselectJoint();
 
         Vector3 curr = transform.position;
         Vector3 goal = targetPos.transform.position;
-        if(undo){
+        if(source == ActionCallEnum.UNDO){
             goal += 2 * (curr - goal);
         }
 
@@ -129,32 +151,28 @@ public class PlayerMovement : MonoBehaviour
         {
             t += Time.deltaTime;
             transform.position = Vector3.Lerp(curr, goal, t/moveDuration);
-            //marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
-           //                                 marmaladeY + moveVertCurve.Evaluate(t/moveDuration) * bounceHeight,  
-           //                                 marmalade.transform.position.z);
+
             yield return null;
         }
         transform.position = goal;
-        //marmalade.transform.position = new Vector3(marmalade.transform.position.x, 
-        //                                    marmaladeY,  
-           //                                 marmalade.transform.position.z);
         isMoving = false;
-        if(!fromStack && !undo) {
-            PlayerMove pm = new PlayerMove();
-            pm.movetype = 1;
-            UndoRedoManager.Instance?.AddAction(pm);
-        }
+        // if(!fromStack && !undo) {
+        //     PlayerMove pm = new PlayerMove();
+        //     pm.movetype = 1;
+        //     //UndoRedoManager.Instance?.AddAction(pm);
+        // }
+        this.source = ActionCallEnum.NONE;
         animator.Play("Idle");
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 
-    public void Rotate(float degrees, bool fromStack = false, bool undo = false)
+    public void Rotate(float degrees, ActionCallEnum source)
     {
         if(ActionLockManager.Instance.TryTakeLock(this))
-            StartCoroutine(RotateHelper(degrees, fromStack, undo));
+            StartCoroutine(RotateHelper(degrees, source));
     }
 
-    private IEnumerator RotateHelper(float degrees, bool fromStack, bool undo)
+    private IEnumerator RotateHelper(float degrees, ActionCallEnum source)
     {
         Quaternion currRot = transform.rotation;
         isMoving = true;
@@ -167,11 +185,11 @@ public class PlayerMovement : MonoBehaviour
         }
         transform.rotation = currRot * Quaternion.Euler(0, degrees, 0);
         isMoving = false;
-        if(!fromStack && !undo) {
-            PlayerMove pm = new PlayerMove();
-            pm.movetype = (degrees > 0 ? 0: 2);
-            UndoRedoManager.Instance?.AddAction(pm);
-        }
+        // if(!fromStack && !undo) {
+        //     PlayerMove pm = new PlayerMove();
+        //     pm.movetype = (degrees > 0 ? 0: 2);
+        //    // UndoRedoManager.Instance?.AddAction(pm);
+        // }
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 
@@ -180,26 +198,43 @@ public class PlayerMovement : MonoBehaviour
 
 public class PlayerMove: Action 
 {
-    //C: 0 = rotate right, 1 = move forward, 2 = rotate left, 3 = move back
-    public int movetype = 0;
-    public override Action GetInverse()
-    {
-        PlayerMove pm = (PlayerMove)this.MemberwiseClone();
-        pm.movetype = (this.movetype + 2) % 4;
+    public bool forward = true;
 
-        return (Action) pm;
+    public PlayerMove(bool forward)
+    {
+        this.forward = forward;
     }
 
-    public override void ExecuteAction(bool undo)
+    public override Action GetInverse()
     {
-        PlayerMovement pm = GameObject.FindObjectOfType<PlayerMovement>();
-        if(movetype == 0)
-            pm.Rotate(90, true, undo);
-        else if(movetype == 2)
-            pm.Rotate(-90, true, undo);
-        else{
-            pm.Move(true, undo);
-        }
+        return new PlayerMove(forward = false);
+    }
+
+    // public void ExecuteAction(bool undo)
+    // {
+    //     PlayerMovement pm = GameObject.FindObjectOfType<PlayerMovement>();
+    //     if(movetype == 0)
+    //         pm.Rotate(90, true, undo);
+    //     else if(movetype == 2)
+    //         pm.Rotate(-90, true, undo);
+    //     else{
+    //         pm.Move(true, undo);
+    //     }
+    // }
+}
+
+public class PlayerRotate : Action
+{
+    public float amount;
+
+    public PlayerRotate(float amount)
+    {
+        this.amount = amount;
+    }
+
+    public override Action GetInverse()
+    {
+        return new PlayerRotate(-1 * amount);
     }
 }
 

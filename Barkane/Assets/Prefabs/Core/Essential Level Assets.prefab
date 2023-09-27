@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3127616184884038504}
   - component: {fileID: 3127616184884038502}
   - component: {fileID: 3127616183961737505}
+  - component: {fileID: 1065902525}
   m_Layer: 0
   m_Name: Essential Level Assets
   m_TagString: Untagged
@@ -61,6 +62,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b28a317f98bf4947987ae5801f657ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  foldAnimator: {fileID: 0}
 --- !u!114 &3127616184884038504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,7 +76,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Actions: {fileID: -944628639613478452, guid: 1ecfe54dca129f844a31d78fb2ba4d78, type: 3}
-  m_NotificationBehavior: 1
+  m_NotificationBehavior: 0
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
@@ -106,7 +108,7 @@ MonoBehaviour:
   SquareCollider: {fileID: 9111959285705571462, guid: d7555bfb195920947a47d504f148b475, type: 3}
   squareCollidingMask:
     serializedVersion: 2
-    m_Bits: 229696
+    m_Bits: 181568
 --- !u!114 &3127616183961737505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,3 +121,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bd7a566cb68a1c4391f1bc383d49fc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1065902525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3127616184884038507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad882b6a0a5fcb44fa08158b04531a7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  paperState:
+    squareStacks: []
+    jointStacks: []
+  foldAnimator: {fileID: 0}
+  playerMovement: {fileID: 0}

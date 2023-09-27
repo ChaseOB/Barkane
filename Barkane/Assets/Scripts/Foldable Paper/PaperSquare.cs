@@ -21,6 +21,7 @@ public class PaperSquare : MonoBehaviour
     [SerializeField] private GameObject bottomHalf;
     public GameObject BottomHalf => bottomHalf;
     [SerializeField] private EdgeParticles edgeParticles;
+    public float YOffset;
 
     public SquareSide topSide;
     public SquareSide bottomSide;
@@ -31,17 +32,17 @@ public class PaperSquare : MonoBehaviour
     public PaperSquare topStack;
     public PaperSquare bottomStack;
 
-    public OcclusionQueue globalOcclusionQueue
-    {
-        get => m_GlobalOcclusionQueue;
-        set
-        {
-            m_GlobalOcclusionQueue = value;
+    // public OcclusionQueue globalOcclusionQueue
+    // {
+    //     get => m_GlobalOcclusionQueue;
+    //     set
+    //     {
+    //         m_GlobalOcclusionQueue = value;
 
-            // Debug.Log($"GOQ: {(value == null ? "NULL" : value)}");
-        }
-    }
-    private OcclusionQueue m_GlobalOcclusionQueue;
+    //         // Debug.Log($"GOQ: {(value == null ? "NULL" : value)}");
+    //     }
+    // }
+    // private OcclusionQueue m_GlobalOcclusionQueue;
 
     public Vector3 storedPos;
 
@@ -54,9 +55,12 @@ public class PaperSquare : MonoBehaviour
     public List<PaperJoint> adjacentJoints = new List<PaperJoint>();
 
     private FoldablePaper foldablePaper;
+    private Transform visuals;
+
+    public bool debug;
 //#endif
 
-
+    
     private void Awake() 
     {
         edgeParticles = GetComponent<EdgeParticles>();
@@ -67,6 +71,8 @@ public class PaperSquare : MonoBehaviour
 
         topSide.parentSquare = this;
         bottomSide.parentSquare = this;
+
+        visuals = GetComponentInChildren<SquareSizeManager>().gameObject.transform;
     }
 
     private void OnDestroy()
@@ -81,24 +87,46 @@ public class PaperSquare : MonoBehaviour
 #endif
     }
 
+    private void LateUpdate() {
+       UpdateOffset();
+    }
+
+    private void UpdateOffset() {
+        topSide.SetYPositionOffset(YOffset);
+        bottomSide.SetYPositionOffset(-1 * YOffset);
+        // if(visuals != null)
+        //     visuals.transform.localPosition= YOffset  * Vector3.up;
+    }
+
+
     public void EjectFromGlobalQueue()
     {
-        globalOcclusionQueue.Dequeue(this);
-        globalOcclusionQueue = null;
+//        globalOcclusionQueue.Dequeue(this);
+  //      globalOcclusionQueue = null;
     }
 
     public void ToggleTop(bool val)
     {
-        topHalf.SetActive(val);
+       // topHalf.SetActive(val);
         topPlayerCol.SetActive(val);
         topColActive = val;
+        Goal g = topHalf.GetComponentInChildren<Goal>();
+        if(g != null)
+        {
+            g.SetCovered(!val);
+        }
     }
 
     public void ToggleBottom(bool val)
     {
-        bottomHalf.SetActive(val);
+        //bottomHalf.SetActive(val);
         botPlayerCol.SetActive(val);
         botColActive = val;
+        Goal g = bottomHalf.GetComponentInChildren<Goal>();
+        if(g != null)
+        {
+            g.SetCovered(!val);
+        }
     }
 
     public void SetPlayerOccupied(bool value)
@@ -107,11 +135,16 @@ public class PaperSquare : MonoBehaviour
             if(foldablePaper.playerSquare == null) {
                 playerOccupied = true;
                 foldablePaper.playerSquare = this;
+//                print("player entering " + gameObject.name);
+            }
+            else{
+              //  print("player entering " + gameObject.name + " but occupied square is not null");
             }
         }
         else {
             playerOccupied = false;
             foldablePaper.playerSquare = null;
+          //  print("player leaving " + gameObject.name);
         }
     }
 

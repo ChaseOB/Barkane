@@ -17,6 +17,8 @@ public class Goal : MonoBehaviour, IThemedItem
     [SerializeField] private bool glowstickActive = true;
 
     private bool ending = false;
+    [SerializeField] private bool covered;
+
 
     [SerializeField] private GameObject inactiveGoal;
     [SerializeField] private GameObject activeGoal;
@@ -26,6 +28,8 @@ public class Goal : MonoBehaviour, IThemedItem
 
     [SerializeField] private new ParticleSystem particleSystem;
     public List<Gradient> themePartColors = new List<Gradient>();
+
+    private bool playerInGoalRange = false;
 
     private void OnEnable() {
         GlowStickLogic.OnGlowstickChange += OnGlowstickChange;
@@ -41,15 +45,31 @@ public class Goal : MonoBehaviour, IThemedItem
     }
 
     private void OnTriggerStay(Collider other) {
-        if(other.gameObject.CompareTag("Player") && goalActive && inGlowstickRange && glowstickActive && !ending)
+        if(other.gameObject.CompareTag("Player") && goalActive && inGlowstickRange && glowstickActive && !ending && !covered)
             StartCoroutine(WaitToEndLevel());
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        if(other.gameObject.CompareTag("Player"))
+            playerInGoalRange = true;
+    }
+
+    private void OnTriggerExit(Collider other) {
+        if(other.gameObject.CompareTag("Player"))
+            playerInGoalRange = false;
+    }
+
+
+    public void SetCovered(bool c)
+    {
+        covered = c;
     }
 
     //C: Used so player finishes moving
     private IEnumerator WaitToEndLevel() {
         ending = true;
         yield return new WaitUntil(() => !ActionLockManager.Instance.IsLocked);
-        if(!glowstickActive || !goalActive || !inGlowstickRange || !glowstickActive) {
+        if(!glowstickActive || !goalActive || !inGlowstickRange || covered || !playerInGoalRange) {
             ending = false;
         } else {
             EndLevel();
@@ -69,13 +89,12 @@ public class Goal : MonoBehaviour, IThemedItem
         col.color = themePartColors[(int)t.themeEnum];
     }
 
-    public void CollectShard()
+    public void CollectShard(int num)
     {
-        numShardsCollected++;
+        numShardsCollected += num;
         //update shard display
         UIManager.UpdateShardCount(numShardsCollected, numShards);
-        if(CheckIfGoalActive())
-            ActivateGoal();
+        ActivateGoal(CheckIfGoalActive());
     }
 
     private void ActivateGoal(bool val = true)

@@ -15214,54 +15214,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: musicLists.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: sounds.Array.data[1].name
-      value: Fail
-      objectReference: {fileID: 0}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: musicLists.Array.data[1].name
-      value: Snow
-      objectReference: {fileID: 0}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: musicLists.Array.data[2].name
-      value: Caves
-      objectReference: {fileID: 0}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: musicLists.Array.data[1].Tracks.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: musicLists.Array.data[2].Tracks.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: musicLists.Array.data[1].Tracks.Array.data[0]
-      value: 
-      objectReference: {fileID: 8300000, guid: 580042a9cbfe98d40a635e09c555927e, type: 3}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: musicLists.Array.data[1].Tracks.Array.data[1]
-      value: 
-      objectReference: {fileID: 8300000, guid: 0799073523f148d4f8b1f417548103ff, type: 3}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: musicLists.Array.data[1].Tracks.Array.data[2]
-      value: 
-      objectReference: {fileID: 8300000, guid: a3c0961821dcb3e469124a4ece4ecc60, type: 3}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: musicLists.Array.data[2].Tracks.Array.data[0]
-      value: 
-      objectReference: {fileID: 8300000, guid: a5dd44fe96e25c846b26d29fb8556ffa, type: 3}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: musicLists.Array.data[2].Tracks.Array.data[1]
-      value: 
-      objectReference: {fileID: 8300000, guid: a3c0961821dcb3e469124a4ece4ecc60, type: 3}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: musicLists.Array.data[2].Tracks.Array.data[2]
-      value: 
-      objectReference: {fileID: 8300000, guid: a3c0961821dcb3e469124a4ece4ecc60, type: 3}
     - target: {fileID: 5809165807994719649, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
       propertyPath: m_Name
       value: AudioManager

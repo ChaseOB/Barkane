@@ -132,7 +132,7 @@ public class LevelManager : Singleton<LevelManager>
 
         FollowTarget.Instance.SetTargetAndPosition(playerInstance.GetComponent<PlayerMovement>().cameraTrackingTransform);    
         VFXManager.Instance.Refresh();
-        paper.PopulateOcclusionMap();
+       // paper.PopulateOcclusionMap();
         FindObjectOfType<TileSelector>().ReloadReferences();
         currLevelTheme = level.theme;
     }
