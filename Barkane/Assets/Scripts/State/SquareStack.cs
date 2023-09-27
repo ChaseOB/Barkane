@@ -96,11 +96,11 @@ public class SquareStack : FoldableObject
                 if(newStack == null)
                 {
                     newStack = new(squareData);
-                    //newStack.debug = true;
+                    newStack.debug = true;
                 }
                 else
                 {
-                    newStack.squarelist.AddLast(squareData);
+                    newStack.squarelist.AddFirst(squareData);
                 }
                 remove.Add(squareData);
                 //Debug.Log(squareData.paperSquare.gameObject.name + " at " + squareData.currentPosition.location + " target " + squareData.targetPosition.location);
@@ -148,12 +148,12 @@ public class SquareStack : FoldableObject
         bool dotLessThanZero = dot < 0;
         while(other.squarelist.Count > 0)
         {
-                    SquareData s = dotLessThanZero == sameAxis ? other.squarelist.Last(): other.squarelist.First();
-                    other.squarelist.Remove(s);
-                    if(dot < 0)
-                        squarelist.AddFirst(s);
-                    else
-                        squarelist.AddLast(s);
+            SquareData s = dotLessThanZero == sameAxis ? other.squarelist.Last(): other.squarelist.First();
+            other.squarelist.Remove(s);
+            if(dot < 0)
+                squarelist.AddFirst(s);
+            else
+                squarelist.AddLast(s);
         }
 
         // if(dot < 0) //merge onto the top of this stack

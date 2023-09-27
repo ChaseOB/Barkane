@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0ff6c4f30da29949a0b233cfe102b6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: {fileID: 11400000, guid: 4d8493305e8c61842a5a0e81bc0ccd3d, type: 2}
+  level: {fileID: 11400000, guid: 7e3a4078259627b4d982b8e2393d7082, type: 2}
   playerPrefab: {fileID: 8814069561603125229, guid: e6122d66d72e2f248828794196740204, type: 3}
 --- !u!4 &133205281
 Transform:
@@ -593,14 +593,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3127616184884038502, guid: 1cc4adc3a284c76478dbb982a250e796, type: 3}
-      propertyPath: SquareCollider
-      value: 
-      objectReference: {fileID: 9111959285705571462, guid: d7555bfb195920947a47d504f148b475, type: 3}
-    - target: {fileID: 3127616184884038502, guid: 1cc4adc3a284c76478dbb982a250e796, type: 3}
-      propertyPath: squareCollidingMask.m_Bits
-      value: 181568
-      objectReference: {fileID: 0}
     - target: {fileID: 3127616184884038505, guid: 1cc4adc3a284c76478dbb982a250e796, type: 3}
       propertyPath: m_RootOrder
       value: 3

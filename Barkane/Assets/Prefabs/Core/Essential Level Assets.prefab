@@ -105,6 +105,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b0bd9cf62eda814b8a8ec88b022ff27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SquareCollider: {fileID: 9111959285705571462, guid: d7555bfb195920947a47d504f148b475, type: 3}
+  squareCollidingMask:
+    serializedVersion: 2
+    m_Bits: 181568
 --- !u!114 &3127616183961737505
 MonoBehaviour:
   m_ObjectHideFlags: 0
