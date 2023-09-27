@@ -193,20 +193,22 @@ public class TileSelector : Singleton<TileSelector>
             ghostFold90 = Instantiate(indicatorPrefab);
             indicator90 = ghostFold90.GetComponent<FoldIndicator>();
             indicator90.BuildIndicator(targetState90);
+            //print("90 fold valid");
         }
 
         foldDataNeg90 = foldablePaper.BuildFoldData(true);
 
         FoldFailureType failureType2 = FoldChecker.Instance.CheckFold(foldDataNeg90);
-        if(failureType2 == FoldFailureType.KINKED ||
-            failureType2 == FoldFailureType.NOCHECK)
-            return;
+        // if(failureType2 == FoldFailureType.KINKED ||
+        //     failureType2 == FoldFailureType.NOCHECK)
+        //     return;
         if(failureType2 == FoldFailureType.NONE)
         {
             targetStateNeg90 = FoldChecker.Instance.GetFoldPosition(foldDataNeg90);
             ghostFoldNeg90 = Instantiate(indicatorPrefab);
             indicatorNeg90 = ghostFoldNeg90.GetComponent<FoldIndicator>();
             indicatorNeg90.BuildIndicator(targetStateNeg90);
+            //print("neg 90 fold valid");
         }
 
         //targetState90 = FoldChecker.Instance.GetFoldPosition(foldData90);
@@ -233,22 +235,27 @@ public class TileSelector : Singleton<TileSelector>
         state = SelectState.FOLDING;
 
         if(ghostFold90 == null && ghostFoldNeg90 == null) return;
-        if(ghostFold90 == null) 
+        else if(ghostFold90 == null) 
         {
+          //  print("Folding neg 90");
             PaperStateManager.Instance.AddAndExecuteFold(foldDataNeg90);
         }
-        if(ghostFoldNeg90 == null) 
+        else if(ghostFoldNeg90 == null) 
         {
+           // print("Folding 90");
             PaperStateManager.Instance.AddAndExecuteFold(foldData90);
         }
         else
         {
             if(dist90 < distNeg90)
             {
+                         //   print("Folding 90");
                 PaperStateManager.Instance.AddAndExecuteFold(foldData90);
             }
             else
             {
+                         //   print("Folding neg 90");
+
                 PaperStateManager.Instance.AddAndExecuteFold(foldDataNeg90);
             }
         }
@@ -272,12 +279,14 @@ public class TileSelector : Singleton<TileSelector>
         foldablePaper.foldJoint = null;
         if(ghostFold90 != null){
             Destroy(ghostFold90);
-            foldData90 = null;
         }
         if(ghostFoldNeg90 != null){
             Destroy(ghostFoldNeg90);
-            foldDataNeg90 = null;
         }
+        foldData90 = null;
+        foldDataNeg90 = null;
+        targetState90 = null;
+        targetStateNeg90 = null;
     }
 
     public void TryMakeNewGhost()
