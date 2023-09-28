@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 using System.Linq;
 
+
 public enum ActionCallEnum
 {
     NONE,
@@ -31,7 +32,21 @@ public class PaperStateManager: Singleton<PaperStateManager>
     private int numFolds;
     public int NumFolds => numFolds;
 
+    public class FoldArgs : System.EventArgs
+    {
+        public FoldData fd;
+        public ActionCallEnum source;
+        public int foldnum;
 
+        public FoldArgs(FoldData fd, ActionCallEnum source, int foldnum)
+        {
+            this.fd = fd;
+            this.source = source;
+            this.foldnum = foldnum;
+        }
+    }
+
+    public static event System.EventHandler<FoldArgs> OnFold;
 
     //Apply the action to transition to the next state
     // public PaperState ProcessAction(PaperState startState, Action action)
@@ -248,10 +263,11 @@ public class PaperStateManager: Singleton<PaperStateManager>
         }
         UIManager.Instance.UpdateFC(numFolds);
         LevelManager.Instance?.SetFoldCount(numFolds);
+        
 
         // paperState.SendToTarget();
         // TileSelector.Instance.state = SelectState.NONE;
-
+        OnFold?.Invoke(this, new(fd, source, numFolds));
         foldAnimator.Fold(fd, paperState, source);
 
         //TODO: make sure to disable stuff on the inside stacks (most importantly player location setter)

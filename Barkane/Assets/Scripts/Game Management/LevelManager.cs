@@ -161,15 +161,26 @@ public class LevelManager : Singleton<LevelManager>
         if (instantiatedLevel != null) {
             Destroy(instantiatedLevel);
         }
-
+        float elapsedTime1 = 0.0f;
+        float time1 = 2f;
+        while (elapsedTime1 < time1)
+        {
+            elapsedTime1 += Time.deltaTime;
+            yield return null;
+        }
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneIndex);
+        asyncLoad.allowSceneActivation = false;
         while (!asyncLoad.isDone)
         {
+            if (asyncLoad.progress >= 0.9f)
+            {
+                asyncLoad.allowSceneActivation = true;
+            }
             yield return null;
         }
         //bonus placebo time
         float elapsedTime = 0.0f;
-        float time = 2.5f;
+        float time = 2f;
         while (elapsedTime < time)
         {
             elapsedTime += Time.deltaTime;

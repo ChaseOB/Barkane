@@ -1859,6 +1859,7 @@ MonoBehaviour:
   bestFoldCountText: {fileID: 1694942563620108258}
   glowstickText: {fileID: 1464059110661665531}
   glowstickSprite: {fileID: 7954837596513525095}
+  glowstickPrimed: {fileID: 21300000, guid: 6919239662b4b5d4bbee76a7ceccb3bb, type: 3}
   glowstickActive: {fileID: 21300000, guid: 7990fedd89e99a7489edd928b2320233, type: 3}
   glowstickDead: {fileID: 21300000, guid: 03fd867a86273f04fa359075ab34588b, type: 3}
   shardCountGroup: {fileID: 5127441171332320343}

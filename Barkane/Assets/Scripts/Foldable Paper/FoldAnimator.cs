@@ -25,12 +25,7 @@ public class FoldAnimator : MonoBehaviour
     // public bool raycastCheckReturn = false;
     // public bool crDone = false;
 
-    public class FoldArgs : System.EventArgs
-    {
-        public FoldData fd;
-    }
 
-    public static event System.EventHandler<FoldArgs> OnFold;
 
     private void Start() 
     {
@@ -47,7 +42,7 @@ public class FoldAnimator : MonoBehaviour
                 Debug.LogError("Action Lock taken, can't fold (this is bad)");
                 return;
             }
-        OnFold?.Invoke(this, new FoldArgs{fd = fd});
+       // OnFold?.Invoke(this, new FoldArgs{fd = fd});
         StartCoroutine(AnimateFold(fd, state, actionCallEnum));
         //callback?.Invoke();
     }

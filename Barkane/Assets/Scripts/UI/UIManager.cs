@@ -14,6 +14,7 @@ public class UIManager : Singleton<UIManager>
     public TMP_Text bestFoldCountText;
     public TMP_Text glowstickText;
     public Image glowstickSprite;
+    public Sprite glowstickPrimed;
     public Sprite glowstickActive;
     public Sprite glowstickDead;
 
@@ -106,17 +107,20 @@ public class UIManager : Singleton<UIManager>
     }
 
     private void OnGlowstickChange(object sender, GlowStickLogic.GlowStickArgs e) {
-        UpdateGlow(e.lifetime);
+        UpdateGlow(e);
         print(e.lifetime);
     }
 
-    private void UpdateGlow(int lifetime)
+    private void UpdateGlow(GlowStickLogic.GlowStickArgs e)
     {
+        int lifetime = e.lifetime;
         glowstickText.text = lifetime.ToString();
-        if(lifetime == glowstickHealth)
+        if(e.state == GlowstickState.CRACKED)
             glowstickSprite.sprite = glowstickActive;
-        if(lifetime <= 0)
+        if(e.state == GlowstickState.OFF)
             glowstickSprite.sprite = glowstickDead;
+        if(e.state == GlowstickState.PRIMED)
+            glowstickSprite.sprite = glowstickPrimed;
     }
 
     public void SetCosmetic(string cosmetic)
