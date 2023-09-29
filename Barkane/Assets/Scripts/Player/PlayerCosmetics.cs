@@ -28,6 +28,7 @@ public class PlayerCosmetics : Singleton<PlayerCosmetics>
         if(name == null || name == "None" || name == "") 
         { 
             DisableAllCosmetics();
+            return;
         }
         
         enabledCosmetic?.SetActive(false);
