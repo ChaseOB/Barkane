@@ -48,6 +48,12 @@ namespace BarkaneJoint
 
         public bool Debug;
         public Vector3 offset = Vector3.zero;
+
+
+        public float tStart;
+        public float tMid;
+        public Vector3 pivotBaseStart; 
+        public Vector3 pivotBaseMid; 
         /// <summary>
         /// Can be called manually in inspector or automatically by other scene editor utilities.
         /// </summary>
@@ -126,7 +132,7 @@ namespace BarkaneJoint
             if (a1 == null || a2 == null || b1 == null || b2 == null) return;
             // clamping done internally, no need to pass in both sides separately
             // here side1 chosen
-            JointGeometryData.Update(a1, b1, this, ref jointGeometry, ref jointGeometry1, ref jointGeometry2);
+            JointGeometryData.Update(a1, b1, this, squareRenderSettings.margin, ref jointGeometry, ref jointGeometry1, ref jointGeometry2);
             // lock to world space orientation
             transform.rotation = Quaternion.identity;
         }
@@ -204,14 +210,32 @@ namespace BarkaneJoint
             }
         }
 
-    #if UNITY_EDITOR
+    //#if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(jointGeometry.pA, new Vector3(2, 0.1f, 2));
+            Gizmos.DrawSphere(jointGeometry.edgeA, 0.03f);
+            Gizmos.DrawLine(jointGeometry.pA, jointGeometry.pJ);
             Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(jointGeometry.edgeB, 0.03f);
+            Gizmos.DrawLine(jointGeometry.pB, jointGeometry.pJ);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(jointGeometry.pJ, 0.03f);
+            Gizmos.DrawLine(jointGeometry.pJ, jointGeometry.pJ + jointGeometry1.tJ);
+
+            Gizmos.color = Color.white;
+            Gizmos.DrawSphere(this.transform.position + pivotBaseStart, 0.03f);
+
             Gizmos.color = Color.black;
-            Gizmos.DrawWireCube(jointGeometry.pB, new Vector3(2, 0.1f, 2));
+            Gizmos.DrawSphere(this.transform.position + pivotBaseMid, 0.03f);
+
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawRay(jointGeometry.pJ, jointGeometry.nJ2A);
+
+            Gizmos.color = Color.green;
+            Gizmos.DrawRay(jointGeometry.pJ, jointGeometry.nJ2B);
+
+
             //if (filter.sharedMesh != null)
             //{
             //    var vertices = filter.sharedMesh.vertices;
@@ -227,7 +251,7 @@ namespace BarkaneJoint
             //    Gizmos.DrawRay(transform.position, side1Geometry.nJ);
             //}
         }
-    #endif
+   // #endif
 
         public void ShowLine(bool value, bool staySelected = false)
         {
@@ -276,10 +300,14 @@ namespace BarkaneJoint
             for (int i = 0; i <= settings.creaseSegmentCount; i++)
             {
                 #region vertex filling
-                var tStart = settings.tsStart[i];
-                var tMid = settings.tsMid[i];
-                var pivotBaseStart = tStart * scaledSquareSize * jointGeometry1.tJ;
-                var pivotBaseMid = tMid * scaledSquareSize * jointGeometry1.tJ;
+                tStart = settings.tsStart[i];
+                tMid = settings.tsMid[i];
+
+                pivotBaseStart = jointGeometry.offset + (jointGeometry1.tJ * tStart * 2);// * scaledSquareSize * jointGeometry1.tJ;
+                pivotBaseMid = jointGeometry.offset + (jointGeometry1.tJ * tMid * 2);
+                //pivotBaseMid = 
+                //pivotBaseStart = tStart * scaledSquareSize * jointGeometry1.tJ;
+                //pivotBaseMid = tMid * scaledSquareSize * jointGeometry1.tJ;
                 var margin = squareRenderSettings.margin + .001f;
 
                 //start = pivotBaseMid + margin * jointGeometry.nJ2A + new Vector3(0, a1.YOffset, 0);
@@ -287,10 +315,10 @@ namespace BarkaneJoint
 
                 // note that the margin is also affected by the size setting
                 // the margin applies to a 01 (uv) square which is sized to produce the actual square
-                vA1[i] = pivotBaseMid + margin * jointGeometry.nJ2A +  a1.parentSquare.transform.rotation * new Vector3(0, a1.YOffsetJoint, 0);;// + side1Geometry.nA * 0.0006f;
-                vB1[i] = pivotBaseMid + margin * jointGeometry.nJ2B + b1.parentSquare.transform.rotation * new Vector3(0, b1.YOffsetJoint, 0);// + side1Geometry.nB * 0.0006f;
-                vA2[i] = pivotBaseMid + margin * jointGeometry.nJ2A + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);// + side2Geometry.nA * 0.0006f;
-                vB2[i] = pivotBaseMid + margin * jointGeometry.nJ2B + b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0);// + side2Geometry.nB * 0.0006f;
+                vA1[i] = pivotBaseMid + jointGeometry.nJ2A ;//+  a1.parentSquare.transform.rotation * new Vector3(0, a1.YOffsetJoint, 0);;// + side1Geometry.nA * 0.0006f;
+                vB1[i] = pivotBaseMid + jointGeometry.nJ2B ;//+ b1.parentSquare.transform.rotation * new Vector3(0, b1.YOffsetJoint, 0);// + side1Geometry.nB * 0.0006f;
+                vA2[i] = pivotBaseMid + jointGeometry.nJ2A ;//+ a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);// + side2Geometry.nA * 0.0006f;
+                vB2[i] = pivotBaseMid + jointGeometry.nJ2B ;//+ b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0);// + side2Geometry.nB * 0.0006f;
                 
                 List<Vector3Int> squarepositions = new List<Vector3Int>()
                 {
@@ -316,7 +344,7 @@ namespace BarkaneJoint
                     default: //squares coplaner, don't move
                         break;
                 }
-                pivotBaseStart += offset;
+              //  pivotBaseStart += offset;
                 if(Debug)
                 {
                     print(offset);
@@ -471,27 +499,53 @@ namespace BarkaneJoint
             public float a2b;
         }
 
-        public Vector3 pA, pB, pJ;
+        public Vector3 pA, pB, pJ, offset;
         public Vector3 nJ2A, nJ2B;
+        public Vector3 edgeA, edgeB;
+      //  public float margin;
 
-        internal static void Update(SquareSide a, SquareSide b, JointRenderer j, 
+        internal static void Update(SquareSide a, SquareSide b, JointRenderer j, float margin,
             ref JointGeometryData g,
             ref JointSideGeometryData g1, ref JointSideGeometryData g2)
         {
+
             g.pA = a.transform.position;
             g.pB = b.transform.position;
 
-            // g.pA = a.transform.position + a.transform.rotation * new Vector3(0, a.YOffset, 0) * 2;
-            // g.pB = b.transform.position + b.transform.rotation * new Vector3(0, b.YOffset, 0) * 2;
+           g.pA = a.transform.position + a.transform.rotation * new Vector3(0, a.YOffset, 0); //* 2;
+           g.pB = b.transform.position + b.transform.rotation * new Vector3(0, b.YOffset, 0); //* 2;
 
-            g.pJ = j.transform.position;
-            g.nJ2A = (g.pA - g.pJ).normalized;
-            g.nJ2B = (g.pB - g.pJ).normalized;
+          //  g.pJ = j.transform.position;
+
+            Vector3 offset = Vector3.zero;
+                switch(CoordUtils.DiffAxisCount(a, b))
+                {
+                    case 0: //squares in same position, should be at midpoint of squares
+                    case 1:
+                        offset = b.parentSquare.transform.rotation * new Vector3(0, b.YOffsetJoint, 0) + a.parentSquare.transform.rotation * new Vector3(0, a.YOffsetJoint, 0);
+                        offset *= 0.5f;
+                        break;
+                    case 2: //sqaures at 90* angle, offset by both y offsets
+                        offset = b.parentSquare.transform.rotation * new Vector3(0, b.YOffsetJoint, 0) + a.parentSquare.transform.rotation * new Vector3(0, a.YOffsetJoint, 0);
+                        break;
+                    default: //squares coplaner, don't move
+                        break;
+                }
+            g.offset = offset;
+           // Debug.Log(offset);
+
+            g.pJ =  j.transform.position + offset;
+
+            g.edgeA = (j.transform.position - a.transform.position) * (1 - margin) + g.pA;
+            g.edgeB = (j.transform.position - b.transform.position)* (1 - margin ) + g.pB;
+            
+            g.nJ2A = (g.edgeA - g.pJ);
+            g.nJ2B = (g.edgeB - g.pJ);
 
             g1.nA = a.transform.up;
             g1.nB = b.transform.up;
-            g1.tJ = Vector3.Cross(g1.nA, g.nJ2A);
-            g1.a2b = Vector3.SignedAngle(g.nJ2A, g.nJ2B, g1.tJ);
+            g1.tJ = Vector3.Cross(g1.nA, g.nJ2A.normalized);
+            g1.a2b = Vector3.SignedAngle(g.nJ2A.normalized, g.nJ2B.normalized, g1.tJ);
             
             // for large angles pA and pB are easy to cancel each other out (pA + pB approximates pJ) which is bad bc the first method will have a 0
             // for small angles nA and nB are easy to cancel each other out which is bad bc the second method will have a 0
@@ -504,7 +558,7 @@ namespace BarkaneJoint
             g2.nA = -g1.nA;
             g2.nB = -g1.nB;
             g2.tJ = -g1.tJ;
-            g2.a2b = Vector3.SignedAngle(g.nJ2A, g.nJ2B, g2.tJ);
+            g2.a2b = Vector3.SignedAngle(g.nJ2A.normalized, g.nJ2B.normalized, g2.tJ);
 
             // for large angles pA and pB are easy to cancel each other out (pA + pB approximates pJ) which is bad bc the first method will have a 0
             // for small angles nA and nB are easy to cancel each other out which is bad bc the second method will have a 0

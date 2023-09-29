@@ -71,7 +71,7 @@ public class MainMenuManager : Singleton<MainMenuManager>
 
     public void ToggleDeleteScreen(bool toggle)
     {
-        currentProfile.SetActive(!toggle);
+        //currentProfile.SetActive(!toggle);
         deleteMenu.SetActive(toggle);
     }
 
@@ -80,6 +80,7 @@ public class MainMenuManager : Singleton<MainMenuManager>
         profile = null;
         SaveSystem.SetProfile(profileIndex, profile);
         SaveManager.Instance.UpdateAllButtons();
+        currentProfile.SetActive(false);
         deleteMenu.SetActive(false);
         profileSelect.SetActive(true);
     }
