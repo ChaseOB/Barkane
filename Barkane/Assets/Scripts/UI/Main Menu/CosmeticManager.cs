@@ -7,10 +7,12 @@ public class CosmeticManager : Singleton<CosmeticManager>
     [SerializeField] private List<CosmeticButton> buttons = new List<CosmeticButton>();
 
     public string cosmeticString;
+    public PlayerCosmetics playerCosmetics;
 
     private void Awake() {
         InitializeSingleton();
     }
+
     public void SetCosmetics()
     {
         cosmeticString = SaveSystem.Current.GetCosmetic(); 
@@ -29,5 +31,12 @@ public class CosmeticManager : Singleton<CosmeticManager>
         cosmeticString = cosmeticName;
 
         SaveSystem.Current.SetCosmetic(cosmeticName);
+       // SaveSystem.SaveGame();
+        playerCosmetics.EnableCosmetic(cosmeticName);
+    }
+
+    public void OnOpen()
+    {
+        SelectCosmetic(SaveSystem.Current.GetCosmetic());
     }
 }

@@ -72,8 +72,14 @@ public class Goal : MonoBehaviour, IThemedItem
         if(!glowstickActive || !goalActive || !inGlowstickRange || covered || !playerInGoalRange) {
             ending = false;
         } else {
-            EndLevel();
+           StartCoroutine(EndLevelAnimation());
         }
+    }
+
+    private IEnumerator EndLevelAnimation()
+    {
+        
+        yield return new WaitForSeconds(2);
     }
     
     public void EndLevel() {

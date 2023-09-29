@@ -4,6 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using BarkaneEditor;
 
+public class LevelGroup
+{
+    public List<Level> levels;
+    public int endScene;
+}
 
 public class LevelManager : Singleton<LevelManager>
 {
@@ -28,6 +33,8 @@ public class LevelManager : Singleton<LevelManager>
 
     private int currLevelFoldCount = 0;
     public int penalty = 0;
+
+    public List<int> otherScenes = new();
 
     private void Awake() 
     {

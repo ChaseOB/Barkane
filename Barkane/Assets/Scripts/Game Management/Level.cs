@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [CreateAssetMenu(menuName = "Barkane/Level")]
 public class Level : ScriptableObject
 {
@@ -12,3 +13,5 @@ public class Level : ScriptableObject
     public Theme theme;
     public string cosmeticUnlock;
 }
+
+
