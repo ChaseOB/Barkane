@@ -48,7 +48,7 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
         }
 
         // head A
-        vs[0] = g.nJ2A * (settings.halfLength + margin) + gSide.nA * settings.elevation;
+        vs[0] = g.nJ2A.normalized * (settings.halfLength + margin) + gSide.nA * settings.elevation;
         Ring(ref vs,
             vs[0],
             gSide.nA,
@@ -56,6 +56,7 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
             1);
         if (gSide.a2b > 20f && gSide.a2b < 160f) // bending inwards
         {
+            print("case 1");
             // 3 inner joints collapse together
             var shrinkCorrection = 1f / Mathf.Sin(Mathf.Deg2Rad * gSide.a2b / 2);
             var j = gSide.nJ * (settings.elevation * shrinkCorrection);
@@ -80,8 +81,10 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
         }
         else // bending outwards
         {
+            print("case 2");
             // near joint on side A
-            var jA = g.nJ2A * margin + gSide.nA * settings.elevation;
+           // var jA = g.nJ2A.normalized * margin + gSide.nA * settings.elevation;
+           var jA = g.edgeA + gSide.nA * settings.elevation;
             Ring(
                 ref vs,
                 jA,
@@ -89,7 +92,7 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
                 gSide.tJ,
                 1 + 4);
             // joint
-            var j = gSide.nJ * settings.elevation;
+            var j = g.offset + gSide.nJ * settings.elevation;
             Ring(
                 ref vs,
                 j,
@@ -97,7 +100,8 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
                 gSide.tJ,
                 1 + 2 * 4);
             // near joint on side B
-            var jB = g.nJ2B * margin + gSide.nB * settings.elevation;
+            //var jB = g.nJ2B.normalized * margin + gSide.nB * settings.elevation;
+            var jB = g.edgeB + gSide.nB * settings.elevation;
             Ring(
                 ref vs,
                 jB,
@@ -106,7 +110,7 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
                 1 + 3 * 4);
         }
         // head B
-        vs[^1] = g.nJ2B * (settings.halfLength + margin) + gSide.nB * settings.elevation;
+        vs[^1] = g.nJ2B.normalized * (settings.halfLength + margin) + gSide.nB * settings.elevation;
         Ring(
             ref vs,
             vs[vs.Length - 1],
