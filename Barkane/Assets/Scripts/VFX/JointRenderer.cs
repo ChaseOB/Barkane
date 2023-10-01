@@ -509,8 +509,8 @@ namespace BarkaneJoint
             ref JointSideGeometryData g1, ref JointSideGeometryData g2)
         {
 
-            g.pA = a.transform.position;
-            g.pB = b.transform.position;
+            //g.pA = a.transform.position;
+           // g.pB = b.transform.position;
 
            g.pA = a.transform.position + a.transform.rotation * new Vector3(0, a.YOffset, 0); //* 2;
            g.pB = b.transform.position + b.transform.rotation * new Vector3(0, b.YOffset, 0); //* 2;

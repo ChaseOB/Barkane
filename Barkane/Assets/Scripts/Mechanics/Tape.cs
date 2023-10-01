@@ -17,6 +17,8 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
     Vector3[] vs;
     Vector2[] ringShifts; // randomize corners to look less tidy
 
+    public Vector3 a, jA, j, jB, b;
+
     private void Update()
     {
         // lock to world space orientation
@@ -26,6 +28,19 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
     private void LateUpdate()
     {
         UpdateMesh(squareRenderSettings.margin);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(transform.position + a, 0.03f);
+        Gizmos.DrawSphere(transform.position +jA, 0.03f);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(transform.position +j, 0.03f);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(transform.position +jB, 0.03f);
+        Gizmos.DrawSphere(transform.position +b, 0.03f);
+
     }
 
     private void UpdateMesh(float margin)
@@ -48,43 +63,44 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
         }
 
         // head A
-        vs[0] = g.nJ2A.normalized * (settings.halfLength + margin) + gSide.nA * settings.elevation;
+        a = (g.pA - g.edgeA).normalized * settings.halfLength; //g.nJ2A.normalized * (settings.halfLength + margin) + gSide.nA * settings.elevation +;
+        vs[0] = a;
         Ring(ref vs,
             vs[0],
             gSide.nA,
             gSide.tJ,
             1);
-        if (gSide.a2b > 20f && gSide.a2b < 160f) // bending inwards
-        {
-            print("case 1");
-            // 3 inner joints collapse together
-            var shrinkCorrection = 1f / Mathf.Sin(Mathf.Deg2Rad * gSide.a2b / 2);
-            var j = gSide.nJ * (settings.elevation * shrinkCorrection);
-            Ring(
-                ref vs,
-                j,
-                gSide.nJ,
-                gSide.tJ,
-                1 + 4);
-            Ring(
-                ref vs,
-                j,
-                gSide.nJ,
-                gSide.tJ,
-                1 + 2 * 4);
-            Ring(
-                ref vs,
-                j,
-                gSide.nJ,
-                gSide.tJ,
-                1 + 3 * 4);
-        }
-        else // bending outwards
-        {
-            print("case 2");
+        // if (gSide.a2b > 20f && gSide.a2b < 160f) // bending inwards
+        // {
+        //     print("case 1");
+        //     // 3 inner joints collapse together
+        //     var shrinkCorrection = 1f / Mathf.Sin(Mathf.Deg2Rad * gSide.a2b / 2);
+        //     var j = gSide.nJ * (settings.elevation * shrinkCorrection);
+        //     Ring(
+        //         ref vs,
+        //         j,
+        //         gSide.nJ,
+        //         gSide.tJ,
+        //         1 + 4);
+        //     Ring(
+        //         ref vs,
+        //         j,
+        //         gSide.nJ,
+        //         gSide.tJ,
+        //         1 + 2 * 4);
+        //     Ring(
+        //         ref vs,
+        //         j,
+        //         gSide.nJ,
+        //         gSide.tJ,
+        //         1 + 3 * 4);
+        // }
+        // else // bending outwards
+        // {
+        //     print("case 2");
             // near joint on side A
-           // var jA = g.nJ2A.normalized * margin + gSide.nA * settings.elevation;
-           var jA = g.edgeA + gSide.nA * settings.elevation;
+           // jA = g.nJ2A.normalized * margin + gSide.nA * settings.elevation;
+            jA = g.edgeA - transform.position + gSide.nA * settings.elevation;
             Ring(
                 ref vs,
                 jA,
@@ -92,7 +108,7 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
                 gSide.tJ,
                 1 + 4);
             // joint
-            var j = g.offset + gSide.nJ * settings.elevation;
+            j = gSide.nJ * settings.elevation + g.offset;
             Ring(
                 ref vs,
                 j,
@@ -100,17 +116,18 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
                 gSide.tJ,
                 1 + 2 * 4);
             // near joint on side B
-            //var jB = g.nJ2B.normalized * margin + gSide.nB * settings.elevation;
-            var jB = g.edgeB + gSide.nB * settings.elevation;
+           // jB = g.nJ2B.normalized * margin + gSide.nB * settings.elevation;
+              jB = g.edgeB - transform.position + gSide.nB * settings.elevation;
             Ring(
                 ref vs,
                 jB,
                 gSide.nB,
                 gSide.tJ,
                 1 + 3 * 4);
-        }
+        //}
         // head B
-        vs[^1] = g.nJ2B.normalized * (settings.halfLength + margin) + gSide.nB * settings.elevation;
+        b = (g.pB - g.edgeB).normalized * settings.halfLength; //g.nJ2B.normalized * (settings.halfLength + margin) + gSide.nB * settings.elevation;
+        vs[^1] = b;
         Ring(
             ref vs,
             vs[vs.Length - 1],
