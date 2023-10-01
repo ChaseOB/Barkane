@@ -63,7 +63,7 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
         }
 
         // head A
-        a = (g.pA - g.edgeA).normalized * settings.halfLength; //g.nJ2A.normalized * (settings.halfLength + margin) + gSide.nA * settings.elevation +;
+        a = (g.pA - transform.position) + (g.edgeA - g.pA) * (1- settings.halfLength);  //g.nJ2A.normalized * (settings.halfLength + margin) + gSide.nA * settings.elevation +;
         vs[0] = a;
         Ring(ref vs,
             vs[0],
@@ -126,7 +126,7 @@ public class Tape : SidedJointAddon, IDynamicMesh<TapeRenderSettings>
                 1 + 3 * 4);
         //}
         // head B
-        b = (g.pB - g.edgeB).normalized * settings.halfLength; //g.nJ2B.normalized * (settings.halfLength + margin) + gSide.nB * settings.elevation;
+        b = (g.pB - transform.position) + (g.edgeB - g.pB) * (1- settings.halfLength);  //.normalized * settings.halfLength; //g.nJ2B.normalized * (settings.halfLength + margin) + gSide.nB * settings.elevation;
         vs[^1] = b;
         Ring(
             ref vs,
