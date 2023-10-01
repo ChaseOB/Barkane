@@ -491,7 +491,7 @@ namespace BarkaneJoint
         }
     }
 
-    internal class JointGeometryData
+    public class JointGeometryData
     {
         internal class JointSideGeometryData
         {
