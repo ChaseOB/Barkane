@@ -112,12 +112,13 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         var correctionT = Mathf.Max(-Vector3.Dot(gSide.nJ, g.nJ2A.normalized), 0);
         correctionT *= correctionT;
         correctionT *= correctionT;
-        var correction = correctionT * gSide.nJ * margin * settings.marginCorrection;
+        var correction = Vector3.zero; //correctionT * gSide.nJ * margin * settings.marginCorrection;
         //var anchor = gSide.nJ * settings.elevation + g.pJ; 
         anchor = gSide.nJ * settings.elevation * (Mathf.Abs(Vector3.Dot(gSide.nJ, g.nJ2A.normalized)) + 1);
-        dA2 = g.edgeA - g.pJ + gSide.nA * settings.elevation; //g.nJ2A.normalized * margin + gSide.nA * settings.elevation;
-        dB2 = g.edgeB - g.pJ + gSide.nB * settings.elevation;//g.nJ2B.normalized * margin + gSide.nB * settings.elevation;
+        dA2 = g.edgeA - g.pJ + gSide.nA * settings.elevation + g.yOffsetB; //g.nJ2A.normalized * margin + gSide.nA * settings.elevation;
+        dB2 = g.edgeB - g.pJ + gSide.nB * settings.elevation + Vector3.Project(g.yOffsetA, (g.pB - g.edgeB).normalized);//g.nJ2B.normalized * margin + gSide.nB * settings.elevation;
         dC = QuadraticBezier(dA2, anchor, dB2, 0.5f);
+        //dC = gSide.nJ * settings.elevation;
         dA1 = QuadraticBezier(dA2, anchor, dB2, 0.25f);
         dB1 = QuadraticBezier(dA2, anchor, dB2, 0.75f);
 

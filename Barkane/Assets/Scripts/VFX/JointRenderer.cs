@@ -502,6 +502,7 @@ namespace BarkaneJoint
         public Vector3 pA, pB, pJ, offset;
         public Vector3 nJ2A, nJ2B;
         public Vector3 edgeA, edgeB;
+        public Vector3 yOffsetA, yOffsetB;
       //  public float margin;
 
         internal static void Update(SquareSide a, SquareSide b, JointRenderer j, float margin,
@@ -509,13 +510,11 @@ namespace BarkaneJoint
             ref JointSideGeometryData g1, ref JointSideGeometryData g2)
         {
 
-            //g.pA = a.transform.position;
-           // g.pB = b.transform.position;
+            g.yOffsetA = a.transform.rotation * new Vector3(0, a.YOffset, 0);
+            g.yOffsetB = b.transform.rotation * new Vector3(0, b.YOffset, 0);
 
-           g.pA = a.transform.position + a.transform.rotation * new Vector3(0, a.YOffset, 0); //* 2;
-           g.pB = b.transform.position + b.transform.rotation * new Vector3(0, b.YOffset, 0); //* 2;
-
-          //  g.pJ = j.transform.position;
+            g.pA = a.transform.position + g.yOffsetA; 
+            g.pB = b.transform.position + g.yOffsetB;
 
             Vector3 offset = Vector3.zero;
                 switch(CoordUtils.DiffAxisCount(a, b))
