@@ -110,37 +110,49 @@ public class SquareStack : FoldableObject
         }
 
         Debug.Log("making new stack with " + newStackSquares.Count + "squares");
-        newStack = new(newStackSquares.First().currentPosition, newStackSquares.First().targetPosition);
+
+        Quaternion rotation = Quaternion.Euler(foldAxis * 90);
+
+        Vector3Int l = newStackSquares.First().targetPosition.location;
+        Quaternion r = rotation * currentPosition.rotation;
+        Vector3 a = r * Vector3.up;
+        PositionData target = new(l, r, a);
+
+
+        newStack = new(currentPosition, target);
         newStack.debug = true;
         
-        bool flip = ShouldFlip(newStack.currentPosition.axis, newStack.targetPosition.axis);
-        if(flip)
-            newStackSquares.Reverse();
-        while(newStackSquares.Count > 0)
-        {
-            SquareData s = newStackSquares.First();
-            newStack.squarelist.AddFirst(s);
-            squarelist.Remove(s);
-            newStackSquares.Remove(s);
-        }
-        
+        // bool flip = ShouldFlip(newStack.currentPosition.axis, newStack.targetPosition.axis);
+        // if(flip)
+        //     newStackSquares.Reverse();
 
-        // Vector3 cross = Vector3.Cross(newStack.currentPosition.axis, foldAxis);
-        // Vector3 distance = currentPosition.location - newStack.currentPosition.location;
-        // float dot = Vector3.Dot(cross, distance);
-        // bool sameAxis = newStack.targetPosition.axis == targetPosition.axis;
-        // bool dotLessThanZero = dot < 0;
-
+        // if(newStackSquares.Count > 1)
+        // Debug.Log("flip " + flip + newStack.currentPosition.axis + newStack.targetPosition.axis);
         // while(newStackSquares.Count > 0)
         // {
-        //     SquareData s = dotLessThanZero != sameAxis ? newStackSquares.Last(): newStackSquares.First();
-        //     newStackSquares.Remove(s);
+        //     SquareData s = newStackSquares.First();
+        //     newStack.squarelist.AddFirst(s);
         //     squarelist.Remove(s);
-        //     if(dot > 0)
-        //         newStack.squarelist.AddFirst(s);
-        //     else
-        //         newStack.squarelist.AddLast(s);
+        //     newStackSquares.Remove(s);
         // }
+        
+
+        Vector3 cross = Vector3.Cross(newStack.targetPosition.axis, foldAxis);
+        Vector3 distance = currentPosition.location - newStack.targetPosition.location;
+        float dot = Vector3.Dot(cross, distance);
+        bool sameAxis = newStack.targetPosition.axis == targetPosition.axis;
+        bool dotLessThanZero = dot < 0;
+
+        while(newStackSquares.Count > 0)
+        {
+            SquareData s = sameAxis != dotLessThanZero ? newStackSquares.Last(): newStackSquares.First();
+            newStackSquares.Remove(s);
+            squarelist.Remove(s);
+            if(dot < 0)
+                newStack.squarelist.AddFirst(s);
+            else
+                newStack.squarelist.AddLast(s);
+        }
 
         // if(newStack != null)
         // {
