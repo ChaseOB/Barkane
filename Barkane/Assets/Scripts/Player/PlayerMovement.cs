@@ -57,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
             if(CheckValidMove() && CheckValidSnowball())
             {
                 ActionLockManager.Instance.TryRemoveLock(this);
-                PaperStateManager.Instance.AddAndExecuteMove(new PlayerMove(true));
+                PaperStateManager.Instance.AddAndExecuteMove(true);
             }
             else
             {
@@ -85,7 +85,7 @@ public class PlayerMovement : MonoBehaviour
     public void Move(PlayerMove move, ActionCallEnum source)
     {
         ActionLockManager.Instance.TryTakeLock(this);
-        StartCoroutine(MoveHelper(source));
+        StartCoroutine(MoveHelper(move, source));
         // if(undo || (CheckValidMove() && CheckValidSnowball())) {
         //     StartCoroutine(MoveHelper(source));
         //     return;
@@ -128,7 +128,7 @@ public class PlayerMovement : MonoBehaviour
         ActionLockManager.Instance.TryRemoveLock(this);
     }
 
-    private IEnumerator MoveHelper(ActionCallEnum source)
+    private IEnumerator MoveHelper(PlayerMove move, ActionCallEnum source)
     {
         isMoving = true;
         this.source = source;
@@ -142,7 +142,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if(snowball != null) {
-            snowball.MoveSnowball();
+            snowball.MoveSnowball(move, source);
             snowball = null;
         }
         animator.Play("Move");
@@ -200,14 +200,15 @@ public class PlayerMove: Action
 {
     public bool forward = true;
 
-    public PlayerMove(bool forward)
+    public PlayerMove(bool forward, int moveNum)
     {
         this.forward = forward;
+        this.moveNum = moveNum;
     }
 
     public override Action GetInverse()
     {
-        return new PlayerMove(forward = false);
+        return new PlayerMove(!forward, moveNum);
     }
 
     // public void ExecuteAction(bool undo)
@@ -227,14 +228,15 @@ public class PlayerRotate : Action
 {
     public float amount;
 
-    public PlayerRotate(float amount)
+    public PlayerRotate(float amount, int moveNum)
     {
         this.amount = amount;
+        this.moveNum = moveNum;
     }
 
     public override Action GetInverse()
     {
-        return new PlayerRotate(-1 * amount);
+        return new PlayerRotate(-1 * amount, moveNum);
     }
 }
 

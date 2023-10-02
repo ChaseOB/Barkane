@@ -33,6 +33,9 @@ public class PaperStateManager: Singleton<PaperStateManager>
     private int numFolds;
     public int NumFolds => numFolds;
 
+    public int currMoveNum => actionStack.Count;
+    private int nextMoveNum => actionStack.Count + 1;
+
     public class FoldArgs : System.EventArgs
     {
         public FoldData fd;
@@ -81,8 +84,9 @@ public class PaperStateManager: Singleton<PaperStateManager>
         RedoAction();    
     }
 
-    public void AddAndExecuteMove(PlayerMove playerMove)
+    public void AddAndExecuteMove(bool forward)
     {
+        PlayerMove playerMove = new(forward, nextMoveNum);
         ActionLockManager.Instance.TryTakeLock(this);
         actionRedoStack.Clear();
         actionStack.Push(playerMove);
@@ -98,7 +102,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
     public void AddAndExecuteRotate(float amount)
     {
         ActionLockManager.Instance.TryTakeLock(this);
-        PlayerRotate playerRotate = new(amount);
+        PlayerRotate playerRotate = new(amount, nextMoveNum);
         actionRedoStack.Clear();
         actionStack.Push(playerRotate);
         ProcessRotateAction(playerRotate, ActionCallEnum.PLAYER);
@@ -114,7 +118,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
     {
         ActionLockManager.Instance.TryTakeLock(this);
         actionRedoStack.Clear();
-        FoldAction foldAction = new(fd);
+        FoldAction foldAction = new(fd, nextMoveNum);
         actionStack.Push(foldAction);
         ProcessFoldAction(foldAction, ActionCallEnum.PLAYER);
     }
@@ -229,10 +233,10 @@ public class PaperStateManager: Singleton<PaperStateManager>
         ActionLockManager.Instance.TryRemoveLock(this);
 
         FoldArgs args = new(fd, source, numFolds);
-        System.Action start = () => OnFoldStartInternal(source, args);
-        System.Action end = () => OnFoldEndInternal(source, args);
-        var first = source == ActionCallEnum.UNDO ? end : start;
-        var last = source == ActionCallEnum.UNDO ? start : end;
+        void start() => OnFoldStartInternal(source, args);
+        void end() => OnFoldEndInternal(source, args);
+        var first = source == ActionCallEnum.UNDO ? (System.Action)end : start;
+        var last = source == ActionCallEnum.UNDO ? start : (System.Action)end;
         //var foldStartAction = source == ActionCallEnum.UNDO ? OnFoldStartInternal(source, args) : OnFoldEndInternal(source, args);
         //OnFold?.Invoke(this, new(fd, source, numFolds));
         foldAnimator.Fold(fd, paperState, source, first, last);
@@ -338,6 +342,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
 //C: can be a fold or a player movement
 public abstract class Action
 {
+    public int moveNum = -1;
     public abstract Action GetInverse();
 }
 
@@ -345,13 +350,14 @@ public class FoldAction: Action
 {
     public FoldData foldData;
 
-    public FoldAction(FoldData foldData)
+    public FoldAction(FoldData foldData, int moveNum)
     {
         this.foldData = foldData;
+        this.moveNum = moveNum;
     }
 
     public override Action GetInverse()
     {
-        return new FoldAction(foldData.GetInverse());
+        return new FoldAction(foldData.GetInverse(), moveNum);
     }
 }

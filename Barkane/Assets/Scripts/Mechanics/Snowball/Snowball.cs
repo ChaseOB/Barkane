@@ -10,13 +10,32 @@ public class Snowball : MonoBehaviour
     public bool playerContact = false; //set to true when player bumps to start animation
     public LayerMask snowballCollidingMask;
     public LayerMask validLocMask;
-    public float moveDuration = 0.25f;
+    private float moveDuration = 0.5f;
     private Vector3 target;
 
 
+    public class SnowballMoveData
+    {
+        public Vector3 start;
+        public Vector3 end;
+        public float contactTime;
+        public int moveNum;
+
+        public SnowballMoveData(Vector3 start, Vector3 end, float contactTime, int moveNum)
+        {
+            this.start = start;
+            this.end = end;
+            this.contactTime = contactTime;
+            this.moveNum = moveNum;
+        }
+
+    }
+
+    public Stack<SnowballMoveData> snowballMoves = new();
 
     private void Start() {
         FindClosestFace();
+        moveDuration = FindObjectOfType<PlayerMovement>().moveDuration;
     }
 
 
@@ -69,7 +88,7 @@ public class Snowball : MonoBehaviour
         //2. Check that there is a valid square to move to
         Collider[] colliders = Physics.OverlapBox(transform.position + convertedDir, new Vector3(0.1f, 0.1f, 0.1f), Quaternion.identity, validLocMask, QueryTriggerInteraction.Collide);
         if (colliders.Length > 0) {
-            target = transform.position + convertedDir;
+            target = GetTarget(direction);
             Debug.DrawRay(transform.position, convertedDir, Color.magenta, 30);
             return true;
         }
@@ -77,33 +96,78 @@ public class Snowball : MonoBehaviour
         return false;
     }
 
-
-
-    public void MoveSnowball() {
-        StartCoroutine(AnimateSnowball());
+    public Vector3 GetTarget(Vector3 direction)
+    {
+        return transform.position + 2 * direction;
     }
 
 
 
-    private IEnumerator AnimateSnowball() {
+    public void MoveSnowball(PlayerMove move, ActionCallEnum source) {
+        if(source != ActionCallEnum.UNDO)
+            StartCoroutine(AnimateSnowballNormal(move));
+        else
+        {
+            if(move.moveNum == snowballMoves.Peek().moveNum);
+                StartCoroutine(AnimateSnowballReverse());
+
+        }
+
+    }
+
+
+
+    private IEnumerator AnimateSnowballNormal(PlayerMove move) {
         Vector3 current = transform.position;
         float start = Time.time;
+       // print("animation buffered");
+      //  print(Time.time);
         yield return new WaitUntil(() => playerContact);
+      //  print("starting animation");
+       // print(Time.time);
         float end = Time.time;
-        float remaining = moveDuration - start + end;
+       // print(end - start);
+        float remaining = moveDuration - (end - start);
+        //rint(remaining);
         //animate 
 
         float t = 0;
         while (t < remaining)
         {
             t += Time.deltaTime;
-            transform.position = Vector3.Lerp(current, target, t/remaining);
+            if(t >= remaining) break;
+            float l = t/remaining;
+            transform.position = Vector3.Lerp(current, target, l);
+            print(l);
             yield return null;
         }
         transform.position = target;
         playerContact = false;
         //update parent
+        
+        SnowballMoveData data = new(current, target, remaining, move.moveNum);
+        print(data);
+        snowballMoves.Push(data);
 
        FindClosestFace();
+    }
+
+    private IEnumerator AnimateSnowballReverse()
+    {
+        SnowballMoveData move = snowballMoves.Pop();
+        Vector3 startPos = move.start;
+        Vector3 endPos = move.end;
+        float contactTime = move.contactTime;
+        float t = 0;
+        while(t < contactTime)
+        {
+            t += Time.deltaTime;
+            if(t >= contactTime) break;
+            transform.position = Vector3.Lerp(startPos, endPos, 1 - (t/contactTime));
+            yield return null;
+        }
+        transform.position = startPos;
+
+        FindClosestFace();
     }
 }

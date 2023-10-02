@@ -9,6 +9,7 @@ using Random = UnityEngine.Random;
 using JointRenderer = BarkaneJoint.JointRenderer;
 using JointPieceOwnership = BarkaneJoint.JointRenderer.JointPieceOwnership;
 using System.Text;
+using Unity.Mathematics;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshRenderer))]
@@ -52,6 +53,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public float YOffset;
     public float YOffsetJoint =>  parentSquare.topSide == this ? YOffset : -1 * YOffset;
+
+    public GameObject visualParent;
 
     void IRefreshable.EditorRefresh()
     {
@@ -280,14 +283,33 @@ public class SquareSide : MonoBehaviour, IRefreshable
     public void SetYPositionOffset(float offset)
     {
         YOffset = offset;
-        int c = transform.childCount;
-        for(int i = 0; i < transform.childCount; i++)
+        if(visualParent == null)
         {
-            Transform t = transform.GetChild(i);
-            t.localPosition = YOffset * Vector3.up;
+            MakeParent();
         }
+        // int c = transform.childCount;
+        // for(int i = 0; i < transform.childCount; i++)
+        // {
+        //     Transform t = transform.GetChild(i);
+        //     t.localPosition = YOffset * Vector3.up;
+        // }
+        visualParent.transform.localPosition = YOffset * Vector3.up;
         if(materialInstance == null) return;
         materialInstance.SetFloat("_YOffset", offset);
+    }
+
+    private void MakeParent()
+    {
+        visualParent = new("Visuals");
+       // visualParent.transform.parent = this.transform;
+        visualParent.transform.localPosition = transform.position;
+        visualParent.transform.localRotation = quaternion.identity;
+        while(transform.childCount > 0)
+        {
+            Transform t = transform.GetChild(0);
+            t.parent = visualParent.transform;
+        }
+        visualParent.transform.parent = this.transform;
     }
 
     #region overlap
