@@ -78,13 +78,15 @@ public class Goal : MonoBehaviour, IThemedItem
 
     private IEnumerator EndLevelAnimation()
     {
-        
+        ActionLockManager.Instance.TryTakeLock(this);
         yield return new WaitForSeconds(2);
+        EndLevel();
     }
     
     public void EndLevel() {
         OnReachGoal?.Invoke(this, new System.EventArgs());
        // LevelManager.Instance.EndLevel();
+        ActionLockManager.Instance.TryRemoveLock(this);
         UIManager.Instance.EndLevel();
     }
 
