@@ -40,13 +40,15 @@ public class PaperStateManager: Singleton<PaperStateManager>
     {
         public FoldData fd;
         public ActionCallEnum source;
-        public int foldnum;
+        public int beforeFoldNum;
+        public int afterFoldNum;
 
-        public FoldArgs(FoldData fd, ActionCallEnum source, int foldnum)
+        public FoldArgs(FoldData fd, ActionCallEnum source, int beforeFoldNum, int afterFoldNum)
         {
             this.fd = fd;
             this.source = source;
-            this.foldnum = foldnum;
+            this.beforeFoldNum = beforeFoldNum;
+            this.afterFoldNum = afterFoldNum;
         }
     }
 
@@ -232,7 +234,9 @@ public class PaperStateManager: Singleton<PaperStateManager>
 
         ActionLockManager.Instance.TryRemoveLock(this);
 
-        FoldArgs args = new(fd, source, numFolds);
+        int prevFold = source == ActionCallEnum.UNDO ? numFolds - 1 : numFolds;
+        int nextFold = prevFold + 1;
+        FoldArgs args = new(fd, source, prevFold, nextFold);
         void start() => OnFoldStartInternal(source, args);
         void end() => OnFoldEndInternal(source, args);
         var first = source == ActionCallEnum.UNDO ? (System.Action)end : start;
@@ -245,14 +249,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
 
     private void OnFoldStartInternal(ActionCallEnum source, FoldArgs e)
     {
-        if(source == ActionCallEnum.UNDO)
-        {
-            numFolds--;
-        }
-        else
-        {
-            numFolds++;
-        }
+        numFolds = source == ActionCallEnum.UNDO ? e.beforeFoldNum : e.afterFoldNum;
         UIManager.Instance.UpdateFC(numFolds);
         LevelManager.Instance?.SetFoldCount(numFolds);
 

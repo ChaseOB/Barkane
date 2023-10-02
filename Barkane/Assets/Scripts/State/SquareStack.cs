@@ -120,7 +120,7 @@ public class SquareStack : FoldableObject
 
 
         newStack = new(currentPosition, target);
-        newStack.debug = true;
+     //   newStack.debug = true;
         
         // bool flip = ShouldFlip(newStack.currentPosition.axis, newStack.targetPosition.axis);
         // if(flip)
@@ -227,7 +227,7 @@ public class SquareStack : FoldableObject
     //merge other into this stack
     public void MergeIntoStack(SquareStack other, Vector3 foldAxis)
     {
-        debug = debug || other.debug;
+       //debug = debug || other.debug;
        // if(debug)
         if(other.squarelist.Count > 0)
             Debug.Log("merging stacks at " + targetPosition.location);

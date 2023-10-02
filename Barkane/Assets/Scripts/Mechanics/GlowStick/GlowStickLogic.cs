@@ -50,21 +50,23 @@ public class GlowStickLogic : MonoBehaviour
         bool jointInFold = args.fd.axisJoints.Contains(paperJoint);
         if(args.source == ActionCallEnum.UNDO)
         {
-            HandleUndoFold(jointInFold, args.foldnum, args.source);
+            HandleUndoFold(args.afterFoldNum, args.source);
         }
         else
         {
-            HandleFold(jointInFold, args.foldnum, args.source);
+            HandleFold(jointInFold, args.afterFoldNum, args.source);
         }
 
     
     }
 
-    private void HandleUndoFold(bool jointInFold, int foldnum, ActionCallEnum source)
+    private void HandleUndoFold(int foldnum, ActionCallEnum source)
     {
-        if(foldnum >= expirationFoldNum) return;
-        else if(foldnum == expirationFoldNum - 1)
+        print ("foldnum" + foldnum);
+        if(foldnum > expirationFoldNum) return;
+        else if(foldnum == expirationFoldNum )
         {
+            print("undo death");
             //return to cracked state
             if(state != GlowstickState.OFF)
                 print("expiration fold not in off state. Bad.");
@@ -74,7 +76,7 @@ public class GlowStickLogic : MonoBehaviour
             OnGlowstickChange?.Invoke(this, new GlowStickArgs(lifetime, state, source));
             lifetime++;
         }
-        else if (foldnum >= crackFoldNum)
+        else if (foldnum > crackFoldNum)
         {
             print("mid undo");
             //add lifetime
@@ -83,8 +85,9 @@ public class GlowStickLogic : MonoBehaviour
             OnGlowstickChange?.Invoke(this, new GlowStickArgs(lifetime, state, source));
             lifetime++;
         }
-        else if (foldnum == crackFoldNum - 1)
+        else if (foldnum == crackFoldNum)
         {
+            print("undo crack");
             //reset to primed state
             state = GlowstickState.PRIMED;
             //lifetime++;
@@ -99,7 +102,19 @@ public class GlowStickLogic : MonoBehaviour
 
     private void HandleFold(bool jointInFold, int foldnum, ActionCallEnum source)
     {
-        if(state == GlowstickState.CRACKED)
+        if(state == GlowstickState.PRIMED && jointInFold)
+        {
+            state = GlowstickState.CRACKED;
+            ToggleGSBoxes(true);
+            GetComponent<GlowStick>().innerRenderer.material = materials[1];
+            OnGlowstickChange?.Invoke(this, new GlowStickArgs(lifetime, state, source));
+            crackFoldNum = foldnum;
+            expirationFoldNum = foldnum + lifetime;
+            print("cracked + " + crackFoldNum + " expires " + expirationFoldNum);
+            return;
+        }
+
+        else if(state == GlowstickState.CRACKED)
         {
             lifetime--;
             OnGlowstickChange.Invoke(this, new GlowStickArgs(lifetime, state, source));
@@ -112,15 +127,7 @@ public class GlowStickLogic : MonoBehaviour
                 GetComponent<GlowStick>().innerRenderer.material = materials[2];
             }
         }
-        if(state == GlowstickState.PRIMED && jointInFold)
-        {
-            state = GlowstickState.CRACKED;
-            ToggleGSBoxes(true);
-                GetComponent<GlowStick>().innerRenderer.material = materials[1];
-            OnGlowstickChange?.Invoke(this, new GlowStickArgs(lifetime, state, source));
-            crackFoldNum = foldnum;
-            expirationFoldNum = foldnum + lifetime;
-        }
+
     }
 
     //toggles the boxes which activate the crystals;
