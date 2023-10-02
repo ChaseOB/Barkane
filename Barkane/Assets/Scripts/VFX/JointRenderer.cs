@@ -235,21 +235,6 @@ namespace BarkaneJoint
             Gizmos.color = Color.green;
             Gizmos.DrawRay(jointGeometry.pJ, jointGeometry.nJ2B);
 
-
-            //if (filter.sharedMesh != null)
-            //{
-            //    var vertices = filter.sharedMesh.vertices;
-            //    for (int i = 0; i < vertices.Length; i++)
-            //    {
-            //        Handles.Label(transform.localToWorldMatrix.MultiplyPoint3x4(vertices[i] + filter.sharedMesh.normals[i] * 0.1f), i.ToString());
-            //    }
-            //}
-
-            //if (side1Geometry != null)
-            //{
-            //    Gizmos.color = Color.red;
-            //    Gizmos.DrawRay(transform.position, side1Geometry.nJ);
-            //}
         }
    // #endif
 
@@ -303,23 +288,15 @@ namespace BarkaneJoint
                 tStart = settings.tsStart[i];
                 tMid = settings.tsMid[i];
 
-                pivotBaseStart = jointGeometry.offset + (jointGeometry1.tJ * tStart * scaledSquareSize);// * scaledSquareSize * jointGeometry1.tJ;
+                pivotBaseStart = jointGeometry.offset + (jointGeometry1.tJ * tStart * scaledSquareSize);
                 pivotBaseMid = jointGeometry.offset + (jointGeometry1.tJ * tMid * scaledSquareSize);
-                //pivotBaseMid = 
-                //pivotBaseStart = tStart * scaledSquareSize * jointGeometry1.tJ;
-                //pivotBaseMid = tMid * scaledSquareSize * jointGeometry1.tJ;
-                var margin = squareRenderSettings.margin + .001f;
+                //var margin = squareRenderSettings.margin + .001f;
 
-                //start = pivotBaseMid + margin * jointGeometry.nJ2A + new Vector3(0, a1.YOffset, 0);
-                
+                vA1[i] = pivotBaseMid + jointGeometry.nJ2A ;
+                vB1[i] = pivotBaseMid + jointGeometry.nJ2B ;
+                vA2[i] = pivotBaseMid + jointGeometry.nJ2A ;
+                vB2[i] = pivotBaseMid + jointGeometry.nJ2B ;
 
-                // note that the margin is also affected by the size setting
-                // the margin applies to a 01 (uv) square which is sized to produce the actual square
-                vA1[i] = pivotBaseMid + jointGeometry.nJ2A ;//+  a1.parentSquare.transform.rotation * new Vector3(0, a1.YOffsetJoint, 0);;// + side1Geometry.nA * 0.0006f;
-                vB1[i] = pivotBaseMid + jointGeometry.nJ2B ;//+ b1.parentSquare.transform.rotation * new Vector3(0, b1.YOffsetJoint, 0);// + side1Geometry.nB * 0.0006f;
-                vA2[i] = pivotBaseMid + jointGeometry.nJ2A ;//+ a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);// + side2Geometry.nA * 0.0006f;
-                vB2[i] = pivotBaseMid + jointGeometry.nJ2B ;//+ b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0);// + side2Geometry.nB * 0.0006f;
-                
                 List<Vector3Int> squarepositions = new List<Vector3Int>()
                 {
                     Vector3Int.RoundToInt(a1.parentSquare.transform.position),
@@ -349,16 +326,6 @@ namespace BarkaneJoint
                 {
                     print(offset);
                 }
-                // float angle = Mathf.Abs(jointGeometry1.a2b);
-                // if(angle > 135f)
-                // {
-                //     pivotBaseStart += b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
-                // }
-                // else if (angle > 10f && b2.YOffsetJoint != 0)
-                // {
-                //     print(angle);
-                //     pivotBaseStart += b2.parentSquare.transform.rotation * new Vector3(0, b2.YOffsetJoint, 0) + a2.parentSquare.transform.rotation * new Vector3(0, a2.YOffsetJoint, 0);
-                // }
                 vA1[i + settings.PivotOffset] = pivotBaseStart;
                 vB1[i + settings.PivotOffset] = pivotBaseStart;
                 vA2[i + settings.PivotOffset] = pivotBaseStart;

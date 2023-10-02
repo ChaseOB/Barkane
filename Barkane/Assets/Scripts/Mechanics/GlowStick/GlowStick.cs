@@ -99,29 +99,25 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
 
         // Order of joints: A, A2, A1, C, B1, B2, B
         // A
-        //vs[0] = 
-        a = g.pA + (g.edgeA - g.pA) * (1- settings.halfLength) + gSide.nA * settings.elevation ; //g.pJ + g.nJ2A.normalized * (settings.halfLength + margin) + gSide.nA * settings.elevation ; // + jointRenderer.GetParentSquareOffsets().Item1; A abchor
+        a = g.pA + (g.edgeA - g.pA) * (1- settings.halfLength) + gSide.nA * settings.elevation ; 
         vs[0] = a;
-        // ns[0] = g.nJ2A;
         Ring(ref vs, vs[0], gSide.nA, gSide.tJ, 1, settings);
 
         ga2b = gSide.a2b;
-        //print(ga2b);
 
-        // Ideally correctionT should be minimal at small outward angles and suddenly jump to 1 at folding over
-        // Here we approximate by taking it to some power > 1 so smaller fractions are compressed
-        var correctionT = Mathf.Max(-Vector3.Dot(gSide.nJ, g.nJ2A.normalized), 0);
-        correctionT *= correctionT;
-        correctionT *= correctionT;
+        // // Ideally correctionT should be minimal at small outward angles and suddenly jump to 1 at folding over
+        // // Here we approximate by taking it to some power > 1 so smaller fractions are compressed
+        // var correctionT = Mathf.Max(-Vector3.Dot(gSide.nJ, g.nJ2A.normalized), 0);
+        // correctionT *= correctionT;
+        // correctionT *= correctionT;
         var correction = Vector3.zero; //correctionT * gSide.nJ * margin * settings.marginCorrection;
         //var anchor = gSide.nJ * settings.elevation + g.pJ; 
 
         float dotScale = 1 + Mathf.Max(0, (ga2b - 90f) / 180f);
         anchor = gSide.nJ * settings.elevation * (Mathf.Abs(Vector3.Dot(gSide.nJ, (g.edgeA - g.pA).normalized)) * dotScale + 1);
-        dA2 = g.edgeA - g.pJ + gSide.nA * settings.elevation + g.yOffsetB; //g.nJ2A.normalized * margin + gSide.nA * settings.elevation;
-        dB2 = g.edgeB - g.pJ + gSide.nB * settings.elevation + Vector3.Project(g.yOffsetA, (g.pB - g.edgeB).normalized);//g.nJ2B.normalized * margin + gSide.nB * settings.elevation;
+        dA2 = g.edgeA - g.pJ + gSide.nA * settings.elevation + Vector3.Project(g.yOffsetB, (g.pA - g.edgeA).normalized);
+        dB2 = g.edgeB - g.pJ + gSide.nB * settings.elevation + Vector3.Project(g.yOffsetA, (g.pB - g.edgeB).normalized);
         dC = QuadraticBezier(dA2, anchor, dB2, 0.5f);
-        //dC = gSide.nJ * settings.elevation;
         dA1 = QuadraticBezier(dA2, anchor, dB2, 0.25f);
         dB1 = QuadraticBezier(dA2, anchor, dB2, 0.75f);
 
@@ -131,16 +127,9 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         Ring(ref vs, g.pJ + dB1 + correction, DDQuadraticBezier(dA2, anchor, dB2, 0.75f, gSide.tJ), gSide.tJ, 1 + 4 * settings.resolution, settings);
         Ring(ref vs, g.pJ + dB2 + correction, gSide.nB, gSide.tJ, 1 + 5 * settings.resolution, settings);
 
-        // Debug.DrawRay(g.pJ, gSide.tJ, Color.black);
-        // Debug.DrawRay(g.pJ, DDQuadraticBezier(dA2, anchor, dB2, 0.25f, gSide.tJ), Color.red);
-        // Debug.DrawRay(g.pJ, gSide.nJ, Color.green);
-        // Debug.DrawRay(g.pJ, DDQuadraticBezier(dA2, anchor, dB2, 0.75f, gSide.tJ), Color.blue);
-
-        // head B
-        
+        // B
         b =  g.pB + (g.edgeB - g.pB) * (1- settings.halfLength) + gSide.nB * settings.elevation; //g.pJ + g.nJ2B.normalized * (settings.halfLength + margin) + gSide.nB * settings.elevation ;//+ Vector3.up * 0.5f;
         vs[^1] = b;
-        // ns[^1] = g.nJ2B;
         Ring(ref vs, vs[^1], gSide.nB, gSide.tJ, 1 + 6 * settings.resolution, settings);
 
         m.SetVertices(vs, 0, vs.Length, fConsiderBounds);
@@ -228,17 +217,4 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         return Vector3.Cross(axis, T).normalized;
     }
 
-    Vector3 GetCatmullRomPosition(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
-	{
-		//The coefficients of the cubic polynomial (except the 0.5f * which I added later for performance)
-		Vector3 a = 2f * p1;
-		Vector3 b = p2 - p0;
-		Vector3 c = 2f * p0 - 5f * p1 + 4f * p2 - p3;
-		Vector3 d = -p0 + 3f * p1 - 3f * p2 + p3;
-
-		//The cubic polynomial: a + b * t + c * t^2 + d * t^3
-		Vector3 pos = 0.5f * (a + (b * t) + (c * t * t) + (d * t * t * t));
-
-		return pos;
-	}
 }
