@@ -517,7 +517,7 @@ namespace BarkaneJoint
             // for small angles nA and nB are easy to cancel each other out which is bad bc the second method will have a 0
             // overall, we favor using the second method bc it's shorter, so the threshold is set to 5 degrees and not something larger
             // it is possible to do this thresholding without the angle, but the angle is also used elsewhere so might as well
-            g1.nJ = (g1.a2b <= 90f && g1.a2b >= -90f ? g1.nA + g1.nB : -g.nJ2A - g.nJ2B).normalized;
+            g1.nJ = (g1.a2b <= 100f && g1.a2b >= -100f ? g1.nA + g1.nB : -g.nJ2A - g.nJ2B).normalized;
             //g1.nJ = (g1.nA + g1.nB).normalized;
             // TODO: simply below, remove as many trigs as possible
 
@@ -530,7 +530,7 @@ namespace BarkaneJoint
             // for small angles nA and nB are easy to cancel each other out which is bad bc the second method will have a 0
             // overall, we favor using the second method bc it's shorter, so the threshold is set to 5 degrees and not something larger
             // it is possible to do this thresholding without the angle, but the angle is also used elsewhere so might as well
-            g2.nJ = (g2.a2b <= 90f && g2.a2b >= -90f ? g2.nA + g2.nB : -g.nJ2A - g.nJ2B).normalized;
+            g2.nJ = (g2.a2b <= 100f && g2.a2b >= -100f ? g2.nA + g2.nB : -g.nJ2A - g.nJ2B).normalized;
             //g2.nJ = (g2.nA + g2.nB).normalized;
 
             ///SOURCE OF THE PROBLEM: nJ is 0 when A and B are back-to-back. how to fix? idk bro

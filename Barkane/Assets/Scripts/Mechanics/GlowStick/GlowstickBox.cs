@@ -11,7 +11,7 @@ public class GlowstickBox : MonoBehaviour
 
     private void OnTriggerStay(Collider other) {
         if(other.GetComponentInChildren<CrystalShard>()){
-            other.GetComponent<CrystalShard>().ActivateCrystal(glowstickActive);
+            other.GetComponentInChildren<CrystalShard>().ActivateCrystal(glowstickActive);
         }
     }
 
