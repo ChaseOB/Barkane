@@ -158,7 +158,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
         for(int i = 0; i < oldStacks.Count; i++)
         {
             SquareStack s = oldStacks[i];
-            SquareStack newStack = s.SplitStack();
+            SquareStack newStack = s.SplitStack(fd.axisVector);
             if(newStack != null)
             {
                 newStacks.Add(newStack);

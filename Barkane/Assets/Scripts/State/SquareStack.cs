@@ -32,6 +32,12 @@ public class SquareStack : FoldableObject
         targetPosition = new(s.targetPosition);
     }
 
+    public SquareStack(PositionData curr, PositionData target)
+    {
+        currentPosition = new(curr);
+        targetPosition = new(target);
+    }
+
     public static Vector3 GetAxisFromCoordinates(Vector3Int coordinates)
     {
         if(coordinates.x % 2 != 0) return Vector3.right;
@@ -85,37 +91,110 @@ public class SquareStack : FoldableObject
     
 
     //if elements of this stack should be in another stack, split them out into a new stack
-    public SquareStack SplitStack()
+    public SquareStack SplitStack(Vector3 foldAxis)
     {
         SquareStack newStack = null;
-        List<SquareData> remove = new();
+        List<SquareData> newStackSquares = new();
         foreach(SquareData squareData in squarelist)
         {
             if(!squareData.IsInTargetPos())
             {
-                if(newStack == null)
-                {
-                    newStack = new(squareData);
-                    newStack.debug = true;
-                }
-                else
-                {
-                    newStack.squarelist.AddFirst(squareData);
-                }
-                remove.Add(squareData);
+                newStackSquares.Add(squareData);
                 //Debug.Log(squareData.paperSquare.gameObject.name + " at " + squareData.currentPosition.location + " target " + squareData.targetPosition.location);
             }
         }
-        foreach(SquareData s in remove)
+
+        if(newStackSquares.Count == 0) 
         {
-            squarelist.Remove(s);
+            return null;
         }
+
+        Debug.Log("making new stack with " + newStackSquares.Count + "squares");
+        newStack = new(newStackSquares.First().currentPosition, newStackSquares.First().targetPosition);
+        newStack.debug = true;
+        
+        bool flip = ShouldFlip(newStack.currentPosition.axis, newStack.targetPosition.axis);
+        if(flip)
+            newStackSquares.Reverse();
+        while(newStackSquares.Count > 0)
+        {
+            SquareData s = newStackSquares.First();
+            newStack.squarelist.AddFirst(s);
+            squarelist.Remove(s);
+            newStackSquares.Remove(s);
+        }
+        
+
+        // Vector3 cross = Vector3.Cross(newStack.currentPosition.axis, foldAxis);
+        // Vector3 distance = currentPosition.location - newStack.currentPosition.location;
+        // float dot = Vector3.Dot(cross, distance);
+        // bool sameAxis = newStack.targetPosition.axis == targetPosition.axis;
+        // bool dotLessThanZero = dot < 0;
+
+        // while(newStackSquares.Count > 0)
+        // {
+        //     SquareData s = dotLessThanZero != sameAxis ? newStackSquares.Last(): newStackSquares.First();
+        //     newStackSquares.Remove(s);
+        //     squarelist.Remove(s);
+        //     if(dot > 0)
+        //         newStack.squarelist.AddFirst(s);
+        //     else
+        //         newStack.squarelist.AddLast(s);
+        // }
+
         // if(newStack != null)
         // {
         //     Debug.Log("made new stack with " + newStack.squarelist.Count + " squares at " + newStack.currentPosition.location + " target " + newStack.targetPosition.location);
         // }
         return newStack;
     }
+
+    //  public SquareStack SplitStack(Vector3 foldAxis)
+    // {
+    //     SquareStack newStack = null;
+    //     List<SquareData> newStackSquares = new();
+    //     foreach(SquareData squareData in squarelist)
+    //     {
+    //         if(!squareData.IsInTargetPos())
+    //         {
+    //             newStackSquares.Add(squareData);
+    //             //Debug.Log(squareData.paperSquare.gameObject.name + " at " + squareData.currentPosition.location + " target " + squareData.targetPosition.location);
+    //         }
+    //     }
+
+    //     if(newStackSquares.Count == 0) 
+    //     {
+    //         return null;
+    //     }
+
+    //     Debug.Log("making new stack with " + newStackSquares.Count + "squares");
+    //     newStack = new(newStackSquares.First().currentPosition, newStackSquares.First().targetPosition);
+    //     newStack.debug = true;
+        
+
+    //     Vector3 cross = Vector3.Cross(newStack.currentPosition.axis, foldAxis);
+    //     Vector3 distance = currentPosition.location - newStack.currentPosition.location;
+    //     float dot = Vector3.Dot(cross, distance);
+    //     bool sameAxis = newStack.targetPosition.axis == targetPosition.axis;
+    //     bool dotLessThanZero = dot < 0;
+
+    //     while(newStackSquares.Count > 0)
+    //     {
+    //         SquareData s = dotLessThanZero != sameAxis ? newStackSquares.Last(): newStackSquares.First();
+    //         newStackSquares.Remove(s);
+    //         squarelist.Remove(s);
+    //         if(dot > 0)
+    //             newStack.squarelist.AddFirst(s);
+    //         else
+    //             newStack.squarelist.AddLast(s);
+    //     }
+
+    //     // if(newStack != null)
+    //     // {
+    //     //     Debug.Log("made new stack with " + newStack.squarelist.Count + " squares at " + newStack.currentPosition.location + " target " + newStack.targetPosition.location);
+    //     // }
+    //     return newStack;
+    // }
 
     public override void SetParent(Transform parent)
     {
@@ -137,7 +216,8 @@ public class SquareStack : FoldableObject
     public void MergeIntoStack(SquareStack other, Vector3 foldAxis)
     {
         debug = debug || other.debug;
-        if(debug)
+       // if(debug)
+        if(other.squarelist.Count > 0)
             Debug.Log("merging stacks at " + targetPosition.location);
 
         Vector3 cross = Vector3.Cross(currentPosition.axis, foldAxis);
@@ -285,4 +365,15 @@ public class SquareStack : FoldableObject
             s.SetTargetYOffset(target);
         }
     }
+
+    private bool ShouldFlip(Vector3 currentAxis, Vector3 targetAxis)
+    {
+        return IsPositiveAxis(currentAxis) != IsPositiveAxis(targetAxis);
+    }
+
+    private bool IsPositiveAxis(Vector3 axis)
+    {
+        return Vector3.Dot(axis, Vector3.one) > 0;
+    }
+
 }
