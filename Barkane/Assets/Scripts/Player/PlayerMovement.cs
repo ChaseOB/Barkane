@@ -141,6 +141,7 @@ public class PlayerMovement : MonoBehaviour
             goal += 2 * (curr - goal);
         }
 
+        CheckValidSnowball();
         if(snowball != null) {
             snowball.MoveSnowball(move, source);
             snowball = null;

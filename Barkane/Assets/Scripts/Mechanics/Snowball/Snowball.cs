@@ -29,6 +29,11 @@ public class Snowball : MonoBehaviour
             this.moveNum = moveNum;
         }
 
+        public override string ToString()
+        {
+            return$"Start {start} End {end} ContactTime {contactTime} MoveNum {moveNum}";
+        }
+
     }
 
     public Stack<SnowballMoveData> snowballMoves = new();
@@ -61,7 +66,7 @@ public class Snowball : MonoBehaviour
                 else
                     parentSide = bottom;
                 
-                this.transform.parent = parentSide.transform;
+                this.transform.parent = parentSide.GetComponent<SquareSide>().visualParent.transform;
                 return;
             }
         }
@@ -136,9 +141,7 @@ public class Snowball : MonoBehaviour
         {
             t += Time.deltaTime;
             if(t >= remaining) break;
-            float l = t/remaining;
-            transform.position = Vector3.Lerp(current, target, l);
-            print(l);
+            transform.position = Vector3.Lerp(current, target, t/remaining);
             yield return null;
         }
         transform.position = target;
@@ -146,7 +149,7 @@ public class Snowball : MonoBehaviour
         //update parent
         
         SnowballMoveData data = new(current, target, remaining, move.moveNum);
-        print(data);
+       // print(data);
         snowballMoves.Push(data);
 
        FindClosestFace();
@@ -154,6 +157,7 @@ public class Snowball : MonoBehaviour
 
     private IEnumerator AnimateSnowballReverse()
     {
+        print("reversing snowball");
         SnowballMoveData move = snowballMoves.Pop();
         Vector3 startPos = move.start;
         Vector3 endPos = move.end;
@@ -167,6 +171,7 @@ public class Snowball : MonoBehaviour
             yield return null;
         }
         transform.position = startPos;
+        playerContact = false;
 
         FindClosestFace();
     }

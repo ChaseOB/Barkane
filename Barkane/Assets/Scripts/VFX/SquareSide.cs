@@ -279,7 +279,11 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     public static implicit operator (int, int, int)(SquareSide s) => s.Coordinate;
 
-
+    private void Awake()
+    {
+        MakeParent();
+    }
+    
     public void SetYPositionOffset(float offset)
     {
         YOffset = offset;
