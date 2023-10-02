@@ -106,7 +106,7 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         Ring(ref vs, vs[0], gSide.nA, gSide.tJ, 1, settings);
 
         ga2b = gSide.a2b;
-        print(ga2b);
+        //print(ga2b);
 
         // Ideally correctionT should be minimal at small outward angles and suddenly jump to 1 at folding over
         // Here we approximate by taking it to some power > 1 so smaller fractions are compressed
@@ -115,7 +115,9 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         correctionT *= correctionT;
         var correction = Vector3.zero; //correctionT * gSide.nJ * margin * settings.marginCorrection;
         //var anchor = gSide.nJ * settings.elevation + g.pJ; 
-        anchor = gSide.nJ * settings.elevation * (Mathf.Abs(Vector3.Dot(gSide.nJ, (g.edgeA - g.pA).normalized)) * 1.5f + 1);
+
+        float dotScale = 1 + Mathf.Max(0, (ga2b - 90f) / 180f);
+        anchor = gSide.nJ * settings.elevation * (Mathf.Abs(Vector3.Dot(gSide.nJ, (g.edgeA - g.pA).normalized)) * dotScale + 1);
         dA2 = g.edgeA - g.pJ + gSide.nA * settings.elevation + g.yOffsetB; //g.nJ2A.normalized * margin + gSide.nA * settings.elevation;
         dB2 = g.edgeB - g.pJ + gSide.nB * settings.elevation + Vector3.Project(g.yOffsetA, (g.pB - g.edgeB).normalized);//g.nJ2B.normalized * margin + gSide.nB * settings.elevation;
         dC = QuadraticBezier(dA2, anchor, dB2, 0.5f);
