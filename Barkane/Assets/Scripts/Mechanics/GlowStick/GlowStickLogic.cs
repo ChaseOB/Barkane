@@ -32,11 +32,11 @@ public class GlowStickLogic : MonoBehaviour
     public static event System.EventHandler<GlowStickArgs> OnGlowstickChange;
 
     private void OnEnable() {
-        PaperStateManager.OnFold += OnFold;
+        PaperStateManager.OnFoldStart += OnFold;
     }
 
     private void OnDisable() {
-        PaperStateManager.OnFold -= OnFold;
+        PaperStateManager.OnFoldStart -= OnFold;
     }
 
     private void Start() {

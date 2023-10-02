@@ -33,7 +33,7 @@ public class FoldAnimator : MonoBehaviour
         PaperStateManager.Instance.foldAnimator = this;
     }
 
-    public void Fold(FoldData fd, PaperState state, ActionCallEnum actionCallEnum)
+    public void Fold(FoldData fd, PaperState state, ActionCallEnum actionCallEnum, System.Action onFoldStart, System.Action onFoldEnd)
     {
         if(isFolding) return;
         isFolding = true;
@@ -43,11 +43,14 @@ public class FoldAnimator : MonoBehaviour
                 return;
             }
        // OnFold?.Invoke(this, new FoldArgs{fd = fd});
-        StartCoroutine(AnimateFold(fd, state, actionCallEnum));
+        if(onFoldStart != null)
+            onFoldStart.Invoke();
+        StartCoroutine(AnimateFold(fd, state, actionCallEnum, onFoldEnd));
+       
         //callback?.Invoke();
     }
 
-     private IEnumerator AnimateFold(FoldData fd, PaperState state, ActionCallEnum actionCallEnum)
+     private IEnumerator AnimateFold(FoldData fd, PaperState state, ActionCallEnum actionCallEnum, System.Action callback)
      {
         //OnFold?.Invoke(this, new FoldArgs{fd = fd});
 
@@ -106,6 +109,7 @@ public class FoldAnimator : MonoBehaviour
         isFolding = false;
         ActionLockManager.Instance.TryRemoveLock(this);
         TileSelector.Instance.state = SelectState.NONE;
+        callback.Invoke();
     }
 
     private void SetFoldPosition(PaperState state)

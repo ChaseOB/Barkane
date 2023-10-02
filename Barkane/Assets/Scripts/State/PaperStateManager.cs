@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 using System.Linq;
+using System;
 
 
 public enum ActionCallEnum
@@ -46,7 +47,9 @@ public class PaperStateManager: Singleton<PaperStateManager>
         }
     }
 
-    public static event System.EventHandler<FoldArgs> OnFold;
+   // public static event System.EventHandler<FoldArgs> OnFold;
+    public static event System.EventHandler<FoldArgs> OnFoldStart;
+    public static event System.EventHandler<FoldArgs> OnFoldEnd;
 
     //Apply the action to transition to the next state
     // public PaperState ProcessAction(PaperState startState, Action action)
@@ -64,7 +67,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
         paperState = ps;
     }
 
-     private void OnUndo(InputValue value)
+    private void OnUndo(InputValue value)
     {
         if(!value.isPressed)
             return;
@@ -121,11 +124,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
         List<SquareStack> oldStacks = paperState.squareStacks;
         List<SquareStack> newStacks = new();
 
-        //Step 1: find out which squares/joints need to be moved
-        // FoldablePaper fp = FindObjectOfType<FoldablePaper>();
-        // FoldObjects foldObjects = fp.FindFoldObjects();
-
-        //Step 2: set target postiion on squares/joints
+        //Step 1: Set target positions on all fold objects
         FoldData fd = foldAction.foldData;
         Quaternion rotation = Quaternion.Euler(fd.axisVector * 90);
 
@@ -148,12 +147,10 @@ public class PaperStateManager: Singleton<PaperStateManager>
                 SquareData sd = (SquareData)fo;
                 sd = squareDict[sd.paperSquare];
                 sd.SetTarget(target);
-//                print("updating target for square at " + sd.currentPosition.location + " target " + target.location);
             }
-//            print(fo + "target " + target);
         }
 
-        //Step 3: figure out which stacks need to be split and split them
+        //Step 2: figure out which stacks need to be split and split them
         List<SquareStack> remove = new();
         for(int i = 0; i < oldStacks.Count; i++)
         {
@@ -166,22 +163,12 @@ public class PaperStateManager: Singleton<PaperStateManager>
              if(s.IsEmpty)
                  remove.Add(s);
         }
-        //THE SOURCE OF THE PROBLEM:
-        // Newly generated stacks (from spliting) cannot be merged into properly
-        // Seem to have bad targets
 
         foreach(SquareStack s in remove)
             oldStacks.Remove(s);
-        
-       // newStacks = newStacks.Where(s => !s.IsEmpty);
-        
-        // List<SquareStack> combined = new();
-        // combined.AddRange(oldStacks);
-        // combined.AddRange(news)
+
 
         //Step 4: figue out which stacks need to be merged and merge them
-        //print("old stacks " + oldStacks.Count);
-        //print("new stacks " + newStacks.Count);
         for(int i = 0; i < oldStacks.Count; i++)
         {
             SquareStack s1 = oldStacks[i];
@@ -190,7 +177,6 @@ public class PaperStateManager: Singleton<PaperStateManager>
                 SquareStack s2 = newStacks[j];
 
                 StackOverlapType overlap = s1.GetOverlap(s2);                
-                //print(overlap);
                 switch(overlap)
                 {
                     case StackOverlapType.SAME:
@@ -207,7 +193,6 @@ public class PaperStateManager: Singleton<PaperStateManager>
             }
         }
         
-       // newStacks = (List<SquareStack>)newStacks.Where(s => !s.IsEmpty);
 
         List<SquareStack> returnStacks = new();
 
@@ -216,25 +201,15 @@ public class PaperStateManager: Singleton<PaperStateManager>
             if(!s.IsEmpty)
             {
                 returnStacks.Add(s);
-               // if(s.debug)
-                   // print("new stack at " + s.currentPosition.location + " moved to " + s.targetPosition.location);
             }
-            else
-                if(s.debug)
-                    print("removing new empty stack at " + s.currentPosition.location);
         }
 
         foreach(SquareStack s in oldStacks)
         {
-             if(!s.IsEmpty)
+            if(!s.IsEmpty)
             {
                 returnStacks.Add(s);
-               // if(s.debug)
-                   // print("old stack at " + s.currentPosition.location + " moved to " + s.targetPosition.location);
             }
-            else
-                if(s.debug)
-                    print("removing old empty stack at " + s.currentPosition.location);
         }
 
         foreach(SquareStack s in returnStacks)
@@ -247,12 +222,25 @@ public class PaperStateManager: Singleton<PaperStateManager>
        // print("return stacks " + returnStacks.Count);
 
 
-        //Step 5: animate fold
+        //Step 4: animate fold
          if(foldAnimator == null)
             foldAnimator = FindObjectOfType<FoldAnimator>();
 
         ActionLockManager.Instance.TryRemoveLock(this);
 
+        FoldArgs args = new(fd, source, numFolds);
+        System.Action start = () => OnFoldStartInternal(source, args);
+        System.Action end = () => OnFoldEndInternal(source, args);
+        var first = source == ActionCallEnum.UNDO ? end : start;
+        var last = source == ActionCallEnum.UNDO ? start : end;
+        //var foldStartAction = source == ActionCallEnum.UNDO ? OnFoldStartInternal(source, args) : OnFoldEndInternal(source, args);
+        //OnFold?.Invoke(this, new(fd, source, numFolds));
+        foldAnimator.Fold(fd, paperState, source, first, last);
+
+    }
+
+    private void OnFoldStartInternal(ActionCallEnum source, FoldArgs e)
+    {
         if(source == ActionCallEnum.UNDO)
         {
             numFolds--;
@@ -263,14 +251,13 @@ public class PaperStateManager: Singleton<PaperStateManager>
         }
         UIManager.Instance.UpdateFC(numFolds);
         LevelManager.Instance?.SetFoldCount(numFolds);
-        
 
-        // paperState.SendToTarget();
-        // TileSelector.Instance.state = SelectState.NONE;
-        OnFold?.Invoke(this, new(fd, source, numFolds));
-        foldAnimator.Fold(fd, paperState, source);
+        OnFoldStart?.Invoke(this, e);
+    }
 
-        //TODO: make sure to disable stuff on the inside stacks (most importantly player location setter)
+    private void OnFoldEndInternal(ActionCallEnum source, FoldArgs e)
+    {
+        OnFoldEnd?.Invoke(this, e);
     }
 
     public void UndoAction()
