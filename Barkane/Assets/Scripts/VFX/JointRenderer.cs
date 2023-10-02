@@ -544,27 +544,29 @@ namespace BarkaneJoint
             g1.nA = a.transform.up;
             g1.nB = b.transform.up;
             g1.tJ = Vector3.Cross(g1.nA, g.nJ2A).normalized;
-            g1.a2b = Vector3.SignedAngle(g.nJ2A, g.nJ2B, g1.tJ);
+            g1.a2b = Vector3.SignedAngle(g1.nA, g1.nB, g1.tJ);
             
             // for large angles pA and pB are easy to cancel each other out (pA + pB approximates pJ) which is bad bc the first method will have a 0
             // for small angles nA and nB are easy to cancel each other out which is bad bc the second method will have a 0
             // overall, we favor using the second method bc it's shorter, so the threshold is set to 5 degrees and not something larger
             // it is possible to do this thresholding without the angle, but the angle is also used elsewhere so might as well
-            //g1.nJ = (g1.a2b < 20f && g1.a2b > -20f ? -g.nJ2A - g.nJ2B : g1.nA + g1.nB).normalized;
-            g1.nJ = (g1.nA + g1.nB).normalized;
+            g1.nJ = (g1.a2b <= 90f && g1.a2b >= -90f ? g1.nA + g1.nB : -g.nJ2A - g.nJ2B).normalized;
+            //g1.nJ = (g1.nA + g1.nB).normalized;
             // TODO: simply below, remove as many trigs as possible
 
             g2.nA = -g1.nA;
             g2.nB = -g1.nB;
             g2.tJ = -g1.tJ;
-            g2.a2b = Vector3.SignedAngle(g.nJ2A, g.nJ2B, g2.tJ);
+            g2.a2b = Vector3.SignedAngle(g2.nA, g2.nB, g2.tJ);
 
             // for large angles pA and pB are easy to cancel each other out (pA + pB approximates pJ) which is bad bc the first method will have a 0
             // for small angles nA and nB are easy to cancel each other out which is bad bc the second method will have a 0
             // overall, we favor using the second method bc it's shorter, so the threshold is set to 5 degrees and not something larger
             // it is possible to do this thresholding without the angle, but the angle is also used elsewhere so might as well
-            //g2.nJ = (g2.a2b < 20f && g2.a2b > -20f ? -g.nJ2A - g.nJ2B : g2.nA + g2.nB).normalized;
-            g2.nJ = (g2.nA + g2.nB).normalized;
+            g2.nJ = (g2.a2b <= 90f && g2.a2b >= -90f ? g2.nA + g2.nB : -g.nJ2A - g.nJ2B).normalized;
+            //g2.nJ = (g2.nA + g2.nB).normalized;
+
+            ///SOURCE OF THE PROBLEM: nJ is 0 when A and B are back-to-back. how to fix? idk bro
         }
     }
 }
