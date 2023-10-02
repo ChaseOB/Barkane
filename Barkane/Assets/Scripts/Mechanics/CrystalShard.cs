@@ -24,6 +24,8 @@ public class CrystalShard : MonoBehaviour, IThemedItem
 
     private bool collected = false;
 
+    private int collectedMove = -1;
+
     private void OnEnable() {
         GlowStickLogic.OnGlowstickChange += OnGlowstickChange;
     }
@@ -66,18 +68,20 @@ public class CrystalShard : MonoBehaviour, IThemedItem
             goal?.CollectShard(1);
             children.SetActive(false);
             AudioManager.Instance?.Play("Ding");
+            collectedMove = PaperStateManager.Instance.currMoveNum;
         }
     }
 
     public void UnCollect()
     {
-        if(collected)
+        if(collected && collectedMove == PaperStateManager.Instance.currMoveNum + 1)
         {
             goal?.CollectShard(-1);
             children.SetActive(true);
             //AudioManager.Instance?.Play("Ding");
             collected = false;
-            ActivateParticles(true);
+            ActivateParticles(true); //TODO: check this
+            collectedMove = -1;
         }
     }
 
