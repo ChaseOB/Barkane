@@ -31,7 +31,7 @@ public class FoldIndicator : MonoBehaviour
             {
                 SquareData s = (SquareData) data.obj;
             
-            if(s.currentPosition.location != data.target.location)
+            if(s.currentPosition.location != data.target.location && !locs.Contains(data.target.location))
             {
                 // print("diff location" + s.targetPosition.location);
                 GameObject newSquare = Instantiate(ghostSquarePrefab, data.target.location, data.target.rotation);

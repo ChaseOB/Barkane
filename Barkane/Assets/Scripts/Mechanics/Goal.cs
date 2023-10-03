@@ -80,8 +80,22 @@ public class Goal : MonoBehaviour, IThemedItem
     private IEnumerator EndLevelAnimation()
     {
         ActionLockManager.Instance.TryTakeLock(this);
+        float t = 0;
+        while(t < 0.25f)
+        {
+            t += Time.deltaTime;
+            AudioManager.SetMusicVolume(Mathf.Lerp(50, 20, t/0.25f));
+            yield return null;
+        }
         burst.Play();
-        yield return new WaitForSeconds(1.5f);
+        AudioManager.Instance.Play("Win");
+        yield return new WaitForSeconds(2.5f);
+        while(t > 0)
+        {
+            t -= Time.deltaTime;
+            AudioManager.SetMusicVolume(Mathf.Lerp(50, 20, t/0.25f));
+        }
+        AudioManager.SetMusicVolume(100);
         EndLevel();
     }
     
