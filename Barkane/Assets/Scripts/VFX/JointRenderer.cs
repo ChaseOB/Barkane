@@ -54,6 +54,10 @@ namespace BarkaneJoint
         public float tMid;
         public Vector3 pivotBaseStart; 
         public Vector3 pivotBaseMid; 
+
+
+        public Material goodMat;
+        public Material badMat;
         /// <summary>
         /// Can be called manually in inspector or automatically by other scene editor utilities.
         /// </summary>
@@ -249,6 +253,11 @@ namespace BarkaneJoint
             // {
             //     maskFoldParticles?.UnEmit();
             // }
+        }
+
+        public void SetLineActive(bool active)
+        {
+            indicator.GetComponent<MeshRenderer>().material = active ? goodMat : badMat;
         }
 
 #if UNITY_EDITOR

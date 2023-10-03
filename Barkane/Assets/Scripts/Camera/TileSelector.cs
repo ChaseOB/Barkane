@@ -104,6 +104,8 @@ public class TileSelector : Singleton<TileSelector>
     {
         if(ghostFold90 == null && ghostFoldNeg90 == null) 
         {
+            foldData90.SetLineActive(false);
+            //foldDataNeg90.SetLineActive(false);
             //No valid folds, gray out joint
             return;
         }
@@ -184,12 +186,14 @@ public class TileSelector : Singleton<TileSelector>
         if(FoldChecker.Instance == null) return;
 
         foldData90 = foldablePaper.BuildFoldData(false);
+        foldData90.SetLineActive(true);
+
 
         FoldFailureType failureType1 = FoldChecker.Instance.CheckFold(foldData90);
         if(failureType1 == FoldFailureType.KINKED ||
             failureType1 == FoldFailureType.NOCHECK)
         {
-            DeselectJoint();
+            foldData90.SetLineActive(false);
             return;
         }
         if(failureType1 == FoldFailureType.NONE)
@@ -202,6 +206,7 @@ public class TileSelector : Singleton<TileSelector>
         }
 
         foldDataNeg90 = foldablePaper.BuildFoldData(true);
+        foldDataNeg90.SetLineActive(true);
 
         FoldFailureType failureType2 = FoldChecker.Instance.CheckFold(foldDataNeg90);
         // if(failureType2 == FoldFailureType.KINKED ||

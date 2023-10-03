@@ -41,6 +41,14 @@ public class FoldData
         );
     }
 
+    public void SetLineActive(bool active)
+    {
+        foreach (PaperJoint p in axisJoints)
+        {
+            p.SetLineActive(active);
+        }
+    }
+
     // public FoldData(List<PaperJoint> aj, List<FoldableObject> fo, List<FoldableObject> pfo, Vector3Int apos, Vector3Int avec, int deg) {
     //     axisJoints = aj;
     //     foldObjects = fo;

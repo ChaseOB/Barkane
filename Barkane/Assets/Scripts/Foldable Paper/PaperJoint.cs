@@ -72,6 +72,11 @@ public class PaperJoint : MonoBehaviour
                 pj.ShowLine(value);
     }
 
+    public void SetLineActive(bool active)
+    {
+        jointRenderer.SetLineActive(active);
+    }
+
     private void OnTriggerEnter(Collider other) {
         
         if(other.gameObject.layer == 7)

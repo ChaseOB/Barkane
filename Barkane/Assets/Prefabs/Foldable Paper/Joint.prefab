@@ -427,7 +427,7 @@ MonoBehaviour:
   paperSquares: []
   isSelected: 0
   showLine: 0
-  adjList: []
+  adjFoldJointsList: []
   capsuleCollider: {fileID: 7650339220258648006}
   canFold: 1
   jointRenderer: {fileID: 7650339220833805935}
@@ -536,6 +536,14 @@ MonoBehaviour:
   indicator: {fileID: 482529356090007759}
   maskFoldParticles: {fileID: 7214889616483195651}
   materialPrototype: {fileID: 2100000, guid: 9e1dfe9053d0eaf448923530f341cbbf, type: 2}
+  Debug: 0
+  offset: {x: 0, y: 0, z: 0}
+  tStart: -0.5
+  tMid: -0.5
+  pivotBaseStart: {x: 0, y: 0, z: 0}
+  pivotBaseMid: {x: 0, y: 0, z: 0}
+  goodMat: {fileID: 2100000, guid: 1dd6878bf7a928e4e943bccf7002dfa2, type: 2}
+  badMat: {fileID: 2100000, guid: e4c6eaba3b595f945be5f27de9362d5d, type: 2}
   IsAnimating: 0
 --- !u!1 &7999719840422985437
 GameObject:
