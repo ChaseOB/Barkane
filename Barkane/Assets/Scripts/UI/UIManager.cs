@@ -29,6 +29,11 @@ public class UIManager : Singleton<UIManager>
     public Image cosmeticImage;
     public List<string> cosmeticStrings;
     public List<Sprite> cosmeticSprites;
+    public Sprite cosmeticNormal;
+    public Sprite cosmeticHighlight;
+    public Image cosmeticBackground;
+    public TMP_Text cosmeticText;
+    public GameObject cosmeticButton;
 
     private bool showCosmetic = false;
     private string cosmetic;
@@ -141,6 +146,8 @@ public class UIManager : Singleton<UIManager>
         bestFoldCountText.text = bestFolds.ToString();
         Time.timeScale = 0;
         if(showCosmetic) {
+            cosmeticBackground.sprite = cosmeticNormal;
+            cosmeticText.text = "Click to Equipt";
             cosmeticGroup.SetActive(true);
             showCosmetic = false;
         }
@@ -150,7 +157,10 @@ public class UIManager : Singleton<UIManager>
 
     public void EquiptCosmetic()
     {
+        cosmeticButton.SetActive(false);
         SaveSystem.Current.SetCosmetic(cosmetic);
+        cosmeticBackground.sprite = cosmeticHighlight;
+        cosmeticText.text = "Equipped";
     }
 
     public void ToggleEndLevelGroup(bool val)
