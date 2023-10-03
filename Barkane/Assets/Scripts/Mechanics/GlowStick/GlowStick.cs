@@ -29,11 +29,12 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
     {
         visualRoot = transform.GetChild(0);
         jointRenderer = transform.parent.GetComponentInChildren<JointRenderer>();
+        visualRoot.transform.parent = null;
     }
 
     private void Update()
     {
-        visualRoot.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+       // visualRoot.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
     }
 
     private void LateUpdate()
