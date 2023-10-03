@@ -113,7 +113,7 @@ public class Snowball : MonoBehaviour
             StartCoroutine(AnimateSnowballNormal(move));
         else
         {
-            if(move.moveNum == snowballMoves.Peek().moveNum);
+            if(move.moveNum == snowballMoves.Peek().moveNum)
                 StartCoroutine(AnimateSnowballReverse());
 
         }

@@ -54,6 +54,7 @@ public class TileSelector : Singleton<TileSelector>
         foldablePaper = FindObjectOfType<FoldablePaper>();
         state = SelectState.NONE;
     }
+    
 
     private void Update()
     {
@@ -101,15 +102,19 @@ public class TileSelector : Singleton<TileSelector>
 
     private void UpdateGhostPosition()
     {
-        if(ghostFold90 == null && ghostFoldNeg90 == null) return;
+        if(ghostFold90 == null && ghostFoldNeg90 == null) 
+        {
+            //No valid folds, gray out joint
+            return;
+        }
         if(ghostFold90 == null) 
         {
-            ghostFoldNeg90.SetActive(true);
+            indicatorNeg90.ToggleIndicatorState(true);
             return;
         }
         if(ghostFoldNeg90 == null) 
         {
-            ghostFold90.SetActive(true);
+            indicator90.ToggleIndicatorState(true);
             return;
         }
 
@@ -121,13 +126,13 @@ public class TileSelector : Singleton<TileSelector>
 
         if(dist90 < distNeg90)
         {
-            ghostFold90.SetActive(true);
-            ghostFoldNeg90.SetActive(false);
+            indicator90.ToggleIndicatorState(true);
+            indicatorNeg90.ToggleIndicatorState(false);
         }
         else
         {
-            ghostFold90.SetActive(false);
-            ghostFoldNeg90.SetActive(true);
+            indicator90.ToggleIndicatorState(false);
+            indicatorNeg90.ToggleIndicatorState(true);
         }
     }
 
