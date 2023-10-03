@@ -61,8 +61,8 @@ GameObject:
   - component: {fileID: 5353261048891426299}
   - component: {fileID: 5353261048891426300}
   - component: {fileID: 5353261048891426303}
-  - component: {fileID: 5353261048891426302}
   - component: {fileID: 3938678172716900455}
+  - component: {fileID: 8386933180447362385}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -218,29 +218,6 @@ MonoBehaviour:
   m_DefaultActionMap: UI
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 5353261048891426296}
---- !u!114 &5353261048891426302
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5353261048891426297}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e08d5f052230941429eab5fc1b22cc65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  foldChecker: {fileID: 0}
-  hoverSquare: {fileID: 0}
-  indicatorPrefab: {fileID: 2933429386292174230, guid: aea577dacb4f4a14b90d9ccc4b99004d, type: 3}
-  foldablePaper: {fileID: 0}
-  foldAnimator: {fileID: 0}
-  paperMask:
-    serializedVersion: 2
-    m_Bits: 1088
-  jointMask:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!114 &3938678172716900455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,6 +235,29 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 50de3238d34ef554982ac7eda6cdc9a6, type: 2}
+--- !u!114 &8386933180447362385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5353261048891426297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e08d5f052230941429eab5fc1b22cc65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverSquare: {fileID: 0}
+  indicatorPrefab: {fileID: 2933429386292174230, guid: aea577dacb4f4a14b90d9ccc4b99004d, type: 3}
+  foldablePaper: {fileID: 0}
+  foldAnimator: {fileID: 0}
+  paperMask:
+    serializedVersion: 2
+    m_Bits: 262144
+  jointMask:
+    serializedVersion: 2
+    m_Bits: 128
+  state: 0
 --- !u!1 &5353261049099573900
 GameObject:
   m_ObjectHideFlags: 0

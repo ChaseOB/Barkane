@@ -283,7 +283,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
     {
         MakeParent();
     }
-    
+
     public void SetYPositionOffset(float offset)
     {
         YOffset = offset;
@@ -314,6 +314,9 @@ public class SquareSide : MonoBehaviour, IRefreshable
             t.parent = visualParent.transform;
         }
         visualParent.transform.parent = this.transform;
+        visualParent.layer = LayerMask.NameToLayer("HoverSquare");
+        BoxCollider c = visualParent.AddComponent<BoxCollider>();
+        c.size = new Vector3(2, 0.02f, 2);
     }
 
     #region overlap
