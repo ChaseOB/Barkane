@@ -27,6 +27,7 @@ public class Goal : MonoBehaviour, IThemedItem
     [SerializeField] private List<Material> swirlMaterials;
 
     [SerializeField] private new ParticleSystem particleSystem;
+    public ParticleSystem burst;
     public List<Gradient> themePartColors = new List<Gradient>();
 
     private bool playerInGoalRange = false;
@@ -79,7 +80,8 @@ public class Goal : MonoBehaviour, IThemedItem
     private IEnumerator EndLevelAnimation()
     {
         ActionLockManager.Instance.TryTakeLock(this);
-        yield return new WaitForSeconds(2);
+        burst.Play();
+        yield return new WaitForSeconds(1.5f);
         EndLevel();
     }
     
@@ -95,6 +97,9 @@ public class Goal : MonoBehaviour, IThemedItem
         goalPlane.GetComponent<MeshRenderer>().material = swirlMaterials[(int)t.themeEnum];
         var col = particleSystem.colorOverLifetime;
         col.color = themePartColors[(int)t.themeEnum];
+
+        var c = burst.colorOverLifetime;
+        c.color = themePartColors[(int)t.themeEnum];
     }
 
     public void CollectShard(int num)

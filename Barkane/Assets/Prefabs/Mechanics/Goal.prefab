@@ -99,6 +99,8 @@ MonoBehaviour:
   numShards: 1
   inGlowstickRange: 1
   particlesActive: 1
+  glowstickActive: 1
+  covered: 0
   inactiveGoal: {fileID: 2654907975775782997}
   activeGoal: {fileID: 2654907975575420462}
   goalPlane: {fileID: 2797200993066839656}
@@ -107,6 +109,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: d94406731e9f77f42b36f88bf266e32c, type: 2}
   - {fileID: 2100000, guid: 1762792845e845f419bae92f6a3d45cc, type: 2}
   particleSystem: {fileID: 5722666678502495773}
+  burst: {fileID: 8094141859834631988}
   themePartColors:
   - serializedVersion: 2
     key0: {r: 0.7587352, g: 0, b: 1, a: 0}
@@ -624,5 +627,10 @@ Transform:
 --- !u!198 &5722666678502495773 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
+  m_PrefabInstance: {fileID: 4726016191942369552}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &8094141859834631988 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3585434356193703460, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
   m_PrefabInstance: {fileID: 4726016191942369552}
   m_PrefabAsset: {fileID: 0}
