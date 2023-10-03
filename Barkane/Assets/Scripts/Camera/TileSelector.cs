@@ -104,7 +104,7 @@ public class TileSelector : Singleton<TileSelector>
     {
         if(ghostFold90 == null && ghostFoldNeg90 == null) 
         {
-            foldData90.SetLineActive(false);
+            foldData90?.SetLineActive(false);
             //foldDataNeg90.SetLineActive(false);
             //No valid folds, gray out joint
             return;
