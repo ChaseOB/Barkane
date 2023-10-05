@@ -162,6 +162,7 @@ public class LevelManager : Singleton<LevelManager>
     private IEnumerator LoadLevelAsynch(int sceneIndex)
     {
         ActionLockManager.Instance.ForceTakeLock(this);
+        Cursor.visible = false;
         levelSwitchScreen.SetActive(true);
         if(UIManager.Instance != null)
         {
@@ -189,6 +190,7 @@ public class LevelManager : Singleton<LevelManager>
         VFXManager.Instance?.Refresh();
         //VFXManager.Instance?.UpdateTheme(level.theme);
         levelSwitchScreen.SetActive(false);
+        Cursor.visible = true;
         imageAnimator.Stop();
         if(UIManager.Instance != null)
             UIManager.Instance.ToggleLevelGroup(true);

@@ -94,11 +94,13 @@ public class CutsceneManager : MonoBehaviour
         if(pause)
         {
             videoPlayer?.Pause();
+            Cursor.visible = true;
             paused = true;
         }
         else
         {
             videoPlayer?.Play();
+            Cursor.visible = false;
             paused = false;
         }
     }
@@ -111,7 +113,6 @@ public class CutsceneManager : MonoBehaviour
             LevelManager.Instance.LoadLevel(NextLevel.levelName);     
         if(NextSceneIndex != -1)
             SceneManager.LoadScene(NextSceneIndex);
-        Cursor.visible = true;
     }
 }
 

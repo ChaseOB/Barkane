@@ -29,7 +29,7 @@ public class PauseManager : Singleton<PauseManager>
         PauseMenu.SetActive(!val);
         options.SetActive(val);
     }
-    
+
     public void Pause()
     {
         isPaused = true;
@@ -39,6 +39,7 @@ public class PauseManager : Singleton<PauseManager>
             cutsceneManager.PauseCutscene(true);
         }
         PauseMenu.SetActive(true);
+       // Cursor.visible = true;
     }
 
     public void UnPause()
