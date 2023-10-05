@@ -87,6 +87,7 @@ public class FoldAnimator : MonoBehaviour
         while (t < foldDuration)
         {
             t += Time.deltaTime;
+            if(t >= foldDuration) break;
             tempObj.transform.SetPositionAndRotation(center, Quaternion.AngleAxis(90 * t / foldDuration, fd.axisVector));
             foreach(SquareData s in foldablePaper.squareData)
             {
@@ -96,6 +97,10 @@ public class FoldAnimator : MonoBehaviour
         }
 
         tempObj.transform.SetPositionAndRotation(center, Quaternion.AngleAxis(90, fd.axisVector));
+        foreach(SquareData s in foldablePaper.squareData)
+        {
+            s.paperSquare.YOffset = s.targetYOffset;
+        }
 
         isFolding = false;
         
