@@ -77,7 +77,7 @@ public class SaveManager : Singleton<SaveManager>
     {
         CycleProfileButtons(moveAmount);
         cycleLeftArrow.SetActive(firstVisIndex > 0);
-        cycleRightArrow.SetActive(firstVisIndex + visibleProfiles < SaveSystem.maxSaves && profileButtons.Count >= visibleProfiles);
+        cycleRightArrow.SetActive(firstVisIndex + visibleProfiles < SaveSystem.maxSaves && profileButtons.Count > firstVisIndex + visibleProfiles);
         ShowProfileButtons();
     }
 

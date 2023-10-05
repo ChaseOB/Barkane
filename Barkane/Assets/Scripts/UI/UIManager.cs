@@ -40,6 +40,8 @@ public class UIManager : Singleton<UIManager>
     private int glowstickHealth;
     private int numFolds;
 
+    public StarsUI starsUI;
+
     private void Awake() {
         InitializeSingleton();
     }
@@ -140,11 +142,15 @@ public class UIManager : Singleton<UIManager>
     public void EndLevel()
     {
         //C: This is a horrible way to do this. I don't care
-        int bestFolds = SaveSystem.Current.GetFolds(LevelManager.Instance.GetCurrentLevel().levelName);
+        Level level = LevelManager.Instance.GetCurrentLevel();
+        int bestFolds = SaveSystem.Current.GetFolds(level.levelName);
         if(bestFolds == -1 || numFolds < bestFolds) 
             bestFolds = numFolds;
         bestFoldCountText.text = bestFolds.ToString();
         Time.timeScale = 0;
+
+        starsUI.DisplayStars(level, numFolds);
+
         if(showCosmetic) {
             cosmeticBackground.sprite = cosmeticNormal;
             cosmeticText.text = "Click to Equipt";
@@ -154,6 +160,7 @@ public class UIManager : Singleton<UIManager>
         else
             endLevelGroup.SetActive(true);
     }
+
 
     public void EquiptCosmetic()
     {

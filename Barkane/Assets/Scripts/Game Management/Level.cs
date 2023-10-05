@@ -12,6 +12,9 @@ public class Level : ScriptableObject
     public GameObject levelObject;
     public Theme theme;
     public string cosmeticUnlock;
+    public int ThreeStarMaxFolds;
+    public int TwoStarMaxFolds;
+    public int OneStarMaxFolds;
 }
 
 
