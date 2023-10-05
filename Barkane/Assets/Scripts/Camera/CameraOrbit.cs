@@ -47,7 +47,7 @@ public class CameraOrbit : Singleton<CameraOrbit>
     {
         if(!cameraDisabled)
         {
-            if(clicking)
+            if(clicking && !PauseManager.IsPaused)
             {
                 Vector2 diff = prevMousePosition - Mouse.current.position.ReadValue();
                 localRoatation.x += diff.x * mouseSensitivity; 
