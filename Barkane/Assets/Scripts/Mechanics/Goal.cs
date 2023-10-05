@@ -84,7 +84,7 @@ public class Goal : MonoBehaviour, IThemedItem
         while(t < 0.25f)
         {
             t += Time.deltaTime;
-            AudioManager.SetMusicVolume(Mathf.Lerp(50, 20, t/0.25f));
+            AudioManager.SetMusicVolume(Mathf.Lerp(100, 40, t/0.25f));
             yield return null;
         }
         burst.Play();
@@ -93,7 +93,7 @@ public class Goal : MonoBehaviour, IThemedItem
         while(t > 0)
         {
             t -= Time.deltaTime;
-            AudioManager.SetMusicVolume(Mathf.Lerp(50, 20, t/0.25f));
+            AudioManager.SetMusicVolume(Mathf.Lerp(100, 40, t/0.25f));
         }
         AudioManager.SetMusicVolume(100);
         EndLevel();

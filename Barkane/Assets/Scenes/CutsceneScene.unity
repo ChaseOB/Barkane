@@ -1611,17 +1611,33 @@ PrefabInstance:
       propertyPath: m_Name
       value: In Game UI
       objectReference: {fileID: 0}
+    - target: {fileID: 5127441170468721755, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5523757978682461022, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
       propertyPath: cutsceneManager
       value: 
       objectReference: {fileID: 621503655}
     - target: {fileID: 6563210800388030131, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563210801204949717, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 621503655}
+    - target: {fileID: 6563210801204949717, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: EndCutscene
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563210801204949717, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CutsceneManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6563210801204949719, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}

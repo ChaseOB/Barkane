@@ -33,6 +33,13 @@ public class CameraOrbit : Singleton<CameraOrbit>
         cameraParent = this.transform.parent;
         localRoatation.x = cameraParent.localRotation.eulerAngles.y * -1;
         localRoatation.y = cameraParent.localRotation.eulerAngles.x;
+        UpdateSensitivity();
+    }
+
+    public void UpdateSensitivity()
+    {
+        mouseSensitivity = 1 * (PlayerPrefs.HasKey("mouse") ? PlayerPrefs.GetInt("mouse") : 50);
+        ScrollSenstivity = 0.4f * (PlayerPrefs.HasKey("scroll") ? PlayerPrefs.GetInt("scroll") : 50);
     }
 
     //CO: We want the camera to move after everything else

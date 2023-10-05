@@ -86,13 +86,20 @@ public class CutsceneManager : MonoBehaviour
     public void PauseCutscene(bool pause)
     {
         if(pause)
+        {
             videoPlayer.Pause();
+            paused = true;
+        }
         else
+        {
             videoPlayer.Play();
+            paused = false;
+        }
     }
 
     public void EndCutscene()
     {
+        Time.timeScale = 1;
         ended = true;   
         LevelManager.Instance.LoadLevel(0);     
         Cursor.visible = true;

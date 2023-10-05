@@ -13,8 +13,8 @@ public class AudioManager : Singleton<AudioManager>
     //private static Sound[] _music;
     public ArrayClipArray[] musicLists;
 
-    private static float sfxVolume = 0.5f; // [0..1]
-    private static float musicVolume = 0.5f;
+    private static float sfxVolume = 1; // [0..1]
+    private static float musicVolume = 1;
 
     //[SerializeField]
     //private GameObject audioListenerObj;
@@ -25,6 +25,9 @@ public class AudioManager : Singleton<AudioManager>
     private int currentArray;
     private int currentIndex;
     private AudioSource source;
+
+    public static float playerMusicVolume = 0.5f;
+    public static float playerSFXVolume = 0.5f;
 
 
     void Awake()
@@ -154,7 +157,7 @@ public class AudioManager : Singleton<AudioManager>
         {
             if (s == null || s.source == null)
                 continue;
-            s.source.volume = s.volume * value;
+            s.source.volume = s.volume * sfxVolume * playerSFXVolume;
         }
     }
 
@@ -162,7 +165,29 @@ public class AudioManager : Singleton<AudioManager>
     {
         value = (Mathf.Clamp(value, 0, 100)/100.0f);
         musicVolume = value;
-        Instance.source.volume = musicVolume;
+        Instance.source.volume = musicVolume * playerMusicVolume;
+    }
+
+    public static void SetPlayerSFXVolume(float value)
+    {
+        value = (Mathf.Clamp(value, 0, 100)/100.0f);
+        playerSFXVolume = value;
+
+        if (_sounds == null)
+            return;
+        foreach (Sound s in _sounds)
+        {
+            if (s == null || s.source == null)
+                continue;
+            s.source.volume = s.volume * sfxVolume * playerSFXVolume;
+        }
+    }
+
+    public static void SetPlayerMusicVolume(float value)
+    {
+        value = (Mathf.Clamp(value, 0, 100)/100.0f);
+        playerMusicVolume = value;
+        Instance.source.volume = musicVolume * playerMusicVolume;
     }
 
     public static void SetPitch(float value)

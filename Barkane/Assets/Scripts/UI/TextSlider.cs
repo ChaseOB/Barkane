@@ -8,13 +8,17 @@ public class TextSlider : MonoBehaviour
 {
     public TextMeshProUGUI numberText;
     private Slider slider;
+    public string text;
+    public string saveString;
 
     void Start() {
-        slider = GetComponent<Slider>();
-        setNumberText(slider.value);
+        slider = GetComponentInChildren<Slider>();
+        slider.value = PlayerPrefs.HasKey(saveString) ? PlayerPrefs.GetInt(saveString) : 50;
+        setNumberText((int) slider.value);
     }
 
-    public void setNumberText(float value) {
-        numberText.text = value.ToString();
+    public void setNumberText(int value) {
+        numberText.text = text + value.ToString() + "%";
+        PlayerPrefs.SetInt(saveString, value);
     }
 }
