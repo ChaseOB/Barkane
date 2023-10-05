@@ -110,8 +110,9 @@ public class UIManager : Singleton<UIManager>
     public void UpdateFC(int numFolds)
     {
         this.numFolds = numFolds;
-        foldCountText.text = numFolds.ToString();
-        yourFoldCountText.text = numFolds.ToString();
+        string s = numFolds < 1000 ? numFolds.ToString() : "999+";
+        foldCountText.text = s;
+        yourFoldCountText.text = s;
     }
 
     private void OnGlowstickChange(object sender, GlowStickLogic.GlowStickArgs e) {
@@ -147,7 +148,7 @@ public class UIManager : Singleton<UIManager>
         int bestFolds = SaveSystem.Current.GetFolds(level.levelName);
         if(bestFolds == -1 || numFolds < bestFolds) 
             bestFolds = numFolds;
-        bestFoldCountText.text = bestFolds.ToString();
+        bestFoldCountText.text =  bestFolds < 1000 ? bestFolds.ToString() : "999+";
         Time.timeScale = 0;
 
         starsUI.DisplayStars(level, numFolds);

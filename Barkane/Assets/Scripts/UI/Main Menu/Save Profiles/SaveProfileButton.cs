@@ -38,7 +38,7 @@ public class SaveProfileButton : ProfileButton
         worldIcon.sprite = worldIconSprites[profile.GetLastLevelWorldNum()];
         int completionPercent = profile.GetNumLevelsCompleted() * 100 / numLevels;
         completionText.text = $"{completionPercent}%";
-        int numFolds = profile.GetNumFolds();
+        string numFolds = profile.GetNumFolds() < 100000 ? profile.GetNumFolds().ToString() : "99999+";
         foldsText.text = $"{numFolds} Folds";
     }
 
