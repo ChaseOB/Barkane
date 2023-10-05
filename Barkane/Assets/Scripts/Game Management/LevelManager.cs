@@ -21,7 +21,7 @@ public class LevelManager : Singleton<LevelManager>
     [SerializeField] private GameObject playerPrefab;
     private GameObject playerInstance = null;
 
-    [SerializeField] private GameObject levelSwitchScreen; //C: Used to hide VFX Loading
+    [SerializeField] public GameObject levelSwitchScreen; //C: Used to hide VFX Loading
     [SerializeField] private List<Level> levelList;
     public int currLevelIndex = 0;
 

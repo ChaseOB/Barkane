@@ -269,7 +269,7 @@ VideoPlayer:
   m_PlayOnAwake: 0
   m_SkipOnDrop: 1
   m_Looping: 0
-  m_WaitForFirstFrame: 1
+  m_WaitForFirstFrame: 0
   m_FrameReadyEventEnabled: 0
   m_VideoShaders: []
 --- !u!4 &329855779
@@ -374,6 +374,7 @@ MonoBehaviour:
   videoPlayer: {fileID: 329855778}
   NextLevel: {fileID: 11400000, guid: e78364d75a6b0f54a94089b09d0110aa, type: 2}
   NextSceneIndex: -1
+  mintime: 17
 --- !u!1 &865729357
 GameObject:
   m_ObjectHideFlags: 0

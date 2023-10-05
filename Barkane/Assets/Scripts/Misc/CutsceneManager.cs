@@ -39,9 +39,22 @@ public class CutsceneManager : MonoBehaviour
 
     private IEnumerator WaitToStart()
     {
-        videoPlayer?.Play();
-        yield return new WaitForEndOfFrame();
-        videoPlayer?.Pause();
+        LevelManager.Instance?.levelSwitchScreen.SetActive(true);
+        LevelManager.Instance?.imageAnimator.Play();
+        if(videoPlayer != null)
+        {
+            videoPlayer.Prepare();
+            while(!videoPlayer.isPrepared)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+            videoPlayer.frame = 0;
+            videoPlayer.Pause();
+            yield return new WaitForEndOfFrame();
+        }
+        yield return new WaitForSeconds(1f);
+        LevelManager.Instance?.levelSwitchScreen.SetActive(false);
+        LevelManager.Instance?.imageAnimator.Stop();
         yield return new WaitForSeconds(1f);
         StartCutscene();
     }
