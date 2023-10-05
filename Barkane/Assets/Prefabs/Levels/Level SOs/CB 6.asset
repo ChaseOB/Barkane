@@ -18,3 +18,6 @@ MonoBehaviour:
   levelObject: {fileID: 7225610573936878141, guid: c04010fc176fd164c83bd4f028197fff, type: 3}
   theme: {fileID: 11400000, guid: 23f30d238faa36944a41821ae891be95, type: 2}
   cosmeticUnlock: 
+  ThreeStarMaxFolds: 20
+  TwoStarMaxFolds: 30
+  OneStarMaxFolds: 50

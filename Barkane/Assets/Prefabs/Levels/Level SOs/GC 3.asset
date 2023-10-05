@@ -18,3 +18,6 @@ MonoBehaviour:
   levelObject: {fileID: 7923317848637619215, guid: dec59bd073d80464bb5766bc7830ebf4, type: 3}
   theme: {fileID: 11400000, guid: 696d7d1b257994f499495bd456579486, type: 2}
   cosmeticUnlock: SwagGlasses
+  ThreeStarMaxFolds: 5
+  TwoStarMaxFolds: 5
+  OneStarMaxFolds: 5

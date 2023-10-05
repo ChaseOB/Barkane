@@ -41,6 +41,7 @@ public class UIManager : Singleton<UIManager>
     private int numFolds;
 
     public StarsUI starsUI;
+    public StarsUI bestStarsUI;
 
     private void Awake() {
         InitializeSingleton();
@@ -150,6 +151,7 @@ public class UIManager : Singleton<UIManager>
         Time.timeScale = 0;
 
         starsUI.DisplayStars(level, numFolds);
+        bestStarsUI.DisplayStars(level, bestFolds);
 
         if(showCosmetic) {
             cosmeticBackground.sprite = cosmeticNormal;
