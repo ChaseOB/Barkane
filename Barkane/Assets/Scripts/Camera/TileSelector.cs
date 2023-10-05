@@ -244,7 +244,11 @@ public class TileSelector : Singleton<TileSelector>
     {
         state = SelectState.FOLDING;
 
-        if(ghostFold90 == null && ghostFoldNeg90 == null) return;
+        if(ghostFold90 == null && ghostFoldNeg90 == null) 
+        {
+            DeselectJoint();
+            return;
+        }
         else if(ghostFold90 == null) 
         {
           //  print("Folding neg 90");

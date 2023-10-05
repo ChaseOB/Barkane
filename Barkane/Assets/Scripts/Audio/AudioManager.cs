@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.Audio;
 using UnityEngine;
+using System.Collections;
 
 public class AudioManager : Singleton<AudioManager>
 {
@@ -57,7 +58,7 @@ public class AudioManager : Singleton<AudioManager>
 
     private void Start()
     {
-        PlayMusic();
+        PlayMusic(false);
     }
 
     public void Play(string name)
@@ -80,26 +81,52 @@ public class AudioManager : Singleton<AudioManager>
         s.source.Play();
     }
 
-    public void PlayMusic(int list, int ind)
+    public void PlayMusic(int list, int ind, bool fade = true)
     {
-        source.Stop();
         if (musicLists == null)
             return;
+
         AudioClip s = musicLists[list].Tracks[ind];
-
-        if(ind > musicLists[list].Tracks.Length)
-            ind = 0;
-
+      
         if (s == null)
         {
             Debug.LogError("Music track does not exist!");
             return;
         }
-        source.clip = s;
-        source.Play();
+        StartCoroutine(MusicTransitionCoroutine(s, fade));  
     }
-    public void PlayMusic() {
-        PlayMusic(currentArray, currentIndex);
+
+    private IEnumerator MusicTransitionCoroutine(AudioClip clip, bool fade)
+    {
+        float t = 0;
+        if(fade)
+        {
+            while(t < 0.25f)
+            {
+                t += Time.deltaTime;
+                SetMusicVolume(Mathf.Lerp(100, 0, t/0.25f));
+                yield return null;
+            }
+        }
+        source.Stop();
+       
+        source.clip = clip;
+        source.Play();
+        if(fade)
+        {
+            while(t > 0f)
+            {
+                t -= Time.deltaTime;
+                SetMusicVolume(Mathf.Lerp(100, 0, t/0.25f));
+                yield return null;
+            }
+        }
+
+        SetMusicVolume(100);
+    }
+
+    public void PlayMusic(bool fade = true) {
+        PlayMusic(currentArray, currentIndex, fade);
     }
 
     public void PlayList(string name) {
