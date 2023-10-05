@@ -236,7 +236,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!328 &329855778
 VideoPlayer:
   m_ObjectHideFlags: 0
@@ -332,48 +332,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   captions:
-  - text: The quiet town of Pleasantville has known peace for many years under the
-      protection of the gems of Ultimate Power.
+  - text: This is a test
     startTime: 0
     duration: 5
     pauseDuration: 0
     pauseOnDisplay: 0
     played: 0
-  - text: 'The Gems bestow magical world-bending powers to the Arcane Mage, a title
-      passed down through generations. The current arcane mage is Meeplin the 7th,
-      who resides in Pleasantville with his dog Marmalade.  '
-    startTime: 4.125
-    duration: 9
-    pauseDuration: 10
-    pauseOnDisplay: 1
-    played: 0
-  - text: One night, the evil mage Drazwi broke into Meeplin's tower and shattered
-      all of the Gems of Ultimate Power. Meeplin the 7th gave his life in the fight
-      to protect the final gem.
-    startTime: 4.625
-    duration: 9
-    pauseDuration: 0
-    pauseOnDisplay: 0
-    played: 0
-  - text: With no descendants to his name, as Meeplin the 7th dies, his powers passed
-      to Marmalade, marking the end of the Meeplin bloodline and making her the first
-      Barkane Mage.
-    startTime: 10
-    duration: 6
-    pauseDuration: 3.1
-    pauseOnDisplay: 1
-    played: 0
-  - text: She must now traverse the broken paper lands, collecting the pieces of
-      the Gems in order to grow her powers, defeat Drazwi, and save Pleasantville.
-    startTime: 14
-    duration: 7
-    pauseDuration: 0
-    pauseOnDisplay: 0
-    played: 0
   typer: {fileID: 1452949489}
   videoPlayer: {fileID: 329855778}
-  NextLevel: {fileID: 11400000, guid: e78364d75a6b0f54a94089b09d0110aa, type: 2}
+  NextLevel: {fileID: 11400000, guid: b5087a0fb89faf4409aabf0857fe85c1, type: 2}
   NextSceneIndex: -1
+  mintime: 5
 --- !u!1 &865729357
 GameObject:
   m_ObjectHideFlags: 0
@@ -1367,7 +1336,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0222db1a593791b49b2b49ea94931580, type: 2}
+  - {fileID: 2100000, guid: 0c1360880e2c7db4ebd71674cb7da00d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

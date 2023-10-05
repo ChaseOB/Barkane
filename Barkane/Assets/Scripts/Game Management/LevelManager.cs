@@ -81,6 +81,11 @@ public class LevelManager : Singleton<LevelManager>
         SaveSystem.Current.UnlockLevel(levelList[index].levelName);
     }
 
+    public void UnlockLevel(Level level)
+    {
+        SaveSystem.Current.UnlockLevel(level.levelName);
+    }
+
 
     //Handles index setting, special case of last level
     public void LoadLevel(int index)

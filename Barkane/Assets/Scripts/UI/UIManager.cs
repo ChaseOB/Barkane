@@ -190,8 +190,16 @@ public class UIManager : Singleton<UIManager>
     {
         EventSystem.current.GetComponent<EventSystem>().SetSelectedGameObject(null);
         Time.timeScale = 1;
-        LevelManager.Instance.LoadNextLevel();
-        endLevelGroup.SetActive(false);
+        Level level = LevelManager.Instance.GetCurrentLevel();
+                endLevelGroup.SetActive(false);
+
+        if(level.CutsceneSceneIndex != -1)
+        {
+            SceneManager.LoadScene(level.CutsceneSceneIndex);
+        }
+        else{
+            LevelManager.Instance.LoadNextLevel();
+        }
     }
 
     public void ReturnToMenu()

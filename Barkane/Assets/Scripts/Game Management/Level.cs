@@ -15,6 +15,7 @@ public class Level : ScriptableObject
     public int ThreeStarMaxFolds;
     public int TwoStarMaxFolds;
     public int OneStarMaxFolds;
+    public int CutsceneSceneIndex = -1;
 }
 
 

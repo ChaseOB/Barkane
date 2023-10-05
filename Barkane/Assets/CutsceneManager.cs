@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.Video;
+using UnityEditor.SearchService;
+using UnityEngine.SceneManagement;
 
 public class CutsceneManager : MonoBehaviour
 {
@@ -10,18 +12,22 @@ public class CutsceneManager : MonoBehaviour
     public TMPTextTyper typer;
     public VideoPlayer videoPlayer;
 
+    public Level NextLevel;
+    public int NextSceneIndex = -1;
+
     private float time = 0;
     private bool active = false;
     private bool paused = false;
 
 
-    private float mintime = 17f;
+    public float mintime = 17f;
     private bool ended = false;
 
     private bool disabled = false;
 
     private void Start() {
-       LevelManager.Instance.UnlockLevel(0);
+        if(NextLevel != null)
+            LevelManager.Instance.UnlockLevel(NextLevel);
         if(disabled)
         {
             EndCutscene();
@@ -33,16 +39,16 @@ public class CutsceneManager : MonoBehaviour
 
     private IEnumerator WaitToStart()
     {
-        videoPlayer.Play();
+        videoPlayer?.Play();
         yield return new WaitForEndOfFrame();
-        videoPlayer.Pause();
+        videoPlayer?.Pause();
         yield return new WaitForSeconds(1f);
         StartCutscene();
     }
 
     private void Update() {
         if(active && !paused) {
-            time += Time.deltaTime * videoPlayer.playbackSpeed;
+            time += Time.deltaTime * (videoPlayer != null ? videoPlayer.playbackSpeed : 1);
             foreach(CutsceneCaption c in captions)
             {
                 if(time > c.startTime && !c.played)
@@ -63,7 +69,7 @@ public class CutsceneManager : MonoBehaviour
 
     public void StartCutscene()
     {
-        videoPlayer.Play();
+        videoPlayer?.Play();
         active = true;
     }
 
@@ -76,10 +82,10 @@ public class CutsceneManager : MonoBehaviour
 
     private IEnumerator Pause(float duration)
     {
-        videoPlayer.Pause();
+        videoPlayer?.Pause();
         paused = true;
         yield return new WaitForSeconds(duration);
-        videoPlayer.Play();
+        videoPlayer?.Play();
         paused = false;
     }
 
@@ -87,12 +93,12 @@ public class CutsceneManager : MonoBehaviour
     {
         if(pause)
         {
-            videoPlayer.Pause();
+            videoPlayer?.Pause();
             paused = true;
         }
         else
         {
-            videoPlayer.Play();
+            videoPlayer?.Play();
             paused = false;
         }
     }
@@ -101,7 +107,10 @@ public class CutsceneManager : MonoBehaviour
     {
         Time.timeScale = 1;
         ended = true;   
-        LevelManager.Instance.LoadLevel(0);     
+        if(NextLevel != null)
+            LevelManager.Instance.LoadLevel(NextLevel.levelName);     
+        if(NextSceneIndex != -1)
+            SceneManager.LoadScene(NextSceneIndex);
         Cursor.visible = true;
     }
 }
