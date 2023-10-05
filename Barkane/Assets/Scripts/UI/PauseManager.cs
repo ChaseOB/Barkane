@@ -12,6 +12,8 @@ public class PauseManager : Singleton<PauseManager>
 
     public CutsceneManager cutsceneManager;
 
+    public GameObject options;
+
     private void Awake() {
         InitializeSingleton();
     }
@@ -22,6 +24,12 @@ public class PauseManager : Singleton<PauseManager>
         else UnPause();
     }
 
+    public void ToggleOptions(bool val)
+    {
+        PauseMenu.SetActive(!val);
+        options.SetActive(val);
+    }
+    
     public void Pause()
     {
         isPaused = true;

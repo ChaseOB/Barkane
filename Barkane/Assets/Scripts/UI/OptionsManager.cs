@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class OptionsManager : MonoBehaviour
 {
-    public void SetMusicVolume(int val)
+    public void SetMusicVolume(float val)
     {
         AudioManager.SetPlayerMusicVolume(val);
     }
 
-    public void SetSFXVolume(int val)
+    public void SetSFXVolume(float val)
     {
         AudioManager.SetPlayerSFXVolume(val);
     }

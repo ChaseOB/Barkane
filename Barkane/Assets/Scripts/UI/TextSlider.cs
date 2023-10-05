@@ -14,11 +14,11 @@ public class TextSlider : MonoBehaviour
     void Start() {
         slider = GetComponentInChildren<Slider>();
         slider.value = PlayerPrefs.HasKey(saveString) ? PlayerPrefs.GetInt(saveString) : 50;
-        setNumberText((int) slider.value);
+        setNumberText(slider.value);
     }
 
-    public void setNumberText(int value) {
+    public void setNumberText(float value) {
         numberText.text = text + value.ToString() + "%";
-        PlayerPrefs.SetInt(saveString, value);
+        PlayerPrefs.SetInt(saveString, (int)value);
     }
 }

@@ -38,8 +38,8 @@ public class CameraOrbit : Singleton<CameraOrbit>
 
     public void UpdateSensitivity()
     {
-        mouseSensitivity = 1 * (PlayerPrefs.HasKey("mouse") ? PlayerPrefs.GetInt("mouse") : 50);
-        ScrollSenstivity = 0.4f * (PlayerPrefs.HasKey("scroll") ? PlayerPrefs.GetInt("scroll") : 50);
+        mouseSensitivity = 1f * 0.01f * (PlayerPrefs.HasKey("pan") ? PlayerPrefs.GetInt("pan") : 50);
+        ScrollSenstivity = 0.4f * 0.01f * (PlayerPrefs.HasKey("zoom") ? PlayerPrefs.GetInt("zoom") : 50);
     }
 
     //CO: We want the camera to move after everything else
