@@ -83,7 +83,13 @@ public class CutsceneManager : MonoBehaviour
         paused = false;
     }
 
-
+    public void PauseCutscene(bool pause)
+    {
+        if(pause)
+            videoPlayer.Pause();
+        else
+            videoPlayer.Play();
+    }
 
     public void EndCutscene()
     {

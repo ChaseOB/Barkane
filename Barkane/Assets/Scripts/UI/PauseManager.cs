@@ -10,6 +10,8 @@ public class PauseManager : Singleton<PauseManager>
     private bool isPaused = false;
     public static bool IsPaused => Instance.isPaused;
 
+    public CutsceneManager cutsceneManager;
+
     private void Awake() {
         InitializeSingleton();
     }
@@ -24,6 +26,10 @@ public class PauseManager : Singleton<PauseManager>
     {
         isPaused = true;
         Time.timeScale = 0;
+        if(cutsceneManager != null)
+        {
+            cutsceneManager.PauseCutscene(true);
+        }
         PauseMenu.SetActive(true);
     }
 
@@ -32,6 +38,10 @@ public class PauseManager : Singleton<PauseManager>
         EventSystem.current.GetComponent<EventSystem>().SetSelectedGameObject(null);
         isPaused = false;
         Time.timeScale = 1;
+        if(cutsceneManager != null)
+        {
+            cutsceneManager.PauseCutscene(false);
+        }
         PauseMenu.SetActive(false);
     }
 

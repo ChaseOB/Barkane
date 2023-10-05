@@ -100,6 +100,7 @@ public class SaveProfile
 
     public void SetLastLevel(Level level)
     {
+        if(level == null) return;
         lastLevel = level.levelName;
         lastLevelNum = level.levelNum;
         lastLevelWorldNum = level.worldNum;

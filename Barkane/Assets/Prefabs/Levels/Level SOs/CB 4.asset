@@ -18,6 +18,6 @@ MonoBehaviour:
   levelObject: {fileID: 3103685792244780463, guid: 73848c5892c546d46981df956b13cbfc, type: 3}
   theme: {fileID: 11400000, guid: 23f30d238faa36944a41821ae891be95, type: 2}
   cosmeticUnlock: Blossom
-  ThreeStarMaxFolds: 4
-  TwoStarMaxFolds: 6
-  OneStarMaxFolds: 12
+  ThreeStarMaxFolds: 6
+  TwoStarMaxFolds: 10
+  OneStarMaxFolds: 14
