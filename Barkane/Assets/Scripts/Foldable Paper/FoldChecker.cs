@@ -198,7 +198,7 @@ public class FoldChecker : Singleton<FoldChecker>
                 {
                     GameObject blockSquare = Instantiate(SquareCollider, 
                                                 c.transform.position, 
-                                                s.transform.rotation);
+                                                c.transform.rotation);
                     blockSquare.GetComponent<SquareCast>().size = bfold.size;
                     blockSquare.name = "bs";
                     blockSquare.GetComponent<SquareCast>().showRay = true;
