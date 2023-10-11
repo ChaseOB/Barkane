@@ -74,6 +74,13 @@ MonoBehaviour:
     loop: 0
     doRandomPitch: 0
     source: {fileID: 0}
+  - name: Win
+    clip: {fileID: 8300000, guid: 8d824cf7e5421fd4194199c78095906a, type: 3}
+    volume: 0.54
+    pitch: 0
+    loop: 0
+    doRandomPitch: 0
+    source: {fileID: 0}
   musicLists:
   - name: Cherry Blossom
     Tracks:
@@ -82,7 +89,7 @@ MonoBehaviour:
     - {fileID: 8300000, guid: a3c0961821dcb3e469124a4ece4ecc60, type: 3}
   - name: Snow
     Tracks:
-    - {fileID: 8300000, guid: bc0d8601039a1cc47898ff0bd378e6c7, type: 3}
+    - {fileID: 8300000, guid: b9c5fe7652206f1478b743f8f095e25a, type: 3}
     - {fileID: 8300000, guid: 580042a9cbfe98d40a635e09c555927e, type: 3}
   - name: Caves
     Tracks:

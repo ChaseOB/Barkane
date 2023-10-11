@@ -1920,6 +1920,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numberText: {fileID: 884387580}
+  text: 
+  saveString: 
 --- !u!114 &252492946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5274,6 +5276,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numberText: {fileID: 619464793}
+  text: 
+  saveString: 
 --- !u!1 &725916836
 GameObject:
   m_ObjectHideFlags: 0
@@ -16309,22 +16313,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: sounds.Array.size
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: sounds.Array.data[4].clip
-      value: 
-      objectReference: {fileID: 8300000, guid: 8d824cf7e5421fd4194199c78095906a, type: 3}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: sounds.Array.data[4].name
-      value: Win
-      objectReference: {fileID: 0}
-    - target: {fileID: 5553612410188532438, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
-      propertyPath: sounds.Array.data[4].volume
-      value: 0.54
-      objectReference: {fileID: 0}
     - target: {fileID: 5809165807994719649, guid: 1b8c1a947af69364191dc7f0c35970e3, type: 3}
       propertyPath: m_Name
       value: AudioManager

@@ -66,7 +66,7 @@ public class Snowball : MonoBehaviour
                 else
                     parentSide = bottom;
                 
-                this.transform.parent = parentSide.GetComponent<SquareSide>().visualParent.transform;
+                this.transform.parent = parentSide.GetComponent<SquareSide>().visualParent == null ? parentSide.GetComponent<SquareSide>().transform : parentSide.GetComponent<SquareSide>().visualParent.transform;
                 return;
             }
         }
