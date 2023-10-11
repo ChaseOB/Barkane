@@ -21,4 +21,4 @@ MonoBehaviour:
   ThreeStarMaxFolds: 6
   TwoStarMaxFolds: 8
   OneStarMaxFolds: 12
-  CutsceneSceneIndex: 5
+  CutsceneSceneIndex: -1

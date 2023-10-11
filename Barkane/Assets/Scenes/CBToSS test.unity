@@ -339,7 +339,7 @@ MonoBehaviour:
     pauseOnDisplay: 0
     played: 0
   typer: {fileID: 1452949489}
-  videoPlayer: {fileID: 329855778}
+  videoPlayer: {fileID: 0}
   NextLevel: {fileID: 11400000, guid: b5087a0fb89faf4409aabf0857fe85c1, type: 2}
   NextSceneIndex: -1
   mintime: 5

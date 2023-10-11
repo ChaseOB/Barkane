@@ -40,7 +40,7 @@ public class CutsceneManager : MonoBehaviour
     {
         LevelManager.Instance?.levelSwitchScreen.SetActive(true);
         LevelManager.Instance?.imageAnimator.Play();
-        if(videoPlayer != null)
+        if(videoPlayer != null && videoPlayer.enabled) 
         {
             videoPlayer.Prepare();
             while(!videoPlayer.isPrepared)
@@ -81,7 +81,8 @@ public class CutsceneManager : MonoBehaviour
 
     public void StartCutscene()
     {
-        videoPlayer?.Play();
+        if(videoPlayer != null)
+            videoPlayer?.Play();
         active = true;
     }
 
@@ -94,10 +95,12 @@ public class CutsceneManager : MonoBehaviour
 
     private IEnumerator Pause(float duration)
     {
-        videoPlayer?.Pause();
+        if(videoPlayer != null)
+            videoPlayer?.Pause();
         paused = true;
         yield return new WaitForSeconds(duration);
-        videoPlayer?.Play();
+        if(videoPlayer != null)
+            videoPlayer?.Play();
         paused = false;
     }
 
@@ -105,13 +108,15 @@ public class CutsceneManager : MonoBehaviour
     {
         if(pause)
         {
-            videoPlayer?.Pause();
+            if(videoPlayer != null)
+                videoPlayer?.Pause();
             Cursor.visible = true;
             paused = true;
         }
         else
         {
-            videoPlayer?.Play();
+            if(videoPlayer != null)
+                videoPlayer?.Play();
             Cursor.visible = false;
             paused = false;
         }
