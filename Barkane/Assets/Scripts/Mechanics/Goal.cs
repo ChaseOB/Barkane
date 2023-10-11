@@ -80,6 +80,8 @@ public class Goal : MonoBehaviour, IThemedItem
     private IEnumerator EndLevelAnimation()
     {
         ActionLockManager.Instance.TryTakeLock(this);
+                UIHints.instance?.Clear();
+
         float t = 0;
         while(t < 0.25f)
         {

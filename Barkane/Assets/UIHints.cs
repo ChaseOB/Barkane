@@ -47,8 +47,10 @@ public class UIHints : MonoBehaviour
     {
         StopAllCoroutines();
         hintList.Clear();
-        canvasGroup.alpha = 0;    
-        isVisible = false;
+        StartCoroutine(FadeHintBox(1, 0, () => {
+            canvasGroup.alpha = 0;    
+            isVisible = false;
+        }));
     }
 
     /// <summary>
