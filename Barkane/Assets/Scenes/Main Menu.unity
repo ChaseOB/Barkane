@@ -3667,7 +3667,7 @@ RectTransform:
   m_GameObject: {fileID: 509768205}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.722961, y: 1.6873868, z: 1}
+  m_LocalScale: {x: 2.029237, y: 1.6873868, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1930958851}
@@ -3675,7 +3675,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 509, y: -304}
+  m_AnchoredPosition: {x: 598.3, y: -304}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &509768207
@@ -9792,8 +9792,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 495376175726155516, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1092961373653022622, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
+      propertyPath: level
+      value: 
+      objectReference: {fileID: 11400000, guid: d6779cb207929dd44b730e2b6099938c, type: 2}
     - target: {fileID: 2381363260956667262, guid: 0a59e64376547f643bb0e85b5932f94a, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -16263,7 +16267,7 @@ PrefabInstance:
       objectReference: {fileID: 1719070850}
     - target: {fileID: 5765191864672309409, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
       propertyPath: levelList.Array.size
-      value: 16
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 5765191864672309409, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
       propertyPath: levelScenes.Array.size
@@ -16333,6 +16337,10 @@ PrefabInstance:
       propertyPath: levelList.Array.data[15]
       value: 
       objectReference: {fileID: 11400000, guid: b564fd03e95c9d04bb20965d465c8966, type: 2}
+    - target: {fileID: 5765191864672309409, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
+      propertyPath: levelList.Array.data[16]
+      value: 
+      objectReference: {fileID: 11400000, guid: d6779cb207929dd44b730e2b6099938c, type: 2}
     - target: {fileID: 5765191864672309409, guid: 8a6381df7f1d66a40beb44b1f58c6f08, type: 3}
       propertyPath: levelScenes.Array.data[1]
       value: 2

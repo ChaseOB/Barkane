@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e7cf2c46ece0374682d71ab95d0203c, type: 3}
-  m_Name: OLD CB6 NOW SOMEWHERE CGo
+  m_Name: GC 5
   m_EditorClassIdentifier: 
-  levelName: CB 6
-  worldNum: 0
-  levelNum: 6
-  levelObject: {fileID: 5094416910311288095, guid: 7e78348930bf13b488e61eaafaaabbf8, type: 3}
-  theme: {fileID: 11400000, guid: 23f30d238faa36944a41821ae891be95, type: 2}
+  levelName: GC 5
+  worldNum: 2
+  levelNum: 5
+  levelObject: {fileID: 7225610573936878141, guid: c04010fc176fd164c83bd4f028197fff, type: 3}
+  theme: {fileID: 11400000, guid: 696d7d1b257994f499495bd456579486, type: 2}
   cosmeticUnlock: 
   ThreeStarMaxFolds: 20
   TwoStarMaxFolds: 30
