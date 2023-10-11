@@ -33,8 +33,16 @@ public class AudioManager : Singleton<AudioManager>
 
     void Awake()
     {
-        InitializeSingleton(this.gameObject);
-        DontDestroyOnLoad(gameObject);
+        if(Instance == null)
+        {
+            InitializeSingleton(this.gameObject);
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         _sounds = sounds;
 
