@@ -623,7 +623,7 @@ RectTransform:
   - {fileID: 3989690968688930752}
   - {fileID: 7196464603792569237}
   m_Father: {fileID: 5127441170468721735}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1831,7 +1831,7 @@ RectTransform:
   - {fileID: 4335857645677822976}
   - {fileID: 2174434768036812448}
   m_Father: {fileID: 5127441170468721735}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1959,7 +1959,7 @@ Transform:
   - {fileID: 6563210800611942227}
   - {fileID: 6563210801425438041}
   m_Father: {fileID: 5127441170468721735}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5127441170454117229
 GameObject:
@@ -2133,11 +2133,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7416532103858753550}
+  - {fileID: 4122263229196500866}
   - {fileID: 551766541070319002}
   - {fileID: 5267846904808029279}
   - {fileID: 5107659218083666296}
   - {fileID: 7940438020851726957}
-  - {fileID: 4122263229196500866}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4761,7 +4761,7 @@ RectTransform:
   m_Children:
   - {fileID: 1179482832901806794}
   m_Father: {fileID: 5127441170468721735}
-  m_RootOrder: 5
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -5243,7 +5243,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1607247562841780157, guid: e730d9db4aee758458fc7f01d58c8b7b, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1607247562841780157, guid: e730d9db4aee758458fc7f01d58c8b7b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5285,9 +5285,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2799761976013677765, guid: e730d9db4aee758458fc7f01d58c8b7b, type: 3}
+      propertyPath: m_text
+      value: 'Camera Zoom Sensitivity: 50%'
+      objectReference: {fileID: 0}
     - target: {fileID: 3399404719296191365, guid: e730d9db4aee758458fc7f01d58c8b7b, type: 3}
       propertyPath: m_Name
       value: Options Menu
+      objectReference: {fileID: 0}
+    - target: {fileID: 3767010608659198019, guid: e730d9db4aee758458fc7f01d58c8b7b, type: 3}
+      propertyPath: m_text
+      value: 'Music Volume: 50%'
+      objectReference: {fileID: 0}
+    - target: {fileID: 3870522677970755943, guid: e730d9db4aee758458fc7f01d58c8b7b, type: 3}
+      propertyPath: m_text
+      value: 'SFX Volume: 50%'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5908693053297691077, guid: e730d9db4aee758458fc7f01d58c8b7b, type: 3}
+      propertyPath: m_text
+      value: 'Camera Pan Sensitivity: 50%'
       objectReference: {fileID: 0}
     - target: {fileID: 5991327642157091715, guid: e730d9db4aee758458fc7f01d58c8b7b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target

@@ -144,6 +144,7 @@ public class UIManager : Singleton<UIManager>
     public void EndLevel()
     {
         //C: This is a horrible way to do this. I don't care
+        UIHints.instance?.Clear();
         Level level = LevelManager.Instance.GetCurrentLevel();
         int bestFolds = SaveSystem.Current.GetFolds(level.levelName);
         if(bestFolds == -1 || numFolds < bestFolds) 
