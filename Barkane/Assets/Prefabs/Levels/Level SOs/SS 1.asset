@@ -15,10 +15,10 @@ MonoBehaviour:
   levelName: SS 1
   worldNum: 1
   levelNum: 1
-  levelObject: {fileID: 202415309129664681, guid: 75832ab341db34c4e9e1c173a5d2368e, type: 3}
+  levelObject: {fileID: 6086515416373544826, guid: b372b8bb3f2fe7b499f2fd3a0737e3d8, type: 3}
   theme: {fileID: 11400000, guid: f76e961422aa7114fa728acfcd66523b, type: 2}
   cosmeticUnlock: 
-  ThreeStarMaxFolds: 8
-  TwoStarMaxFolds: 12
-  OneStarMaxFolds: 16
+  ThreeStarMaxFolds: 0
+  TwoStarMaxFolds: 0
+  OneStarMaxFolds: 0
   CutsceneSceneIndex: -1
