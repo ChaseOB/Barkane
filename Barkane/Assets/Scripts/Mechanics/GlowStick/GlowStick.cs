@@ -102,7 +102,7 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         // A
         a = g.pA + (g.edgeA - g.pA) * (1- settings.halfLength) + gSide.nA * settings.elevation ; 
         vs[0] = a;
-        Ring(ref vs, vs[0], gSide.nA, gSide.tJ, 1, settings);
+        Ring(ref vs, vs[0], gSide.nA, gSide.tJ, 1, settings, flip: true);
 
         ga2b = gSide.a2b;
 
@@ -145,14 +145,18 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
     private void Ring(
         ref Vector3[] vs,
         // ref Vector3[] ns,
-        Vector3 o, Vector3 n, Vector3 t, int iStart, GlowstickRenderSettings settings, float rFactor = 1f)
+        Vector3 o, Vector3 n, Vector3 t, int iStart, GlowstickRenderSettings settings, float rFactor = 1f, bool flip = false)
     {
         for(int i = iStart, j = 0; i < iStart + settings.resolution; i++, j++)
         {
             var sin = settings.angles[j].x;
             var cos = settings.angles[j].y;
 
-            vs[i] = o + settings.radius * rFactor * (sin * n + cos * t);
+            
+            var v = o + settings.radius * rFactor * (sin * n + cos * t);
+            if(flip)
+                print(v);
+            vs[i] = v;
             // ns[i] = sin * n + cos * t;
         }
     }

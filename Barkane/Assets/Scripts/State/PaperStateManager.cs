@@ -246,7 +246,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
     private void OnFoldStartInternal(ActionCallEnum source, FoldArgs e)
     {
         numFolds = source == ActionCallEnum.UNDO ? e.beforeFoldNum : e.afterFoldNum;
-        UIManager.Instance.UpdateFC(numFolds);
+        UIManager.Instance?.UpdateFC(numFolds);
         LevelManager.Instance?.SetFoldCount(numFolds);
 
         OnFoldStart?.Invoke(this, e);

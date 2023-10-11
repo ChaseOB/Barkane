@@ -297,7 +297,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
         //     Transform t = transform.GetChild(i);
         //     t.localPosition = YOffset * Vector3.up;
         // }
-        visualParent.transform.localPosition = YOffset * Vector3.up;
+        if(visualParent != null)
+            visualParent.transform.localPosition = YOffset * Vector3.up;
         if(materialInstance == null) return;
         materialInstance.SetFloat("_YOffset", offset);
     }

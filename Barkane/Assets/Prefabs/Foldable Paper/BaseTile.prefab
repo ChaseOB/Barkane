@@ -302,6 +302,7 @@ MonoBehaviour:
   TintColor: {r: 0, g: 0, b: 0, a: 0}
   playerLoc: {fileID: 398644310617893384}
   YOffset: -0
+  visualParent: {fileID: 0}
   m_SideVisiblity: 0
 --- !u!114 &4332946852583158350
 MonoBehaviour:
@@ -531,6 +532,7 @@ MonoBehaviour:
   TintColor: {r: 0, g: 0, b: 0, a: 0}
   playerLoc: {fileID: 6208710809326013470}
   YOffset: 0
+  visualParent: {fileID: 0}
   m_SideVisiblity: 0
 --- !u!114 &3583265718418767156
 MonoBehaviour:
@@ -590,7 +592,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5610209214461489457
 Transform:
   m_ObjectHideFlags: 0
@@ -736,6 +738,7 @@ MonoBehaviour:
   botColActive: 1
   orientation: 0
   adjacentJoints: []
+  debug: 0
 --- !u!114 &7721798970483151979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -906,7 +909,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6070138652213593470
 Transform:
   m_ObjectHideFlags: 0
