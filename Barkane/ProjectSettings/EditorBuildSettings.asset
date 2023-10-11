@@ -21,7 +21,10 @@ EditorBuildSettings:
     path: Assets/Scenes/CutsceneScene.unity
     guid: f748af2cb2a69ee4b9d9b8b43fef113f
   - enabled: 1
-    path: Assets/Scenes/CBToSS test.unity
+    path: Assets/Scenes/CB to SS.unity
     guid: a5c7dbec0a4416144bc2b7e298107a47
+  - enabled: 1
+    path: Assets/Scenes/SS to GC.unity
+    guid: 44039ada8b9aa384c967cc98316f2032
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 546b0a8d0a8a7c2408d473c96ca96d63, type: 2}
