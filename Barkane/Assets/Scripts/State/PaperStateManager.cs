@@ -32,6 +32,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
     public int currMoveNum => actionStack.Count;
     private int nextMoveNum => actionStack.Count + 1;
 
+    private PlayerActionHints hints;
     public class FoldArgs : System.EventArgs
     {
         public FoldData fd;
@@ -63,6 +64,11 @@ public class PaperStateManager: Singleton<PaperStateManager>
         InitializeSingleton();
     }
 
+    private void Start()
+    {
+        hints = FindObjectOfType<PlayerActionHints>();
+    }
+
     public void SetPaperState(PaperState ps)
     {
         paperState = ps;
@@ -73,13 +79,17 @@ public class PaperStateManager: Singleton<PaperStateManager>
         if(!value.isPressed)
             return;
         UndoAction();
+        if(hints != null)
+            hints.DisableHint("undo");
     }
 
     private void OnRedo(InputValue value)
     {
         if(!value.isPressed)
             return;
-        RedoAction();    
+        RedoAction();
+        if(hints != null)
+            hints.DisableHint("redo");    
     }
 
     public void AddAndExecuteMove(bool forward)

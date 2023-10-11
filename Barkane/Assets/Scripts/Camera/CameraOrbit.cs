@@ -22,6 +22,12 @@ public class CameraOrbit : Singleton<CameraOrbit>
     private float cameraDistance = 5.0f;
     private Vector2 prevMousePosition;
 
+
+    private PlayerActionHints hints;
+
+    bool moved = false;
+    bool scrolled = false;
+
     private void Awake()
     {
         InitializeSingleton();
@@ -34,6 +40,7 @@ public class CameraOrbit : Singleton<CameraOrbit>
         localRoatation.x = cameraParent.localRotation.eulerAngles.y * -1;
         localRoatation.y = cameraParent.localRotation.eulerAngles.x;
         UpdateSensitivity();
+        hints = FindObjectOfType<PlayerActionHints>();
     }
 
     public void UpdateSensitivity()
@@ -53,8 +60,11 @@ public class CameraOrbit : Singleton<CameraOrbit>
                 localRoatation.x += diff.x * mouseSensitivity; 
                 localRoatation.y += diff.y * mouseSensitivity;
                 localRoatation.y = Mathf.Clamp(localRoatation.y, -80f, 80f);
+                moved = true;
             }
             float scrollAmount = Mouse.current.scroll.ReadValue().y * ScrollSenstivity * 0.01f * cameraDistance;
+            if(scrollAmount > 0)
+                scrolled = true;
             cameraDistance -= scrollAmount;
             cameraDistance = Mathf.Clamp(cameraDistance, minCameraDistance, maxCameraDistance);
         }
@@ -65,6 +75,10 @@ public class CameraOrbit : Singleton<CameraOrbit>
             cameraTransform.localPosition = new Vector3(0, 0, Mathf.Lerp(cameraTransform.localPosition.z, cameraDistance * -1, Time.deltaTime * scrollDampen));
         
         prevMousePosition = Mouse.current.position.ReadValue();
+
+         hints = FindObjectOfType<PlayerActionHints>(); 
+        if(moved && scrolled && hints != null)
+            hints.DisableHint("camera");
     }
 
     private void OnClick(InputValue value)

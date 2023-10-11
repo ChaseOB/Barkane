@@ -27,7 +27,7 @@ public class UIHints : MonoBehaviour
 
     private void OnEnable()
     {
-        SceneManager.activeSceneChanged += Clear;
+        //SceneManager.activeSceneChanged += Clear;
     }
 
     private void Update() 
