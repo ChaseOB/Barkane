@@ -35,6 +35,7 @@ public class TileSelector : Singleton<TileSelector>
 
 
     public SelectState state;
+    private PlayerActionHints hints;
 
 
     private void Awake()
@@ -53,6 +54,7 @@ public class TileSelector : Singleton<TileSelector>
         foldAnimator = FindObjectOfType<FoldAnimator>();
         foldablePaper = FindObjectOfType<FoldablePaper>();
         state = SelectState.NONE;
+        hints = FindObjectOfType<PlayerActionHints>();
     }
     
 
@@ -179,6 +181,10 @@ public class TileSelector : Singleton<TileSelector>
         state = SelectState.SELECTED;
         CheckForValidFolds();
         //CreateGhostFold();
+        if(hints != null)
+        {
+            hints.DisableHint("select");
+        }
     }
 
     private void CheckForValidFolds()

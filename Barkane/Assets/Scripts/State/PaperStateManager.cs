@@ -119,6 +119,11 @@ public class PaperStateManager: Singleton<PaperStateManager>
         FoldAction foldAction = new(fd, nextMoveNum);
         actionStack.Push(foldAction);
         ProcessFoldAction(foldAction, ActionCallEnum.PLAYER);
+        PlayerActionHints hints = FindObjectOfType<PlayerActionHints>();
+        if(hints != null)
+        {
+            hints.DisableHint("fold");
+        }
     }
 
     public void ProcessFoldAction(FoldAction foldAction, ActionCallEnum source)
