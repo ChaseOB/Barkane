@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e7cf2c46ece0374682d71ab95d0203c, type: 3}
   m_Name: SS 6
   m_EditorClassIdentifier: 
-  levelName: SS 4 -Boomo's Log
+  levelName: SS 6
   worldNum: 1
   levelNum: 6
   levelObject: {fileID: 6445395177646790876, guid: 108971276dc66f541a3ba576dd2eb27f, type: 3}
