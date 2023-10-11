@@ -304,6 +304,10 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     private void MakeParent()
     {
+        #if UNITY_EDITOR
+            return;
+        #endif
+        
         visualParent = new("Visuals");
        // visualParent.transform.parent = this.transform;
         visualParent.transform.localPosition = transform.position;
