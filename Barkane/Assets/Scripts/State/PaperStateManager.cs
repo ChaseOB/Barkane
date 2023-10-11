@@ -78,8 +78,8 @@ public class PaperStateManager: Singleton<PaperStateManager>
     {
         if(!value.isPressed)
             return;
-        UndoAction();
-        if(hints != null)
+        bool undo = UndoAction();
+        if(undo && hints != null)
             hints.DisableHint("undo");
     }
 
@@ -87,8 +87,8 @@ public class PaperStateManager: Singleton<PaperStateManager>
     {
         if(!value.isPressed)
             return;
-        RedoAction();
-        if(hints != null)
+        bool redo = RedoAction();
+        if(redo && hints != null)
             hints.DisableHint("redo");    
     }
 
@@ -272,22 +272,22 @@ public class PaperStateManager: Singleton<PaperStateManager>
         OnFoldEnd?.Invoke(this, e);
     }
 
-    public void UndoAction()
+    public bool UndoAction()
     {   
         if(ActionLockManager.Instance.IsLocked || !ActionLockManager.Instance.TryTakeLock(this)){
             print("cannot undo: lock taken");
-            return;
+            return false;
         }
         if(actionStack.Count == 0){
             print("nothing to undo");
             ActionLockManager.Instance.TryRemoveLock(this);
-            return;
+            return false;
         }
         Action action = actionStack.Pop();
         if(action == null){
             print("nothing to undo");
             ActionLockManager.Instance.TryRemoveLock(this);
-            return;
+            return false;
         }
         actionRedoStack.Push(action);
         //ActionLockManager.Instance.TryRemoveLock(this);
@@ -305,26 +305,27 @@ public class PaperStateManager: Singleton<PaperStateManager>
         {
             ProcessRotateAction((PlayerRotate)action.GetInverse(), ActionCallEnum.UNDO);
         }
+        return true;
         //foldAnimator.Fold(fd.GetInverse(), null, fromStack: true);
         //Debug.Log($"undid {action} from stack");
     }
 
-    public void RedoAction()
+    public bool RedoAction()
     {   
         if(ActionLockManager.Instance.IsLocked || !ActionLockManager.Instance.TryTakeLock(this)){
             print("cannot undo: lock taken");
-            return;
+            return false;
         }
         if(actionRedoStack.Count == 0){
             print("nothing to redo");
             ActionLockManager.Instance.TryRemoveLock(this);
-            return;
+            return false;
         }
         Action action = actionRedoStack.Pop();
         if(action == null){
             print("nothing to undo");
             ActionLockManager.Instance.TryRemoveLock(this);
-            return;
+            return false;
         }
         actionStack.Push(action);
        // ActionLockManager.Instance.TryRemoveLock(this);
@@ -342,7 +343,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
         {
             ProcessRotateAction((PlayerRotate)action, ActionCallEnum.REDO);
         }
-        
+        return true;
     }
 
 }
