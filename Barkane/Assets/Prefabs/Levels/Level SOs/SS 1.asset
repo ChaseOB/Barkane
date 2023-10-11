@@ -18,7 +18,7 @@ MonoBehaviour:
   levelObject: {fileID: 202415309129664681, guid: 75832ab341db34c4e9e1c173a5d2368e, type: 3}
   theme: {fileID: 11400000, guid: f76e961422aa7114fa728acfcd66523b, type: 2}
   cosmeticUnlock: 
-  ThreeStarMaxFolds: 2
-  TwoStarMaxFolds: 4
-  OneStarMaxFolds: 6
+  ThreeStarMaxFolds: 8
+  TwoStarMaxFolds: 12
+  OneStarMaxFolds: 16
   CutsceneSceneIndex: -1
