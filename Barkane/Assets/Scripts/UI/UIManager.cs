@@ -172,6 +172,7 @@ public class UIManager : Singleton<UIManager>
         SaveSystem.Current.SetCosmetic(cosmetic);
         cosmeticBackground.sprite = cosmeticHighlight;
         cosmeticText.text = "Equipped";
+        SaveSystem.SaveGame();
     }
 
     public void ToggleEndLevelGroup(bool val)

@@ -37,7 +37,7 @@ public class LevelSelectButton : MonoBehaviour
     public void CheckStars()
     {
         int numFolds = SaveSystem.Current.GetFolds(level.levelName);
-        print(level.levelName + " " + numFolds);
+//        print(level.levelName + " " + numFolds);
         starsUI.DisplayStars(level, numFolds);
     }
 

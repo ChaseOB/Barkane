@@ -24,6 +24,8 @@ public class CosmeticManager : Singleton<CosmeticManager>
 
     public void SelectCosmetic(string cosmeticName)
     {
+        if(cosmeticName == "" || cosmeticName == null)
+            cosmeticName = "None";
         foreach(CosmeticButton button in buttons) {
             button.ToggleSelectionImage(button.cosmeticName.Equals(cosmeticName));
         }
@@ -31,7 +33,7 @@ public class CosmeticManager : Singleton<CosmeticManager>
         cosmeticString = cosmeticName;
 
         SaveSystem.Current.SetCosmetic(cosmeticName);
-       // SaveSystem.SaveGame();
+        SaveSystem.SaveGame();
         playerCosmetics.EnableCosmetic(cosmeticName);
     }
 
