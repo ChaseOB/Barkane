@@ -27,7 +27,7 @@ public class CutsceneManager : MonoBehaviour
 
     private void Start() {
         if(NextLevel != null)
-            LevelManager.Instance.UnlockLevel(NextLevel);
+            LevelManager.Instance?.UnlockLevel(NextLevel);
         if(disabled)
         {
             EndCutscene();

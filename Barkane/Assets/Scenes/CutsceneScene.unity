@@ -1622,10 +1622,58 @@ PrefabInstance:
       propertyPath: cutsceneManager
       value: 
       objectReference: {fileID: 621503655}
+    - target: {fileID: 6563210800388030128, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.141715
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563210800388030128, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.141715
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563210800388030128, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.141715
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563210800388030128, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -17
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563210800388030128, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -549
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563210800388030129, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6700319b8f9adb644b38ccb53a1f63ee, type: 3}
+    - target: {fileID: 6563210800388030129, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563210800388030129, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563210800388030129, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6563210800388030131, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6563210801204949717, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4653638dd26d5c545bbd390a4c5bd8b6, type: 3}
+    - target: {fileID: 6563210801204949717, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_SpriteState.m_SelectedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6700319b8f9adb644b38ccb53a1f63ee, type: 3}
+    - target: {fileID: 6563210801204949717, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_SpriteState.m_HighlightedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4653638dd26d5c545bbd390a4c5bd8b6, type: 3}
     - target: {fileID: 6563210801204949717, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -1639,6 +1687,14 @@ PrefabInstance:
       value: CutsceneManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6563210801204949719, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563210801781442159, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6563210802135781152, guid: 10d07f84fcb588642a70aab385a89fb2, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
