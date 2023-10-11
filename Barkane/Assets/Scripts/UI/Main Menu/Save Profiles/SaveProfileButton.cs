@@ -20,7 +20,7 @@ public class SaveProfileButton : ProfileButton
     private SaveProfile profile;
     private int index;
 
-    private int numLevels = 14;
+    private int numLevels = 18;
 
     public void SetProfile(SaveProfile profile, int ind)
     {

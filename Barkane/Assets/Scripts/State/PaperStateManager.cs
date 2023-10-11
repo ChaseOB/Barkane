@@ -289,6 +289,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
             ActionLockManager.Instance.TryRemoveLock(this);
             return false;
         }
+        TileSelector.Instance.DeselectJoint();
         actionRedoStack.Push(action);
         //ActionLockManager.Instance.TryRemoveLock(this);
         if(foldAnimator == null)
@@ -327,6 +328,7 @@ public class PaperStateManager: Singleton<PaperStateManager>
             ActionLockManager.Instance.TryRemoveLock(this);
             return false;
         }
+        TileSelector.Instance.DeselectJoint();
         actionStack.Push(action);
        // ActionLockManager.Instance.TryRemoveLock(this);
         if(foldAnimator == null)
