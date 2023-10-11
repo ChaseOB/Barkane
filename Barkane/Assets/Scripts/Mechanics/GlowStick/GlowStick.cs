@@ -154,8 +154,6 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
 
             
             var v = o + settings.radius * rFactor * (sin * n + cos * t);
-            if(flip)
-                print(v);
             vs[i] = v;
             // ns[i] = sin * n + cos * t;
         }
