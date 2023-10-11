@@ -20,12 +20,16 @@ public class PauseManager : Singleton<PauseManager>
 
     public void TogglePause()
     {
+       
         if(!isPaused) Pause();
+        else if(options.activeSelf)
+            ToggleOptions(false);
         else UnPause();
     }
 
     public void ToggleOptions(bool val)
     {
+        EventSystem.current.GetComponent<EventSystem>().SetSelectedGameObject(null);
         PauseMenu.SetActive(!val);
         options.SetActive(val);
     }
