@@ -12,13 +12,13 @@ public class CosmeticButton : MonoBehaviour
 
     private void Start() {
         if(unlockDefault)
-            UnlockCosmetic();
+            UnlockCosmetic(true);
     }
 
-    public void UnlockCosmetic()
+    public void UnlockCosmetic(bool unlock)
     {
-        lockIcon.SetActive(false);
-        button.SetActive(true);
+        lockIcon.SetActive(!unlock);
+        button.SetActive(unlock);
     }
 
     public void ToggleSelectionImage(bool toggle)
