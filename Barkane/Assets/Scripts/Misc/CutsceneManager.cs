@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.Video;
-using UnityEditor.SearchService;
 using UnityEngine.SceneManagement;
 
 public class CutsceneManager : MonoBehaviour
