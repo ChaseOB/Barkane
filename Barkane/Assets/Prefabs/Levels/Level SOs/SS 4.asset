@@ -17,7 +17,7 @@ MonoBehaviour:
   levelNum: 4
   levelObject: {fileID: 6721457303693984174, guid: 0a871694edc4afe4f9b23d18065f12f4, type: 3}
   theme: {fileID: 11400000, guid: f76e961422aa7114fa728acfcd66523b, type: 2}
-  cosmeticUnlock: 
+  cosmeticUnlock: Antlers
   ThreeStarMaxFolds: 8
   TwoStarMaxFolds: 10
   OneStarMaxFolds: 12

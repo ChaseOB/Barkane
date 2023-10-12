@@ -15,7 +15,7 @@ MonoBehaviour:
   levelName: SS 1
   worldNum: 1
   levelNum: 1
-  levelObject: {fileID: 6766916127023255197, guid: d7a7cefac6158554d9a9b0ee30ffbd76, type: 3}
+  levelObject: {fileID: 4743012361813556641, guid: d7516759e85d26e4eacfe8793b921828, type: 3}
   theme: {fileID: 11400000, guid: f76e961422aa7114fa728acfcd66523b, type: 2}
   cosmeticUnlock: 
   ThreeStarMaxFolds: 6

@@ -15,9 +15,10 @@ MonoBehaviour:
   levelName: GC 4
   worldNum: 2
   levelNum: 4
-  levelObject: {fileID: 536032829354533646, guid: 6d044a1f6f49f1940b4dc809a8bd85b4, type: 3}
+  levelObject: {fileID: 7851273026855746123, guid: 778734c768a538f42bee37094d8d72e5, type: 3}
   theme: {fileID: 11400000, guid: 696d7d1b257994f499495bd456579486, type: 2}
-  cosmeticUnlock: 
-  ThreeStarMaxFolds: 10
-  TwoStarMaxFolds: 0
-  OneStarMaxFolds: 0
+  cosmeticUnlock: SwagGlasses
+  ThreeStarMaxFolds: 8
+  TwoStarMaxFolds: 12
+  OneStarMaxFolds: 20
+  CutsceneSceneIndex: -1
