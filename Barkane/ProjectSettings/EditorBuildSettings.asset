@@ -26,5 +26,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SS to GC.unity
     guid: 44039ada8b9aa384c967cc98316f2032
+  - enabled: 1
+    path: Assets/Scenes/After GC.unity
+    guid: 4e220a65ce48ced4fbac8bc1c31fd228
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 546b0a8d0a8a7c2408d473c96ca96d63, type: 2}
