@@ -129,7 +129,10 @@ public class CutsceneManager : MonoBehaviour
         if(NextLevel != null)
             LevelManager.Instance.LoadLevel(NextLevel.levelName);     
         if(NextSceneIndex != -1)
+        {
             SceneManager.LoadScene(NextSceneIndex);
+            Cursor.visible = true;
+        }
     }
 }
 
