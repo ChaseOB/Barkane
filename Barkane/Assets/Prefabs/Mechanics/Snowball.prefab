@@ -54,11 +54,10 @@ MonoBehaviour:
   playerContact: 0
   snowballCollidingMask:
     serializedVersion: 2
-    m_Bits: 9280
+    m_Bits: 173120
   validLocMask:
     serializedVersion: 2
     m_Bits: 64
-  moveDuration: 0.25
 --- !u!65 &3008161187667592638
 BoxCollider:
   m_ObjectHideFlags: 0
