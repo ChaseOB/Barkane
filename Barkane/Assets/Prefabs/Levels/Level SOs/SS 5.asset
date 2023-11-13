@@ -19,6 +19,6 @@ MonoBehaviour:
   theme: {fileID: 11400000, guid: f76e961422aa7114fa728acfcd66523b, type: 2}
   cosmeticUnlock: 
   ThreeStarMaxFolds: 6
-  TwoStarMaxFolds: 0
-  OneStarMaxFolds: 0
+  TwoStarMaxFolds: 8
+  OneStarMaxFolds: 12
   CutsceneSceneIndex: -1
