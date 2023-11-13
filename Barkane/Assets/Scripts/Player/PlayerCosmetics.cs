@@ -1,17 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class PlayerCosmetics : Singleton<PlayerCosmetics>
 {
     [SerializeField] private List<GameObject> CosmeticGOs = new List<GameObject>();
     [SerializeField] private List<string> CosmeticNames = new List<string>();
 
+    public Material PlayerMat;
+
     private GameObject enabledCosmetic;
     private Dictionary<string, GameObject> cosmeticDict = new Dictionary<string, GameObject>();
 
     private void Awake() {
-        InitializeSingleton(this.gameObject);
+        InitializeSingleton(gameObject);
 
         if(CosmeticGOs.Count != CosmeticNames.Count)
             Debug.LogWarning("Cosmetic GO and names counts are not equal");
@@ -46,6 +46,19 @@ public class PlayerCosmetics : Singleton<PlayerCosmetics>
         enabledCosmetic?.SetActive(false);
         enabledCosmetic = null;
     }
+
+    // public void DisableCosmetic(Cosmetic.CosmeticEnum)
+    // {
+
+    // }
+}
+
+[System.Serializable]
+public class CosmeticData
+{
+    public Cosmetic.CosmeticEnum cosmeticEnum;
+    public GameObject gameObject;
+    public Texture2D playerTex;
 }
 
 
