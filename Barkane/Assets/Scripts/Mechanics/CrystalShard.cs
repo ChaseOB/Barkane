@@ -78,9 +78,8 @@ public class CrystalShard : MonoBehaviour, IThemedItem
         {
             goal?.CollectShard(-1);
             children.SetActive(true);
-            //AudioManager.Instance?.Play("Ding");
             collected = false;
-            ActivateParticles(true); //TODO: check this
+            ActivateParticles(particlesActive); 
             collectedMove = -1;
         }
     }
@@ -96,9 +95,14 @@ public class CrystalShard : MonoBehaviour, IThemedItem
         }
     }
 
-    public void ActivateCrystal(bool val)
+    public void ActivateCrystal(bool val, bool fromGlowstick = false)
     {
-        print("activating Crystal " + val);
+        //Edge case when player is standing on crystal and then it gets enabled by glowstick. Need to store for Undo/Redo
+        if(fromGlowstick && !val)
+        {
+            UnCollect();
+        }
+
         crystalActive = val;
         if(crystalActive) {
             model.SetActive(true);
@@ -112,7 +116,7 @@ public class CrystalShard : MonoBehaviour, IThemedItem
     }
 
     private void OnGlowstickChange(object sender, GlowStickLogic.GlowStickArgs e) {
-        if(e.state == GlowstickState.OFF)
+        if(e.state == GlowstickState.OFF || e.state == GlowstickState.PRIMED)
             ActivateParticles(false);
         if(e.state == GlowstickState.CRACKED)
             ActivateParticles(true);
@@ -130,7 +134,6 @@ public class CrystalShard : MonoBehaviour, IThemedItem
     private void OnTriggerStay(Collider other) {
         if(!other.TryGetComponent<PlayerMovement>(out var p)) return;
         Collect();
-        
     }
     
     private void OnTriggerExit(Collider other) {

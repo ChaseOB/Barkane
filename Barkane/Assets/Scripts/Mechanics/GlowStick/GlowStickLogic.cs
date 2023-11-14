@@ -25,7 +25,7 @@ public class GlowStickLogic : MonoBehaviour
         {
             lifetime = l;
             state = s;
-            this.source = souce;
+            source = souce;
         }
     }
 
@@ -56,13 +56,10 @@ public class GlowStickLogic : MonoBehaviour
         {
             HandleFold(jointInFold, args.afterFoldNum, args.source);
         }
-
-    
     }
 
     private void HandleUndoFold(int foldnum, ActionCallEnum source)
     {
-        print ("foldnum" + foldnum);
         if(foldnum > expirationFoldNum) return;
         else if(foldnum == expirationFoldNum )
         {

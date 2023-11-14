@@ -134,10 +134,9 @@ public class Goal : MonoBehaviour, IThemedItem
         goalPlane.SetActive(val);
     }
 
-    public void SetInGlowstickRange (bool val = true)
+    public void SetInGlowstickRange(bool val = true)
     {
-        //if(glowstickActive)
-            inGlowstickRange = val;
+        inGlowstickRange = val;
         ActivateGoal(CheckIfGoalActive());
     }
 
@@ -158,7 +157,7 @@ public class Goal : MonoBehaviour, IThemedItem
     }
 
     private void OnGlowstickChange(object sender, GlowStickLogic.GlowStickArgs e) {
-        if(e.state == GlowstickState.OFF) {
+        if(e.state == GlowstickState.OFF || e.state == GlowstickState.PRIMED) {
             glowstickActive = false;
             ActivateParticles(false);
         }
