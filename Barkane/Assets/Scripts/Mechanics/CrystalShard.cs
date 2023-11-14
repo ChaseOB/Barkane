@@ -98,6 +98,7 @@ public class CrystalShard : MonoBehaviour, IThemedItem
 
     public void ActivateCrystal(bool val)
     {
+        print("activating Crystal " + val);
         crystalActive = val;
         if(crystalActive) {
             model.SetActive(true);

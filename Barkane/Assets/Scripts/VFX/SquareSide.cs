@@ -308,7 +308,8 @@ public class SquareSide : MonoBehaviour, IRefreshable
         #if UNITY_EDITOR
             return;
         #endif
-        
+
+        #pragma warning disable 0162
         visualParent = new("Visuals");
        // visualParent.transform.parent = this.transform;
         visualParent.transform.localPosition = transform.position;
@@ -322,6 +323,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
         visualParent.layer = LayerMask.NameToLayer("HoverSquare");
         BoxCollider c = visualParent.AddComponent<BoxCollider>();
         c.size = new Vector3(2, 0.02f, 2);
+        #pragma warning restore 0162
     }
 
     #region overlap

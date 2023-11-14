@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 public class PlayerCosmetics : Singleton<PlayerCosmetics>
@@ -39,6 +40,10 @@ public class PlayerCosmetics : Singleton<PlayerCosmetics>
         }
         enabledCosmetic = go;
         enabledCosmetic.SetActive(true);
+
+        // var c = Cosmetic.CosmeticEnum.GLASSES;
+        // string s = c.ToString();
+        // Cosmetic.CosmeticEnum e = (Cosmetic.CosmeticEnum) Enum.Parse(typeof(Cosmetic.CosmeticEnum), s);
     }
 
     public void DisableAllCosmetics()

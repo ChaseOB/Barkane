@@ -7,6 +7,9 @@ public class Cosmetic
         FLOWERHAT,
         ANTLERS,
         GLASSES,
+        CRANE,
+        KNIFE,
+        POPSICLE,
     } 
 
     public enum CosmeticType

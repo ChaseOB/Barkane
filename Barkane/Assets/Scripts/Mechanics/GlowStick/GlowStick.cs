@@ -140,6 +140,8 @@ public class GlowStick : SidedJointAddon, IDynamicMesh<GlowstickRenderSettings>,
         {
             m.SetTriangles(settings.indices, 0, false);
         }
+
+        m.RecalculateBounds();
     }
 
     private void Ring(

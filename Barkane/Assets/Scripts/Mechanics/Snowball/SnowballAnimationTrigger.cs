@@ -11,8 +11,6 @@ public class SnowballAnimationTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if(playerMask == (playerMask | (1 << other.gameObject.layer))){
-          //  print("collide");
-            //print(Time.time);
             snowball.OnPlayerCollide();
         }
     }

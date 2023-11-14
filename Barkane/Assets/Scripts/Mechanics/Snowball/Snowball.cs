@@ -77,12 +77,7 @@ public class Snowball : MonoBehaviour
     //returns true if you can push the snowball in the given (world space) direction
     public bool CheckIfCanPushSnowball(Vector3 direction)
     {   
-
         Vector3 convertedDir = direction.normalized * 2;
-        
-        print(center.position);
-        print(convertedDir);
-
 
         //1. Raycast in direction to make sure square is not blocked
         if(Physics.Raycast(center.position, direction, 2, snowballCollidingMask)) 
@@ -115,9 +110,7 @@ public class Snowball : MonoBehaviour
         {
             if(move.moveNum == snowballMoves.Peek().moveNum)
                 StartCoroutine(AnimateSnowballReverse());
-
         }
-
     }
 
 
@@ -125,16 +118,11 @@ public class Snowball : MonoBehaviour
     private IEnumerator AnimateSnowballNormal(PlayerMove move) {
         Vector3 current = transform.position;
         float start = Time.time;
-       // print("animation buffered");
-      //  print(Time.time);
+
         yield return new WaitUntil(() => playerContact);
-      //  print("starting animation");
-       // print(Time.time);
+
         float end = Time.time;
-       // print(end - start);
         float remaining = moveDuration - (end - start);
-        //rint(remaining);
-        //animate 
 
         float t = 0;
         while (t < remaining)
@@ -146,13 +134,11 @@ public class Snowball : MonoBehaviour
         }
         transform.position = target;
         playerContact = false;
-        //update parent
         
         SnowballMoveData data = new(current, target, remaining, move.moveNum);
-       // print(data);
         snowballMoves.Push(data);
 
-       FindClosestFace();
+        FindClosestFace();
     }
 
     private IEnumerator AnimateSnowballReverse()
