@@ -60,12 +60,13 @@ public class AudioManager : Singleton<AudioManager>
 
 
         //menuLowPass = audioListenerObj.GetComponent<AudioLowPassFilter>();
-        SetSFXVolume(sfxVolume * 100);
-        SetMusicVolume(musicVolume * 100);
+       
     }
 
     private void Start()
     {
+        SetPlayerSFXVolume(PlayerPrefs.GetInt("sfx", 50));
+        SetPlayerMusicVolume(PlayerPrefs.GetInt("music", 50));
         PlayMusic(false);
     }
 
@@ -207,7 +208,6 @@ public class AudioManager : Singleton<AudioManager>
     {
         value = (Mathf.Clamp(value, 0, 100)/100.0f);
         playerSFXVolume = value;
-
         if (_sounds == null)
             return;
         foreach (Sound s in _sounds)
