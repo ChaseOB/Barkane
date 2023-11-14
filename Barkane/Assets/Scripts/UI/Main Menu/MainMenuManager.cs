@@ -12,6 +12,7 @@ public class MainMenuManager : Singleton<MainMenuManager>
     public GameObject mainMenu;
     public GameObject levelSelect;
     public GameObject credits;
+    public GameObject options;
     public GameObject cosmetics;
     public GameObject profileSelect;
     public GameObject currentProfile;
@@ -53,6 +54,12 @@ public class MainMenuManager : Singleton<MainMenuManager>
         LevelManager.Instance.LoadLevel(level);
     }
 
+    public void ToggleOptions(bool toggle)
+    {
+        mainMenu.SetActive(!toggle);
+        options.SetActive(toggle);
+    }
+
     public void ToggleCredits(bool toggle)
     {
         credits.SetActive(toggle);
@@ -71,7 +78,6 @@ public class MainMenuManager : Singleton<MainMenuManager>
 
     public void ToggleDeleteScreen(bool toggle)
     {
-        //currentProfile.SetActive(!toggle);
         deleteMenu.SetActive(toggle);
     }
 
