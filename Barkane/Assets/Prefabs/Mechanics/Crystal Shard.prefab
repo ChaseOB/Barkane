@@ -375,30 +375,6 @@ PrefabInstance:
       propertyPath: ShapeModule.radius.value
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
-      propertyPath: InitialModule.startSize.scalar
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
-      propertyPath: InitialModule.startSpeed.scalar
-      value: 0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
-      propertyPath: InitialModule.startLifetime.scalar
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.key0.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.key0.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1079968537921140493, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
-      propertyPath: ColorModule.gradient.maxGradient.key0.r
-      value: 0.7587352
-      objectReference: {fileID: 0}
     - target: {fileID: 1079968538550384884, guid: 71042d0eeb36b4861a1f40bf0371fdd7, type: 3}
       propertyPath: m_Name
       value: CrystalSparkleParticle
