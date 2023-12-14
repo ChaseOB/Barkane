@@ -143,7 +143,7 @@ public class LevelManager : Singleton<LevelManager>
         playerInstance= Instantiate(playerPrefab, playerPos.position, Quaternion.identity);
 
         FollowTarget.Instance.SetTargetAndPosition(playerInstance.GetComponent<PlayerMovement>().cameraTrackingTransform);    
-        VFXManager.Instance.Refresh();
+        VFXManager.Instance.UpdateTheme(level.theme);
        // paper.PopulateOcclusionMap();
         FindObjectOfType<TileSelector>().ReloadReferences();
         currLevelTheme = level.theme;
