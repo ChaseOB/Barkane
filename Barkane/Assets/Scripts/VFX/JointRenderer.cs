@@ -49,6 +49,8 @@ namespace BarkaneJoint
         public bool Debug;
         public Vector3 offset = Vector3.zero;
 
+        private Vector3 INDICATOR_OFFSET = new(0.2f, 0.07f, 0f);
+
 
         public float tStart;
         public float tMid;
@@ -144,7 +146,7 @@ namespace BarkaneJoint
         void LateUpdate()
         {
             UpdateMesh();
-            indicator.transform.localPosition = Quaternion.Inverse(transform.parent.localRotation) * offset;
+            indicator.transform.localPosition = Quaternion.Inverse(transform.parent.localRotation) * offset - INDICATOR_OFFSET;
         }
 
         /// <summary>
@@ -291,6 +293,7 @@ namespace BarkaneJoint
 
         private void UpdateVertexNormals()
         {
+            if(a1 == null) return;
             for (int i = 0; i <= settings.creaseSegmentCount; i++)
             {
                 #region vertex filling
@@ -305,7 +308,6 @@ namespace BarkaneJoint
                 vB1[i] = pivotBaseMid + jointGeometry.nJ2B ;
                 vA2[i] = pivotBaseMid + jointGeometry.nJ2A ;
                 vB2[i] = pivotBaseMid + jointGeometry.nJ2B ;
-
                 List<Vector3Int> squarepositions = new List<Vector3Int>()
                 {
                     Vector3Int.RoundToInt(a1.parentSquare.transform.position),
