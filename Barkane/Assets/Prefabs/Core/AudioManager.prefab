@@ -46,13 +46,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - name: test
-    clip: {fileID: 8300000, guid: b5e39b53bf57e04479fac8d2111f9aea, type: 3}
-    volume: 1
-    pitch: 0
-    loop: 0
-    doRandomPitch: 0
-    source: {fileID: 0}
   - name: Fail
     clip: {fileID: 8300000, guid: e939106eaef72c14cb4625aca55790cb, type: 3}
     volume: 0.343
@@ -77,6 +70,27 @@ MonoBehaviour:
   - name: Win
     clip: {fileID: 8300000, guid: 8d824cf7e5421fd4194199c78095906a, type: 3}
     volume: 0.54
+    pitch: 0
+    loop: 0
+    doRandomPitch: 0
+    source: {fileID: 0}
+  - name: Button Hover
+    clip: {fileID: 8300000, guid: c9e329d71816f6b428975314e9c9d7ca, type: 3}
+    volume: 1
+    pitch: 0
+    loop: 0
+    doRandomPitch: 0
+    source: {fileID: 0}
+  - name: Button Click
+    clip: {fileID: 8300000, guid: 4dff2b57c13d0ae499cd44f34523d3cd, type: 3}
+    volume: 0.54
+    pitch: 0
+    loop: 0
+    doRandomPitch: 0
+    source: {fileID: 0}
+  - name: Button Leave
+    clip: {fileID: 8300000, guid: 11c26adb408c4394790cfecdb2e1e520, type: 3}
+    volume: 0.488
     pitch: 0
     loop: 0
     doRandomPitch: 0
