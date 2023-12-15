@@ -297,7 +297,7 @@ public class TMPTextTyper : MonoBehaviour
     {
         if (coroutine != null) StopCoroutine(coroutine);
 
-        m_TextMeshPro.text = text;
+        m_TextMeshPro.text = text.Replace("\\", System.Environment.NewLine);
         
         StartTyping();
     }
