@@ -29,7 +29,7 @@ public class AudioManager : Singleton<AudioManager>
 
     public static float playerMusicVolume = 0.5f;
     public static float playerSFXVolume = 0.5f;
-
+    public bool stopMusic = false;
 
     void Awake()
     {
@@ -91,7 +91,8 @@ public class AudioManager : Singleton<AudioManager>
     }
 
     public void PlayMusic(int list, int ind, bool fade = true)
-    {
+    {   
+        stopMusic = false;
         if (musicLists == null)
             return;
 
@@ -157,7 +158,7 @@ public class AudioManager : Singleton<AudioManager>
     }
 
     void Update() {
-        if (!source.isPlaying) {
+        if (!source.isPlaying && !stopMusic) {
             currentIndex++;
             if (currentIndex >= musicLists[currentArray].Tracks.Length) {
                 currentIndex = 0;
@@ -179,6 +180,12 @@ public class AudioManager : Singleton<AudioManager>
         }
 
         s.source.Stop();
+    }
+
+    public void StopMusic()
+    {
+        source.Pause();
+        stopMusic = true;
     }
 
 

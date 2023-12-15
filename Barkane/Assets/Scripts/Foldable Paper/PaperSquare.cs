@@ -135,16 +135,12 @@ public class PaperSquare : MonoBehaviour
             if(foldablePaper.playerSquare == null) {
                 playerOccupied = true;
                 foldablePaper.playerSquare = this;
-//                print("player entering " + gameObject.name);
             }
-            else{
-              //  print("player entering " + gameObject.name + " but occupied square is not null");
-            }
+
         }
         else {
             playerOccupied = false;
             foldablePaper.playerSquare = null;
-          //  print("player leaving " + gameObject.name);
         }
     }
 

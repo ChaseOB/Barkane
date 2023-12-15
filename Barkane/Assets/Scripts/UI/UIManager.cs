@@ -174,7 +174,7 @@ public class UIManager : Singleton<UIManager>
         string cosmetic = cosmeticUnlocks[0];
         cosmeticImage.sprite = cosmeticSprites[cosmeticStrings.IndexOf(cosmetic)];
         cosmeticBackground.sprite = cosmeticNormal;
-        cosmeticText.text = "Click to Equipt";
+        cosmeticText.text = "Click to Equip";
         cosmeticGroup.SetActive(true);
     }
 
