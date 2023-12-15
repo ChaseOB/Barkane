@@ -225,7 +225,7 @@ public class LevelManager : Singleton<LevelManager>
         //Unlock Cosmetics if there are any
         if(level.cosmeticUnlock != string.Empty){
             SaveSystem.Current.SetCosmeticUnlock(level.cosmeticUnlock, true);
-            UIManager.Instance.SetCosmetic(level.cosmeticUnlock);
+            UIManager.Instance.AddCosmetic(level.cosmeticUnlock);
         }
 
         //unlock next level

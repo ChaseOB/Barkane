@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -36,7 +37,8 @@ public class UIManager : Singleton<UIManager>
     public GameObject cosmeticButton;
 
     private bool showCosmetic = false;
-    private string cosmetic;
+   // private string cosmetic;
+    private List<string> cosmeticUnlocks;
     private int glowstickHealth;
     private int numFolds;
 
@@ -113,6 +115,11 @@ public class UIManager : Singleton<UIManager>
         string s = numFolds < 1000 ? numFolds.ToString() : "999+";
         foldCountText.text = s;
         yourFoldCountText.text = s;
+
+        if(numFolds >= 50)
+        {
+            AddCosmetic("knife");
+        }
     }
 
     private void OnGlowstickChange(object sender, GlowStickLogic.GlowStickArgs e) {
@@ -132,13 +139,14 @@ public class UIManager : Singleton<UIManager>
             glowstickSprite.sprite = glowstickPrimed;
     }
 
-    public void SetCosmetic(string cosmetic)
+    public void AddCosmetic(string cosmetic)
     {
-        if(cosmetic == null || !cosmeticStrings.Contains(cosmetic))
+        if(cosmetic == null || !cosmeticStrings.Contains(cosmetic) || cosmeticUnlocks.Contains(cosmetic))
             return;
-        cosmeticImage.sprite = cosmeticSprites[cosmeticStrings.IndexOf(cosmetic)];
+        //cosmeticImage.sprite = cosmeticSprites[cosmeticStrings.IndexOf(cosmetic)];
         showCosmetic = true;
-        this.cosmetic = cosmetic;
+        //this.cosmetic = cosmetic;
+        cosmeticUnlocks.Add(cosmetic);
     }
 
     public void EndLevel()
@@ -155,25 +163,44 @@ public class UIManager : Singleton<UIManager>
         bestStarsUI.DisplayStars(level, bestFolds);
 
         if(showCosmetic) {
-            cosmeticBackground.sprite = cosmeticNormal;
-            cosmeticText.text = "Click to Equipt";
-            cosmeticGroup.SetActive(true);
-            showCosmetic = false;
+            ShowNextCosmetic();
         }
         else
             endLevelGroup.SetActive(true);
+    }
+
+    public void ShowNextCosmetic()
+    {
+        string cosmetic = cosmeticUnlocks[0];
+        cosmeticImage.sprite = cosmeticSprites[cosmeticStrings.IndexOf(cosmetic)];
+        cosmeticBackground.sprite = cosmeticNormal;
+        cosmeticText.text = "Click to Equipt";
+        cosmeticGroup.SetActive(true);
     }
 
 
     public void EquiptCosmetic()
     {
         cosmeticButton.SetActive(false);
-        SaveSystem.Current.SetCosmetic(cosmetic);
+        SaveSystem.Current.SetCosmetic(cosmeticUnlocks[0]);
         cosmeticBackground.sprite = cosmeticHighlight;
         cosmeticText.text = "Equipped";
         SaveSystem.SaveGame();
     }
 
+    public void TryShowNextCosmetic()
+    {
+        cosmeticUnlocks.RemoveAt(0);
+        if(cosmeticUnlocks.Count == 0)
+        {
+            showCosmetic = false;
+            cosmeticGroup.SetActive(true);
+        }
+        else{
+            ShowNextCosmetic();
+        }
+    }
+    
     public void ToggleEndLevelGroup(bool val)
     {
         endLevelGroup.SetActive(val);

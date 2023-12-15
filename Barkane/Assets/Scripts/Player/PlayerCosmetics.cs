@@ -7,6 +7,8 @@ public class PlayerCosmetics : Singleton<PlayerCosmetics>
     [SerializeField] private List<string> CosmeticNames = new List<string>();
 
     public Material PlayerMat;
+    public Material BloodyMat;
+    public MeshRenderer meshRenderer;
 
     private GameObject enabledCosmetic;
     private Dictionary<string, GameObject> cosmeticDict = new Dictionary<string, GameObject>();
@@ -40,6 +42,7 @@ public class PlayerCosmetics : Singleton<PlayerCosmetics>
         }
         enabledCosmetic = go;
         enabledCosmetic.SetActive(true);
+        meshRenderer.material = name == "knife" ? BloodyMat : PlayerMat;
 
         // var c = Cosmetic.CosmeticEnum.GLASSES;
         // string s = c.ToString();

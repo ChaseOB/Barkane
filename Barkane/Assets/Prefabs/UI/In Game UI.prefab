@@ -647,7 +647,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2619972439884234027
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2426,10 +2426,16 @@ MonoBehaviour:
   - Blossom
   - Antlers
   - SwagGlasses
+  - crane
+  - popsicle
+  - knife
   cosmeticSprites:
   - {fileID: 21300000, guid: dbbd9b5886663084eb7efb08f937e7a3, type: 3}
   - {fileID: 21300000, guid: 7b664e8d24bc47d4c975e032697a8127, type: 3}
   - {fileID: 21300000, guid: 0f2208ef2383d5740b96cd25f8b9084d, type: 3}
+  - {fileID: 21300000, guid: c1ef4a112a6e9eb429ed422a49bb3389, type: 3}
+  - {fileID: 21300000, guid: bd7e5bb7078c49c4b9f6efeb283c6455, type: 3}
+  - {fileID: 21300000, guid: 053b2c7ff0df88948865b96d279ce03b, type: 3}
   cosmeticNormal: {fileID: 21300000, guid: 31740d6b4bb421042a0b0084c0eef121, type: 3}
   cosmeticHighlight: {fileID: 21300000, guid: 76e58259973a960429d87f92482816ec, type: 3}
   cosmeticBackground: {fileID: 4019383403372175019}
