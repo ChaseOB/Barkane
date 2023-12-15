@@ -394,7 +394,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2907904101578823785, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: unlockDefault
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2907904101578823790, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_Pivot.x
@@ -5103,6 +5103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   videoPanel: {fileID: 910501573}
   videoPlayer: {fileID: 618218678}
+  text: {fileID: 1402306415}
 --- !u!4 &504943383
 Transform:
   m_ObjectHideFlags: 0
@@ -12214,7 +12215,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2907904101578823785, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: unlockDefault
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2907904101578823790, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_Pivot.x
@@ -13175,7 +13176,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2907904101578823785, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: unlockDefault
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2907904101578823790, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_Pivot.x
@@ -14267,7 +14268,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1402306416
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15532,7 +15533,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 250904981209127175, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: SwagGlasses
+      value: flag
       objectReference: {fileID: 0}
     - target: {fileID: 250904981209127175, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -15648,7 +15649,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2907904101578823791, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2907904102715187475, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_Layer
@@ -15665,30 +15666,30 @@ PrefabInstance:
     - target: {fileID: 4130857891216469285, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 0f2208ef2383d5740b96cd25f8b9084d, type: 3}
+      objectReference: {fileID: 21300000, guid: 38924cae589ede545a46c0b79fcda589, type: 3}
     - target: {fileID: 5319463216166223678, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7166487439223360871, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.12435162
+      value: 0.14193493
       objectReference: {fileID: 0}
     - target: {fileID: 7166487439223360871, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.12435162
+      value: 0.14193493
       objectReference: {fileID: 0}
     - target: {fileID: 7166487439223360871, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.12435162
+      value: 0.14193493
       objectReference: {fileID: 0}
     - target: {fileID: 7166487439223360871, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 493.9
+      value: 490.4
       objectReference: {fileID: 0}
     - target: {fileID: 7166487439223360871, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 251.7
+      value: 256.6
       objectReference: {fileID: 0}
     - target: {fileID: 8374947674929400560, guid: 5760750ba7baa1e45999bf30402c3a18, type: 3}
       propertyPath: m_Layer

@@ -454,6 +454,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "TextShow",
+                    "type": "Button",
+                    "id": "c31a4e4a-84a7-4cce-a4b0-e258716fb9ed",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -927,6 +936,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "ConventionMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8569dabe-c09c-46ed-b411-d43996870513",
+                    "path": "<Keyboard>/rightBracket",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TextShow",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

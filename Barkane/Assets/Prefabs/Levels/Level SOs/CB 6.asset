@@ -17,7 +17,7 @@ MonoBehaviour:
   levelNum: 6
   levelObject: {fileID: 5094416910311288095, guid: 7e78348930bf13b488e61eaafaaabbf8, type: 3}
   theme: {fileID: 11400000, guid: 23f30d238faa36944a41821ae891be95, type: 2}
-  cosmeticUnlock: 
+  cosmeticUnlock: crane
   ThreeStarMaxFolds: 8
   TwoStarMaxFolds: 14
   OneStarMaxFolds: 20

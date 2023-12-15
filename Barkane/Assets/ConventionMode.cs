@@ -10,6 +10,14 @@ public class ConventionMode : MonoBehaviour
     public GameObject videoPanel;
     public VideoPlayer videoPlayer;
     private Coroutine c;
+    public GameObject text;
+
+    public void OnTextShow(InputValue value)
+    {
+        if(!value.isPressed)
+            return;
+        text.SetActive(!text.activeSelf);
+    }
 
     public void OnConventionMode(InputValue value)
     {
