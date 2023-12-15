@@ -17,7 +17,7 @@ MonoBehaviour:
   levelNum: 6
   levelObject: {fileID: 7225610573936878141, guid: c04010fc176fd164c83bd4f028197fff, type: 3}
   theme: {fileID: 11400000, guid: 696d7d1b257994f499495bd456579486, type: 2}
-  cosmeticUnlock: popsicle
+  cosmeticUnlock: flag
   ThreeStarMaxFolds: 20
   TwoStarMaxFolds: 30
   OneStarMaxFolds: 50

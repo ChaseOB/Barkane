@@ -2417,6 +2417,7 @@ MonoBehaviour:
   - crane
   - popsicle
   - knife
+  - flag
   cosmeticSprites:
   - {fileID: 21300000, guid: dbbd9b5886663084eb7efb08f937e7a3, type: 3}
   - {fileID: 21300000, guid: 7b664e8d24bc47d4c975e032697a8127, type: 3}
@@ -2424,6 +2425,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: c1ef4a112a6e9eb429ed422a49bb3389, type: 3}
   - {fileID: 21300000, guid: bd7e5bb7078c49c4b9f6efeb283c6455, type: 3}
   - {fileID: 21300000, guid: 053b2c7ff0df88948865b96d279ce03b, type: 3}
+  - {fileID: 21300000, guid: 38924cae589ede545a46c0b79fcda589, type: 3}
   cosmeticNormal: {fileID: 21300000, guid: 31740d6b4bb421042a0b0084c0eef121, type: 3}
   cosmeticHighlight: {fileID: 21300000, guid: 76e58259973a960429d87f92482816ec, type: 3}
   cosmeticBackground: {fileID: 4019383403372175019}

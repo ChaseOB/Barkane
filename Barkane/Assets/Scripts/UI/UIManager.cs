@@ -116,7 +116,7 @@ public class UIManager : Singleton<UIManager>
         foldCountText.text = s;
         yourFoldCountText.text = s;
 
-        if(numFolds >= 5)
+        if(numFolds >= 50)
         {
             AddCosmetic("knife");
         }
