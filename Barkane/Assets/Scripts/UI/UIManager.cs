@@ -116,7 +116,7 @@ public class UIManager : Singleton<UIManager>
         foldCountText.text = s;
         yourFoldCountText.text = s;
 
-        if(numFolds >= 50)
+        if(numFolds >= 5)
         {
             AddCosmetic("knife");
         }
@@ -176,6 +176,7 @@ public class UIManager : Singleton<UIManager>
         cosmeticBackground.sprite = cosmeticNormal;
         cosmeticText.text = "Click to Equip";
         cosmeticGroup.SetActive(true);
+        cosmeticButton.SetActive(true);
     }
 
 
@@ -194,7 +195,8 @@ public class UIManager : Singleton<UIManager>
         if(cosmeticUnlocks.Count == 0)
         {
             showCosmetic = false;
-            cosmeticGroup.SetActive(true);
+            cosmeticGroup.SetActive(false);
+            endLevelGroup.SetActive(true);
         }
         else{
             ShowNextCosmetic();
