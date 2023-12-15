@@ -38,7 +38,7 @@ public class UIManager : Singleton<UIManager>
 
     private bool showCosmetic = false;
    // private string cosmetic;
-    private List<string> cosmeticUnlocks;
+    private List<string> cosmeticUnlocks = new();
     private int glowstickHealth;
     private int numFolds;
 
