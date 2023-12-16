@@ -116,22 +116,17 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     private void PushData()
     {
-        if (materialInstance == null)
+        materialInstance = new Material(materialPrototype)
         {
-            materialInstance = new Material(materialPrototype)
-            {
-                name = $"rehydrated {materialPrototype.name}"
-            };
-        } else
-        {
-            var distanceTexture = new Texture2D(distanceTextureWidth, distanceTextureWidth);
-            distanceTexture.LoadImage(distanceTextureData);
-            distanceTexture.Apply();
+            name = $"rehydrated {materialPrototype.name}"
+        };
+        var distanceTexture = new Texture2D(distanceTextureWidth, distanceTextureWidth);
+        distanceTexture.LoadImage(distanceTextureData);
+        distanceTexture.Apply();
 
-            mFilter.sharedMesh = meshData.Rehydrated;
-            materialInstance.SetTexture("Dist", distanceTexture);
+        mFilter.sharedMesh = meshData.Rehydrated;
+        materialInstance.SetTexture("Dist", distanceTexture);
 
-        }
         materialInstance.SetColor("_Color", BaseColor);
         materialInstance.SetColor("_EdgeTint", TintColor);
         materialInstance.SetVector("_NormalOffset", new Vector2(Random.value, Random.value));
