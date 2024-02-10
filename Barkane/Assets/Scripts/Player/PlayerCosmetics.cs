@@ -51,6 +51,7 @@ public class PlayerCosmetics : Singleton<PlayerCosmetics>
 
     public void DisableAllCosmetics()
     {
+        meshRenderer.material = PlayerMat;
         enabledCosmetic?.SetActive(false);
         enabledCosmetic = null;
     }
