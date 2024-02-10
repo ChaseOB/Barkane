@@ -109,7 +109,7 @@ public class PaperSquareFace : MonoBehaviour, IThemedItem
 #if UNITY_EDITOR
         EditorUtility.SetDirty(squareSide);
 #endif
-        squareSide.UpdateMesh();
+        squareSide.UpdateMeshAtEditorTime();
     }
 #if UNITY_EDITOR
     public void SetFaceObject(FaceObjectType type, bool status)

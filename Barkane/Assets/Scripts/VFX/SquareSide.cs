@@ -58,13 +58,13 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     void IRefreshable.EditorRefresh()
     {
-        UpdateMesh();
+        UpdateMeshAtEditorTime();
     }
 
     void IRefreshable.RuntimeRefresh()
     {
         // Debug.Log("Runtime refresh");
-        PushData();
+        PushData(true);
         RuntimeParticleUpdate();
 
         // CAUTION: keep the refresh order of JointRenderer after SquareSide
@@ -114,15 +114,22 @@ public class SquareSide : MonoBehaviour, IRefreshable
 
     [SerializeField] private SideVisiblity m_SideVisiblity; //for debugging
 
-    private void PushData()
+    private void PushData(bool isRuntime)
     {
+        var prevMaterialInstance = materialInstance;
+
         if (materialInstance == null)
         {
             materialInstance = new Material(materialPrototype)
             {
                 name = $"rehydrated {materialPrototype.name}"
             };
-        } else
+        }
+        
+        // AT: idk why the code below only runs if material instance doesn't start as null,
+        // looking at it after a year it seems like it could be run in all cases, runtime or not
+
+        if (isRuntime || prevMaterialInstance != null)
         {
             var distanceTexture = new Texture2D(distanceTextureWidth, distanceTextureWidth);
             distanceTexture.LoadImage(distanceTextureData);
@@ -169,7 +176,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
         }
     }
 
-    public void UpdateMesh()
+    public void UpdateMeshAtEditorTime()
     {
 
         var (mesh, texture, sprinkleVerts, sprinkleNorms) = meshGenerator.Create(materialPrototype);
@@ -184,7 +191,7 @@ public class SquareSide : MonoBehaviour, IRefreshable
         };
         meshData = new SerializedMesh(mesh);
 
-        PushData();
+        PushData(false);
 
 #if UNITY_EDITOR
         if (!PrefabUtility.IsPartOfAnyPrefab(this)) return;
