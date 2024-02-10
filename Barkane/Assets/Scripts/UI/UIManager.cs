@@ -116,10 +116,6 @@ public class UIManager : Singleton<UIManager>
         foldCountText.text = s;
         yourFoldCountText.text = s;
 
-        if(numFolds >= 50)
-        {
-            AddCosmetic("knife");
-        }
     }
 
     private void OnGlowstickChange(object sender, GlowStickLogic.GlowStickArgs e) {
@@ -143,15 +139,13 @@ public class UIManager : Singleton<UIManager>
     {
         if(cosmetic == null || !cosmeticStrings.Contains(cosmetic) || cosmeticUnlocks.Contains(cosmetic))
             return;
-        //cosmeticImage.sprite = cosmeticSprites[cosmeticStrings.IndexOf(cosmetic)];
         showCosmetic = true;
-        //this.cosmetic = cosmetic;
         cosmeticUnlocks.Add(cosmetic);
+        SaveSystem.Current.SetCosmeticUnlock(cosmetic, true);
     }
 
     public void EndLevel()
     {
-        //C: This is a horrible way to do this. I don't care
         Level level = LevelManager.Instance.GetCurrentLevel();
         int bestFolds = SaveSystem.Current.GetFolds(level.levelName);
         if(bestFolds == -1 || numFolds < bestFolds) 

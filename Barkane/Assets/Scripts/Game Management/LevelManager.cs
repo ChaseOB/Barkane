@@ -216,6 +216,12 @@ public class LevelManager : Singleton<LevelManager>
     { 
         instantiatedLevel.GetComponent<FoldablePaper>().isComplete = true;
 
+        if(currLevelFoldCount >= 50)
+        {
+            UIManager.Instance.AddCosmetic("knife");
+        }
+
+
         //set folds for current level
         currLevelFoldCount += penalty;
         SaveSystem.Current.SetNumFoldsIfLower(level.levelName, currLevelFoldCount);
@@ -227,6 +233,7 @@ public class LevelManager : Singleton<LevelManager>
             SaveSystem.Current.SetCosmeticUnlock(level.cosmeticUnlock, true);
             UIManager.Instance.AddCosmetic(level.cosmeticUnlock);
         }
+
 
         //unlock next level
         if(sequentialUnlock && currLevelIndex + 1 != levelList.Count)
