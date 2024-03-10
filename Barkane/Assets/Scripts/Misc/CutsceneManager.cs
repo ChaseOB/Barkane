@@ -4,12 +4,15 @@ using UnityEngine;
 using System;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class CutsceneManager : MonoBehaviour
 {
     public List<CutsceneCaption> captions;
     public TMPTextTyper typer;
     public VideoPlayer videoPlayer;
+    public TextMeshProUGUI textMesh;
+
 
     public Level NextLevel;
     public int NextSceneIndex = -1;
@@ -88,6 +91,10 @@ public class CutsceneManager : MonoBehaviour
 
     private IEnumerator ShowCaption(CutsceneCaption caption)
     {
+        if(caption.centerText)
+        {
+            textMesh.alignment = TextAlignmentOptions.Center;
+        }
         typer.StartTyping(caption.text);
         yield return new WaitForSeconds(caption.duration);
         typer.FadeOutText(1f);
@@ -145,6 +152,7 @@ public class CutsceneCaption
     public float pauseDuration;
     public bool pauseOnDisplay;
     public bool played = false;
+    public bool centerText = false;
 }
 
 

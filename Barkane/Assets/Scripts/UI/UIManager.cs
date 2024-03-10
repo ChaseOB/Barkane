@@ -137,7 +137,10 @@ public class UIManager : Singleton<UIManager>
 
     public void AddCosmetic(string cosmetic)
     {
-        if(cosmetic == null || !cosmeticStrings.Contains(cosmetic) || cosmeticUnlocks.Contains(cosmetic))
+        if(cosmetic == null 
+            || !cosmeticStrings.Contains(cosmetic) 
+            || cosmeticUnlocks.Contains(cosmetic)
+            || SaveSystem.Current.GetCosmeticUnlock(cosmetic))
             return;
         showCosmetic = true;
         cosmeticUnlocks.Add(cosmetic);

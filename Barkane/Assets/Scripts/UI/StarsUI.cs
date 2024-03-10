@@ -8,13 +8,13 @@ public class StarsUI : MonoBehaviour
 
     public void DisplayStars(Level level, int numFolds)
     {
-        int numStars = 0;
+        int numStars = 1;
         if(numFolds <= level.ThreeStarMaxFolds)
             numStars = 3;
         else if (numFolds <= level.TwoStarMaxFolds)
             numStars = 2;
-        else if(numFolds <= level.OneStarMaxFolds)
-            numStars = 1;
+        // else if(numFolds <= level.OneStarMaxFolds)
+        //     numStars = 1;
 
         if(numFolds < 0) numStars = 0;
 
